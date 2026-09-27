@@ -68,31 +68,16 @@ La guía `Docs/GUIA-PRIMER-ARRANQUE.txt` se copia junto al DMG como
 `dist/Brisa-Como-abrir.txt`; no se añade al volumen del instalador para
 mantenerlo limpio y sin elementos extra.
 
-## Notarización (para distribuir fuera de tu Mac)
+## Distribución
 
-La firma actual es **ad-hoc** (suficiente para tu máquina). Para que Gatekeeper
-abra la app en cualquier Mac sin avisos necesitas un Apple Developer account
-(99 €/año) y:
+La app se firma **ad-hoc** y así se reparte. En otro Mac, Gatekeeper la marca
+como no verificada: se abre con el rodeo que explica la guía de primer arranque
+—*Abrir igualmente* en Ajustes › Privacidad y seguridad—, que se entrega junto
+al DMG precisamente para eso. Es suficiente para probar entre conocidos.
 
-```bash
-# 1. Firmar con tu Developer ID (sustituye el ID por el tuyo)
-security find-identity -v -p codesigning     # localizar tu "Developer ID Application"
-codesign --force --deep --options runtime \
-  --sign "Developer ID Application: TU NOMBRE (TEAMID)" \
-  --timestamp dist/Brisa.app
-
-# 2. Comprimir y enviar a Apple
-ditto -c -k --keepParent dist/Brisa.app Brisa.zip
-xcrun notarytool submit Brisa.zip --apple-id TU@ICLOUD --password CONTRASEÑA-DE-APP --wait
-# (crea la contraseña de app en appleid.apple.com > Inicio de sesión y seguridad)
-
-# 3. Grapar el ticket
-xcrun stapler staple dist/Brisa.app
-bash Scripts/make-dmg.sh     # re-empaquetar con la app ya grapada
-```
-
-Sin este paso, un Mac ajeno mostrará «Brisa no se puede abrir porque es de un
-desarrollador no identificado». Con él, Gatekeeper la abre limpiamente.
+Lo que se pierde sin firma de desarrollador: el aviso de Gatekeeper, y la
+estabilidad del Acceso total al disco, que se concede al binario concreto y
+hay que otorgarlo después de cada compilación.
 
 ## Privacidad
 
@@ -112,11 +97,10 @@ Resumen llevan ahí; al concederlo, Brisa se da cuenta sola y reanaliza).
 **Aviso para quien prueba desde el repositorio:** si ejecutas
 `dist/Brisa.app` con el proyecto dentro de `~/Documents`, macOS pedirá acceso a
 **Documentos**: no es por el análisis, es porque la propia app está dentro de
-esa carpeta y necesita leer su bundle. Además, la firma ad-hoc cambia en cada
-compilación, así que el permiso no se recuerda y vuelve a preguntar. Ejecuta la
+esa carpeta y necesita leer su bundle. Además, como la firma ad-hoc cambia en
+cada compilación, el permiso no se recuerda y vuelve a preguntar. Ejecuta la
 app desde fuera de Documentos (por ejemplo, la copia que instala el DMG en
-`/Applications`) y no aparece ningún aviso. Con firma de desarrollador y
-notarización, tampoco al reinstalar.
+`/Applications`) y no aparece ningún aviso.
 
 ## Desinstalar
 
