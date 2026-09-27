@@ -1,0 +1,59 @@
+BRISA · CÓMO EMPEZAR
+====================
+
+Gracias por probar Brisa. Son tres pasos y no llegan a dos minutos.
+
+1 · INSTALAR BRISA
+------------------
+Abre el instalador y arrastra el icono de Brisa a la carpeta «Aplicaciones»
+que aparece justo al lado.
+
+2 · ABRIRLA LA PRIMERA VEZ
+--------------------------
+La primera vez, macOS querrá asegurarse de que eres tú quien abre Brisa y
+mostrará un aviso parecido a este:
+
+    «Apple no ha podido verificar que "Brisa" no contenga
+     software malicioso.»
+
+Es lo normal en una versión que todavía no está publicada en la App Store:
+no significa que Brisa tenga nada malo. Para abrirla:
+
+    1. Abre el menú Apple  →  Ajustes del Sistema.
+    2. Entra en «Privacidad y seguridad» (tendrás que bajar un poco por la
+       lista de la izquierda).
+    3. Baja hasta el apartado «Seguridad» y busca el aviso sobre Brisa:
+       pulsa «Abrir».
+    4. Pulsa «Abrir igualmente» e introduce la contraseña de tu Mac.
+
+El aviso de «Privacidad y seguridad» desaparece alrededor de una hora después
+de tu primer intento, así que hazlo sin prisas pero sin dejarlo para mañana:
+si ya no está, vuelve a intentar abrir Brisa y repite estos pasos.
+
+Solo hace falta esta vez. A partir de ahora abre Brisa con doble clic, desde
+Launchpad o buscándola en Spotlight, como cualquier otra aplicación.
+
+En versiones anteriores de macOS este paso se hace con el clic derecho: sobre
+el icono de Brisa en Aplicaciones, elige «Abrir» y confirma con «Abrir».
+
+3 · LA PRIMERA VEZ DENTRO DE BRISA
+----------------------------------
+  • Brisa analiza tu Mac nada más abrirse (verás la animación de escaneo).
+  • Después te pedirá «Acceso total al disco»: un permiso de macOS que le
+    permite medir también carpetas protegidas, como Documentos, Fotos o
+    Descargas. La app te lleva al sitio exacto y, en cuanto lo actives,
+    vuelve a analizar por su cuenta.
+  • Si prefieres no darlo, Brisa funciona igual: medirá todo lo demás y te
+    dirá con claridad qué ha dejado fuera.
+
+TU PRIVACIDAD
+-------------
+Brisa mide tu disco en tu propio Mac: tus archivos no salen de él, no hay
+cuentas ni seguimiento y nada se envía a ningún sitio salvo que actives tú
+la opción «Ayudar a mejorar Brisa».
+
+¿ALGO NO FUNCIONA?
+------------------
+Respóndeme al mensaje donde recibiste el instalador y cuéntame tres cosas:
+qué estabas haciendo, qué esperabas que pasara y qué pasó en realidad. Una
+captura de pantalla ayuda mucho.

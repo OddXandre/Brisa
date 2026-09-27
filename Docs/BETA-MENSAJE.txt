@@ -1,0 +1,38 @@
+GRACIAS POR PROBAR BRISA 🧹
+═══════════════════════════
+
+CÓMO INSTALARLA
+  1. Arrastra el icono de Brisa a la carpeta «Aplicaciones» de este disco.
+
+LA PRIMERA VEZ
+  • macOS mostrará un aviso parecido a «Apple no ha podido verificar que
+    "Brisa" no contenga software malicioso». Es normal: esta versión aún no
+    está publicada en la App Store. Para abrirla:
+
+      1. Menú Apple  →  Ajustes del Sistema.
+      2. «Privacidad y seguridad»  →  apartado «Seguridad».
+      3. Pulsa «Abrir» y después «Abrir igualmente».
+      4. Escribe la contraseña de tu Mac.
+
+    Ese aviso desaparece alrededor de una hora después del primer intento
+    (si ya no está, vuelve a intentar abrir Brisa y repite los pasos).
+
+    En versiones anteriores de macOS: clic derecho sobre Brisa  →  «Abrir»
+     →  «Abrir». Solo pasa una vez; luego se abre con doble clic.
+
+  • Para medir carpetas protegidas (Documentos, Fotos…), Brisa te pedirá una
+    sola vez el permiso «Acceso total al disco», con una guía dentro de la
+    app. Sin él también funciona: medirá el resto y te dirá qué deja fuera.
+  • Si concedes ese permiso y Brisa sigue diciendo que no las ha medido, es
+    un detalle de macOS (recuerda el permiso de la versión anterior): la
+    propia app te da el botón «Restablecer permiso» y te explica qué hacer.
+
+QUÉ ESPERAR
+  • Es una beta: puede haber fallos, ¡y agradezco tu paciencia!
+  • Nada se borra para siempre: todo lo que limpies va a la Papelera de
+    Brisa y puedes restaurarlo con un clic.
+  • Todo ocurre en tu Mac: tus archivos no salen de él y no hay seguimiento.
+
+¿PROBLEMAS O IDEAS?
+  Escríbeme con tres cosas: qué hiciste, qué esperabas y qué pasó (una
+  captura de pantalla ayuda mucho). ¡Gracias! 🧡

@@ -1,0 +1,10 @@
+# Compilación de SwiftPM: se regenera con `swift build` / `bash build-app.sh`.
+.build/
+
+# Finder
+.DS_Store
+
+# Estado de las herramientas que trabajan en este proyecto (identificador de
+# sesión, enlaces a skills globales). No son fuente de Brisa y cambian solas.
+.freebuff/
+.agents/
