@@ -82,7 +82,8 @@ hay que otorgarlo después de cada compilación.
 ## Privacidad
 
 Sin telemetría, sin red: todo el análisis y las operaciones ocurren en tu Mac.
-Los datos (papelera, historial, exclusiones) viven en
+Los datos (papelera, historial de análisis, exclusiones y el histórico del Mac
+—una muestra cada diez segundos, 24 horas—) viven en
 `~/Library/Application Support/Brisa/`.
 
 ## Permisos: qué pide macOS y por qué

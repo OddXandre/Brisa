@@ -224,10 +224,6 @@ html.motion-off .osb{transition:none}
 .tb-scan .num{margin:0 1px}
 @media(max-width:640px){.tb-scan .tbs-txt{display:none}.tb-scan{width:28px;padding:0;justify-content:center}.tb-title small{display:none}}
 
-.seg{display:flex;align-items:center;background:var(--sel);border:none;border-radius:var(--r-pill);padding:2px;gap:2px}
-.seg .tb-btn{width:26px;height:24px;border-radius:var(--r-pill)}
-.seg .tb-btn.on{background:var(--surface);color:var(--ink);box-shadow:var(--rim)}
-
 #layout{display:flex;min-height:0;overflow:hidden}
 #sidebar{
   width:232px;flex:none;display:flex;flex-direction:column;min-height:0;
@@ -472,6 +468,112 @@ html.motion-off .seg-tip{transition:none}
 .ins-card p{font-size:var(--t-small);color:var(--ink-2);line-height:1.5}
 .ins-card .i-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
 @media(max-width:900px){.ins-grid{grid-template-columns:1fr}}
+
+
+#view-estado .v-body{gap:12px}
+
+.se-hero{padding:0;overflow:hidden}
+
+.se-verdict{display:flex;align-items:center;gap:14px;padding:17px 20px}
+.se-mark{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--sel);color:var(--ink-2);transition:var(--press)}
+.se-mark svg{width:17px;height:17px}
+
+#view-estado[data-level="warn"] .se-mark{background:var(--acc-soft);color:var(--acc)}
+#view-estado[data-level="bad"] .se-mark{background:var(--acc-soft);color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc-soft-2)}
+.se-say{flex:1;min-width:0}
+.se-say h2{margin:0;font-size:var(--t-title);font-weight:600;letter-spacing:-.02em;line-height:1.3;color:var(--ink)}
+.se-say p{margin:3px 0 0;font-size:var(--t-body);line-height:1.45;color:var(--ink-3);max-width:64ch}
+.se-live{display:flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:var(--r-pill);border:none;background:var(--sel);color:var(--ink-2);font-size:var(--t-small);flex:none;transition:var(--press)}
+.se-live:hover{background:var(--sel-2);color:var(--ink)}
+.se-dot{width:6px;height:6px;border-radius:50%;background:var(--acc-text);flex:none;animation:sePulse 2s var(--ease-io) infinite}
+.se-live[aria-pressed="true"] .se-dot{background:var(--ink-4);animation:none}
+html.motion-off .se-dot{animation:none}
+@keyframes sePulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+
+.se-grid{display:grid;grid-template-columns:repeat(3,1fr);padding:2px 0;border-top:1px solid var(--line)}
+.se-cell{position:relative;display:flex;flex-direction:column;gap:5px;padding:14px 16px;min-width:0}
+.se-cell+.se-cell::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:.5px;background:var(--line)}
+.se-cell:nth-child(3n+1)::before{display:none}
+.se-cell:nth-child(n+4){box-shadow:inset 0 .5px 0 var(--line)}
+.se-top{display:flex;align-items:center;gap:7px;min-width:0}
+.se-ic{display:grid;place-items:center;color:var(--ink-3);flex:none}
+.se-ic svg{width:14px;height:14px}
+.se-k{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.se-v{font-size:var(--t-title);font-weight:400;letter-spacing:-.022em;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.se-v.nodata{font-size:var(--t-body);color:var(--ink-3)}
+.se-s{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.se-bar{height:3px;border-radius:9999px;background:var(--track);overflow:hidden;margin-top:2px}
+.se-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--ink);transition:width var(--d3) var(--ease),background-color var(--d1) var(--ease)}
+.se-cell[data-state="warn"] .se-bar i{background:var(--acc-text)}
+.se-cell[data-state="bad"] .se-bar i{background:var(--acc)}
+
+.se-chart-panel{padding:15px 20px 13px}
+
+.se-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.se-head h2{margin:0;font-size:var(--t-small);font-family:var(--font);font-weight:600;letter-spacing:-.008em;color:var(--ink-2)}
+
+#se-range{margin:0 0 0 auto}
+
+.se-plot{display:grid;grid-template-columns:36px minmax(0,1fr)}
+.se-y{display:flex;flex-direction:column;justify-content:space-between;padding-bottom:3px;font-size:var(--t-label);color:var(--ink-4);font-variant-numeric:tabular-nums}
+.se-chart{display:block;width:100%;height:104px;overflow:visible}
+.se-chart path,.se-chart line{vector-effect:non-scaling-stroke}
+.se-chart .se-guide{stroke:var(--line);stroke-width:1}
+.se-chart .se-area{fill:var(--acc);fill-opacity:.07;stroke:none}
+.se-chart .se-line-cpu{fill:none;stroke:var(--acc);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.se-chart .se-line-mem{fill:none;stroke:var(--ink-3);stroke-width:1.5;stroke-dasharray:4 4;stroke-linejoin:round;stroke-linecap:round}
+.se-legend{display:flex;align-items:center;gap:14px;font-size:var(--t-small);color:var(--ink-3)}
+.se-legend span{display:flex;align-items:center;gap:6px}
+.se-swatch{width:14px;height:3px;border-radius:2px;flex:none}
+.se-swatch.cpu{background:var(--acc)}
+.se-swatch.mem{background:repeating-linear-gradient(90deg,var(--ink-3) 0 4px,transparent 4px 8px)}
+.se-x{display:flex;justify-content:space-between;margin-top:7px;padding-left:36px;font-size:var(--t-label);color:var(--ink-4)}
+
+.se-chart-empty{margin:0;padding:26px 0 22px 36px;font-size:var(--t-small);color:var(--ink-3);max-width:64ch;line-height:1.55}
+
+
+.boot-in .se-grid>*{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*30ms)}
+
+
+
+.se-chead{min-height:0;max-height:none;padding-top:2px;padding-bottom:4px}
+.se-chead .se-hcol{border:none;background:none;padding:2px 0;display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:var(--t-label);color:var(--ink-4);transition:color var(--d1) var(--ease)}
+.se-chead .se-hcol:hover{color:var(--ink-2)}
+.se-chead .se-hcol[aria-checked="true"]{color:var(--ink)}
+.se-chead .se-hcol .farr{color:var(--acc)}
+.se-hspace{width:26px;flex:none}
+.se-hbar{flex:1 1 auto;min-width:56px}
+
+#se-cons[data-order="cpu"] .se-col.mem,#se-cons[data-order="mem"] .se-col.cpu{color:var(--ink-3)}
+
+
+.se-row{cursor:default;gap:10px}
+.se-row:hover{background:transparent}
+.se-row .r-name{flex:0 1 320px}
+.se-row .r-name small{color:var(--ink-3);font-size:var(--t-label);margin-left:6px}
+.se-col{font-size:var(--t-small);color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums;flex:none}
+.se-col.cpu{width:56px}
+.se-col.mem{width:76px;font-size:var(--t-body)}
+.se-row .se-bar{flex:1 1 auto;min-width:56px;margin-top:0}
+.se-cons-empty{padding:22px 16px;color:var(--ink-3);font-size:var(--t-small)}
+
+
+.se-acts .row .r-go{opacity:1;transform:none}
+.se-acts .r-name{display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0}
+.se-acts .r-name b{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.se-acts .r-name small{color:var(--ink-3);font-size:var(--t-label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.se-note{margin:0;padding:2px 2px 4px;font-size:var(--t-label);line-height:1.6;color:var(--ink-3)}
+
+@media(max-width:900px){
+  .se-grid{grid-template-columns:repeat(2,1fr)}
+  .se-cell:nth-child(3n+1)::before{display:block}
+  .se-cell:nth-child(2n+1)::before{display:none}
+  .se-cell:nth-child(n+3){box-shadow:inset 0 .5px 0 var(--line)}
+  .se-row .r-name{flex:1 1 auto}
+}
 
 
 #view-atlas .atlas-layout{flex:1 1 auto;min-height:0}
@@ -1378,8 +1480,10 @@ html.theme-anim .sb-item{
 #view-atlas.pending #atlas-pending,
 #view-historial.pending #hist-pending{display:flex;flex:1 1 auto}
 
-.fscroll:has(>.pending-panel){display:flex;flex-direction:column}
-.fscroll>.pending-panel{flex:1 1 auto}
+#files-pending{display:none}
+#view-archivos.pending .files-panel{display:none}
+#view-archivos.pending .v-body{display:flex;flex-direction:column}
+#view-archivos.pending #files-pending{display:flex;flex:1 1 auto}
 .pending-panel{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:12px;text-align:center;padding:56px 24px;color:var(--ink-2);
@@ -1601,6 +1705,109 @@ html.motion-off :is(.busy-ring,.tbs-dot){animation-duration:var(--spin)!importan
       </section>
 
       
+      <section class="view" id="view-estado" hidden data-level="ok">
+        <div class="v-body">
+          <div class="panel pending-panel" id="estado-pending">
+            <div class="pp-mark"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="gauge" aria-hidden="true"></svg></div>
+            <h2 id="ep-h2" data-i18n="est.loadingH2">Leyendo el estado del Mac</h2>
+            <p id="ep-p" data-i18n="est.loadingP">Son unas décimas de segundo. Todo se lee en tu Mac y de aquí no sale nada.</p>
+            <button class="btn btn-p" id="ep-retry" hidden></button>
+          </div>
+
+          
+          <div class="panel se-hero" id="se-hero" hidden>
+            <div class="se-verdict" id="se-verdict">
+              <span class="se-mark" id="se-mark"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="check" aria-hidden="true"></svg></span>
+              <div class="se-say">
+                <h2 id="se-title"></h2>
+                <p id="se-sub"></p>
+              </div>
+              <button class="se-live" id="se-live" aria-pressed="false" data-i18n-aria="est.liveToggle" data-i18n-title="est.liveToggle" aria-label="Pausar o reanudar el seguimiento en vivo" title="Pausar o reanudar el seguimiento en vivo">
+                <span class="se-dot" aria-hidden="true"></span><span id="se-live-txt" data-i18n="est.live">En vivo</span>
+              </button>
+            </div>
+
+            <div class="se-grid" id="se-grid">
+              <div class="se-cell" id="se-cell-cpu" style="--i:0">
+                <span class="se-top"><span class="se-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="cpu" aria-hidden="true"></svg></span><span class="se-k" data-i18n="est.cpu">CPU</span></span>
+                <span class="se-v" id="se-v-cpu">—</span>
+                <span class="se-bar" id="se-b-cpu"><i></i></span>
+                <span class="se-s" id="se-s-cpu"></span>
+              </div>
+              <div class="se-cell" id="se-cell-mem" style="--i:1">
+                <span class="se-top"><span class="se-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="memory" aria-hidden="true"></svg></span><span class="se-k" data-i18n="est.mem">Memoria</span></span>
+                <span class="se-v" id="se-v-mem">—</span>
+                <span class="se-bar" id="se-b-mem"><i></i></span>
+                <span class="se-s" id="se-s-mem"></span>
+              </div>
+              <div class="se-cell" id="se-cell-disk" style="--i:2">
+                <span class="se-top"><span class="se-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="drive" aria-hidden="true"></svg></span><span class="se-k" data-i18n="est.disk">Disco</span></span>
+                <span class="se-v" id="se-v-disk">—</span>
+                <span class="se-bar" id="se-b-disk"><i></i></span>
+                <span class="se-s" id="se-s-disk"></span>
+              </div>
+              <div class="se-cell" id="se-cell-net" style="--i:3">
+                <span class="se-top"><span class="se-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="net" aria-hidden="true"></svg></span><span class="se-k" data-i18n="est.net">Red</span></span>
+                <span class="se-v" id="se-v-net">—</span>
+                <span class="se-bar" id="se-b-net"><i></i></span>
+                <span class="se-s" id="se-s-net"></span>
+              </div>
+              <div class="se-cell" id="se-cell-bat" style="--i:4">
+                <span class="se-top"><span class="se-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="battery" aria-hidden="true"></svg></span><span class="se-k" data-i18n="est.battery">Batería</span></span>
+                <span class="se-v" id="se-v-bat">—</span>
+                <span class="se-bar" id="se-b-bat"><i></i></span>
+                <span class="se-s" id="se-s-bat"></span>
+              </div>
+              <div class="se-cell" id="se-cell-heat" style="--i:5">
+                <span class="se-top"><span class="se-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="thermo" aria-hidden="true"></svg></span><span class="se-k" data-i18n="est.thermal">Térmico</span></span>
+                <span class="se-v" id="se-v-heat">—</span>
+                <span class="se-bar" id="se-b-heat"><i></i></span>
+                <span class="se-s" id="se-s-heat"></span>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="panel se-chart-panel" id="se-chart-wrap" hidden>
+            <div class="se-head">
+              <h2 data-i18n="est.chart">Cómo ha ido el Mac</h2>
+              <span class="se-legend">
+                <span><i class="se-swatch cpu"></i><span data-i18n="est.cpu">CPU</span></span>
+                <span><i class="se-swatch mem"></i><span data-i18n="est.mem">Memoria</span></span>
+              </span>
+              <span class="range-seg" id="se-range" role="radiogroup" data-i18n-aria="est.rangeAria" aria-label="Tramo de tiempo de la gráfica"></span>
+            </div>
+            <div class="se-plot" id="se-plot">
+              <div class="se-y"><span>100 %</span><span>0 %</span></div>
+              <svg class="se-chart" id="se-chart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" data-i18n-aria="est.chartAria" aria-label="Gráfica de CPU y memoria del tramo elegido"></svg>
+            </div>
+            <div class="se-x" id="se-x"><span id="se-x-from"></span><span data-i18n="est.chartNow">Ahora</span></div>
+            <p class="se-chart-empty" id="se-chart-empty" hidden></p>
+          </div>
+
+          <div id="se-cons-wrap" hidden>
+            <div class="v-section"><h2 data-i18n="est.consumers">Quién consume ahora</h2></div>
+            
+            <div class="row se-row se-chead" role="radiogroup" data-i18n-aria="est.orderAria" aria-label="Ordenar la lista por">
+              <span class="se-hspace"></span>
+              <span class="r-name"></span>
+              <span class="se-hbar"></span>
+              <button class="se-col cpu se-hcol" id="se-by-cpu" role="radio" aria-checked="true" data-i18n="est.byCpu">CPU</button>
+              <button class="se-col mem se-hcol" id="se-by-mem" role="radio" aria-checked="false" data-i18n="est.byMem">Memoria</button>
+            </div>
+            <div class="rowlist" id="se-cons" data-order="cpu"></div>
+          </div>
+
+          <div id="se-act-wrap" hidden>
+            <div class="v-section"><h2 data-i18n="est.actions">Qué puedes hacer</h2></div>
+            <div class="rowlist se-acts" id="se-acts"></div>
+          </div>
+
+          <p class="se-note" id="se-note" hidden></p>
+        </div>
+      </section>
+
+      
       <section class="view" id="view-atlas" hidden>
         <div class="v-body">
           <div class="panel pending-panel" id="atlas-pending"></div>
@@ -1635,6 +1842,8 @@ html.motion-off :is(.busy-ring,.tbs-dot){animation-duration:var(--spin)!importan
       
       <section class="view" id="view-archivos" hidden>
         <div class="v-body files-wrap">
+          
+          <div class="panel pending-panel" id="files-pending"></div>
           <div class="files-panel">
             <div class="files-toolbar">
               <button class="chip on" data-fl="todos" data-i18n="files.all">Todos</button>
@@ -1837,6 +2046,23 @@ function inApp(){
     }
   };
   
+  
+  window.brisa.onSystem = function(sample){
+    try{
+      const s=(typeof sample==="string")?JSON.parse(sample):sample;
+      if(typeof applySystem==="function") applySystem(s);
+    }catch(e){ console.error("[brisa] muestra del sistema inválida", e); }
+  };
+  
+  window.brisa.onSystemHistory = function(payload){
+    try{
+      const d=(typeof payload==="string")?JSON.parse(payload):payload;
+      if(!d||typeof d.range!=="string") return;
+      SYS.series[d.range]=Array.isArray(d.points)?d.points:[];
+      if(SYS.range===d.range&&typeof renderEstado==="function") renderEstado();
+    }catch(e){ console.error("[brisa] histórico inválido", e); }
+  };
+
   window.brisa._fda = false;
   window.brisa.onPermissions = function(json){
     try{
@@ -1903,9 +2129,69 @@ const onEv=(sel,ev,fn)=>{const el=$(sel); if(el) el.addEventListener(ev,fn); ret
 
 const I18N = {
   es: {
-    "nav.resumen":"Resumen", "nav.atlas":"Espacio en disco", "nav.archivos":"Archivos grandes",
-    "nav.duplicados":"Duplicados", "nav.historial":"Historial", "nav.ritmo":"Mantenimiento",
-    "nav.papelera":"Papelera de Brisa",
+    "nav.resumen":"Resumen", "nav.estado":"Estado del Mac", "nav.atlas":"Espacio en disco",
+    "nav.archivos":"Archivos grandes", "nav.duplicados":"Duplicados", "nav.historial":"Historial",
+    "nav.ritmo":"Mantenimiento", "nav.papelera":"Papelera de Brisa",
+
+    
+    "est.loadingH2":"Leyendo el estado del Mac",
+    "est.loadingP":"Son unas décimas de segundo. Todo se lee en tu Mac y de aquí no sale nada.",
+    "est.errorH2":"No se pudo leer el estado del Mac",
+    "est.errorP":"El sistema no respondió a la petición de datos. Puedes intentarlo otra vez.",
+    "est.retry":"Reintentar",
+    "est.cpu":"CPU", "est.mem":"Memoria", "est.disk":"Disco", "est.net":"Red",
+    "est.battery":"Batería", "est.thermal":"Térmico",
+    "est.live":"En vivo", "est.paused":"En pausa",
+    "est.liveToggle":"Pausar o reanudar el seguimiento en vivo",
+    "est.noData":"No disponible",
+    "est.consumers":"Quién consume ahora", "est.orderAria":"Ordenar la lista por",
+    "est.byCpu":"CPU", "est.byMem":"Memoria",
+    "est.procs":"{n} procesos", "est.procsOne":"{n} proceso",
+    "est.consEmpty":"Ahora mismo no hay ningún proceso con un consumo apreciable.",
+    "est.actions":"Qué puedes hacer",
+    "est.actAtlas":"Ver qué ocupa el espacio", "est.actAtlasD":"Reparto por categorías: fotos, apps, documentos, descargas…",
+    "est.actDup":"Buscar archivos duplicados", "est.actDupD":"Copias repetidas que se pueden aliviar sin perder nada",
+    "est.actFiles":"Revisar los archivos grandes", "est.actFilesD":"Lo más pesado del disco, por tamaño y por último uso",
+    "est.cpuSub":"{n} núcleos · carga {l}", "est.cpuSubOne":"{n} núcleo · carga {l}",
+    "est.memSub":"{c} GB comprimidos · {s} GB de swap", "est.memSubNoSwap":"{c} GB comprimidos · sin swap",
+    "est.diskSub":"{p} % de {t} GB en uso",
+    "est.netSub":"Subida {u} · {i}",
+    "est.batCharging":"Cargando · {t} para el 100 %", "est.batChargingSimple":"Cargando",
+    "est.batCharged":"Enchufado · {c} ciclos", "est.batChargedNoCycles":"Enchufado",
+    "est.batDischarging":"Con batería · quedan {t}", "est.batDischargingSimple":"Con batería",
+    "est.batNoBattery":"Este Mac no tiene batería",
+    "est.thermalValueNominal":"Normal", "est.thermalValueFair":"Templado",
+    "est.thermalValueSerious":"Alto", "est.thermalValueCritical":"Crítico",
+    "est.thermalNominal":"El sistema no limita el rendimiento",
+    "est.thermalFair":"El Mac va algo justo de temperatura",
+    "est.thermalSerious":"El sistema ha reducido el rendimiento",
+    "est.thermalCritical":"Rendimiento muy limitado por el calor",
+    "est.thermalLowPower":"Modo de bajo consumo activo",
+    "est.note":"Datos de solo lectura, sin permisos del sistema y sin salir de tu Mac.",
+    "est.noteNoBattery":" Este Mac no tiene batería, así que ese apartado no mide nada.",
+    "est.okTitle":"Tu Mac está funcionando con normalidad",
+    "est.okText":"Nada fuera de lo normal: hay CPU de sobra y memoria y espacio suficientes.",
+    "est.cpuTitle":"Hay algo trabajando a tope de CPU",
+    "est.cpuTitleMany":"Varios procesos están repartiéndose la CPU",
+    "est.cpuText":"{n} está usando el {p} % de la CPU. Si no lo necesitas ahora mismo, ciérralo y el Mac irá más suelto.",
+    "est.cpuTextMany":"{n} es el que más consume, con un {p} %; el resto se reparte entre otros procesos.",
+    "est.cpuTextNoName":"La CPU está al {p} %. Suele ser algo puntual; si sigue así, mira la lista de abajo.",
+    "est.memTitle":"La memoria está bajo presión",
+    "est.memText":"El Mac recurre al archivo de intercambio ({s} GB), así que va a disco para compensar. Lo que más memoria ocupa es {n}.",
+    "est.memTextNoName":"El Mac recurre al archivo de intercambio ({s} GB), así que va a disco para compensar. Cerrar alguna app grande lo aliviaría.",
+    "est.diskTitle":"Queda poco espacio en el disco",
+    "est.diskText":"Te quedan {f} GB de {t} GB: un {p} % del disco está libre. Brisa puede enseñarte qué ocupa el resto.",
+    "est.thermalTitle":"El Mac está caliente", "est.thermalTitleBad":"El Mac está muy caliente",
+    "est.thermalText":"El sistema ha bajado el rendimiento para no forzar más el chip. Dejarlo respirar —sobre una superficie dura y sin nada pesado encima— lo devuelve a su sitio.",
+    "est.batteryTitle":"La batería está baja",
+    "est.batteryText":"Queda un {p} % y el Mac va con batería. Conecta el cargador si vas a seguir trabajando.",
+    "est.batteryTextTime":"Queda un {p} %: unos {t} de autonomía.",
+    "est.chart":"Cómo ha ido el Mac",
+    "est.chartAria":"Gráfica de CPU y memoria del tramo elegido",
+    "est.rangeAria":"Tramo de tiempo de la gráfica",
+    "est.chartAgo":"Hace {r}", "est.chartNow":"Ahora",
+    "est.chartEmpty":"Aquí empezará a dibujarse lo que pase. Brisa guarda una muestra cada diez segundos mientras está abierta, así que este tramo se va llenando solo.",
+    "est.titleSub":"CPU {c} % · memoria {m} %", "est.titleWaiting":"esperando datos",
     "top.analyzeAgain":"Analizar de nuevo", "top.theme":"Cambiar tema", "top.settings":"Ajustes",
     "top.pendingScan":"Esperando el primer análisis", "top.analyzing":"Analizando…", "top.scannedNow":"Analizado ahora",
     "top.scannedYesterday":"Analizado ayer", "top.scannedAgo":"Analizado hace {d}",
@@ -2069,9 +2355,69 @@ const I18N = {
   },
   en: {
     
-    "nav.resumen":"Summary", "nav.atlas":"Disk Space", "nav.archivos":"Large Files",
-    "nav.duplicados":"Duplicates", "nav.historial":"History", "nav.ritmo":"Maintenance",
-    "nav.papelera":"Brisa Trash",
+    "nav.resumen":"Summary", "nav.estado":"Mac Status", "nav.atlas":"Disk Space",
+    "nav.archivos":"Large Files", "nav.duplicados":"Duplicates", "nav.historial":"History",
+    "nav.ritmo":"Maintenance", "nav.papelera":"Brisa Trash",
+
+    
+    "est.loadingH2":"Reading your Mac’s status",
+    "est.loadingP":"It takes a fraction of a second. Everything is read on your Mac and nothing leaves it.",
+    "est.errorH2":"Couldn’t read your Mac’s status",
+    "est.errorP":"The system didn’t answer the request. You can try again.",
+    "est.retry":"Try again",
+    "est.cpu":"CPU", "est.mem":"Memory", "est.disk":"Disk", "est.net":"Network",
+    "est.battery":"Battery", "est.thermal":"Thermal",
+    "est.live":"Live", "est.paused":"Paused",
+    "est.liveToggle":"Pause or resume live updates",
+    "est.noData":"Not available",
+    "est.consumers":"What’s using it now", "est.orderAria":"Sort the list by",
+    "est.byCpu":"CPU", "est.byMem":"Memory",
+    "est.procs":"{n} processes", "est.procsOne":"{n} process",
+    "est.consEmpty":"Nothing is using an appreciable amount right now.",
+    "est.actions":"What you can do",
+    "est.actAtlas":"See what’s taking up space", "est.actAtlasD":"By category: photos, apps, documents, downloads…",
+    "est.actDup":"Look for duplicate files", "est.actDupD":"Repeated copies you can clear without losing anything",
+    "est.actFiles":"Review the large files", "est.actFilesD":"The heaviest items on the disk, by size and last use",
+    "est.cpuSub":"{n} cores · load {l}", "est.cpuSubOne":"{n} core · load {l}",
+    "est.memSub":"{c} GB compressed · {s} GB of swap", "est.memSubNoSwap":"{c} GB compressed · no swap",
+    "est.diskSub":"{p} % of {t} GB used",
+    "est.netSub":"Up {u} · {i}",
+    "est.batCharging":"Charging · {t} to 100 %", "est.batChargingSimple":"Charging",
+    "est.batCharged":"Plugged in · {c} cycles", "est.batChargedNoCycles":"Plugged in",
+    "est.batDischarging":"On battery · {t} left", "est.batDischargingSimple":"On battery",
+    "est.batNoBattery":"This Mac has no battery",
+    "est.thermalValueNominal":"Normal", "est.thermalValueFair":"Warm",
+    "est.thermalValueSerious":"High", "est.thermalValueCritical":"Critical",
+    "est.thermalNominal":"The system isn’t limiting performance",
+    "est.thermalFair":"The Mac is running a little warm",
+    "est.thermalSerious":"The system has reduced performance",
+    "est.thermalCritical":"Performance is heavily limited by heat",
+    "est.thermalLowPower":"Low Power Mode is on",
+    "est.note":"Read-only data, no system permissions, and it never leaves your Mac.",
+    "est.noteNoBattery":" This Mac has no battery, so that cell has nothing to measure.",
+    "est.okTitle":"Your Mac is running normally",
+    "est.okText":"Nothing out of the ordinary: plenty of CPU headroom and enough memory and space.",
+    "est.cpuTitle":"Something is pushing the CPU hard",
+    "est.cpuTitleMany":"Several processes are sharing the CPU",
+    "est.cpuText":"{n} is using {p} % of the CPU. If you don’t need it right now, quitting it will make the Mac feel lighter.",
+    "est.cpuTextMany":"{n} is the heaviest at {p} %; the rest is spread across other processes.",
+    "est.cpuTextNoName":"CPU is at {p} %. It’s usually a passing spike; if it stays there, look at the list below.",
+    "est.memTitle":"Memory is under pressure",
+    "est.memText":"The Mac is falling back on swap ({s} GB), so it’s going to disk. The biggest holder is {n}.",
+    "est.memTextNoName":"The Mac is falling back on swap ({s} GB), so it’s going to disk. Quitting one large app would relieve it.",
+    "est.diskTitle":"Free space is running low",
+    "est.diskText":"You have {f} GB left of {t} GB: {p} % of the disk is free. Brisa can show you what’s taking up the rest.",
+    "est.thermalTitle":"The Mac is hot", "est.thermalTitleBad":"The Mac is very hot",
+    "est.thermalText":"The system has lowered performance to avoid pushing the chip further. Letting it breathe —on a hard surface, with nothing heavy on top— brings it back.",
+    "est.batteryTitle":"Battery is low",
+    "est.batteryText":"{p} % left and the Mac is on battery. Plug it in if you’re going to keep working.",
+    "est.batteryTextTime":"{p} % left: about {t} of runtime.",
+    "est.chart":"How your Mac has been",
+    "est.chartAria":"CPU and memory chart for the selected range",
+    "est.rangeAria":"Chart time range",
+    "est.chartAgo":"{r} ago", "est.chartNow":"Now",
+    "est.chartEmpty":"What happens will be drawn here. Brisa keeps one sample every ten seconds while it’s open, so this range fills up on its own.",
+    "est.titleSub":"CPU {c} % · memory {m} %", "est.titleWaiting":"waiting for data",
     
     "top.analyzeAgain":"Analyze again", "top.theme":"Change theme", "top.settings":"Settings",
     "top.pendingScan":"Waiting for first scan", "top.analyzing":"Analyzing…", "top.scannedNow":"Scanned just now",
@@ -2347,6 +2693,16 @@ const IC={
   music:'<ellipse cx="8.6" cy="17.1" rx="3" ry="2.5" transform="rotate(-20 8.6 17.1)"/><path d="M11.6 17.1V4.9"/><path d="M11.6 4.9c3.3.5 5.5 1.9 5.5 4.3"/>',
   cpu:'<rect x="6.6" y="6.6" width="10.8" height="10.8" rx="2.2"/><rect x="10" y="10" width="4" height="4" rx="1.1"/><path d="M9.6 3.4v3.2M14.4 3.4v3.2M9.6 17.4v3.2M14.4 17.4v3.2M3.4 9.6h3.2M3.4 14.4h3.2M17.4 9.6h3.2M17.4 14.4h3.2"/>',
   
+  gauge:'<path d="M4.1 18.3a7.9 7.9 0 0 1 15.8 0"/><path d="M12 18.3v-5.6"/><circle cx="12" cy="18.3" r="1.2" fill="currentColor" stroke="none"/>',
+  
+  memory:'<rect x="3.4" y="7.4" width="17.2" height="8.4" rx="2"/><path d="M7.4 15.8v3.6M11.2 15.8v3.6M15 15.8v3.6M18.8 15.8v3.6"/><path d="M8.2 10.4v2.4M12 10.4v2.4M15.8 10.4v2.4"/>',
+  
+  battery:'<rect x="3" y="7.4" width="15.6" height="9.2" rx="2.5"/><path d="M19.9 10.8a2.9 2.9 0 0 1 0 2.4"/><rect x="5.9" y="10.3" width="5.2" height="3.4" rx="1" fill="currentColor" stroke="none"/>',
+  
+  thermo:'<path d="M14.2 14V6.1a2.2 2.2 0 1 0-4.4 0V14a4.2 4.2 0 1 0 4.4 0z"/><path d="M12 17.2V9"/>',
+  
+  net:'<circle cx="12" cy="12" r="8.3"/><path d="M3.7 12h16.6"/><path d="M12 3.7c2.6 2.4 3.9 5.2 3.9 8.3s-1.3 5.9-3.9 8.3c-2.6-2.4-3.9-5.2-3.9-8.3s1.3-5.9 3.9-8.3z"/>',
+  
   chart:'<path d="M3.6 3.6v16.8h16.8"/><path d="M7.6 15.2 11 11.3l3 2.6 3.4-5.3"/>',
   clock:'<circle cx="12" cy="12" r="8.3"/><path d="M12 7.2V12l3.3 2.1"/>',
   
@@ -2407,12 +2763,14 @@ function repaintCurrent(){
     else if(cur==="historial") renderHistorial();
     else if(cur==="ritmo") renderRitmo();
     else if(cur==="papelera") renderPapelera();
+    else if(cur==="estado") renderEstado();
   },340);
 }
 
 
 const NAV_ITEMS = [
   {v:"resumen",k:"nav.resumen",ic:"home"},
+  {v:"estado",k:"nav.estado",ic:"gauge"},
   {v:"atlas",k:"nav.atlas",ic:"drive"},
   {v:"archivos",k:"nav.archivos",ic:"folder"},
   {v:"duplicados",k:"nav.duplicados",ic:"copy"},
@@ -2472,6 +2830,9 @@ function go(name){
   if(name==="historial"){histBooted=false;renderHistorial();}
   if(name==="ritmo") renderRitmo();
   if(name==="papelera") renderPapelera();
+  if(name==="estado") renderEstado();
+  
+  syncSystemWatch();
   $("#main").querySelectorAll(".v-body").forEach(b=>b.scrollTop=0);
   watchSize();
 }
@@ -2490,13 +2851,19 @@ function renderTitle(force){
   const name=force||el.dataset.view||"resumen";
   el.dataset.view=name;
   const ic=TB_IC[name]?`<span class="tb-ic">${SVG(TB_IC[name])}</span>`:"";
-  if(STATE.needsScan){
+  
+  if(STATE.needsScan&&name!=="estado"){
     const pend={resumen:t("nav.resumen"),atlas:t("nav.atlas"),archivos:t("nav.archivos"),duplicados:t("nav.duplicados"),historial:t("nav.historial"),ritmo:t("nav.ritmo"),papelera:t("nav.papelera")};
     el.innerHTML=`${ic}<b>${pend[name]||name}</b><small>· ${t("title.pending")}</small>`;
     return;
   }
   const sub=({
     resumen:`<b>${t("nav.resumen")}</b><small>· ${fmt(STATE.free)} GB ${t("u.free")} · ${fmt(totalClean())} GB ${t("u.recoverableShort")}</small>`,
+    estado:(()=>{
+      const sy=SYS.sample;
+      if(!sy||!sy.cpu||sy.cpu.pct===undefined||!sy.mem)return `<b>${t("nav.estado")}</b><small>· ${t("est.titleWaiting")}</small>`;
+      return `<b>${t("nav.estado")}</b><small>· ${t("est.titleSub",{c:Math.round(sy.cpu.pct),m:Math.round(sy.mem.pct)})}</small>`;
+    })(),
     atlas:`<b>${t("nav.atlas")}</b><small>· ${CATS.length} ${t("u.categories")} · ${fmt(CATS.reduce((s,c)=>s+c.gb,0))} GB</small>`,
     archivos:(()=>{const l=sortedFiles();return l.length?`<b>${t("nav.archivos")}</b><small>· ${l.length} · ${fmt(l.reduce((s,f)=>s+f.gb,0))} GB</small>`:`<b>${t("nav.archivos")}</b><small>· 0</small>`;})(),
     duplicados:`<b>${t("nav.duplicados")}</b><small>· ${DUP_GROUPS.reduce((s,g)=>s+g.count,0)} · ${fmt(STATE.avail.duplicados.gb)} GB ${t("dup.available")}</small>`,
@@ -3183,10 +3550,15 @@ function pendingPanelHTML(h2,p,ctaId){
     +`<button class="btn btn-p"${ctaId?` id="${ctaId}"`:" onclick=\"requestScan()\""}>${t("res.analyzeCta")}</button>`;
 }
 function renderFiles(animate){
+  const view=$("#view-archivos");
   if(STATE.needsScan){
-    const sc=$("#files-scroll"); if(sc)sc.innerHTML=`<div class="panel pending-panel">${pendingPanelHTML(t("files.pendingH2"),t("files.pendingP"))}</div>`;
+    
+    if(view)view.classList.add("pending");
+    const p=$("#files-pending"), h2=t("files.pendingH2");
+    if(p&&p.dataset.key!==h2){ p.dataset.key=h2; p.innerHTML=pendingPanelHTML(h2,t("files.pendingP")); }
     renderTitle(); return;
   }
+  if(view)view.classList.remove("pending");
   const list=sortedFiles();
   renderTitle();
   const sc=$("#files-scroll");
@@ -4887,6 +5259,567 @@ function makeOverlayScroll(el){
 function initOverlayScrollbars(root){(root||document).querySelectorAll(SCROLL_SEL).forEach(makeOverlayScroll);}
 
 
+const SYS_HIST=60; 
+
+const SYS_RANGES=[
+  {k:"2m",sec:120,label:["rel.min",2]},
+  {k:"10m",sec:600,label:["rel.min",10]},
+  {k:"1h",sec:3600,label:["rel.hour",1]},
+  {k:"24h",sec:86400,label:["rel.hour",24]}
+];
+const SYS={
+  sample:null,      
+  failed:false,     
+  watching:false,   
+  paused:false,     
+  order:"cpu",      
+  range:"2m",       
+  hist:[],          
+  series:{},        
+  errT:null,
+  rangeT:null,      
+  demo:"normal",    
+  demoPhase:0,
+  tick:null
+};
+
+const sysEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sysPct=v=>Math.round(Math.max(0,v||0))+" %";
+function sysMem(mb){
+  const m=Math.max(0,mb||0);
+  return m>=1024 ? fmt(m/1024)+" GB" : Math.round(m)+" MB";
+}
+
+function sysRate(bytes){
+  const b=Math.max(0,bytes||0);
+  if(b>=1048576) return (b/1048576).toLocaleString(locale(),{maximumFractionDigits:1})+" MB/s";
+  if(b>=1024)    return (b/1024).toLocaleString(locale(),{maximumFractionDigits:0})+" KB/s";
+  return Math.round(b)+" B/s";
+}
+
+function sysTime(min){
+  const m=Math.max(0,Math.round(min||0));
+  return m>=60 ? t("rel.hour",{n:Math.floor(m/60)})+" "+t("rel.min",{n:m%60}) : t("rel.min",{n:m});
+}
+
+
+const SYS_RANK=["cpu","mem","heat","disk","bat"];
+function sysSustained(){
+  const h=SYS.hist.slice(-4).map(p=>p.cpu);
+  return h.length>=4 && h.every(v=>v>=85);
+}
+function sysLevel(metric,s){
+  const cpu=s.cpu||{}, mem=s.mem||{}, disk=s.disk||{}, bat=s.battery||{}, heat=s.thermal||{};
+  const swapRatio=mem.swapTotal>0?mem.swapUsed/mem.swapTotal:0;
+  const freeRatio=disk.total>0?disk.free/disk.total:1;
+  const usedPct=disk.total>0?(1-freeRatio)*100:0;
+  if(metric==="cpu")  return (sysSustained()||cpu.pct>=95)?"bad":(cpu.pct>=70?"warn":"ok");
+  if(metric==="mem")  return (mem.pressure==="critical"||swapRatio>=0.9)?"bad":((mem.pressure==="warning"&&swapRatio>=0.4)?"warn":"ok");
+  if(metric==="disk") return (freeRatio<=0.08||disk.free<10)?"bad":((freeRatio<=0.15||disk.free<25)?"warn":"ok");
+  if(metric==="bat")  return (!bat.avail||bat.state!=="discharging")?"ok":(bat.pct<=10?"bad":(bat.pct<=20?"warn":"ok"));
+  if(metric==="heat") return heat.state==="critical"?"bad":(heat.state==="serious"?"warn":"ok");
+  return usedPct>=0?"ok":"ok";
+}
+
+function sysDiagnosis(s){
+  const mem=s.mem||{}, disk=s.disk||{}, bat=s.battery||{}, heat=s.thermal||{}, cpu=s.cpu||{};
+  let worst=null, worstScore=0;
+  SYS_RANK.forEach(m=>{
+    const lv=sysLevel(m,s);
+    const score=lv==="bad"?2:(lv==="warn"?1:0);
+    if(score>worstScore){ worst=m; worstScore=score; }
+  });
+  if(!worst) return {level:"ok",ic:"check",title:"est.okTitle",text:"est.okText",vars:{},actions:[]};
+  const level=worstScore===2?"bad":"warn";
+  const procs=Array.isArray(s.procs)?s.procs:[];
+
+  if(worst==="cpu"){
+    const lead=procs.slice().sort((a,b)=>b.cpu-a.cpu)[0];
+    const vars={p:Math.round(cpu.pct||0)};
+    if(!lead||lead.cpu<5) return {level,ic:"cpu",title:"est.cpuTitle",text:"est.cpuTextNoName",vars,actions:[]};
+    if(lead.cpu<cpu.pct*0.5){
+      vars.n=lead.name; vars.p=Math.round(lead.cpu);
+      return {level,ic:"cpu",title:"est.cpuTitleMany",text:"est.cpuTextMany",vars,actions:[]};
+    }
+    vars.n=lead.name; vars.p=Math.round(lead.cpu);
+    return {level,ic:"cpu",title:"est.cpuTitle",text:"est.cpuText",vars,actions:[]};
+  }
+  if(worst==="mem"){
+    const lead=procs.slice().sort((a,b)=>b.mem-a.mem)[0];
+    const vars={s:fmt(mem.swapUsed||0)};
+    if(lead&&lead.mem>=400){ vars.n=lead.name; return {level,ic:"memory",title:"est.memTitle",text:"est.memText",vars,actions:[]}; }
+    return {level,ic:"memory",title:"est.memTitle",text:"est.memTextNoName",vars,actions:[]};
+  }
+  if(worst==="heat"){
+    return {level,ic:"thermo",
+            title:heat.state==="critical"?"est.thermalTitleBad":"est.thermalTitle",
+            text:"est.thermalText",vars:{},actions:[]};
+  }
+  if(worst==="disk"){
+    const vars={f:fmt(disk.free||0),t:fmt(disk.total||0),
+                p:Math.round(disk.total>0?disk.free/disk.total*100:0)};
+    
+    return {level,ic:"drive",title:"est.diskTitle",text:"est.diskText",vars,
+            actions:[{to:"atlas",ic:"drive",title:"est.actAtlas",desc:"est.actAtlasD"},
+                     {to:"duplicados",ic:"copy",title:"est.actDup",desc:"est.actDupD"},
+                     {to:"archivos",ic:"folder",title:"est.actFiles",desc:"est.actFilesD"}]};
+  }
+  const vars={p:bat.pct||0};
+  if(bat.minutes>0){
+    vars.t=sysTime(bat.minutes);
+    return {level,ic:"battery",title:"est.batteryTitle",text:"est.batteryTextTime",vars,actions:[]};
+  }
+  return {level,ic:"battery",title:"est.batteryTitle",text:"est.batteryText",vars,actions:[]};
+}
+
+
+
+function sysRemember(s){
+  if(!s||typeof s.ts!=="number")return;
+  const cpu=(s.cpu&&typeof s.cpu.pct==="number")?s.cpu.pct:null;
+  const mem=(s.mem&&typeof s.mem.pct==="number")?s.mem.pct:null;
+  if(cpu===null||mem===null)return;
+  SYS.hist.push({t:s.ts,cpu:Math.max(0,cpu),mem:Math.max(0,mem)});
+  if(SYS.hist.length>SYS_HIST)SYS.hist.splice(0,SYS.hist.length-SYS_HIST);
+}
+
+function applySystem(s){
+  if(!s||typeof s!=="object")return;
+  SYS.sample=s;
+  SYS.failed=false;
+  clearTimeout(SYS.errT); SYS.errT=null;
+  sysRemember(s);
+  const view=$("#view-estado");
+  if(view&&!view.hidden) renderEstado();
+}
+
+function syncSystemWatch(){
+  const view=$("#view-estado");
+  const live=!!(view&&!view.hidden)&&!document.hidden&&!SYS.paused;
+  if(inApp()){
+    if(live!==SYS.watching){
+      SYS.watching=live;
+      postIntent("systemWatch",{on:live});
+      if(live){ SYS.failed=false; sysWatchdog(); sysRequestRange(); }
+      else { clearTimeout(SYS.errT); clearInterval(SYS.rangeT); SYS.rangeT=null; }
+    }
+  } else {
+    sysDemoWatch(live);
+  }
+}
+
+function sysRequestRange(){
+  clearInterval(SYS.rangeT); SYS.rangeT=null;
+  const r=sysRange();
+  if(r.k==="2m")return;
+  if(!inApp()){ SYS.series[r.k]=sysDemoSeries(r.sec); renderEstado(); return; }
+  postIntent("systemHistory",{range:r.k});
+  SYS.rangeT=setInterval(()=>postIntent("systemHistory",{range:SYS.range}),60000);
+}
+
+function sysDemoSeries(sec){
+  const n=Math.min(360,Math.max(24,Math.round(sec/10)));
+  const now=Date.now()/1000, pts=[];
+  for(let i=n;i>=1;i--){
+    const d=sysDemoSample(i*(sec/n)/2);
+    pts.push([now-(i*sec)/n,d.cpu.pct,d.mem.pct]);
+  }
+  return pts;
+}
+
+function sysWatchdog(){
+  if(SYS.sample)return;
+  clearTimeout(SYS.errT);
+  SYS.errT=setTimeout(()=>{ if(!SYS.sample){ SYS.failed=true; renderEstado(); } },4000);
+}
+document.addEventListener("visibilitychange",syncSystemWatch);
+window.addEventListener("pagehide",()=>{
+  if(SYS.watching){ SYS.watching=false; postIntent("systemWatch",{on:false}); }
+});
+
+
+const SYS_CHART_W=600, SYS_CHART_H=120;
+function sysRange(){ return SYS_RANGES.find(r=>r.k===SYS.range)||SYS_RANGES[0]; }
+function sysRangeLabel(r){ return t(r.label[0],{n:r.label[1]}); }
+
+function sysSeries(){
+  const r=sysRange();
+  if(r.k==="2m")return SYS.hist.map(p=>[p.t,p.cpu,p.mem]);
+  return Array.isArray(SYS.series[r.k])?SYS.series[r.k]:[];
+}
+function sysChart(){
+  const svg=$("#se-chart"); if(!svg)return;
+  const r=sysRange();
+  const now=(SYS.sample&&typeof SYS.sample.ts==="number")?SYS.sample.ts:Date.now()/1000;
+  const from=now-r.sec;
+  const pts=sysSeries();
+  const empty=pts.length<2;
+  const plot=$("#se-plot"), axis=$("#se-x"), msg=$("#se-chart-empty");
+  if(plot)plot.hidden=empty;
+  if(axis)axis.hidden=empty;
+  if(msg){
+    msg.hidden=!empty;
+    const txt=t("est.chartEmpty");
+    if(empty&&msg.dataset.key!==txt){ msg.dataset.key=txt; msg.textContent=txt; }
+  }
+  const xf=$("#se-x-from");
+  if(xf)xf.textContent=t("est.chartAgo",{r:sysRangeLabel(r)});
+  if(!svg.dataset.built){
+    svg.dataset.built="1";
+    svg.innerHTML=[25,50,75].map(p=>'<line class="se-guide" x1="0" x2="'+SYS_CHART_W+'" y1="'+(p/100*SYS_CHART_H).toFixed(1)+'" y2="'+(p/100*SYS_CHART_H).toFixed(1)+'"/>').join("")
+      +'<path class="se-area" id="se-chart-area" d=""/>'
+      +'<path class="se-line-cpu" id="se-chart-cpu" d=""/>'
+      +'<path class="se-line-mem" id="se-chart-mem" d=""/>';
+  }
+  const X=v=>clamp((v-from)/r.sec,0,1)*SYS_CHART_W;
+  const Y=v=>SYS_CHART_H-2-(clamp(v,0,100)/100)*(SYS_CHART_H-4);
+  const put=(sel,d)=>{ const el=$(sel); if(el&&el.getAttribute("d")!==d)el.setAttribute("d",d); };
+  if(empty){ put("#se-chart-cpu",""); put("#se-chart-mem",""); put("#se-chart-area",""); return; }
+  const line=(pts,idx)=>pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ");
+  const cpu=line(pts,1), mem=line(pts,2);
+  
+  const area=pts.length>1?"M"+X(pts[0][0]).toFixed(1)+" "+SYS_CHART_H+" "+cpu.slice(1)
+      +" L"+X(pts[pts.length-1][0]).toFixed(1)+" "+SYS_CHART_H+" Z":"";
+  put("#se-chart-cpu",cpu); put("#se-chart-mem",mem); put("#se-chart-area",area);
+}
+
+function sysRanges(){
+  const host=$("#se-range"); if(!host)return;
+  const html=SYS_RANGES.map(r=>'<button class="rs'+(SYS.range===r.k?" on":"")+'" data-range="'+r.k+'" role="radio" aria-checked="'+(SYS.range===r.k)+'">'+sysRangeLabel(r)+"</button>").join("");
+  if(host.dataset.html!==html){ host.dataset.html=html; host.innerHTML=html; }
+}
+function sysRangeTo(key){
+  if(SYS.range===key||!SYS_RANGES.some(r=>r.k===key))return;
+  SYS.range=key;
+  sysRequestRange();
+  renderEstado();
+}
+
+
+
+function sysCellPaint(id,value,level,sub,pct){
+  const cell=$("#se-cell-"+id), v=$("#se-v-"+id), s=$("#se-s-"+id), bar=$("#se-b-"+id+" i");
+  if(cell)cell.dataset.state=level;
+  if(v){
+    const nodata=value===null;
+    const txt=nodata?t("est.noData"):value;
+    if(v.textContent!==txt)v.textContent=txt;
+    v.classList.toggle("nodata",nodata);
+  }
+  if(s&&s.textContent!==(sub||""))s.textContent=sub||"";
+  const w=value===null?"0%":Math.max(1,Math.min(100,pct||0)).toFixed(1)+"%";
+  if(bar&&bar.style.width!==w)bar.style.width=w;
+}
+function sysPaintCells(s){
+  const cpu=s.cpu||{}, mem=s.mem||{}, disk=s.disk||{}, net=s.net||{},
+        bat=s.battery||{}, heat=s.thermal||{};
+
+  if(cpu.pct!==undefined){
+    const sub=cpu.cores?(cpu.cores>1?t("est.cpuSub",{n:cpu.cores,l:fmt(cpu.load||0)})
+                                       :t("est.cpuSubOne",{n:cpu.cores,l:fmt(cpu.load||0)})):"";
+    sysCellPaint("cpu",sysPct(cpu.pct),sysLevel("cpu",s),sub,cpu.pct);
+  } else sysCellPaint("cpu",null,"ok","",0);
+
+  if(mem.total){
+    const used=mem.used!==undefined?mem.used:(mem.pct/100*mem.total);
+    const sub=mem.swapTotal>0?t("est.memSub",{c:fmt(mem.compressed||0),s:fmt(mem.swapUsed||0)})
+                             :t("est.memSubNoSwap",{c:fmt(mem.compressed||0)});
+    sysCellPaint("mem",fmt(used)+" / "+fmt(mem.total)+" GB",sysLevel("mem",s),sub,used/mem.total*100);
+  } else sysCellPaint("mem",null,"ok","",0);
+
+  if(disk.total>0){
+    const usedPct=(1-disk.free/disk.total)*100;
+    sysCellPaint("disk",fmt(disk.free)+" GB",sysLevel("disk",s),
+                 t("est.diskSub",{p:Math.round(usedPct),t:fmt(disk.total)}),usedPct);
+  } else sysCellPaint("disk",null,"ok","",0);
+
+  if(net.avail&&typeof net.down==="number"){
+    sysCellPaint("net","↓ "+sysRate(net.down),"ok",
+                 t("est.netSub",{u:sysRate(net.up),i:net.iface||"—"}),0);
+  } else sysCellPaint("net",null,"ok","",0);
+
+  if(!bat.avail){
+    sysCellPaint("bat",null,"ok",t("est.batNoBattery"),0);
+  } else {
+    let sub;
+    if(bat.state==="charging") sub=bat.minutes>0?t("est.batCharging",{t:sysTime(bat.minutes)}):t("est.batChargingSimple");
+    else if(bat.state==="discharging") sub=bat.minutes>0?t("est.batDischarging",{t:sysTime(bat.minutes)}):t("est.batDischargingSimple");
+    else if(bat.cycles) sub=t("est.batCharged",{c:bat.cycles});
+    else sub=t("est.batChargedNoCycles");
+    sysCellPaint("bat",Math.round(bat.pct||0)+" %",sysLevel("bat",s),sub,bat.pct||0);
+  }
+
+  const hNames={nominal:"est.thermalValueNominal",fair:"est.thermalValueFair",
+                serious:"est.thermalValueSerious",critical:"est.thermalValueCritical"};
+  const hSubs={nominal:"est.thermalNominal",fair:"est.thermalFair",
+               serious:"est.thermalSerious",critical:"est.thermalCritical"};
+  const hBars={nominal:0,fair:34,serious:67,critical:100};
+  const hk=hNames[heat.state]?heat.state:"nominal";
+  let hsub=t(hSubs[hk]);
+  if(heat.lowPower)hsub+=" · "+t("est.thermalLowPower");
+  sysCellPaint("heat",t(hNames[hk]),sysLevel("heat",s),hsub,hBars[hk]);
+
+  sysChart();
+}
+
+
+function sysSorted(){
+  const s=SYS.sample;
+  const procs=(s&&Array.isArray(s.procs))?s.procs:[];
+  const k=SYS.order==="mem"?"mem":"cpu";
+  return procs.slice().sort((a,b)=>(b[k]||0)-(a[k]||0));
+}
+const sysVal=p=>SYS.order==="mem"?(p.mem||0):(p.cpu||0);
+function sysConsumers(){
+  const host=$("#se-cons"), wrap=$("#se-cons-wrap");
+  if(!host||!wrap)return;
+  const list=sysSorted();
+  wrap.hidden=false;
+  host.dataset.order=SYS.order; 
+  if(!list.length){
+    if(host.dataset.key!=="empty"){ host.dataset.key="empty"; host.innerHTML='<div class="se-cons-empty">'+t("est.consEmpty")+'</div>'; }
+    return;
+  }
+  const max=Math.max.apply(null,list.map(sysVal))||1;
+  
+  const key=list.map(p=>p.name).join("|");
+  if(host.dataset.key!==key){
+    host.dataset.key=key;
+    host.innerHTML=list.map((p,i)=>{
+      
+      const n=p.procs>1?t("est.procs",{n:p.procs}):t("est.procsOne",{n:p.procs||1});
+
+      return '<div class="row se-row" style="--i:'+i+'">'+
+             '<span class="r-ic">'+SVG(p.kind==="app"?"apps":"cpu")+'</span>'+
+             '<span class="r-name">'+sysEsc(p.name)+'<small>'+sysEsc(n)+'</small></span>'+
+             '<span class="se-bar"><i></i></span>'+
+             '<span class="se-col cpu"></span><span class="se-col mem"></span></div>';
+    }).join("");
+    
+    const first=host.dataset.built!=="1";
+    host.dataset.built="1";
+    clearTimeout(host._staggerT);
+    if(first&&$("#view-estado").classList.contains("boot-in")){
+      host.classList.add("stagger");
+      host._staggerT=setTimeout(()=>host.classList.remove("stagger"),700);
+    } else {
+      host.classList.remove("stagger");
+    }
+  }
+  list.forEach((p,i)=>{
+    const row=host.children[i];
+    if(!row)return;
+    const c=row.querySelector(".se-col.cpu"), m=row.querySelector(".se-col.mem"), bar=row.querySelector(".se-bar i");
+    const cpu=sysPct(p.cpu||0), mem=sysMem(p.mem||0);
+    if(c&&c.textContent!==cpu)c.textContent=cpu;
+    if(m&&m.textContent!==mem)m.textContent=mem;
+    if(bar){
+      const w=(Math.max(1,(sysVal(p)/max)*100)).toFixed(1)+"%";
+      if(bar.style.width!==w)bar.style.width=w;
+    }
+  });
+}
+function sysActions(actions){
+  const host=$("#se-acts"), wrap=$("#se-act-wrap");
+  if(!host||!wrap)return;
+  if(!actions||!actions.length){
+    wrap.hidden=true; host.innerHTML=""; host.dataset.key="";
+    return;
+  }
+  wrap.hidden=false;
+  const key=actions.map(a=>a.to).join("|");
+  if(host.dataset.key===key)return;
+  host.dataset.key=key;
+  host.innerHTML=actions.map((a,i)=>'<div class="row" data-go="'+a.to+'" role="button" tabindex="0" style="--i:'+i+'">'+
+    '<span class="r-ic acc">'+SVG(a.ic)+'</span>'+
+    '<span class="r-name"><b>'+t(a.title)+'</b><small>'+t(a.desc)+'</small></span>'+
+    '<span class="r-go">'+SVG("chevR")+'</span></div>').join("");
+  host.querySelectorAll(".row").forEach(r=>r.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(r.dataset.go); }
+  }));
+}
+
+
+function sysPaintOrder(){
+  [["#se-by-cpu","cpu"],["#se-by-mem","mem"]].forEach(([sel,val])=>{
+    const b=$(sel); if(!b)return;
+    const on=SYS.order===val;
+    b.setAttribute("aria-checked",on?"true":"false");
+    const arrow=b.querySelector(".farr");
+    if(!on){ if(arrow)arrow.remove(); return; }
+    if(!arrow){ const s=document.createElement("span"); s.className="farr desc"; b.appendChild(s); }
+  });
+}
+function sysOrder(which){
+  SYS.order=which==="mem"?"mem":"cpu";
+  sysPaintOrder();
+  const host=$("#se-cons"); if(host){ host.dataset.key=""; host.dataset.order=SYS.order; } 
+  sysConsumers();
+}
+
+
+function renderEstado(){
+  const view=$("#view-estado"); if(!view)return;
+  const pend=$("#estado-pending"), hero=$("#se-hero");
+  const s=SYS.sample;
+  const hideAll=()=>{
+    if(hero)hero.hidden=true;
+    $("#se-chart-wrap").hidden=true;
+    $("#se-cons-wrap").hidden=true;
+    $("#se-act-wrap").hidden=true;
+    $("#se-note").hidden=true;
+  };
+  sysRanges();
+  sysPaintOrder();
+
+  if(!s){
+    
+    const fail=!!SYS.failed;
+    pend.hidden=false;
+    $("#ep-h2").textContent=t(fail?"est.errorH2":"est.loadingH2");
+    $("#ep-p").textContent=t(fail?"est.errorP":"est.loadingP");
+    const b=$("#ep-retry");
+    b.hidden=!fail;
+    if(fail)b.textContent=t("est.retry");
+    hideAll();
+    view.dataset.level="ok";
+    return;
+  }
+  pend.hidden=true;
+  if(hero)hero.hidden=false;
+  $("#se-chart-wrap").hidden=false;
+
+  const d=sysDiagnosis(s);
+  view.dataset.level=d.level;
+  $("#se-mark").innerHTML=SVG(d.ic);
+  $("#se-title").textContent=t(d.title);
+  $("#se-sub").textContent=t(d.text,d.vars);
+
+  sysPaintCells(s);
+  sysConsumers();
+  sysActions(d.actions);
+
+  const note=$("#se-note");
+  note.hidden=false;
+  const noBat=s.battery&&s.battery.avail===false;
+  note.textContent=t("est.note")+(noBat?t("est.noteNoBattery"):"");
+
+  const live=$("#se-live");
+  if(live)live.setAttribute("aria-pressed",SYS.paused?"true":"false");
+  const lt=$("#se-live-txt");
+  if(lt)lt.textContent=t(SYS.paused?"est.paused":"est.live");
+
+  renderTitle();
+}
+
+
+const SYS_BASE={
+  ts:0,
+  cpu:{pct:9,cores:8,load:1.42},
+  mem:{total:8.59,used:6.18,pct:72,app:2.4,wired:1.8,compressed:1.9,cached:1.2,
+       pressure:"normal",swapUsed:0.4,swapTotal:9.66},
+  disk:{total:245.1,free:127.1,pct:48.1},
+  thermal:{state:"nominal",lowPower:false},
+  battery:{avail:true,pct:64,state:"discharging",minutes:203,cycles:201},
+  net:{avail:true,iface:"en0",down:184000,up:26000},
+  procs:[
+    {name:"Contenido web de Safari",kind:"app",procs:6,cpu:3.1,mem:2140},
+    {name:"Freebuff",kind:"app",procs:11,cpu:1.8,mem:868},
+    {name:"Figma",kind:"app",procs:15,cpu:1.2,mem:9410},
+    {name:"Safari",kind:"app",procs:1,cpu:0.6,mem:392},
+    {name:"photoanalysisd",kind:"other",procs:1,cpu:0.2,mem:126}
+  ]
+};
+const SYS_DEMO={
+  
+  normal:{},
+  
+  cpu:{cpu:{pct:88,load:7.4},
+       procs:[{name:"Google Chrome",kind:"app",procs:14,cpu:64.2,mem:3180},
+              {name:"Contenido web de Safari",kind:"app",procs:6,cpu:11.4,mem:2140},
+              {name:"Freebuff",kind:"app",procs:11,cpu:6.1,mem:868},
+              {name:"WindowServer",kind:"other",procs:1,cpu:3.2,mem:410},
+              {name:"Figma",kind:"app",procs:15,cpu:1.9,mem:9410}]},
+  
+  mem:{cpu:{pct:34,load:4.1},
+       mem:{pct:93,used:7.99,app:2.1,wired:2.2,compressed:3.7,cached:0.6,
+            pressure:"warning",swapUsed:8.6,swapTotal:9.66},
+       procs:[{name:"Figma",kind:"app",procs:15,cpu:2.4,mem:12552},
+              {name:"Google Chrome",kind:"app",procs:14,cpu:1.8,mem:4180},
+              {name:"Freebuff",kind:"app",procs:11,cpu:1.1,mem:1240},
+              {name:"Contenido web de Safari",kind:"app",procs:6,cpu:0.9,mem:3436},
+              {name:"Xcode",kind:"app",procs:4,cpu:0.4,mem:2260}]},
+  
+  disk:{cpu:{pct:12,load:1.8},
+        disk:{total:245.1,free:18.4,pct:92.5}},
+  
+  bat:{cpu:{pct:22,load:2.6},
+       battery:{avail:true,pct:14,state:"discharging",minutes:42,cycles:201}},
+  
+  hot:{cpu:{pct:58,load:5.8},
+       thermal:{state:"serious",lowPower:false},
+       procs:[{name:"HandBrake",kind:"app",procs:2,cpu:38.4,mem:1620},
+              {name:"Google Chrome",kind:"app",procs:14,cpu:9.2,mem:3180},
+              {name:"Freebuff",kind:"app",procs:11,cpu:4.1,mem:868},
+              {name:"mds_stores",kind:"other",procs:1,cpu:2.2,mem:310},
+              {name:"Figma",kind:"app",procs:15,cpu:1.4,mem:9410}]}
+};
+function sysDemoSample(phase){
+  const s=JSON.parse(JSON.stringify(SYS_BASE));
+  const p=SYS_DEMO[SYS.demo]||{};
+  ["cpu","mem","disk","battery","thermal","net"].forEach(k=>{
+    if(p[k])Object.assign(s[k],p[k]);
+  });
+  if(p.procs)s.procs=p.procs;
+  
+  s.cpu.pct=clamp(s.cpu.pct+Math.sin(phase/2.4)*2.2,0,100);
+  s.mem.pct=clamp(s.mem.pct+Math.cos(phase/3.1)*1.1,0,100);
+  s.mem.used=Math.round(s.mem.pct/100*s.mem.total*100)/100;
+  s.net.down=Math.max(0,s.net.down*(1+Math.sin(phase/1.7)*0.35));
+  s.net.up=Math.max(0,s.net.up*(1+Math.cos(phase/1.9)*0.35));
+  s.ts=Date.now()/1000;
+  return s;
+}
+function sysDemoWatch(on){
+  if(on&&!SYS.tick){
+    SYS.tick=setInterval(()=>{ SYS.demoPhase+=1; applySystem(sysDemoSample(SYS.demoPhase)); },2000);
+  } else if(!on&&SYS.tick){
+    clearInterval(SYS.tick); SYS.tick=null;
+  }
+}
+
+function sysDemoSeed(){
+  if(inApp())return;
+  const q=new URLSearchParams(location.search).get("escenario");
+  if(q&&SYS_DEMO[q])SYS.demo=q;
+  
+  
+  SYS_RANGES.forEach(r=>{ if(r.k!=="2m") SYS.series[r.k]=sysDemoSeries(r.sec); });
+  const now=Date.now()/1000;
+  for(let i=0;i<40;i++){
+    const d=sysDemoSample(i);
+    SYS.hist.push({t:now-(40-i)*2,cpu:d.cpu.pct,mem:d.mem.pct});
+  }
+  applySystem(sysDemoSample(0));
+}
+
+
+on("#se-live",()=>{ SYS.paused=!SYS.paused; syncSystemWatch(); renderEstado(); });
+on("#se-by-cpu",()=>sysOrder("cpu"));
+on("#se-by-mem",()=>sysOrder("mem"));
+on("#ep-retry",()=>{
+  SYS.failed=false;
+  SYS.sample=null;
+  SYS.watching=false;   
+  renderEstado();
+  syncSystemWatch();
+  sysRequestRange();
+});
+
+onEv("#se-range","click",e=>{
+  const b=e.target.closest("[data-range]"); if(b)sysRangeTo(b.dataset.range);
+});
+
 const RELAYOUT={atlas:{last:0,timer:0},hist:{last:0,timer:0}};
 function scheduleRelayout(kind){
   const st=RELAYOUT[kind];
@@ -5106,6 +6039,7 @@ function boot(){
   });
 
   setTimeout(()=>{renderResumen();refreshSpace();refreshScore(true);},400);
+  sysDemoSeed();
 }
 boot();
 

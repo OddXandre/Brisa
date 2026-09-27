@@ -30,6 +30,10 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
     /// terminar, sin encadenar dos recorridos del disco a la vez.
     private var pendingAccessRescan = false
     private let scanner = ScannerService()
+    /// Estado vivo del Mac para la sección «Estado del Mac». Solo muestrea
+    /// mientras la sección está abierta (ver el intent `systemWatch`); el
+    /// propio monitor se aparta además cuando la app pasa a segundo plano.
+    private let system = SystemMonitor()
 
     /// Estado con el que abre la app: el último análisis guardado —números
     /// reales al instante, con su antigüedad— o, la primera vez, el estado
@@ -45,6 +49,10 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         accessGranted = PermissionService.hasFullDiskAccess()
         super.init()
         AppLanguage.shared.set(BrisaSettings.shared.language)
+        // El histórico arranca con la app, no con la sección: dos contadores del
+        // kernel cada diez segundos cuestan microsegundos, y sin él los tramos
+        // largos de la gráfica (10 min, 1 h, 24 h) estarían siempre vacíos.
+        SystemHistory.shared.start()
         let cached = ScanCache.load()
         if let cached {
             bootState = (cached.state, cached.ts)
@@ -76,6 +84,12 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         // en Fotos) en vez de analizar el disco. Es el enganche que hace real
         // cada botón.
         webView.configuration.userContentController.add(self, name: Self.name)
+        // Cada muestra del sistema viaja a la interfaz por su propio canal: el
+        // estado del Mac se mueve cada dos segundos y no tiene nada que ver con
+        // el análisis del disco, que puede ser de hace horas.
+        system.onSample = { [weak self] sample in
+            self?.pushSystem(sample)
+        }
         if let boot = bootState, let script = Self.bootScript(for: boot) {
             let userScript = WKUserScript(source: script,
                                           injectionTime: .atDocumentStart,
@@ -173,6 +187,31 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         evalMain("window.brisa && window.brisa.setState(\(json), \(stamp));")
     }
 
+    /// Una muestra del estado del Mac hacia la interfaz. El JSON es un literal
+    /// de JavaScript válido, así que se inyecta tal cual (igual que el estado
+    /// del disco); si algún número saliera no finito, el serializador lo dice y
+    /// la muestra se descarta en vez de romper el script de la página.
+    private func pushSystem(_ sample: [String: Any]) {
+        guard JSONSerialization.isValidJSONObject(sample),
+              let data = try? JSONSerialization.data(withJSONObject: sample),
+              let json = String(data: data, encoding: .utf8) else { return }
+        evalMain("window.brisa && window.brisa.onSystem && window.brisa.onSystem(\(json));")
+    }
+
+    /// Serie histórica del tramo pedido: puntos [instante, % de CPU, % de
+    /// memoria], ya agrupados por SystemHistory a lo que mide una gráfica. Se
+    /// lee y se prepara fuera del hilo principal: son hasta 8.640 puntos y el
+    /// filtrado, aunque barato, no tiene por qué ocurrir mientras se pinta.
+    private func sendSystemHistory(_ payload: Any?) {
+        let key = Self.stringValue((payload as? [String: Any])?["range"]) ?? SystemHistory.defaultRange
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            let points = SystemHistory.shared.series(for: key)
+            guard let data = try? JSONSerialization.data(withJSONObject: ["range": key, "points": points]),
+                  let json = String(data: data, encoding: .utf8) else { return }
+            self?.evalMain("window.brisa && window.brisa.onSystemHistory && window.brisa.onSystemHistory(\(json));")
+        }
+    }
+
     /// Los ajustes no son un resultado del análisis: van siempre con su valor
     /// vivo. Si no, un estado guardado hace horas devolvería a la interfaz una
     /// retención o un idioma que el usuario ya había cambiado.
@@ -231,6 +270,17 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             applyTheme(payload)
         case "scan":
             startScan()
+        case "systemWatch":
+            // La sección «Estado del Mac» pide seguimiento en vivo al abrirse y
+            // lo suelta al cerrarse (o al cambiar de sección). Sin esto último,
+            // Brisa seguiría leyendo el sistema cada dos segundos para una
+            // pantalla que ya nadie está mirando.
+            system.setLive(Self.boolValue((payload as? [String: Any])?["on"]) ?? false)
+        case "systemHistory":
+            // La gráfica pide el histórico al abrirse y cada vez que cambia de
+            // tramo. Los dos minutos viven en la memoria de la interfaz; de ahí
+            // para atrás, en el archivo que mantiene SystemHistory.
+            sendSystemHistory(payload)
         case "deleteFiles":
             // Fase 3: eliminar archivos → Papelera de Brisa (lote con deshacer)
             deleteFiles(payload: payload)
