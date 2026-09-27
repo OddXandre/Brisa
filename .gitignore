@@ -1,6 +1,11 @@
 # Compilación de SwiftPM: se regenera con `swift build` / `bash build-app.sh`.
 .build/
 
+# Empaquetado: `build-app.sh` y `make-dmg.sh` lo rehacen desde la fuente, y son
+# binarios. Versionarlos hacía que cada compilación ensuciara el árbol y que .git
+# creciera ~800 KB por versión sin aportar nada que la fuente no tenga.
+dist/
+
 # Finder
 .DS_Store
 
