@@ -372,6 +372,7 @@ html.motion-off .osb{transition:none}
 .link:hover{text-decoration:underline;text-underline-offset:3px}
 
 
+#view-resumen #cat-rows{flex:0 0 auto;min-height:220px}
 
 .panel{background:var(--surface);border:none;border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge)}
 .hero-strip{display:grid;grid-template-columns:1.05fr .95fr;overflow:hidden}
@@ -459,6 +460,19 @@ html.motion-off .seg-tip{transition:none}
 .hf-t{flex:1;min-width:180px;font-size:var(--t-body);font-weight:400}
 .hf-t b{font-size:var(--t-title);font-weight:400;letter-spacing:-.024em;font-variant-numeric:tabular-nums}
 .hf-t small{display:block;color:var(--ink-3);font-size:var(--t-label);font-weight:400;margin-top:1px}
+
+
+#view-resumen .hero-foot{flex:none;margin-top:auto}
+#view-resumen .ins-grid{flex:1 0 auto;min-height:120px}
+#view-resumen .ins-grid .ins-card{height:100%}
+.ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-content:stretch}
+.ins-card{padding:14px 15px;display:flex;flex-direction:column;gap:8px;background:var(--surface);border:none;border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge)}
+.ins-card .i-top{display:flex;align-items:center;gap:8px}
+.ins-card .i-top svg{width:14px;height:14px;color:var(--acc-text)}
+.ins-card .i-title{font-size:var(--t-body);font-weight:400}
+.ins-card p{font-size:var(--t-small);color:var(--ink-2);line-height:1.5}
+.ins-card .i-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+@media(max-width:900px){.ins-grid{grid-template-columns:1fr}}
 
 
 #view-atlas .atlas-layout{flex:1 1 auto;min-height:0}
@@ -989,22 +1003,6 @@ html.motion-off .seg-tip{transition:none}
 @media(max-width:900px){.cmp{grid-template-columns:1fr;gap:0}.cmp-vs{flex-direction:row;padding:10px 0}}
 
 
-#view-resumen .ins-grid{min-height:120px}
-#view-resumen .hero-foot{flex:none;margin-top:auto}
-#view-resumen .ins-grid .ins-card{height:100%}
-.ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-content:stretch}
-.ins-card{padding:14px 15px;display:flex;flex-direction:column;gap:8px;background:var(--surface);border:none;border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge)}
-.ins-card .i-top{display:flex;align-items:center;gap:8px}
-.ins-card .i-top svg{width:14px;height:14px;color:var(--acc-text)}
-.ins-card .i-title{font-size:var(--t-body);font-weight:400}
-.ins-card p{font-size:var(--t-small);color:var(--ink-2);line-height:1.5}
-.ins-card .i-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
-@media(max-width:900px){.ins-grid{grid-template-columns:1fr}}
-
-
-.ritmo-note{font-size:var(--t-small);color:var(--ink-3);line-height:1.55}
-
-
 .btn-danger{background:var(--acc-soft);color:var(--acc-text);border:1px solid var(--acc-soft-2)}
 .btn-danger:hover{background:rgba(238,96,24,.2)}
 .btn-kill{color:var(--acc-text);border-color:var(--acc-soft-2)}
@@ -1076,6 +1074,7 @@ html.motion-off .seg-tip{transition:none}
 }
 
 
+.ritmo-note{font-size:var(--t-small);color:var(--ink-3);line-height:1.55}
 .ritmo-hero{display:flex;flex-direction:column;gap:12px;padding:14px 18px}
 .rh-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .rh-title b{font-size:var(--t-body);font-weight:400;display:block;letter-spacing:-.024em}
@@ -1131,14 +1130,13 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 .sched-pills{display:flex;gap:8px;flex-wrap:wrap;padding:0;align-content:center;min-width:0;max-width:100%}
 
 
-#view-papelera .rowlist{flex:1 0 auto;min-height:220px}
 #view-ritmo #ritmo-rules{flex:0 0 auto;min-height:180px}
 #view-ritmo #last-run{flex:1 0 auto;display:flex;flex-direction:column}
 #view-ritmo #last-run .rounds{flex:0 0 auto;display:flex;flex-direction:column}
 #view-ritmo #last-run .round{flex:0 0 auto;align-items:center}
-#view-resumen #cat-rows{flex:0 0 auto;min-height:220px}
-#view-resumen .ins-grid{flex:1 0 auto;min-height:120px}
 
+
+#view-papelera .rowlist{flex:1 0 auto;min-height:220px}
 
 .pap-hint{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;background:transparent;border:none;text-align:center;font-size:var(--t-small);color:var(--ink-3)}
 .pap-hint svg{width:15px;height:15px;flex:none}
@@ -1742,6 +1740,7 @@ html.motion-off :is(.busy-ring,.tbs-dot){animation-duration:var(--spin)!importan
 
 
 <script>
+
 
 window.brisa=window.brisa||{_fda:false,_protected:[]};
 
@@ -3478,8 +3477,6 @@ function restorePap(id){
 }
 
 
-const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-
 let histSel=[];
 let histRange="3m";
 const D7=864e5;
@@ -3767,16 +3764,18 @@ function atlasPick(id,el){
   else{subSel=id;atlasDetail=true;}
   drawAtlas();
 }
+
+const hexRgb=hex=>{const n=parseInt(hex.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];};
 function toneOf(hex){
   
-  const n=parseInt(hex.slice(1),16),r=((n>>16)&255),g=((n>>8)&255),b=(n&255);
+  const [r,g,b]=hexRgb(hex);
   const mixTo=(v,t,p)=>Math.round(v+(t-v)*p);
   return `rgb(${mixTo(r,255,0.42)},${mixTo(g,255,0.42)},${mixTo(b,255,0.42)})`;
 }
 function tileFg(bg){
   
   let r,g,b;
-  if(bg[0]==='#'){const n=parseInt(bg.slice(1),16);r=(n>>16)&255;g=(n>>8)&255;b=n&255;}
+  if(bg[0]==='#'){[r,g,b]=hexRgb(bg);}
   else{const m=bg.match(/\d+/g);r=+m[0];g=+m[1];b=+m[2];}
   const lum=(0.2126*r+0.7152*g+0.0722*b)/255;
   
@@ -3966,7 +3965,7 @@ function adonData(){
 }
 
 function adonTone(hex,p){
-  const n=parseInt(hex.slice(1),16),r=((n>>16)&255),g=((n>>8)&255),b=(n&255);
+  const [r,g,b]=hexRgb(hex);
   const mix=(v,t)=>Math.round(v+(t-v)*p);
   return `rgb(${mix(r,255)},${mix(g,255)},${mix(b,255)})`;
 }
