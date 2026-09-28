@@ -61,9 +61,9 @@ swift Scripts/make-icon.swift Sources/brisa_app/Resources/DockLogo.svg "$APP/Con
 # Sources como fuente de la marca, pero dejan de pesar en el paquete.
 RES_BUNDLE="$APP/Contents/Resources/Brisa_brisa_app.bundle"
 rm -f "$RES_BUNDLE/index.html"
-# Las tres copias publicadas —la del bundle, la de la raíz y la archivada—
-# salen del publicador, que recorta los comentarios (109 KB que ni WebKit ni el
-# navegador leen). La fuente sigue documentada; el artefacto que se envía, no.
+# Las dos copias publicadas —la del bundle y la de la raíz— salen del
+# publicador, que recorta los comentarios (109 KB que ni WebKit ni el navegador
+# leen). La fuente sigue documentada; el artefacto que se envía, no.
 # Se comprueba al publicar: claves de i18n, iconos, selectores, ids y
 # data-i18n deben coincidir con la fuente, y cada <script> debe compilar.
 /usr/bin/python3 Scripts/publicar.py
@@ -104,7 +104,7 @@ codesign --force --deep --sign - "$APP"
 
 # Las copias publicadas del prototipo las deja `Scripts/publicar.py` (unas
 # líneas más arriba), siempre desde la fuente: la de la raíz —la que se abre en
-# el navegador— y la archivada en Docs. Nadie las edita a mano, así que no
-# pueden quedarse atrás respecto a la app.
+# el navegador— y la que carga la app. Nadie las edita a mano, así que no pueden
+# quedarse atrás respecto a la app.
 
 echo "OK: $APP"

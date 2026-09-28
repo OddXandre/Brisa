@@ -7,8 +7,8 @@
 dist/
 
 # Prototipo publicado: lo regenera `Scripts/publicar.py` desde
-# `Sources/brisa_app/Resources/index.html`. Versionarlo era guardar dos veces lo
-# mismo —raíz y `Docs/prototype/` eran idénticas— y envejecer con cada cambio.
+# `Sources/brisa_app/Resources/index.html`. Versionarlo sería guardar dos veces
+# lo mismo y dejar que la copia envejezca con cada cambio.
 prototipo-brisa.html
 
 # Finder
