@@ -707,6 +707,14 @@ html,body{overscroll-behavior:none}
 .se-y{display:flex;flex-direction:column;justify-content:space-between;padding-bottom:3px;font-size:var(--t-label);color:var(--ink-4);font-variant-numeric:tabular-nums}
 .se-chart{display:block;width:100%;height:104px;overflow:visible}
 .se-chart path,.se-chart line{vector-effect:non-scaling-stroke}
+/* La línea no salta: se DESLIZA. El eje es tiempo real, y el tiempo real no va a
+   escalones; así que el grupo que lleva los trazos se desplaza a velocidad
+   constante mientras el trazado solo se reescribe al llegar la muestra —una vez
+   cada dos segundos, como antes—. El clip es para la cola que sale por la
+   izquierda: sin él se metería en la columna de las rayas de cien. El
+   desplazamiento lo resuelve el compositor; el coste de pintar no cambia. */
+.se-scroll{animation:seScroll var(--se-dur,2s) linear forwards}
+@keyframes seScroll{from{transform:translateX(var(--se-from,0px))}to{transform:translateX(var(--se-to,0px))}}
 .se-chart .se-guide{stroke:var(--line);stroke-width:1}
 .se-chart .se-area{fill:var(--acc);fill-opacity:.07;stroke:none}
 .se-chart .se-line-cpu{fill:none;stroke:var(--acc);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
@@ -6452,14 +6460,20 @@ function sysChart(){
   if(xf)xf.textContent=t("est.chartAgo",{r:sysRangeLabel(r)});
   if(!svg.dataset.built){
     svg.dataset.built="1";
-    svg.innerHTML=[25,50,75].map(p=>'<line class="se-guide" x1="0" x2="'+SYS_CHART_W+'" y1="'+(p/100*SYS_CHART_H).toFixed(1)+'" y2="'+(p/100*SYS_CHART_H).toFixed(1)+'"/>').join("")
+    /* La rejilla se queda FUERA del grupo que se desliza: una raya horizontal no
+       gana nada moviéndose de lado, y así el compositor mueve solo los trazos. */
+    svg.innerHTML='<defs><clipPath id="se-clip"><rect x="-2" y="0" width="'+(SYS_CHART_W+4)+'" height="'+SYS_CHART_H+'"/></clipPath></defs>'
+      +[25,50,75].map(p=>'<line class="se-guide" x1="0" x2="'+SYS_CHART_W+'" y1="'+(p/100*SYS_CHART_H).toFixed(1)+'" y2="'+(p/100*SYS_CHART_H).toFixed(1)+'"/>').join("")
+      +'<g class="se-scroll" id="se-scroll" clip-path="url(#se-clip)">'
       +'<path class="se-area" id="se-chart-area" d=""/>'
       +'<path class="se-line-cpu" id="se-chart-cpu" d=""/>'
-      +'<path class="se-line-mem" id="se-chart-mem" d=""/>';
+      +'<path class="se-line-mem" id="se-chart-mem" d=""/>'
+      +'</g>';
   }
   const X=v=>clamp((v-from)/r.sec,0,1)*SYS_CHART_W;
   const Y=v=>SYS_CHART_H-2-(clamp(v,0,100)/100)*(SYS_CHART_H-4);
   const put=(sel,d)=>{ const el=$(sel); if(el&&el.getAttribute("d")!==d)el.setAttribute("d",d); };
+  sysSlide(pts,r);
   if(empty){ put("#se-chart-cpu",""); put("#se-chart-mem",""); put("#se-chart-area",""); return; }
   const line=(pts,idx)=>pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ");
   const cpu=line(pts,1), mem=line(pts,2);
@@ -6468,6 +6482,39 @@ function sysChart(){
   const area=pts.length>1?"M"+X(pts[0][0]).toFixed(1)+" "+SYS_CHART_H+" "+cpu.slice(1)
       +" L"+X(pts[pts.length-1][0]).toFixed(1)+" "+SYS_CHART_H+" Z":"";
   put("#se-chart-cpu",cpu); put("#se-chart-mem",mem); put("#se-chart-area",area);
+}
+/* ---------- El deslizamiento de la línea ----------
+   La ventana avanzaba a saltos: cada vez que llegaba una muestra —cada dos
+   segundos—, TODA la curva se movía diez píxeles de una vez. Eso era el tirón,
+   y no tenía arreglo redibujando más a menudo: el problema era que el eje, que
+   es tiempo, avanzaba a escalones.
+
+   Así que el trazado se dibuja referido a la última muestra y el grupo entero
+   sigue avanzando solo, a velocidad constante, hasta la siguiente. Dibujar pasa
+   igual que antes —una vez cada dos segundos—, así que la gráfica cuesta lo
+   mismo y se mueve como si fuera continua; lo único añadido es un desplazamiento
+   que resuelve el compositor.
+
+   Vale para el tramo en vivo: la serie de los tramos largos llega de disco cada
+   minuto y ahí no hay tiempo continuo que recorrer. Y en pausa «avanzar» es no
+   moverse: la línea se queda justo donde está, que es lo que significa pausar. */
+function sysSlide(pts,r){
+  const g=$("#se-scroll"); if(!g)return;
+  if(!pts.length){ g.style.animation="none"; return; }
+  const hist=SYS.hist;
+  /* El paso es el que las muestras traen de verdad, no el que deberían traer:
+     un cambio de cadencia se ve como un cambio de velocidad, no como un salto. */
+  const step=(hist.length>1)?clamp(hist[hist.length-1].t-hist[hist.length-2].t,.2,10):2;
+  const live=r.k==="2m";
+  const el=live?clamp(Date.now()/1000-pts[pts.length-1][0],0,step):0;
+  const px=SYS_CHART_W/r.sec;
+  const from=-el*px,to=(live&&!SYS.paused)?from-step*px:from;
+  g.style.setProperty("--se-from",from.toFixed(2)+"px");
+  g.style.setProperty("--se-to",to.toFixed(2)+"px");
+  g.style.setProperty("--se-dur",step+"s");
+  /* Reiniciar el desplazamiento es lo que lo pone en fase con la muestra nueva;
+     el punto de partida es el que ya tenía, así que no hay salto al reiniciar. */
+  g.style.animation="none"; void g.getBoundingClientRect(); g.style.animation="";
 }
 /* El selector de tramo: se pinta desde SYS_RANGES y se marca el activo. */
 function sysRanges(){
