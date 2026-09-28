@@ -17,13 +17,13 @@ struct WindowConfigurator: NSViewRepresentable {
     func updateNSView(_ nsView: WindowProbeView, context: Context) {}
 
     /// Colores de fondo de la interfaz (--bg en index.html), uno por apariencia.
-    /// El del modo oscuro es un gris profundo y neutro —los tres canales
-    /// iguales, sin el tinte azul que tenía antes y sin negro puro—, un escalón
-    /// por debajo del gris de ventana de macOS (#1E1E1E), que es el que usa la
-    /// barra. Esta capa pinta la franja de los semáforos y el primer fotograma:
-    /// si no coincidiera con el lienzo se vería un borde de otro color.
+    /// El del modo oscuro ya no es un gris medio: es el casi negro del lienzo
+    /// que usa la interfaz (#0a0a0a, la paleta de Freebuff). Esta capa pinta la
+    /// franja de los semáforos y el primer fotograma, así que TIENE que ser el
+    /// mismo valor que --bg: si se quedara en el gris viejo, se vería un borde
+    /// de otro color alrededor de la ventana.
     enum Palette {
-        static let dark = NSColor(srgbRed: 0x16 / 255, green: 0x16 / 255, blue: 0x16 / 255, alpha: 1)
+        static let dark = NSColor(srgbRed: 0x0a / 255, green: 0x0a / 255, blue: 0x0a / 255, alpha: 1)
         static let light = NSColor(srgbRed: 0xF6 / 255, green: 0xF6 / 255, blue: 0xF3 / 255, alpha: 1)
 
         static func background(for appearance: NSAppearance) -> NSColor {

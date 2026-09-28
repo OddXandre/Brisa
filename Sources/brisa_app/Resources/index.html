@@ -32,39 +32,47 @@
   --font:Inter,'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',system-ui,sans-serif;
   --font-display:Inter,'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
   /* ---------- Superficies
-     Dos Bases, no una escalera de grises, y cada una en su sitio: el lienzo
-     —lo que se ve por debajo del contenido— es un gris profundo y NEUTRO
-     (R=G=B, sin el tinte azul que tenía antes, y sin caer en el negro puro,
-     que convierte la ventana en un agujero); y el cromo sube un escalón hasta
-     el gris que macOS da a la ventana en darkAqua (medido en este Mac con
-     `NSColor.windowBackgroundColor`: #1E1E1E), así que el armazón va por ENCIMA
-     del contenido, como en una ventana del sistema, en vez de un fondo plano
-     del mismo tono de arriba abajo. Encima, veladuras
-     blancas en alfa: al ir en alfa, cada superficie se compone con lo que
-     tenga debajo (el material de la ventana, una hoja, un mapa), así que la
-     misma pieza funciona sobre cualquier fondo.
+     Los neutros salen de la paleta que usa la interfaz de Freebuff —su lienzo,
+     sus veladuras, sus filos—, no de una rampa inventada aquí. El lienzo es
+     casi negro (#0a0a0a) y el cromo se separa de él un pelo (#0f0f0f), así que
+     la ventana se lee como UNA pieza oscura y lo que sube de verdad es el
+     contenido que se apoya encima. Antes el lienzo era #161616 —el gris de
+     ventana de macOS—: toda la app flotaba sobre un gris medio y los negros no
+     llegaban a ser negros.
+     Encima del lienzo van veladuras blancas en alfa: al ir en alfa, cada
+     superficie se compone con lo que tenga debajo (el material de la ventana,
+     una hoja, un mapa), así que la misma pieza funciona sobre cualquier fondo.
+     Los tres primeros escalones están calculados para caer en los grises de
+     Freebuff sobre este lienzo: #171717 el contenido, #1c1c1c una superficie
+     dentro de otra, #262626 el filo.
      El acento es una brasa y solo una: Ember marca la acción principal y nada
      más. Si aparece un segundo color, el sistema deja de ser un instrumento. */
-  --bg:#161616;   /* un escalón por debajo del gris de ventana de macOS (#1E1E1E) */
+  --bg:#0a0a0a;   /* el lienzo de Freebuff */
   /* Superficies de contenido: veladuras, no grises. Con .05 los paneles de
-     Resumen y Mantenimiento se leían como recuadros gris azulado; a .04 la
-     tarjeta se separa del fondo sin convertirse en un bloque de color. */
-  --surface:rgba(255,255,255,.04);
-  --surface-2:rgba(255,255,255,.08);
-  --line:rgba(255,255,255,.10);
+     Resumen y Mantenimiento se leían como recuadros gris azulado; a .053 caen
+     justo en el #171717 de Freebuff sin convertirse en un bloque de color. */
+  --surface:rgba(255,255,255,.053);
+  --surface-2:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.11);
   --line-2:rgba(255,255,255,.20);
   --ink:rgba(255,255,255,.96);
   --ink-2:rgba(236,236,236,.70);
   --ink-3:rgba(236,236,236,.58);   /* por encima de 4,5:1 sobre la superficie más clara */
   --ink-4:rgba(236,236,236,.46);
-  --sel:rgba(255,255,255,.07);
-  --sel-2:rgba(255,255,255,.12);
+  --sel:rgba(255,255,255,.06);
+  --sel-2:rgba(255,255,255,.10);
   --track:rgba(255,255,255,.12);
-  /* Material: lo que flota —barra, hojas, avisos, tarjeta de disco— no lleva un
-     gris más claro, lleva MENOS opacidad y desenfoque: el
-     fondo se lee a través y la pieza se separa por el filo de luz de arriba,
-     que es como el cristal del sistema recorta la luz. */
-  --glass:rgba(30,30,30,.72);   /* el cromo: NSColor.windowBackgroundColor en darkAqua */
+  /* Material: lo que flota no lleva un gris más claro, lleva MENOS opacidad y
+     desenfoque: el fondo se lee a través y la pieza se separa por el filo de
+     luz de arriba, que es como el cristal del sistema recorta la luz.
+     Y son DOS piezas, no una, porque hacen dos trabajos distintos. El cromo
+     —la barra— va casi al tono del lienzo (#0f0f0f, como en Freebuff): es
+     el armazón, no una tarjeta. Lo que se apoya ENCIMA de otra cosa —hoja,
+     aviso, banda, pie de acciones— sí tiene que despegarse de lo que tapa, así
+     que sube a #121212. Con un solo token, o el cromo flotaba o las hojas no
+     se despegaban del fondo. */
+  --glass:rgba(15,15,15,.72);   /* el cromo */
+  --float:rgba(18,18,18,.80);   /* lo que se apoya encima de otra cosa */
   --rim:inset 0 .5px 0 rgba(255,255,255,.09);
   /* --edge: la separación, y solo la separación. Aquí la sombra se queda
      fuera —una caja suelta sobre otra se leía como calcomanía— así que la
@@ -73,7 +81,7 @@
   --edge:inset 0 0 0 1px var(--line);
   --blur:blur(30px) saturate(180%);
   --rail:transparent;
-  --tip-bg:rgba(40,40,40,.97);   /* un escalón por encima del lienzo: NSColor.underPageBackgroundColor */
+  --tip-bg:rgba(33,33,33,.97);   /* el escalón «raised» de Freebuff (#212121) */
   --tip-ink:#FFFFFF;
   --acc:#ff5900;
   --acc-text:#ff7b3d;
@@ -101,7 +109,7 @@
   /* ---------- movimiento ----------
      Una curva de frenada para la interfaz; la curva simétrica queda solo para
      el ancho del carril. Las entradas son cortas y el escalonado se reserva a
-     grupos pequeños: nunca se anima cada fila de una lista larga. */
+     grupos cortos: como mucho cinco piezas, y solo al entrar. */
   /* ---------- escala tipográfica ----------
      Siete pasos en lugar de veintiuno. Antes convivían 8 / 8,5 / 9 / 9,5 / 10 /
      10,5 / 11 / 11,5 / 12 / 12,5 / 13 / 13,5 / 14 / 15 / 16 / 17 / 18 / 26 / 27 /
@@ -124,17 +132,25 @@
   --t-num:34px;
 
   /* Movimiento: estados rápidos, transiciones de piezas breves y una entrada
-     algo mayor solo para superficies completas. */
+     algo mayor solo para superficies completas.
+     Los números subieron un tercio sobre los que había (120, 180, 240 y 320
+     ms). No es capricho: a 120 ms un cambio de estado se ve como un corte y no
+     como una transición, y con diez piezas encadenadas el conjunto entero
+     parecía instantáneo. Ahora cada pieza tarda lo justo para leerse —de 160 a
+     440 ms, dentro del margen de 100–400 ms que da la guía de duración de
+     animación de NN/g, con la excepción lenta solo para la pieza mayor, la
+     vista entera—, y el escalonado pasa de 26 a 34 ms para que la cadena se
+     siga leyendo como cadena y no como un bloque. */
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-io:cubic-bezier(.45,0,.25,1);
   --ease-spring:cubic-bezier(.34,1.12,.64,1);
-  --d0:.08s;
-  --d1:.12s;
-  --d2:.18s;
-  --d3:.24s;
-  --d4:.32s;
-  --spin:.8s;                       /* el giro de los indicadores de espera */
-  --stagger-step:26ms;
+  --d0:.10s;
+  --d1:.16s;
+  --d2:.24s;
+  --d3:.32s;
+  --d4:.44s;
+  --spin:1s;                        /* el giro de los indicadores de espera */
+  --stagger-step:34ms;
   /* El desenfoque de entrada tiene UNA medida y una sola regla: se usa donde la
      pieza aparece ENCIMA de algo —la hoja, el aviso, los bloques del Atlas—,
      porque ahí el desenfoque dice «esto acaba de materializarse». En filas,
@@ -171,6 +187,10 @@ html[data-theme="light"]{
   --sel-2:rgba(120,120,128,.2);
   --track:#e4e5ea;
   --glass:rgba(255,255,255,.78);
+  /* Lo que flota se apoya sobre OTRA superficie, así que en claro sube de
+     blanco en vez de bajar: si heredara el valor del tema oscuro, las hojas
+     saldrían negras sobre el hormigón. */
+  --float:rgba(255,255,255,.86);
   --rim:inset 0 .5px 0 rgba(255,255,255,.7);
   --edge:inset 0 0 0 1px var(--line);
   --blur:blur(30px) saturate(180%);
@@ -545,7 +565,7 @@ html,body{overscroll-behavior:none}
    opaca más. Es el único sitio donde el desenfoque se ve de verdad. */
 .banner-ok{
   display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:11px 14px;
-  background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
   border:none;border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge);
   font-size:var(--t-body);
 }
@@ -1351,7 +1371,7 @@ html,body{overscroll-behavior:none}
    nada (se veía el texto pasar por detrás) y en claro no se distinguía del
    panel. Ahora es el material de la app —el mismo de los avisos y las hojas— y
    con su filo, que es lo que separa un pie fijo de lo que hay detrás. */
-.dp-foot{position:sticky;bottom:0;z-index:2;margin:14px -16px 0;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding:14px 16px 16px;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.dp-foot{position:sticky;bottom:0;z-index:2;margin:14px -16px 0;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding:14px 16px 16px;background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 .dup-detail{transition:opacity var(--d1) var(--ease)}
 .dp-foot .sp{flex:1}
 /* en estrecho: el pie se apila limpio en su lugar, sin partir el texto */
@@ -1625,7 +1645,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeOut{from{opacity:1}to{opacity:0}}
-.sheet{width:min(540px,calc(100vw - 32px));max-height:min(620px,calc(100vh - 48px));display:flex;flex-direction:column;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:none;border-radius:var(--r-sheet);box-shadow:var(--shadow-pop),var(--rim);animation:pop var(--d3) var(--ease)}
+.sheet{width:min(540px,calc(100vw - 32px));max-height:min(620px,calc(100vh - 48px));display:flex;flex-direction:column;background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:none;border-radius:var(--r-sheet);box-shadow:var(--shadow-pop),var(--rim);animation:pop var(--d3) var(--ease)}
 /* Una hoja no «cae»: se posa. El recorrido vertical baja a la mitad y se apoya
    en el escalado, que es lo que da la sensación de que la pieza ya estaba ahí y
    acaba de asentarse —el gesto de macOS, en vez del desplazamiento genérico de
@@ -1686,6 +1706,14 @@ html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 .settings-nav .sn:hover{background:var(--sel);color:var(--ink)}
 .settings-nav .sn.on{background:var(--acc-soft);color:var(--acc-text);font-weight:500}
 .settings-nav .sn.on svg{color:var(--acc)}
+/* La cabecera de la hoja: el título a la izquierda y la X ARRIBA A LA DERECHA.
+   Antes la X era el último hijo de la columna de navegación —detrás de un
+   espaciador flex:1—, así que caía abajo a la izquierda, que es justo donde
+   nadie la busca. Y va en su propia franja, fuera del cuerpo, porque el cuerpo
+   hace scroll: si compartieran sitio, el contenido le pasaría por debajo. */
+.settings-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.settings-head{display:flex;align-items:center;gap:12px;padding:14px 16px 0 26px}
+.settings-head h3{flex:1;font-size:var(--t-body);font-weight:500;letter-spacing:-.008em;color:var(--ink-2)}
 .settings-body{flex:1;overflow-y:auto;padding:22px 26px 24px;min-width:0}
 .set-group h4{font-size:var(--t-small);font-weight:600;letter-spacing:-.008em;color:var(--ink-2);margin:22px 0 2px}
 .set-group h4:first-child{margin-top:0}
@@ -1742,7 +1770,7 @@ select.set-sel:hover{background:var(--sel-2)}
 
 /* ---------- Toasts ---------- */
 #toasts{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;max-width:340px}
-.toast{display:flex;gap:12px;align-items:flex-start;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:none;border-radius:var(--r-panel);box-shadow:var(--shadow-pop),var(--rim);padding:11px 13px;animation:toastIn var(--d3) var(--ease)}
+.toast{display:flex;gap:12px;align-items:flex-start;background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:none;border-radius:var(--r-panel);box-shadow:var(--shadow-pop),var(--rim);padding:11px 13px;animation:toastIn var(--d3) var(--ease)}
 @keyframes toastIn{from{opacity:0;transform:translateX(18px);filter:var(--entry-blur)}to{opacity:1;transform:none;filter:none}}
 @keyframes toastOut{from{opacity:1;transform:none;filter:none}to{opacity:0;transform:translateX(14px);filter:var(--entry-blur)}}
 .toast.out{animation:toastOut var(--d2) var(--ease) forwards;pointer-events:none}
@@ -3329,7 +3357,7 @@ function setTheme(t,persist=true){
      así que el tema volvía al del sistema cada vez que abrías la app. */
   if(persist){ try{ localStorage.setItem("brisa-theme",t); }catch(e){} }
   const d=document.documentElement; d.classList.add("theme-anim");
-  clearTimeout(setTheme._t); setTheme._t=setTimeout(()=>d.classList.remove("theme-anim"),260);
+  clearTimeout(setTheme._t); setTheme._t=setTimeout(()=>d.classList.remove("theme-anim"),360);
   const tb=$("#tb-theme"); if(tb)tb.innerHTML=SVG(t==="light"?"moon":"sun");
   $$(".set-seg button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
   repaintCurrent();
@@ -3366,7 +3394,7 @@ function repaintCurrent(){
     else if(cur==="ritmo") renderRitmo();
     else if(cur==="papelera") renderPapelera();
     else if(cur==="estado") renderEstado();
-  },340);
+  },420);
 }
 
 /* ---------- navegación lateral ---------- */
@@ -3411,7 +3439,7 @@ function go(name){
   if(cur){
     cur.classList.remove("boot-in");void cur.offsetWidth;cur.classList.add("boot-in");
     clearTimeout(cur._bootT);
-    cur._bootT=setTimeout(()=>cur.classList.remove("boot-in"),420);
+    cur._bootT=setTimeout(()=>cur.classList.remove("boot-in"),520);
   }
   $$(".sb-item").forEach(b=>b.setAttribute("aria-current",b.dataset.view===name?"page":"false"));
   syncToolbar(name);
@@ -3766,7 +3794,7 @@ function renderResumen(){
     vb.classList.remove("boot-in");
     void vb.offsetWidth;
     vb.classList.add("boot-in");
-    setTimeout(()=>vb.classList.remove("boot-in"),420);
+    setTimeout(()=>vb.classList.remove("boot-in"),520);
   }
   const ok=$("#ok-banner"), la=STATE.lastAction;
   if(la && la.type==="clean"){
@@ -3822,7 +3850,7 @@ function closeSheet(){
   if(!o){host.innerHTML="";return;}
   if(sheetClosing)return;
   o.classList.add("closing");
-  sheetClosing=setTimeout(()=>{sheetClosing=null;host.innerHTML="";},180);
+  sheetClosing=setTimeout(()=>{sheetClosing=null;host.innerHTML="";},260);
 }
 function requestScan(){
   /* App real: pedir el análisis a Swift. En el navegador, simulación. */
@@ -3918,7 +3946,7 @@ function introText(txt){
   INTRO.text=txt;
   INTRO.sub.classList.add("swap");
   clearTimeout(introSwapT);
-  introSwapT=setTimeout(()=>{ INTRO.sub.textContent=txt; INTRO.sub.classList.remove("swap"); },150);
+  introSwapT=setTimeout(()=>{ INTRO.sub.textContent=txt; INTRO.sub.classList.remove("swap"); },190);
 }
 function introFrame(){
   if(!INTRO.active)return;
@@ -6057,10 +6085,14 @@ function openSettings(){
       <button class="sn${s.sec==='papelera'?' on':''}" data-sec="papelera">${SVG("bin")}${t("set.trash")}</button>
       <button class="sn${s.sec==='notif'?' on':''}" data-sec="notif">${SVG("bell")}${t("set.notifications")}</button>
       <button class="sn${s.sec==='privacidad'?' on':''}" data-sec="privacidad">${SVG("shield")}${t("set.privacy")}</button>
-      <div style="flex:1"></div>
-      <button class="sheet-close" data-close aria-label="${t("ask.close")}">${SVG("x")}</button>
     </div>
-    <div class="settings-body" id="set-body"></div>`,"settings-sheet");
+    <div class="settings-main">
+      <div class="settings-head">
+        <h3>${t("top.settings")}</h3>
+        <button class="sheet-close" data-close aria-label="${t("ask.close")}">${SVG("x")}</button>
+      </div>
+      <div class="settings-body" id="set-body"></div>
+    </div>`,"settings-sheet");
   sheet.querySelector("[data-close]").onclick=closeSheet;
   const secs=settingsSections(s);
   const body=$("#set-body");
@@ -6134,7 +6166,7 @@ function toast(msg,sub){
   const el=document.createElement("div"); el.className="toast";
   el.innerHTML=`<p>${msg}${sub?`<small>${sub}</small>`:""}</p><button class="icon-btn x" aria-label="${t("u.close")}">${SVG("x")}</button>`;
   h.appendChild(el);
-  const kill=()=>{el.classList.add("out");setTimeout(()=>el.remove(),180);};
+  const kill=()=>{el.classList.add("out");setTimeout(()=>el.remove(),260);};
   el.querySelector(".x").addEventListener("click",kill);
   setTimeout(kill,4200);
 }
