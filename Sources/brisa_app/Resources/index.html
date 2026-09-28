@@ -728,13 +728,29 @@ html,body{overscroll-behavior:none}
 .se-chart{display:block;width:100%;height:104px;overflow:visible}
 .se-chart path,.se-chart line{vector-effect:non-scaling-stroke}
 /* La línea no salta: se DESLIZA. El eje es tiempo real, y el tiempo real no va a
-   escalones; así que el grupo que lleva los trazos se desplaza a velocidad
-   constante mientras el trazado solo se reescribe al llegar la muestra —una vez
-   cada dos segundos, como antes—. El clip es para la cola que sale por la
-   izquierda: sin él se metería en la columna de las rayas de cien. El
-   desplazamiento lo resuelve el compositor; el coste de pintar no cambia. */
-.se-scroll{animation:seScroll var(--se-dur,2s) linear forwards}
-@keyframes seScroll{from{transform:translateX(var(--se-from,0px))}to{transform:translateX(var(--se-to,0px))}}
+   escalones; así que la gráfica se desplaza a velocidad constante mientras el
+   trazado solo se reescribe al llegar la muestra —una vez cada dos segundos,
+   como antes—.
+   El recorte va en el hueco y no dentro del SVG: así la cola que sale por la
+   izquierda no se mete en la columna de las rayas de cien, y el desplazamiento
+   puede vivir en el DIV de dentro, que es un elemento normal. Eso importa: una
+   transformación sobre el SVG o sobre un grupo de dentro la suele resolver
+   WebKit en el hilo principal, y entonces el trabajo de pintar cada muestra
+   —tres trazados, el orden de procesos, la vista entera— le para el reloj a la
+   animación y al reanudar se ve el salto. En un DIV con su capa reservada lo
+   mueve el compositor, y lo que haga el hilo principal deja de notarse. */
+.se-chart-mask{position:relative;min-width:0;overflow:hidden}
+.se-chart-drift{will-change:transform;animation:seScrollA var(--se-dur,2s) linear forwards}
+/* Y el trazado se dibuja más largo que el hueco (ver sysPad): el último valor se
+   prolonga en plano por la derecha, así que al desplazarse no aparece un hueco
+   vacío en el borde —lo que entra ya estaba pintado— y la muestra nueva solo
+   sustituye ese plano por el dato de verdad. */
+/* Dos animaciones idénticas: alternar el NOMBRE reinicia el desplazamiento —hay
+   que ponerlo en fase con la muestra nueva— sin tocar el diseño. Forzar un
+   recálculo con getBoundingClientRect() para reiniciar era un parón en medio
+   del repintado, que es justo lo que se quiere evitar. */
+@keyframes seScrollA{from{transform:translateX(var(--se-from,0%))}to{transform:translateX(var(--se-to,0%))}}
+@keyframes seScrollB{from{transform:translateX(var(--se-from,0%))}to{transform:translateX(var(--se-to,0%))}}
 .se-chart .se-guide{stroke:var(--line);stroke-width:1}
 .se-chart .se-area{fill:var(--acc);fill-opacity:.07;stroke:none}
 .se-chart .se-line-cpu{fill:none;stroke:var(--acc);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
@@ -2295,7 +2311,11 @@ html.theme-anim .sb-item{
             </div>
             <div class="se-plot" id="se-plot">
               <div class="se-y"><span>100 %</span><span>0 %</span></div>
-              <svg class="se-chart" id="se-chart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" data-i18n-aria="est.chartAria" aria-label="Gráfica de CPU y memoria del tramo elegido"></svg>
+              <div class="se-chart-mask">
+                <div class="se-chart-drift" id="se-chart-drift">
+                  <svg class="se-chart" id="se-chart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" data-i18n-aria="est.chartAria" aria-label="Gráfica de CPU y memoria del tramo elegido"></svg>
+                </div>
+              </div>
             </div>
             <div class="se-x" id="se-x"><span id="se-x-from"></span><span data-i18n="est.chartNow">Ahora</span></div>
             <p class="se-chart-empty" id="se-chart-empty" hidden></p>
@@ -6240,7 +6260,12 @@ function initOverlayScrollbars(root){(root||document).querySelectorAll(SCROLL_SE
 
    Nada de esto pide un permiso: son contadores que el sistema da a cualquiera.
    Y nada se escribe: se lee y se cuenta, ni un byte de vuelta. */
-const SYS_HIST=60; /* 60 muestras × 2 s: los dos minutos que la interfaz tiene en memoria */
+/* 61 muestras × 2 s: los dos minutos que la interfaz tiene en memoria, contados
+   de punta a punta. 60 muestras son 59 huecos —118 s—, y con el eje de dos
+   minutos la línea arrancaba dos segundos dentro del marco: un hueco vacío de
+   un dedo pegado al eje izquierdo. La primera muestra de la lista tiene que
+   caer como muy tarde en el borde, y eso son 61. */
+const SYS_HIST=61;
 /* Tramos de la gráfica. Los dos minutos salen de la memoria de la interfaz, que
    es lo único que se mide cada dos segundos; de ahí para atrás, de la serie que
    Brisa mantiene en disco (SystemHistory) y que se pide al entrar en la sección
@@ -6412,6 +6437,13 @@ function syncSystemWatch(){
     sysDemoWatch(live);
   }
 }
+/* Cada cuánto se vuelve a pedir un tramo largo: la sexagésima parte del tramo,
+   entre diez segundos y un minuto. De ahí sale lo único que la gráfica no puede
+   saber —el rato que va de la última muestra guardada al instante de ahora—,
+   que es exactamente lo que se rellena con el último valor. Con un minuto fijo
+   para todo, en el tramo de diez minutos ese relleno eran cien píxeles de raya
+   plana: una décima parte del ancho. */
+function sysRefreshMs(r){ return Math.min(60,Math.max(10,r.sec/60))*1000; }
 /* Pide a Swift la serie del tramo elegido y deja el refresco puesto. Los dos
    minutos no se piden a nadie: están en la memoria de la interfaz. */
 function sysRequestRange(){
@@ -6420,7 +6452,7 @@ function sysRequestRange(){
   if(r.k==="2m")return;
   if(!inApp()){ SYS.series[r.k]=sysDemoSeries(r.sec); renderEstado(); return; }
   postIntent("systemHistory",{range:r.k});
-  SYS.rangeT=setInterval(()=>postIntent("systemHistory",{range:SYS.range}),60000);
+  SYS.rangeT=setInterval(()=>postIntent("systemHistory",{range:SYS.range}),sysRefreshMs(r));
 }
 /* El histórico de verdad lo pone la app (SystemHistory.swift). En el prototipo
    no existe —no hay archivo—, así que los tramos largos se rellenan con el
@@ -6473,6 +6505,20 @@ function sysSeries(){
   if(r.k==="2m")return SYS.hist.map(p=>[p.t,p.cpu,p.mem]);
   return Array.isArray(SYS.series[r.k])?SYS.series[r.k]:[];
 }
+/* El paso entre muestras vivas, medido de las que hay y no supuesto: si la
+   cadencia cambia, cambia la velocidad del desplazamiento, no su forma. */
+function sysStep(){
+  const h=SYS.hist;
+  return (h.length>1)?clamp(h[h.length-1].t-h[h.length-2].t,.2,10):2;
+}
+/* Cuánto avanza el eje entre dos muestras, en unidades del lienzo. El viewBox
+   mide 600 de ancho pase lo que pase con la ventana —el SVG se estira—, así que
+   esta es la medida común del deslizamiento y del sobrante que el trazado se
+   prolonga por la derecha. Va el DOBLE del avance: una muestra que llegue tarde
+   deja el deslizamiento al tope y el sobrante tiene que cubrir también eso. Y
+   nunca menos de una unidad, que es lo que se redondean las coordenadas: en un
+   tramo de un día el doble del avance no llega ni a una décima. */
+function sysPad(r,step){ return r.sec>0?Math.max(1,2*SYS_CHART_W*step/r.sec):1; }
 function sysChart(){
   const svg=$("#se-chart"); if(!svg)return;
   const r=sysRange();
@@ -6492,27 +6538,39 @@ function sysChart(){
   if(xf)xf.textContent=t("est.chartAgo",{r:sysRangeLabel(r)});
   if(!svg.dataset.built){
     svg.dataset.built="1";
-    /* La rejilla se queda FUERA del grupo que se desliza: una raya horizontal no
-       gana nada moviéndose de lado, y así el compositor mueve solo los trazos. */
-    svg.innerHTML='<defs><clipPath id="se-clip"><rect x="-2" y="0" width="'+(SYS_CHART_W+4)+'" height="'+SYS_CHART_H+'"/></clipPath></defs>'
-      +[25,50,75].map(p=>'<line class="se-guide" x1="0" x2="'+SYS_CHART_W+'" y1="'+(p/100*SYS_CHART_H).toFixed(1)+'" y2="'+(p/100*SYS_CHART_H).toFixed(1)+'"/>').join("")
-      +'<g class="se-scroll" id="se-scroll" clip-path="url(#se-clip)">'
+    /* Las tres rayas se dibujan MÁS ANCHAS que la caja —20 unidades por cada
+       lado—: el conjunto se desliza de lado y, sin ese sobrante, al final de
+       cada tramo quedaría un hueco sin raya en el borde derecho. */
+    svg.innerHTML=[25,50,75].map(p=>'<line class="se-guide" x1="-20" x2="'+(SYS_CHART_W+20)+'" y1="'+(p/100*SYS_CHART_H).toFixed(1)+'" y2="'+(p/100*SYS_CHART_H).toFixed(1)+'"/>').join("")
       +'<path class="se-area" id="se-chart-area" d=""/>'
       +'<path class="se-line-cpu" id="se-chart-cpu" d=""/>'
-      +'<path class="se-line-mem" id="se-chart-mem" d=""/>'
-      +'</g>';
+      +'<path class="se-line-mem" id="se-chart-mem" d=""/>';
   }
-  const X=v=>clamp((v-from)/r.sec,0,1)*SYS_CHART_W;
+  const step=sysStep(), edge=SYS_CHART_W+sysPad(r,step);
+  /* Sin recortar a 0..600: lo que queda fuera del tramo lo tapa el hueco
+     (overflow:hidden). Recortar aquí apilaba en el borde izquierdo todos los
+     puntos que ya se habían salido del eje y eso se veía como una raya
+     vertical pegada al eje en cuanto el tramo era largo. */
+  const X=v=>(v-from)/r.sec*SYS_CHART_W;
   const Y=v=>SYS_CHART_H-2-(clamp(v,0,100)/100)*(SYS_CHART_H-4);
   const put=(sel,d)=>{ const el=$(sel); if(el&&el.getAttribute("d")!==d)el.setAttribute("d",d); };
-  sysSlide(pts,r);
+  sysSlide(pts,r,step);
   if(empty){ put("#se-chart-cpu",""); put("#se-chart-mem",""); put("#se-chart-area",""); return; }
-  const line=(pts,idx)=>pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ");
+  /* El trazado se dibuja MÁS LARGO que el hueco: el último valor se prolonga en
+     plano hasta el sobrante, así que lo que entra por la derecha ya está
+     pintado y el borde nunca se queda vacío. Es lo que se lee mientras el eje
+     avanza hacia la muestra siguiente: el útil no ha cambiado, y decirlo con
+     una raya plana es más honesto que dejar el hueco. */
+  const line=(pts,idx)=>{
+    const flat=Y(pts[pts.length-1][idx]).toFixed(1);
+    return pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ")
+      +"L"+edge.toFixed(1)+" "+flat;
+  };
   const cpu=line(pts,1), mem=line(pts,2);
   /* El relleno va bajo la CPU, que es la serie con acento: da profundidad sin
      pedir un segundo color. */
-  const area=pts.length>1?"M"+X(pts[0][0]).toFixed(1)+" "+SYS_CHART_H+" "+cpu.slice(1)
-      +" L"+X(pts[pts.length-1][0]).toFixed(1)+" "+SYS_CHART_H+" Z":"";
+  const area="M"+X(pts[0][0]).toFixed(1)+" "+SYS_CHART_H+" "+cpu.slice(1)
+      +" L"+edge.toFixed(1)+" "+SYS_CHART_H+" Z";
   put("#se-chart-cpu",cpu); put("#se-chart-mem",mem); put("#se-chart-area",area);
 }
 /* ---------- El deslizamiento de la línea ----------
@@ -6527,26 +6585,31 @@ function sysChart(){
    mismo y se mueve como si fuera continua; lo único añadido es un desplazamiento
    que resuelve el compositor.
 
-   Vale para el tramo en vivo: la serie de los tramos largos llega de disco cada
-   minuto y ahí no hay tiempo continuo que recorrer. Y en pausa «avanzar» es no
+   Vale para CUALQUIER tramo, también para los largos: el eje avanza igual —con
+   cada muestra— aunque la serie de disco solo llegue cada minuto, y lo que se
+   desliza en ese caso es poquísimo (en una hora, medio píxel cada dos
+   segundos), que es exactamente lo que le toca. Y en pausa «avanzar» es no
    moverse: la línea se queda justo donde está, que es lo que significa pausar. */
-function sysSlide(pts,r){
-  const g=$("#se-scroll"); if(!g)return;
-  if(!pts.length){ g.style.animation="none"; return; }
-  const hist=SYS.hist;
-  /* El paso es el que las muestras traen de verdad, no el que deberían traer:
-     un cambio de cadencia se ve como un cambio de velocidad, no como un salto. */
-  const step=(hist.length>1)?clamp(hist[hist.length-1].t-hist[hist.length-2].t,.2,10):2;
-  const live=r.k==="2m";
-  const el=live?clamp(Date.now()/1000-pts[pts.length-1][0],0,step):0;
-  const px=SYS_CHART_W/r.sec;
-  const from=-el*px,to=(live&&!SYS.paused)?from-step*px:from;
-  g.style.setProperty("--se-from",from.toFixed(2)+"px");
-  g.style.setProperty("--se-to",to.toFixed(2)+"px");
+function sysSlide(pts,r,step){
+  const g=$("#se-chart-drift"); if(!g||!pts.length)return;
+  /* La fase se mide contra el instante del EJE —la muestra viva, que es la que
+     sysChart pone al final del trazado— y no contra la última muestra de la
+     serie: en los tramos largos esa última muestra puede tener un minuto, la
+     resta se iba al tope y el conjunto arrancaba ya desplazado de más. */
+  const nowT=(SYS.sample&&typeof SYS.sample.ts==="number")?SYS.sample.ts:Date.now()/1000;
+  const el=clamp(Date.now()/1000-nowT,0,step);
+  /* En PORCENTAJE del propio ancho, no en píxeles: el SVG se estira con la
+     ventana (viewBox de 600 con preserveAspectRatio none), así que un avance
+     medido en píxeles dejaría de corresponder a un tramo de eje en cuanto
+     cambiara el tamaño. */
+  const seg=r.sec>0?100/r.sec:0;
+  const from=-el*seg,to=SYS.paused?from:from-step*seg;
+  g.style.setProperty("--se-from",from.toFixed(4)+"%");
+  g.style.setProperty("--se-to",to.toFixed(4)+"%");
   g.style.setProperty("--se-dur",step+"s");
-  /* Reiniciar el desplazamiento es lo que lo pone en fase con la muestra nueva;
-     el punto de partida es el que ya tenía, así que no hay salto al reiniciar. */
-  g.style.animation="none"; void g.getBoundingClientRect(); g.style.animation="";
+  /* Turnar el nombre entre las dos animaciones idénticas la reinicia; el punto
+     de partida es el que ya tenía, así que no hay salto al reiniciar. */
+  g.style.animationName=g.style.animationName==="seScrollA"?"seScrollB":"seScrollA";
 }
 /* El selector de tramo: se pinta desde SYS_RANGES y se marca el activo. */
 function sysRanges(){
@@ -6882,7 +6945,16 @@ function sysDemoSample(phase){
 }
 function sysDemoWatch(on){
   if(on&&!SYS.tick){
-    SYS.tick=setInterval(()=>{ SYS.demoPhase+=1; applySystem(sysDemoSample(SYS.demoPhase)); },2000);
+    SYS.tick=setInterval(()=>{
+      SYS.demoPhase+=1;
+      /* Al ritmo de la app —ver sysRefreshMs—, la serie del tramo largo se
+         vuelve a pedir; aquí, a sembrar. Sin esto el prototipo se quedaba con
+         la foto del momento en que se abrió la sección y a los veinte minutos
+         el tramo de diez minutos contaba veinte minutos de silencio. */
+      if(SYS.range!=="2m"&&(SYS.demoPhase*2)%Math.round(sysRefreshMs(sysRange())/1000)===0)
+        SYS.series[SYS.range]=sysDemoSeries(sysRange().sec);
+      applySystem(sysDemoSample(SYS.demoPhase));
+    },2000);
   } else if(!on&&SYS.tick){
     clearInterval(SYS.tick); SYS.tick=null;
   }
