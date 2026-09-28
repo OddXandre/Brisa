@@ -32,6 +32,8 @@ FUENTE = RAIZ / "Sources/brisa_app/Resources/index.html"
 PUBLICADAS = [
     RAIZ / "prototipo-brisa.html",
 ]
+COPIA_APP = (RAIZ / "dist/Brisa.app/Contents/Resources/"
+             "Brisa_brisa_app.bundle/Contents/Resources/index.html")
 # Palabras tras las cuales una barra abre una expresión regular y no una
 # división. Sin esto, `return /x/` se leería como división y el recorte
 # partiría el archivo por la mitad.
@@ -261,14 +263,14 @@ def main():
           f"{dentro_de_cadenas} B")
 
     if "--check" in sys.argv:
-        destinos = PUBLICADAS + [RAIZ / "dist/Brisa.app/Contents/Resources/"
-                                 "Brisa_brisa_app.bundle/Contents/Resources/index.html"]
+        destinos = PUBLICADAS + [COPIA_APP]
         malas = [d for d in destinos if d.exists() and d.read_text(encoding="utf-8") != publicado]
         for d in malas:
             print("FALLO: copia publicada desincronizada:", d.relative_to(RAIZ))
         return 1 if malas else 0
 
-    for destino in PUBLICADAS:
+    destinos = PUBLICADAS + ([COPIA_APP] if COPIA_APP.exists() else [])
+    for destino in destinos:
         destino.write_text(publicado, encoding="utf-8")
         print("escrito:", destino.relative_to(RAIZ))
     return 0

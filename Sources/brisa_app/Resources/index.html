@@ -99,20 +99,9 @@
   --gutter:30px;
   --section-gap:20px;
   /* ---------- movimiento ----------
-     Una sola escala para toda la app. Tres curvas y cuatro duraciones, y cada
-     cosa usa la suya por lo que ES, no por dónde vive:
-
-     · --ease      salida fuerte (arranca rápido y frena): lo que responde a un
-                   gesto —hover, foco, fondo, color—. Es la curva que hace que
-                   la interfaz parezca reaccionar en vez de arrastrarse.
-     · --ease-io   recorrido con los dos extremos visibles: la anchura de la
-                   barra lateral, que entra y sale a la vez.
-     · --ease-spring solo micro-piezas (el tirador de un interruptor), donde un
-                   milímetro de rebote se lee como respuesta física.
-
-     Las duraciones van de micro a grande y nunca se mezclan: d1 para estados,
-     d2 para superficies pequeñas, d3 para paneles y cambios de vista, d4 para
-     las entradas escalonadas. */
+     Una curva de frenada para la interfaz; la curva simétrica queda solo para
+     el ancho del carril. Las entradas son cortas y el escalonado se reserva a
+     grupos pequeños: nunca se anima cada fila de una lista larga. */
   /* ---------- escala tipográfica ----------
      Siete pasos en lugar de veintiuno. Antes convivían 8 / 8,5 / 9 / 9,5 / 10 /
      10,5 / 11 / 11,5 / 12 / 12,5 / 13 / 13,5 / 14 / 15 / 16 / 17 / 18 / 26 / 27 /
@@ -134,31 +123,18 @@
   --t-h1:27px;
   --t-num:34px;
 
-  /* ---------- Movimiento ----------
-     Un solo idioma para todo el producto: una curva y cuatro duraciones.
-     La regla es la de siempre en Apple: la duración la decide el tamaño de lo
-     que se mueve —no el capricho de cada pantalla— y dos piezas que entran a
-     la vez duran lo mismo, así que solo cambia su retardo (el escalón).
-
-       --d0  medio tramo   100 ms   cada mitad del plegado de la barra lateral
-       --d1  estado        140 ms   hover, pulsado, cambio de color
-       --d2  pieza pequeña 220 ms   una píldora, un bloque, una cifra
-       --d3  contenido     300 ms   entrada escalonada, cambio de sección
-       --d4  lo grande     460 ms   arranque de la app, hojas
-
-     --ease frena al final (la curva de la casa); --ease-io es la de los gestos
-     que empiezan y acaban en reposo (el cargador); --ease-spring solo donde hay
-     física de verdad que celebrar. Pulsar escapa de la escalera: ver el bloque
-     «Pulsado» más abajo. */
+  /* Movimiento: estados rápidos, transiciones de piezas breves y una entrada
+     algo mayor solo para superficies completas. */
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-io:cubic-bezier(.45,0,.25,1);
-  --ease-spring:cubic-bezier(.34,1.42,.64,1);
-  --d0:.1s;
-  --d1:.14s;
-  --d2:.22s;
-  --d3:.3s;
-  --d4:.46s;
+  --ease-spring:cubic-bezier(.34,1.12,.64,1);
+  --d0:.08s;
+  --d1:.12s;
+  --d2:.18s;
+  --d3:.24s;
+  --d4:.32s;
   --spin:.8s;                       /* el giro de los indicadores de espera */
+  --stagger-step:18ms;
   /* Una sola transición para todos los controles pulsables: fondo, color,
      borde, brillo, opacidad, la losa del pulsado (box-shadow) y el hundimiento.
      Antes cada botón llevaba su propia lista y el mismo gesto se sentía
@@ -263,19 +239,18 @@ html,body{overscroll-behavior:none}
 /* La barra flotante vive SIEMPRE pegada al borde derecho del panel (es el lado
    donde macOS las pone y donde el pulgar no tapa el principio de las líneas),
    separada 2px del canto y de 3px de grosor: un filo, no un canal. */
-.osb{position:absolute;top:0;right:0;width:9px;pointer-events:none;opacity:0;transition:opacity var(--d3) var(--ease);will-change:opacity;z-index:45}
+.osb{position:absolute;top:0;right:0;width:9px;pointer-events:none;opacity:0;transition:opacity var(--d3) var(--ease);z-index:45}
 .osb.show{opacity:1;transition:opacity var(--d2) var(--ease)}
 .osb-thumb{position:absolute;top:0;right:2px;width:3px;border-radius:99px;background:var(--ink-3);transition:background-color var(--d1) var(--ease),width var(--d1) var(--ease);pointer-events:none}
 .osb.show .osb-thumb{pointer-events:auto}
 /* Al pasar por encima el pulgar se oscurece y engorda un pelo: es el aviso de
    macOS de que se puede agarrar, sin cambiar de sitio nada de lo que hay debajo. */
 .osb-thumb:hover{background:var(--ink-2);width:5px}
-html.motion-off .osb{transition:none}
-
 /* ---------- Shell: topbar + contenido ---------- */
 #app{display:grid;grid-template-rows:52px 1fr;height:100vh;height:100dvh;width:100%;overflow:hidden;min-width:0}
 #layout,#main,#topbar,#tb-right,.tb-title{min-width:0}
-@media(max-width:900px){#sidebar{width:58px!important}#app:not(.rail) #sidebar{width:58px!important}#app:not(.rail) .sb-brand{justify-content:center}#app:not(.rail) .sb-label,#app:not(.rail) .sc-label,#app:not(.rail) .dc-info{display:none}#app:not(.rail) .sb-item{padding:7px 0 7px 9px}#app:not(.rail) .sb-collapse{width:29px;height:29px;justify-content:center;padding:0;margin:0 auto 6px}#app:not(.rail) .dc-rail{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;padding:0 6px 10px}#app:not(.rail) .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:auto}#app:not(.rail) .dc-ring{display:block}#app:not(.rail) .disk-card{display:flex;height:122px;padding:0}#app:not(.rail) .dc-rail-top{flex:1;display:flex;align-items:center;justify-content:center}#app:not(.rail) .dc-rail .dc-act{width:28px;height:28px;flex:none}}
+@media(max-width:900px){#sidebar{width:58px!important}#app:not(.rail) #sidebar{width:58px!important}#app:not(.rail) .sb-brand{justify-content:center}#app:not(.rail) .sb-label,#app:not(.rail) .sc-label,#app:not(.rail) .dc-info{display:none}#app:not(.rail) .sb-item{justify-content:center;padding:6px 0}
+#app:not(.rail) .sb-item:active{transform:none}#app:not(.rail) .sb-item .badge{position:absolute;right:4px;top:2px;min-width:0;width:7px;height:7px;padding:0;border-radius:9999px;font-size:0}#app:not(.rail) .sb-collapse{width:29px;height:29px;justify-content:center;padding:0;margin:0 auto 6px}#app:not(.rail) .dc-rail{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;padding:0 6px 10px}#app:not(.rail) .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:auto}#app:not(.rail) .dc-ring{display:block}#app:not(.rail) .disk-card{display:flex;height:122px;padding:0}#app:not(.rail) .dc-rail-top{flex:1;display:flex;align-items:center;justify-content:center}#app:not(.rail) .dc-rail .dc-act{width:28px;height:28px;flex:none}}
 
 #topbar{
   display:flex;align-items:center;gap:8px;
@@ -351,10 +326,7 @@ html.motion-off .osb{transition:none}
 #layout{display:flex;min-height:0;overflow:hidden}
 #sidebar{
   width:232px;flex:none;display:flex;flex-direction:column;min-height:0;
-  /* La barra lateral es la segunda capa del cristal: sin relleno propio, deja
-     pasar lo que tiene detrás y se separa por una línea de medio pixel. */
   background:var(--rail);
-  -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
   box-shadow:inset -.5px 0 0 var(--line);
   transition:width var(--d2) var(--ease-io);
   overflow:hidden;
@@ -380,11 +352,12 @@ html.motion-off .osb{transition:none}
 .sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:2px 8px 8px;min-height:0}
 .sb-item{
   display:flex;align-items:center;gap:12px;width:100%;text-align:left;
-  padding:6px 9px;height:29px;margin-bottom:3px;border-radius:var(--r-btn);color:var(--ink-2);font-size:var(--t-body);font-weight:400;
+  padding:6px 12px;height:32px;margin-bottom:3px;border-radius:var(--r-btn);color:var(--ink-2);font-size:var(--t-body);font-weight:400;
   letter-spacing:-.024em;white-space:nowrap;position:relative;
-  transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),transform var(--d2) var(--ease);
+  transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease);
 }
-.sb-item svg{width:17px;height:17px;flex:none}
+.sb-item>svg.ic{width:18px;height:18px;flex:none;display:block;align-self:center}
+.sb-item .sb-label{min-width:0}
 .sb-item:hover{background:var(--sel);color:var(--ink)}
 /* La sección actual se marca como en las barras laterales del sistema: la fila
    se rellena y su icono toma el acento. Antes llevaba además una barrita de
@@ -399,7 +372,9 @@ html.motion-off .osb{transition:none}
   transition:transform var(--d2) var(--ease-spring),opacity var(--d1) var(--ease);
 }
 
-#app.rail .sb-item{padding:6px 9px;height:29px}
+#app.rail .sb-item{justify-content:center;padding:6px 0;height:32px}
+#app.rail .sb-item .sb-label{display:none}
+#app.rail .sb-item:active{transform:none}
 #app.rail .badge{position:absolute;right:4px;top:2px;min-width:0;width:7px;height:7px;padding:0;border-radius:9999px;font-size:0}
 .sb-foot{padding:8px;border-top:1px solid var(--line)}
 /* La tarjeta de disco no es una tarjeta: es el pie de la barra lateral. Sin
@@ -459,9 +434,6 @@ html.motion-off .osb{transition:none}
    exactamente cuando termina el movimiento de la anchura. */
 #sidebar :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition:opacity var(--d1) var(--ease)}
 #sidebar.fx-hide :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){opacity:0}
-/* fx-in congela el entrante en 0 sin transición durante el intercambio de contenido;
-   fx-soft lo funde en el segundo tramo del movimiento (0,135 s + 0,015 s de retardo
-   ≈ mitad del recorrido de los 240 ms de la anchura) */
 #sidebar.fx-in :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){opacity:0!important;transition:none!important}
 #sidebar.fx-soft :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition:opacity var(--d0) var(--ease) var(--d0)!important}
 /* Durante la transición el contenido expandido se maqueta a su ancho final (232 px):
@@ -557,7 +529,6 @@ html.motion-off .osb{transition:none}
 .seg-tip{position:absolute;transform:translate(-50%,calc(-100% + 5px));background:var(--tip-bg);color:var(--tip-ink);font-size:var(--t-label);font-weight:500;padding:5px 9px;border-radius:var(--r-btn);white-space:nowrap;pointer-events:none;z-index:8;font-variant-numeric:tabular-nums;opacity:0;transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease);box-shadow:var(--shadow-pop)}
 .seg-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--tip-bg)}
 .seg-tip.on{opacity:1;transform:translate(-50%,-100%)}
-html.motion-off .seg-tip{transition:none}
 .hs .v small{font-size:var(--t-title);font-weight:400;color:var(--ink-3);letter-spacing:-.024em}
 .hs .d{font-size:var(--t-small);color:var(--ink-2);margin-top:3px}
 .hs .trend{display:inline-flex;align-items:center;gap:4px;margin-top:7px;font-size:var(--t-small);font-weight:400;color:var(--ink-2)}
@@ -683,10 +654,8 @@ html.motion-off .seg-tip{transition:none}
 .se-say p{margin:3px 0 0;font-size:var(--t-body);line-height:1.45;color:var(--ink-3);max-width:64ch}
 .se-live{display:flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:var(--r-pill);border:none;background:var(--sel);color:var(--ink-2);font-size:var(--t-small);flex:none;transition:var(--press)}
 .se-live:hover{background:var(--sel-2);color:var(--ink)}
-.se-dot{width:6px;height:6px;border-radius:50%;background:var(--acc-text);flex:none;animation:sePulse 2s var(--ease-io) infinite}
-.se-live[aria-pressed="true"] .se-dot{background:var(--ink-4);animation:none}
-html.motion-off .se-dot{animation:none}
-@keyframes sePulse{0%,100%{opacity:1}50%{opacity:.3}}
+.se-dot{width:6px;height:6px;border-radius:50%;background:var(--acc-text);flex:none}
+.se-live[aria-pressed="true"] .se-dot{background:var(--ink-4)}
 
 /* Las seis cifras del sistema: rejilla de tres por dos con filos en vez de
    marcos. El filo va en el propio canto de la celda —nada que colocar ni que
@@ -747,8 +716,8 @@ html.motion-off .se-dot{animation:none}
 .se-chart-empty{margin:0;padding:26px 0 22px 36px;font-size:var(--t-small);color:var(--ink-3);max-width:64ch;line-height:1.55}
 
 /* Entrada escalonada de las seis cifras: solo al abrir la sección —la clase
-   .boot-in la pone go() y la retira a los 1,4 s—, nunca en un repintado. */
-.boot-in .se-grid>*{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*30ms)}
+   .boot-in la pone go() y la retira al terminar la entrada, nunca en un repintado. */
+.boot-in .se-grid>*:nth-child(-n+6){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 
 
 /* Los dos números que ordenan la lista SON su cabecera: cada uno encima de su
@@ -922,11 +891,8 @@ html.motion-off .se-dot{animation:none}
 .alist.on .al-bar{opacity:.9}
 
 .alist .al-bar{transform-origin:left;transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease)}
-/* La proporción de cada fila se DIBUJA cuando la fila ya está colocada (por eso
-   el retardo va después de su entrada): la barra no es decoración, es la cifra
-   de esa fila en su escala, y verla crecer es lo que la hace comparable con la
-   de al lado. Solo al entrar, nunca al repintar. */
-.alist-rows.stagger .al-bar{animation:barGrow var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms + 90ms)}
+/* La proporción solo se dibuja en las primeras filas, una vez al entrar. */
+.alist-rows.stagger .alist:nth-child(-n+5) .al-bar{animation:barGrow var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 @media(max-width:860px){
   /* En ventana estrecha la lista se queda con lo que decide: rango, nombre y
      peso. El porcentaje sigue ahí como barra bajo la fila, y el recuento de
@@ -964,7 +930,7 @@ html.motion-off .se-dot{animation:none}
 .fol{position:relative;margin-top:9px;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-height:112px;padding:12px 13px 13px;text-align:left;color:var(--ink);background:var(--ft1);border-radius:0 var(--r-panel) var(--r-panel) var(--r-panel);transition:background-color var(--d1) var(--ease),transform var(--d2) var(--ease),box-shadow var(--d2) var(--ease)}
 /* la entrada escalonada solo cuando cambia el nivel (ver renderAtlasFolders):
    al marcar una carpeta se repinta la clase, pero la rejilla no parpadea */
-.af-grid.stagger>.fol{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms)}
+.af-grid.stagger>.fol:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 .fol::before{content:"";position:absolute;left:0;top:-9px;width:44%;height:9px;border-radius:8px 8px 0 0;background:var(--ft1);transition:background-color var(--d1) var(--ease)}
 .fol:hover,.fol.hov{background-color:var(--ft2)}
 .fol:active{transform:translateY(0) scale(.99)}
@@ -1064,8 +1030,8 @@ html.motion-off .se-dot{animation:none}
 @container (max-width:300px){
   .adon{width:min(82cqi,260px)}
 }
-.adon-wrap.stagger .adon-key{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms + 40ms)}
-.adon-wrap.stagger .adon-seg{animation:adonIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms)}
+.adon-wrap.stagger .adon-key:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
+.adon-wrap.stagger .adon-seg:nth-child(-n+5){animation:adonIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 @keyframes adonIn{from{opacity:0}to{opacity:1}}
 .adon-seg:focus-visible{outline:none;filter:brightness(1.1)}
 .adon-c b{transition:opacity var(--d1) var(--ease),transform var(--d1) var(--ease)}
@@ -1133,8 +1099,8 @@ html.motion-off .se-dot{animation:none}
    de fila a fila, que es lo que hace que una lista de números se lea sola */
 .abkt-v{font-size:var(--t-small);font-weight:500;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:96px}
 .abkt-v em{font-style:normal;font-weight:400;color:var(--ink-3)}
-.aage-wrap.stagger .abkt-key{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms + 40ms)}
-.aage-wrap.stagger .abkt-ribbon i{transform-origin:left;animation:segIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms)}
+.aage-wrap.stagger .abkt-key:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
+.aage-wrap.stagger .abkt-ribbon i:nth-child(-n+5){transform-origin:left;animation:segIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 /* La cuadrícula se mide a la vez con el ancho y con el alto que le deja la
    tarjeta: las columnas salen de repartir el ancho y las filas se quedan con
    todo lo que sobra, así el mapa ocupa el hueco entero —sin aire muerto al
@@ -1321,7 +1287,7 @@ html.motion-off .se-dot{animation:none}
    el texto dos veces desfasado y el botón parecía tener dos etiquetas
    superpuestas. El anillo es ahora un nodo real, en su propia capa. */
 .btn.busy,.dc-act.busy{pointer-events:none;color:transparent}
-.busy-ring{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2px solid var(--ink-2);border-right-color:transparent;animation:spin var(--spin) linear infinite;will-change:transform;pointer-events:none}
+.busy-ring{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2px solid var(--ink-2);border-right-color:transparent;animation:spin var(--spin) linear infinite;pointer-events:none}
 .btn-p .busy-ring{border-color:#ffffff;border-right-color:transparent}
 .btn.busy,.dc-act.busy{position:relative}
 .btn.busy svg,.dc-act.busy svg{display:none}
@@ -1406,10 +1372,6 @@ html.motion-off .se-dot{animation:none}
 .chart-wrap{position:relative;flex:1;min-height:0;margin:10px 18px 16px}
 .lc{position:absolute;inset:0;width:100%;height:100%}
 .lc-dot{cursor:pointer;fill:var(--surface);stroke:var(--acc);stroke-width:2;transition:fill var(--d1) var(--ease),stroke var(--d1) var(--ease),stroke-width var(--d1) var(--ease);transform-box:fill-box;transform-origin:center}
-/* El punto no aparece: aterriza. Cada punto es un dato y llega cuando la línea
-   pasa por su altura, así que entra creciendo desde su propio centro —de ahí
-   transform-box:fill-box, que lleva el origen al punto y no al lienzo del SVG—. */
-@keyframes dotIn{from{opacity:0;transform:scale(.45)}}
 .lc-dot:hover,.lc-dot.hb{fill:var(--acc)}
 /* selección para comparar: el punto crece y muestra el nº de hueco (1 o 2).
    El número vive en un <text> hermano —el radio pequeño no cabe texto legible—
@@ -1417,11 +1379,7 @@ html.motion-off .se-dot{animation:none}
 .lc-dot.on{fill:var(--acc);stroke:var(--acc);stroke-width:3}
 .lc-num{font-size:11px;font-weight:500;fill:#fff;pointer-events:none;font-family:var(--font);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:rgba(0,0,0,.18);stroke-width:1px}
 .lc-x{position:absolute;bottom:2px;transform:translateX(-50%);font-size:var(--t-micro);color:var(--ink-3);white-space:nowrap;font-variant-numeric:tabular-nums;pointer-events:none}
-.lc-tip{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:var(--tip-bg);color:var(--tip-ink);font-size:var(--t-label);font-weight:500;padding:5px 9px;border-radius:var(--r-btn);white-space:nowrap;pointer-events:none;z-index:6;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-pop);animation:tipIn var(--d2) var(--ease)}
-/* el globo se muestra alternando [hidden], así que display pasa de none a
-   block: la animación se reproduce entera en cada aparición y no hace falta
-   tocarlo desde el JS */
-@keyframes tipIn{from{opacity:0;transform:translate(-50%,calc(-100% - 4px))}to{opacity:1;transform:translate(-50%,calc(-100% - 10px))}}
+.lc-tip{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:var(--tip-bg);color:var(--tip-ink);font-size:var(--t-label);font-weight:500;padding:5px 9px;border-radius:var(--r-btn);white-space:nowrap;pointer-events:none;z-index:6;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-pop);animation:fadeIn var(--d1) var(--ease)}
 .lc-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--ink)}
 .hist-side{overflow:hidden;display:flex;flex-direction:column;min-height:300px;height:auto}
 .hist-scroll{flex:1;min-height:0;overflow-y:auto;padding:6px 8px 10px;display:flex;flex-direction:column;gap:4px}
@@ -1642,7 +1600,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 .pap-days{font-variant-numeric:tabular-nums;font-size:var(--t-small);color:var(--ink-3)}
 
 /* ---------- Hojas / diálogos ---------- */
-.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,12,.3);display:grid;place-items:center;animation:fadeIn var(--d2) var(--ease)}
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,12,.3);display:grid;place-items:center;animation:fadeIn var(--d1) var(--ease)}
 .overlay.closing{animation:fadeOut var(--d2) var(--ease) forwards;pointer-events:none}
 html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -1774,26 +1732,6 @@ select.set-sel:hover{background:var(--sel-2)}
 
 /* misc */
 .num{font-variant-numeric:tabular-nums}
-/* Movimiento reducido: se suprime lo decorativo (animaciones de entrada, fundidos),
-   pero las transiciones esenciales de estructura se conservan — mismo criterio que macOS,
-   donde el redimensionado de la barra lateral es feedback espacial, no adorno. */
-html.motion-off *,html.motion-off *::before,html.motion-off *::after{
-  transition-duration:.01ms!important;transition-delay:0s!important
-}
-html.motion-off *{
-  /* fill-mode:forwards — la animación instantánea acaba en su fotograma final
-     (que siempre es el estado natural del elemento). Con "backwards" Chromium
-     congela el fotograma INICIAL al acortar la duración a 0.01ms: los segmentos
-     del anillo quedaban a opacity:0 y el donut se veía gris. */
-  animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;animation-fill-mode:forwards!important
-}
-html.motion-off #sidebar{transition-duration:var(--d2)!important;transition-delay:0s!important}
-html.motion-off #sidebar.fx-soft :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition-duration:var(--d0)!important;transition-delay:var(--d0)!important}
-html.motion-off #sidebar:not(.fx-soft) :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition-duration:var(--d0)!important;transition-delay:0s!important}
-@keyframes viewIn{from{opacity:0;transform:translateY(calc(var(--vdir,1) * 6px))}to{opacity:1;transform:none}}
-/* el cambio de sección es el momento más visto de la app: entra con recorrido
-   real y una curva que frena, no con un parpadeo */
-.view-enter{animation:viewIn var(--d3) var(--ease)}
 @keyframes segIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .hs .bar i{transform-origin:left}
 /* La barra del Resumen se arma desde la izquierda cuando aparece (o cuando
@@ -1803,7 +1741,7 @@ html.motion-off #sidebar:not(.fx-soft) :is(.sb-label,.sc-label,.dc-info,.dc-rail
    «ha cambiado algo» y un repintado no es un cambio. */
 @keyframes barGrow{from{transform:scaleX(0)}}
 .hs .bar.grow i{animation:barGrow var(--d3) var(--ease) backwards}
-@keyframes tileIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes tileIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
 /* La cascada de bloques solo al cambiar de nivel —igual que el anillo—: si se
    reprodujera en cada repintado, cada clic dentro del mapa reanimaría la
    rejilla entera y el gesto se volvería pesado.
@@ -1814,40 +1752,31 @@ html.motion-off #sidebar:not(.fx-soft) :is(.sb-label,.sc-label,.dc-info,.dc-rail
    truco que usa macOS en cada zoom. Al subir de nivel el punto es la miga (arriba
    a la izquierda), así que salir también se lee como volver hacia atrás. */
 .map-area.anim .tile{animation:tileIn var(--d2) var(--ease) backwards}
-/* Una cifra que cambia entra desde el lado al que se ha movido: si ha subido,
-   sube; si ha bajado, baja. Antes daba un tirón de escala hacia arriba pasara
-   lo que pasara —que solo decía «mira, cambió», sin decir hacia dónde—. */
-@keyframes numUp{from{opacity:.55;transform:translateY(5px)}to{opacity:1;transform:none}}
-@keyframes numDown{from{opacity:.55;transform:translateY(-5px)}to{opacity:1;transform:none}}
-.num-up{animation:numUp var(--d2) var(--ease)}
-.num-down{animation:numDown var(--d2) var(--ease)}
+/* Las cifras mantienen su posición; el cambio ya se entiende por su valor. */
+@keyframes numChange{from{opacity:.7}to{opacity:1}}
+.num-up,.num-down{animation:numChange var(--d1) var(--ease)}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes shellIn{from{opacity:0}to{opacity:1}}
-#app{animation:shellIn var(--d4) var(--ease)}
-@keyframes riseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-/* La entrada escalonada: recorrido un poco mayor y curva de frenada. El escalón
-   es el que da la sensación de que las piezas se colocan en orden en vez de
-   aparecer a la vez. */
-/* .stagger se aplica SOLO cuando el contenedor se construye o cambia de nivel:
-   quien repinta sin entrada retira la clase (renderFiles, renderAtlasList…).
-   .ins-grid anima solo dentro de un arranque de vista (.boot-in del main) —
-   antes re-aparecía en cada hover de fila y cada limpieza. */
-.stagger>*{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*20ms)}
-.boot-in .ins-grid>*{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*45ms)}
+@keyframes riseIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes viewIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.view.boot-in>.v-body{animation:viewIn var(--d3) var(--ease) both}
+/* El escalonado da orden a grupos cortos, pero se limita a cinco piezas y no
+   se aplica a filas de tablas ni a listas potencialmente largas. */
+.stagger>*:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
+.boot-in .ins-grid>*:nth-child(-n+3){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 /* Entradas del Resumen SOLO al cargar la vista: la clase .boot-in se pone al
    construir la vista y se retira cuando termina — así el CSS no re-anima las
    tarjetas en cada repintado (bump de cifras, banner tras limpiar, tema…).
    Antes las .hs y .hero-foot llevaban animation directa: cada render del
    Resumen las hacía aparecer de nuevo. */
-.boot-in .hs:nth-child(1){animation:riseIn var(--d3) var(--ease) backwards}
-.boot-in .hs:nth-child(2){animation:riseIn var(--d3) var(--ease) .05s backwards}
-.boot-in .hero-foot{animation:riseIn var(--d3) var(--ease) .09s backwards}
-.banner-ok.b-in{animation:riseIn var(--d3) var(--ease)}
+.boot-in .hs:nth-child(1){animation:riseIn var(--d2) var(--ease) backwards}
+.boot-in .hs:nth-child(2){animation:riseIn var(--d2) var(--ease) calc(1 * var(--stagger-step)) backwards}
+.boot-in .hero-foot{animation:riseIn var(--d2) var(--ease) calc(2 * var(--stagger-step)) backwards}
+.banner-ok.b-in{animation:riseIn var(--d2) var(--ease)}
 /* El detalle del Atlas es el nivel de dentro, y vive a la derecha de la lista:
    entra desde ahí, no desde abajo. Así el gesto de abrir una categoría se lee
    como «he entrado», que es lo que ha pasado. */
-@keyframes panelIn{from{opacity:0;transform:translateX(10px)}}
-.ap-main.p-in{animation:panelIn var(--d3) var(--ease)}
+@keyframes panelIn{from{opacity:0;transform:translateX(6px)}}
+.ap-main.p-in{animation:panelIn var(--d2) var(--ease)}
 @keyframes lineIn{to{stroke-dashoffset:0}}
 /* Fundido de tema: transición SOLO en el elemento raíz y mediante variables.
    La versión anterior (html.theme-anim * !important) iniciaba transiciones en
@@ -1981,16 +1910,12 @@ html.theme-anim .sb-item{
 .pending-panel .btn{margin-top:10px}
 
 /* ---------- Intro del primer análisis ----------
-   Tres piezas y ningún aspaviento: un velo que desenfoca lo que hay detrás, la
-   marca respirando y una barra finísima que avanza con el trabajo real. Todo
-   entra escalonado (marca, título, barra, texto) y sale como una sola cosa. No
-   hay rebotes ni giros en bucle: las duraciones y las curvas son las de la app
-   (--d2/--d3/--d4), para que la intro sea el mismo idioma que el resto de la
-   interfaz y no una pantalla aparte. */
+   La entrada se limita a un fundido corto y la barra sigue el progreso real.
+   No hay blur ni movimiento continuo: el análisis puede durar varios segundos. */
 #scan-intro{position:fixed;inset:0;z-index:200;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity var(--d4) var(--ease)}
 #scan-intro.on{opacity:1;pointer-events:auto}
 #scan-intro.done{opacity:0;pointer-events:none}
-.si-veil{position:absolute;inset:0;background:var(--bg);opacity:.94;-webkit-backdrop-filter:blur(22px) saturate(120%);backdrop-filter:blur(22px) saturate(120%)}
+.si-veil{position:absolute;inset:0;background:var(--bg);opacity:.94}
 .si-box{position:relative;display:flex;flex-direction:column;align-items:center;gap:20px}
 .si-box>*{opacity:0;transform:translateY(7px);transition:opacity var(--d3) var(--ease),transform var(--d3) var(--ease)}
 #scan-intro.on .si-box>*{opacity:1;transform:none}
@@ -1998,28 +1923,15 @@ html.theme-anim .sb-item{
 #scan-intro.on .si-track{transition-delay:.08s}
 #scan-intro.on .si-sub{transition-delay:.2s}
 #scan-intro.done .si-box>*{opacity:0;transform:translateY(-5px);transition-delay:0s;transition-duration:var(--d2)}
-/* La marca del análisis no es el logo: es el trabajo ocurriendo. Cuatro cubos
-   caen de dos en dos, se apilan un instante y siguen bajando hasta fundirse
-   con el fondo: el gesto de una pila que crece y se reordena sola, sin rebotes
-   ni bucles nerviosos. Cada cubo lleva sus tres caras —tapa clara, costado en
-   el acento y costado oscuro— para leerse como un volumen de verdad y no como
-   una mancha, con la luz siempre viniendo de arriba, igual que en el resto de
-   la interfaz. Las tres tintas salen del acento de la app, así que el cargador
-   es idéntico en claro y en oscuro. */
+/* Marca estática durante el análisis: la barra inferior es el único progreso
+   animado y sigue el trabajo real, sin adornos en bucle. */
 .si-mark{position:relative;width:96px;height:96px;display:grid;place-items:center}
 .si-cubes{position:relative;display:block;width:40px;height:50px;scale:1.5}
-.si-cubes .cube{position:absolute;left:10px;top:0;width:20px;height:20px;opacity:0}
+.si-cubes .cube{position:absolute;left:10px;top:0;width:20px;height:20px;opacity:1}
 .si-cubes .side-top{position:absolute;left:0;top:0;width:20px;height:20px;background:color-mix(in srgb, var(--acc) 66%, #ffffff);rotate:45deg;transform:skew(-20deg,-20deg)}
 .si-cubes .side-right{position:absolute;left:-9px;top:14px;width:19px;height:5px;background:var(--acc);transform:skew(0deg,25deg)}
 .si-cubes .side-left{position:absolute;left:10px;top:14px;width:19px;height:5px;background:color-mix(in srgb, var(--acc) 74%, #000000);transform:skew(0deg,-25deg)}
-.cube-1{animation:cubeFromLeft 4s var(--ease-io) infinite}
-.cube-2{animation:cubeFromRight 4s var(--ease-io) infinite;animation-delay:1s}
-.cube-3{animation:cubeFromLeft 4s var(--ease-io) infinite;animation-delay:2s}
-.cube-4{animation:cubeFromRight 4s var(--ease-io) infinite;animation-delay:3s}
-/* z-index dentro de los fotogramas: cada cubo cae POR DETRÁS del que ya está
-   apoyado, y ese es justo el orden que hace legible la pila. */
-@keyframes cubeFromLeft{0%{z-index:20;opacity:0;translate:-20px -6px}20%{z-index:10;opacity:1;translate:0 0}40%{z-index:9;translate:0 4px}60%{z-index:8;translate:0 8px}80%{z-index:7;opacity:1;translate:0 12px}100%{z-index:5;opacity:0;translate:0 30px}}
-@keyframes cubeFromRight{0%{z-index:20;opacity:0;translate:20px -6px}20%{z-index:10;opacity:1;translate:0 0}40%{z-index:9;translate:0 4px}60%{z-index:8;translate:0 8px}80%{z-index:7;opacity:1;translate:0 12px}100%{z-index:5;opacity:0;translate:0 30px}}
+
 .si-track{width:260px;height:3px;border-radius:99px;background:var(--track);overflow:hidden}
 /* La barra avanza por transform (escala) desde la izquierda: se anima en la GPU
    y no re-mide el diseño en cada fotograma, que era lo que la hacía escalonada. */
@@ -2028,14 +1940,6 @@ html.theme-anim .sb-item{
 /* El cruce del texto no puede heredar el retardo de la entrada (200 ms), o cada
    cifra del escaneo aparecería con un cuarto de segundo de más. */
 #scan-intro .si-sub.swap{opacity:0;transition-delay:0s}
-/* Con movimiento reducido los cubos no caen: queda uno quieto, ya apoyado. */
-html.motion-off .si-cubes .cube{animation:none;opacity:1;translate:0 0}
-html.motion-off .si-cubes .cube:nth-child(n+2){display:none}
-/* Un indicador de espera no es adorno: si se congela, deja de decir que algo
-   está pasando. Con movimiento reducido siguen girando, solo que eso es lo
-   único que se mueve. */
-html.motion-off :is(.busy-ring,.tbs-dot){animation-duration:var(--spin)!important;animation-iteration-count:infinite!important;animation-timing-function:linear!important}
-.motion-off #scan-intro,.motion-off .si-box>*,.motion-off .si-sub{transition:none}
 
 /* ============================================================
    Pulsado · el control se hunde en su propia losa
@@ -2111,11 +2015,8 @@ html.motion-off :is(.busy-ring,.tbs-dot){animation-duration:var(--spin)!importan
   <div class="si-veil"></div>
   <div class="si-box">
     <div class="si-mark" aria-hidden="true">
-      <span class="si-cubes">
-        <i class="cube cube-1"><i class="side-top"></i><i class="side-right"></i><i class="side-left"></i></i>
-        <i class="cube cube-2"><i class="side-top"></i><i class="side-right"></i><i class="side-left"></i></i>
-        <i class="cube cube-3"><i class="side-top"></i><i class="side-right"></i><i class="side-left"></i></i>
-        <i class="cube cube-4"><i class="side-top"></i><i class="side-right"></i><i class="side-left"></i></i>
+      <span class="si-cubes" aria-hidden="true">
+        <i class="cube"><i class="side-top"></i><i class="side-right"></i><i class="side-left"></i></i>
       </span>
     </div>
     <div class="si-track"><span class="si-fill" id="si-fill"></span></div>
@@ -2714,21 +2615,6 @@ function inApp(){
 </script>
 <script>
 "use strict";
-const sysReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-/* El interruptor de Ajustes manda, y arranca APAGADO: Brisa es una app de
-   movimiento y lo primero es que se vea. Antes el valor inicial era «seguir a
-   macOS», así que en un Mac con «Reducir movimiento» activado —que es lo que
-   pasa aquí— la app entera nacía quieta: ni entradas de sección, ni cascada de
-   bloques, ni cruce del anillo. La preferencia del sistema se sigue leyendo
-   (sysReduce) y se cuenta en Ajustes, pero no decide por su cuenta: si alguien
-   necesita la app sin animaciones, lo apaga ahí. */
-let reduce = false;
-function motionOff(){
-  const r=!!STATE.settings.reduceMotion;
-  document.documentElement.classList.toggle("motion-off",r);
-  reduce=r;
-  return r;
-}
 let TOTAL = 0; /* GB reales del volumen: llegan con el análisis (setState) */
 /* Identidad visible de esta entrega beta. Se actualiza junto con
    CFBundleShortVersionString/BrisaReleaseChannel al preparar una release. */
@@ -2911,8 +2797,6 @@ const I18N = {
     "set.launchAtLogin":"Abrir al iniciar sesión", "set.launchAtLoginD":"Brisa se abre en segundo plano al encender tu Mac.",
     "set.menuBar":"Icono en la barra de menús", "set.menuBarD":"Anillo de estado y acceso rápido desde la barra superior.",
     "set.appearance":"Apariencia", "set.light":"Claro", "set.dark":"Oscuro",
-    "set.reduceMotion":"Reducir movimiento", "set.reduceMotionD":"Desactiva las animaciones.",
-    "set.sysReduce":"Tu Mac lo tiene activado; la app no lo hereda.",
     "set.language":"Idioma", "set.languageD":"Traducciones oficiales: Español e inglés.",
     "set.retention":"Conservar lo eliminado", "set.retentionD":"Días antes de vaciar la Papelera de Brisa.",
     "set.privacyD":"Brisa no tiene telemetría ni acceso a la red. Todo se calcula localmente.",
@@ -3151,8 +3035,6 @@ const I18N = {
     "set.launchAtLogin":"Launch at login", "set.launchAtLoginD":"Brisa opens in the background when you turn on your Mac.",
     "set.menuBar":"Menu bar icon", "set.menuBarD":"Status ring and quick access from the top bar.",
     "set.appearance":"Appearance", "set.light":"Light", "set.dark":"Dark",
-    "set.reduceMotion":"Reduce motion", "set.reduceMotionD":"Turns animations off.",
-    "set.sysReduce":"Your Mac has it on; the app doesn't inherit it.",
     "set.language":"Language", "set.languageD":"Official translations: Español and English.",
     "set.retention":"Keep deleted items", "set.retentionD":"Days before Brisa Trash is emptied.",
     "set.privacyD":"Brisa has no telemetry and no network access. Every calculation happens locally.",
@@ -3281,7 +3163,7 @@ const STATE = {
   ritmo: false,
   sched: "daily",
   settings: {
-    sec: "general", retention: 30, launch: true, menubar: true, weekly: true, full: true, anon: false, language: "es", autoClean: true, reduceMotion: false
+    sec: "general", retention: 30, launch: true, menubar: true, weekly: true, full: true, anon: false, language: "es", autoClean: true
   },
   /* Solo el prototipo puede rellenar datos de demostración. La app nativa
      mantiene este indicador a false y nunca usa estos valores. */
@@ -3413,7 +3295,7 @@ function setTheme(t,persist=true){
      así que el tema volvía al del sistema cada vez que abrías la app. */
   if(persist){ try{ localStorage.setItem("brisa-theme",t); }catch(e){} }
   const d=document.documentElement; d.classList.add("theme-anim");
-  clearTimeout(setTheme._t); setTheme._t=setTimeout(()=>d.classList.remove("theme-anim"),380);
+  clearTimeout(setTheme._t); setTheme._t=setTimeout(()=>d.classList.remove("theme-anim"),260);
   const tb=$("#tb-theme"); if(tb)tb.innerHTML=SVG(t==="light"?"moon":"sun");
   $$(".set-seg button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
   repaintCurrent();
@@ -3480,8 +3362,6 @@ function renderNav(){
     go(b.dataset.view);
   }));
 }
-const NAV_ORDER=NAV_ITEMS.map(it=>it.v);
-let lastView=null; /* la sección anterior: da la dirección de la entrada */
 /* Las acciones propias de una sección viven en la barra de arriba: se enseña la
    del grupo al que pertenece la sección en curso y se esconde la demás. Antes
    cada pantalla llevaba su propia fila de botones dentro del contenido, en una
@@ -3492,26 +3372,12 @@ function syncToolbar(name){
   if(p)p.hidden=name!=="papelera";
 }
 function go(name){
-  /* El contenido no entra siempre desde abajo: entra desde el lado hacia el que
-     te has movido en la lista de la barra lateral. Bajar en esa lista (Resumen →
-     Historial) trae la sección desde abajo; subir la trae desde arriba. Es la
-     misma información que da la fila marcada, contada en el eje del movimiento:
-     el gesto dice de dónde vienes sin que haya que mirar la barra. */
-  const from=NAV_ORDER.indexOf(lastView), to=NAV_ORDER.indexOf(name);
-  const dir=(from>=0&&to>=0&&to<from)?-1:1;
-  lastView=name;
   $$(".view").forEach(v=>v.hidden=v.id!=="view-"+name);
   const cur=$("#view-"+name);
   if(cur){
-    cur.style.setProperty("--vdir",String(dir));
-    /* view-enter + boot-in entran UNA vez por visita: se retiran al terminar
-       (600 ms cubre la cascada más larga), así un repintado posterior de la
-       vista —hover, limpieza, cambio de tema— no vuelve a animar lo que ya
-       estaba en pantalla. Antes las clases permanecían y convivían con las
-       animaciones de las listas: doble entrada garantizada. */
-    cur.classList.remove("view-enter","boot-in");void cur.offsetWidth;cur.classList.add("view-enter","boot-in");
+    cur.classList.remove("boot-in");void cur.offsetWidth;cur.classList.add("boot-in");
     clearTimeout(cur._bootT);
-    cur._bootT=setTimeout(()=>cur.classList.remove("view-enter","boot-in"),1400);
+    cur._bootT=setTimeout(()=>cur.classList.remove("boot-in"),420);
   }
   $$(".sb-item").forEach(b=>b.setAttribute("aria-current",b.dataset.view===name?"page":"false"));
   syncToolbar(name);
@@ -3650,10 +3516,8 @@ function growBar(){
 }
 function bumpIf(el,v){
   if(!el||el.textContent===v)return;
-  /* Una cifra no solo cambia: sube o baja. La dirección es el dato —«has
-     liberado 16,8 GB»— así que el número entra desde el lado al que se ha
-     movido. Un guion (estado pendiente) no tiene dirección que contar y solo
-     se cambia el texto. */
+  /* El valor nuevo recibe un fundido mínimo; no se desplaza, porque la unidad
+     ya ocupa un lugar fijo y el cambio frecuente no debe llamar la atención. */
   const from=numOf(el.textContent), to=numOf(v);
   el.textContent=v;
   if(from===null||to===null||from===to){
@@ -3742,7 +3606,7 @@ function refreshScore(animate){
   $("#score-sent").textContent = STATE.ser>=90?t("score.high"):STATE.ser>=75?t("score.mid"):STATE.ser>=55?t("score.low"):t("score.crit");
   const trend=$("#score-trend");
   trend.hidden=true; /* la semana comparativa existe cuando hay historial real; sin él, no hay tendencia inventada */
-  if(reduce||!animate){el.textContent=STATE.ser;return;}
+  if(!animate){el.textContent=STATE.ser;return;}
   const from=Number(el.textContent)||0, t0=performance.now();
   (function st(t){const p=clamp((t-t0)/900,0,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(STATE.ser-from)*e);if(p<1)requestAnimationFrame(st);})(performance.now());
 }
@@ -3864,8 +3728,12 @@ function renderResumen(){
      Hacerlo en cada repintado lanzaba la entrada entera cada vez que cambiabas
      de tema —el tirón que se veía en Resumen—. */
   const vb=view.querySelector(".v-body");
-  if(vb&&entranDatos){ vb.classList.remove("boot-in"); void vb.offsetWidth; vb.classList.add("boot-in");
-    setTimeout(()=>vb.classList.remove("boot-in"),1400); }
+  if(vb&&entranDatos){
+    vb.classList.remove("boot-in");
+    void vb.offsetWidth;
+    vb.classList.add("boot-in");
+    setTimeout(()=>vb.classList.remove("boot-in"),420);
+  }
   const ok=$("#ok-banner"), la=STATE.lastAction;
   if(la && la.type==="clean"){
     /* El aviso entra cuando aparece; si ya estaba a la vista, un repintado no
@@ -3919,9 +3787,8 @@ function closeSheet(){
   const o=host.querySelector(".overlay");
   if(!o){host.innerHTML="";return;}
   if(sheetClosing)return;
-  if(reduce){host.innerHTML="";return;}
   o.classList.add("closing");
-  sheetClosing=setTimeout(()=>{sheetClosing=null;host.innerHTML="";},240);
+  sheetClosing=setTimeout(()=>{sheetClosing=null;host.innerHTML="";},180);
 }
 function requestScan(){
   /* App real: pedir el análisis a Swift. En el navegador, simulación. */
@@ -4001,8 +3868,7 @@ function scanAgeText(){
 /* ---------- Intro del análisis ----------
    El progreso real del escáner alimenta un objetivo, y la barra se acerca a él
    en cada fotograma (suavizado exponencial). Así no hay saltos: da igual que el
-   escáner informe en ráfagas de 200 ms, la barra siempre se está moviendo. Si
-   el sistema pide reducir movimiento, el avance es directo. */
+   escáner informe en ráfagas de 200 ms, la barra siempre se está moviendo. */
 const INTRO={ov:null,fill:null,sub:null,cur:0,target:0,pendingTarget:0,lastFrame:0,raf:0,exitT:0,active:false,text:'',t0:0,paintedAt:0};
 let introSwapT=null;
 function introEls(){
@@ -4016,7 +3882,6 @@ function introEls(){
 function introText(txt){
   if(!INTRO.sub||!txt||txt===INTRO.text)return;
   INTRO.text=txt;
-  if(reduce){ INTRO.sub.textContent=txt; return; }
   INTRO.sub.classList.add("swap");
   clearTimeout(introSwapT);
   introSwapT=setTimeout(()=>{ INTRO.sub.textContent=txt; INTRO.sub.classList.remove("swap"); },150);
@@ -4245,7 +4110,7 @@ function scanNow(){
   /* Progreso simulado coherente con la intro: el navegador no tiene el escáner
      de Swift, así que la curva la compone scanIntroTick igual que la app hace
      con introProgress. */
-  const dur=reduce?250:1600, t0=performance.now();
+  const dur=1600, t0=performance.now();
   const tick=()=>{
     const p=Math.min(1,(performance.now()-t0)/dur);
     if(first&&INTRO.active) introProgress(Math.round(p*240000),Math.round(p*424));
@@ -4306,7 +4171,7 @@ function runClean(items){
       const r=pl.querySelector('[data-k="'+i+'"]'); if(r){r.classList.add("done"); r.querySelector(".ps").textContent=fmt(items[i].gb)+" GB ✓";}
       $("#fill").style.width=Math.round((i+1)/items.length*100)+"%";
       $("#pct").textContent=Math.round((i+1)/items.length*100)+" %";
-      i++; setTimeout(step, reduce?40:400);
+      i++; setTimeout(step,400);
     } else {
       $("#fill").style.width="100%"; $("#pct").textContent="100 %";
       doClean(items);
@@ -4745,27 +4610,11 @@ function histStats(filtered,animate){
     <div class="hstat" style="--i:1"><span class="hs-v num">${n}</span><span class="hs-k">limpiezas</span></div>
     <div class="hstat" style="--i:2"><span class="hs-v num">${fmt(best)} GB</span><span class="hs-k">${t("hist.bestRound")}</span></div>`;
 }
-/* Inversa de la curva de la casa, por bisección sobre la componente y.
-   La usa el gráfico del Historial: la línea se dibuja avanzando con esa curva,
-   y cada punto tiene que aterrizar justo cuando la punta del trazo llega a su
-   altura —no cuando le toca por índice, porque los puntos no están repartidos
-   a intervalos iguales y la curva no avanza a ritmo constante—. Repartir los
-   retardos por índice es lo que hacía que los círculos aparecieran «antes» de
-   que la línea pasara por ellos. */
+/* La línea se anima una vez; los puntos permanecen fijos para no competir con ella. */
 let histLastHtml="";   /* último SVG pintado: evita repintados idénticos */
 let histEntryT=-1e9;    /* cuándo empezó la entrada: protege el dibujado de repintados */
-function easeInv(f){
-  const x1=.22,y1=1,x2=.36,y2=1;
-  const bx=p=>{const u=1-p;return 3*u*u*p*x1+3*u*p*p*x2+p*p*p;};
-  const by=p=>{const u=1-p;return 3*u*u*p*y1+3*u*p*p*y2+p*p*p;};
-  let lo=0,hi=1;
-  for(let i=0;i<18;i++){const mid=(lo+hi)/2;if(by(mid)<f)lo=mid;else hi=mid;}
-  return bx((lo+hi)/2);
-}
 function histChart(filtered,animate){
   const wrap=$("#hist-chart");
-  /* el trazado del gráfico también respeta reduce-motion */
-  if(reduce)animate=false;
   /* medir el ancho real en pantalla: al entrar a la vista el panel aún tiene
      el layout de la entrada por hacer y puede medir la mitad; si el ancho
      cambia entre el render y el siguiente frame, se redibuja con la medida
@@ -4786,14 +4635,14 @@ function histChart(filtered,animate){
     html=`<div class="map-empty">${t("hist.noneInRange")}</div>`;
   }else if(pts.length===1){
     const p=pts[0];
-    html=`<svg class="lc" width="${W}" height="${H}" aria-label="${t("hist.pointAria",{d:fmtDateFull(p.ts),gb:fmt(p.gb)})}"><circle class="lc-dot${histSel.includes(p.raw.id)?" on":""}" data-id="${p.raw.id}" cx="${X(p.ts).toFixed(1)}" cy="${Y(p.gb).toFixed(1)}" r="5"${animate?` style="animation:dotIn var(--d3) var(--ease) backwards"`:""}/></svg>`;
+    html=`<svg class="lc" width="${W}" height="${H}" aria-label="${t("hist.pointAria",{d:fmtDateFull(p.ts),gb:fmt(p.gb)})}"><circle class="lc-dot${histSel.includes(p.raw.id)?" on":""}" data-id="${p.raw.id}" cx="${X(p.ts).toFixed(1)}" cy="${Y(p.gb).toFixed(1)}" r="5"/></svg>`;
   }else{
     const line=pts.map((p,i)=>(i?"L":"M")+X(p.ts).toFixed(1)+" "+Y(p.gb).toFixed(1)).join(" ");
     const area=line+` L${X(t1).toFixed(1)} ${H-P.b} L${X(t0).toFixed(1)} ${H-P.b} Z`;
     html=`<svg class="lc" width="${W}" height="${H}" role="img" aria-label="${t("hist.chartAria",{gb:fmt(maxV)})}">
-      <path d="${area}" fill="var(--acc)" fill-opacity=".07"${animate?` style="animation:fadeIn var(--d3) var(--ease) .06s backwards"`:""}/>
-      <path d="${line}" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"${animate?` pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1;animation:lineIn var(--d4) var(--ease) .1s forwards"`:""}/>
-      ${pts.map((p,i)=>{const selIdx=histSel.indexOf(p.raw.id);const f=(X(p.ts)-X(pts[0].ts))/((X(pts[pts.length-1].ts)-X(pts[0].ts))||1);return `<circle class="lc-dot${selIdx>=0?" on":""}" data-id="${p.raw.id}" cx="${X(p.ts).toFixed(1)}" cy="${Y(p.gb).toFixed(1)}" r="${selIdx>=0?10:4.5}" tabindex="0"${animate?` style="animation:dotIn var(--d2) var(--ease) ${(.1+.46*easeInv(f)).toFixed(2)}s backwards"`:""} aria-label="${fmtDateFull(p.raw.ts)}, ${fmt(p.raw.gb)} GB, total ${fmt(p.gb)} GB"/>${selIdx>=0?`<text class="lc-num" x="${X(p.ts).toFixed(1)}" y="${Y(p.gb).toFixed(1)}">${selIdx+1}</text>`:""}`}).join("")}
+      <path d="${area}" fill="var(--acc)" fill-opacity=".07"${animate?` style="animation:fadeIn var(--d1) var(--ease) backwards"`:""}/>
+      <path d="${line}" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"${animate?` pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1;animation:lineIn var(--d3) var(--ease) forwards"`:""}/>
+      ${pts.map(p=>{const selIdx=histSel.indexOf(p.raw.id);return `<circle class="lc-dot${selIdx>=0?" on":""}" data-id="${p.raw.id}" cx="${X(p.ts).toFixed(1)}" cy="${Y(p.gb).toFixed(1)}" r="${selIdx>=0?10:4.5}" tabindex="0" aria-label="${fmtDateFull(p.raw.ts)}, ${fmt(p.raw.gb)} GB, total ${fmt(p.gb)} GB"/>${selIdx>=0?`<text class="lc-num" x="${X(p.ts).toFixed(1)}" y="${Y(p.gb).toFixed(1)}">${selIdx+1}</text>`:""}`}).join("")}
     </svg>
     <div class="lc-tip" id="lc-tip" hidden></div>
     ${[t0,t0+(t1-t0)/2,t1].map(ts=>`<span class="lc-x" style="left:${X(ts).toFixed(0)}px">${fmtDate(ts)}</span>`).join("")}`;
@@ -5446,7 +5295,7 @@ function setAtlasMode(m){
     donutModeJustEntered=m==="donut";
     drawAtlas(true); /* rumbo, paso al detalle y card del panel siguen al modo */
   };
-  if(reduce||!stage){apply();return;}
+  if(!stage){apply();return;}
   stage.classList.add("swap");
   clearTimeout(modeSwapT);
   modeSwapT=setTimeout(()=>{apply();stage.classList.remove("swap");},120);
@@ -5564,7 +5413,7 @@ function drawAtlas(force){
   /* la cascada se decide ANTES de construir el HTML: el delay por tile solo
      se imprime si la cascada va a correr */
   const lv=atlasSel||"root";
-  const anim=!reduce&&(force===true||lv!==drawAtlas._lv);
+  const anim=force===true||lv!==drawAtlas._lv;
   drawAtlas._lv=lv;
   /* La cascada está corriendo y el nivel no ha cambiado: este pase viene de un
      repintado (medida del panel, segundo intento de layout al entrar, watchSize)
@@ -6143,7 +5992,6 @@ function settingsSections(s){ return {
         <div class="set-row"><div class="sr-t"><b>${t("set.launchAtLogin")}</b><small>${t("set.launchAtLoginD")}</small></div><button class="mini-switch set-tgl" data-k="launch" role="switch" aria-checked="${s.launch}" aria-label="${t("set.launchAtLogin")}"></button></div>
         <div class="set-row"><div class="sr-t"><b>${t("set.menuBar")}</b><small>${t("set.menuBarD")}</small></div><button class="mini-switch set-tgl" data-k="menubar" role="switch" aria-checked="${s.menubar}" aria-label="${t("set.menuBar")}"></button></div>
         <div class="set-row"><div class="sr-t"><b>${t("set.appearance")}</b></div><div class="set-seg" data-k="theme"><button class="${STATE.theme==='light'?'on':''}" data-t="light">${t("set.light")}</button><button class="${STATE.theme==='dark'?'on':''}" data-t="dark">${t("set.dark")}</button></div></div>
-        <div class="set-row"><div class="sr-t"><b>${t("set.reduceMotion")}</b><small>${t("set.reduceMotionD")}${sysReduce?" "+t("set.sysReduce"):""}</small></div><button class="mini-switch set-tgl" data-k="reduceMotion" role="switch" aria-checked="${!!s.reduceMotion}" aria-label="${t("set.reduceMotion")}"></button></div>
         <div class="set-row"><div class="sr-t"><b>${t("set.language")}</b><small>${t("set.languageD")}</small></div><select class="set-sel" data-k="language"><option value="es" ${s.language==="es"?"selected":""}>Español</option><option value="en" ${s.language==="en"?"selected":""}>English</option></select></div>
       </div>`,
     papelera:`
@@ -6200,8 +6048,7 @@ function bindSettingsControls(s){
   $$(".set-tgl").forEach(b=>b.addEventListener("click",()=>{
     const k=b.dataset.k,on=b.getAttribute("aria-checked")==="true";
     b.setAttribute("aria-checked",String(!on));
-    if(k==="reduceMotion"){STATE.settings.reduceMotion=!on;motionOff();}
-    else if(k!=="retention")STATE.settings[k]=!on;
+    if(k!=="retention")STATE.settings[k]=!on;
     saveSettings();
   }));
   $$("[data-k='retention']").forEach(sel=>sel.addEventListener("change",()=>{s.retention=Number(sel.value);saveSettings();renderPapelera();refreshSpace();syncMaintenance();}));
@@ -6253,7 +6100,7 @@ function toast(msg,sub){
   const el=document.createElement("div"); el.className="toast";
   el.innerHTML=`<p>${msg}${sub?`<small>${sub}</small>`:""}</p><button class="icon-btn x" aria-label="${t("u.close")}">${SVG("x")}</button>`;
   h.appendChild(el);
-  const kill=()=>{el.classList.add("out");setTimeout(()=>el.remove(),300);};
+  const kill=()=>{el.classList.add("out");setTimeout(()=>el.remove(),180);};
   el.querySelector(".x").addEventListener("click",kill);
   setTimeout(kill,4200);
 }
@@ -7085,7 +6932,6 @@ function applyStaticI18n(){
    cada render): usado por las vistas que se pintan por JS. */
 function i18n(key){ return `data-i18n="${key}"`; }
 function boot(){
-  motionOff();
   setTheme(STATE.theme,false);
   hydrateStatic();
   seedHistory();
