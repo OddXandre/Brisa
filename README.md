@@ -15,19 +15,19 @@ brisa-mac/
 │       └── favicon.svg        Icono de pestaña
 ├── Tests/                     Verificadores standalone por fase (swiftc)
 ├── Scripts/                   Publicador de la interfaz, verificador, icono, DMG y medición
-├── Docs/                      Planes, guía del instalador y prototipo archivado
+├── Docs/                      El mensaje de beta y la guía del primer arranque
 ├── prototipo-brisa.html       Prototipo navegable publicado (generado)
 └── build-app.sh               Brisa.app firmada ad-hoc
 ```
 
 La interfaz se edita **solo** en `Sources/brisa_app/Resources/index.html`. De ahí
-salen, en cada compilación y por `Scripts/publicar.py`, las tres copias que se
-publican —`prototipo-brisa.html` en la raíz, `Docs/prototype/index.html` y la que
-carga la app—: el publicador **recorta los comentarios** (−27 % del peso) y
-comprueba que no se pierde nada —claves de idioma, iconos, selectores, ids y
-`data-i18n` han de coincidir con la fuente, y cada `<script>` ha de compilar—.
-La fuente sigue documentada; el artefacto que descarga el usuario, no. Nadie
-edita una copia a mano, así que las tres no pueden divergir de la fuente.
+salen, en cada compilación y por `Scripts/publicar.py`, las dos copias que se
+publican —`prototipo-brisa.html` en la raíz y la que carga la app—: el publicador
+**recorta los comentarios** (−27 % del peso) y comprueba que no se pierde nada
+—claves de idioma, iconos, selectores, ids y `data-i18n` han de coincidir con la
+fuente, y cada `<script>` ha de compilar—. La fuente sigue documentada; el
+artefacto que descarga el usuario, no. Nadie edita una copia a mano, así que las
+dos no pueden divergir de la fuente.
 
 El `AppIcon.icns` se genera **dentro del `.app`** en cada compilación (de
 `DockLogo.svg`, con `Scripts/make-icon.swift`): no vive en el árbol de trabajo ni
@@ -43,8 +43,8 @@ bash build-app.sh                    # → dist/Brisa.app
 bash Scripts/make-dmg.sh             # → dist/Brisa-0.1.0-beta.dmg + guía junto al DMG
 ```
 
-Los materiales históricos que estaban junto al proyecto se conservan en
-`Docs/` y no forman parte del bundle publicado.
+`Docs/` solo contiene lo que acompaña al instalador: el mensaje de beta que va
+dentro de la ventana y la guía del primer arranque.
 
 ## Verificar
 

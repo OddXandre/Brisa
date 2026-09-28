@@ -5,10 +5,9 @@ La FUENTE (`Sources/brisa_app/Resources/index.html`) sigue documentada —es
 donde se trabaja— y de ahí salen todas las copias publicadas:
 
     prototipo-brisa.html          (raíz, la que se abre en el navegador)
-    Docs/prototype/index.html     (copia archivada)
     <bundle>/Resources/index.html (la que carga la app)
 
-Antes las tres eran copias literales de la fuente, así que viajaban con 109 KB
+Antes eran tres copias literales de la fuente, así que viajaban con 109 KB
 de comentarios que ni el navegador ni la app leen. Aquí se quitan al publicar:
 el artefacto que descarga el usuario pesa menos y sigue saliendo de un único
 sitio, así que las copias no pueden divergir.
@@ -32,7 +31,6 @@ RAIZ = Path(__file__).resolve().parent.parent
 FUENTE = RAIZ / "Sources/brisa_app/Resources/index.html"
 PUBLICADAS = [
     RAIZ / "prototipo-brisa.html",
-    RAIZ / "Docs/prototype/index.html",
 ]
 # Palabras tras las cuales una barra abre una expresión regular y no una
 # división. Sin esto, `return /x/` se leería como división y el recorte
