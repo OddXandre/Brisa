@@ -135,6 +135,12 @@
   --d4:.32s;
   --spin:.8s;                       /* el giro de los indicadores de espera */
   --stagger-step:26ms;
+  /* El desenfoque de entrada tiene UNA medida y una sola regla: se usa donde la
+     pieza aparece ENCIMA de algo —la hoja, el aviso, los bloques del Atlas—,
+     porque ahí el desenfoque dice «esto acaba de materializarse». En filas,
+     listas y texto pequeño no se usa nunca: a 2 px el texto se ensucia y el
+     gesto se lee como un defecto, no como una entrada. */
+  --entry-blur:blur(2px);
   /* Una sola transición para todos los controles pulsables: fondo, color,
      borde, brillo, opacidad, la losa del pulsado (box-shadow) y el hundimiento.
      Antes cada botón llevaba su propia lista y el mismo gesto se sentía
@@ -886,12 +892,16 @@ html,body{overscroll-behavior:none}
 .alist .al-files{font-size:var(--t-label);color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
 .alist .al-pct{font-size:var(--t-label);color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
 .alist .al-size{font-size:var(--t-small);font-weight:500;font-variant-numeric:tabular-nums;text-align:right;width:70px;white-space:nowrap}
-.alist .al-bar{position:absolute;left:30px;bottom:3px;height:3px;border-radius:99px;background:var(--acc);opacity:.5;max-width:calc(100% - 210px)}
+.alist .al-bar{position:absolute;left:30px;bottom:3px;height:3px;border-radius:99px;background:var(--acc);opacity:.5;max-width:calc(100% - 210px);transform-origin:left;transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease)}
 .alist.on{background:var(--sel-2)}
 .alist.on .al-bar{opacity:.9}
 
-.alist .al-bar{transform-origin:left;transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease)}
-/* La proporción solo se dibuja en las primeras filas, una vez al entrar. */
+/* La cascada de Archivos la lleva la FILA, y la fila ya entra por la regla
+   general del escalonado —.alist-rows ES el contenedor—. Lo que hacía falta
+   aquí es la barra: es un elemento de dentro, así que sin esto se quedaba
+   quieta mientras la fila subía, y antes pasaba lo contrario —la fila aparecía
+   de golpe y lo único que crecía era la proporción, medio gesto—. Con el mismo
+   retardo, subir y medirse son un solo movimiento. */
 .alist-rows.stagger .alist:nth-child(-n+5) .al-bar{animation:barGrow var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 @media(max-width:860px){
   /* En ventana estrecha la lista se queda con lo que decide: rango, nombre y
@@ -928,9 +938,11 @@ html,body{overscroll-behavior:none}
 .af-head .afh-s{margin-left:auto;font-size:var(--t-small);color:var(--ink-3);white-space:nowrap}
 .af-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(166px,1fr));gap:16px 12px}
 .fol{position:relative;margin-top:9px;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-height:112px;padding:12px 13px 13px;text-align:left;color:var(--ink);background:var(--ft1);border-radius:0 var(--r-panel) var(--r-panel) var(--r-panel);transition:background-color var(--d1) var(--ease),transform var(--d2) var(--ease),box-shadow var(--d2) var(--ease)}
-/* la entrada escalonada solo cuando cambia el nivel (ver renderAtlasFolders):
-   al marcar una carpeta se repinta la clase, pero la rejilla no parpadea */
-.af-grid.stagger>.fol:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
+/* La cascada de carpetas llega de la regla general de .stagger: la rejilla ES
+   el contenedor y cada carpeta es su hija directa, así que repetirla aquí
+   sería la misma animación escrita dos veces. Solo cambia el NIVEL (ver
+   renderAtlasFolders): marcar una carpeta repinta la clase y la rejilla no
+   parpadea, porque .stagger ya no está puesto. */
 .fol::before{content:"";position:absolute;left:0;top:-9px;width:44%;height:9px;border-radius:8px 8px 0 0;background:var(--ft1);transition:background-color var(--d1) var(--ease)}
 .fol:hover,.fol.hov{background-color:var(--ft2)}
 .fol:active{transform:translateY(0) scale(.99)}
@@ -1611,8 +1623,8 @@ html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
    acaba de asentarse —el gesto de macOS, en vez del desplazamiento genérico de
    web—. Al cerrarse hace el camino de vuelta en menos tiempo: entrar se mira,
    salir no. */
-@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.975);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
-@keyframes popOut{from{opacity:1;transform:none;filter:none}to{opacity:0;transform:translateY(4px) scale(.99);filter:blur(2px)}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.975);filter:var(--entry-blur)}to{opacity:1;transform:none;filter:none}}
+@keyframes popOut{from{opacity:1;transform:none;filter:none}to{opacity:0;transform:translateY(4px) scale(.99);filter:var(--entry-blur)}}
 .overlay.closing .sheet{animation:popOut var(--d2) var(--ease) forwards}
 .sheet-h{display:flex;align-items:center;gap:12px;padding:16px 18px 8px}
 .sheet-h h3{font-size:var(--t-title);font-weight:400;letter-spacing:-.024em;flex:1}
@@ -1723,8 +1735,8 @@ select.set-sel:hover{background:var(--sel-2)}
 /* ---------- Toasts ---------- */
 #toasts{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;max-width:340px}
 .toast{display:flex;gap:12px;align-items:flex-start;background:var(--glass);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border:none;border-radius:var(--r-panel);box-shadow:var(--shadow-pop),var(--rim);padding:11px 13px;animation:toastIn var(--d3) var(--ease)}
-@keyframes toastIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
-@keyframes toastOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(14px)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(18px);filter:var(--entry-blur)}to{opacity:1;transform:none;filter:none}}
+@keyframes toastOut{from{opacity:1;transform:none;filter:none}to{opacity:0;transform:translateX(14px);filter:var(--entry-blur)}}
 .toast.out{animation:toastOut var(--d2) var(--ease) forwards;pointer-events:none}
 .toast p{font-size:var(--t-small);flex:1;min-width:0}
 .toast p small{display:block;color:var(--ink-3);font-size:var(--t-label);margin-top:1px}
@@ -1741,7 +1753,7 @@ select.set-sel:hover{background:var(--sel-2)}
    «ha cambiado algo» y un repintado no es un cambio. */
 @keyframes barGrow{from{transform:scaleX(0)}}
 .hs .bar.grow i{animation:barGrow var(--d3) var(--ease) backwards}
-@keyframes tileIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes tileIn{from{opacity:0;transform:scale(.94);filter:var(--entry-blur)}to{opacity:1;transform:none;filter:none}}
 /* La cascada de bloques solo al cambiar de nivel —igual que el anillo—: si se
    reprodujera en cada repintado, cada clic dentro del mapa reanimaría la
    rejilla entera y el gesto se volvería pesado.
@@ -1757,10 +1769,18 @@ select.set-sel:hover{background:var(--sel-2)}
 .num-up,.num-down{animation:numChange var(--d1) var(--ease)}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes riseIn{from{opacity:0;transform:translateY(7px) scale(.99)}to{opacity:1;transform:none}}
-@keyframes viewIn{from{opacity:0;transform:translateY(12px) scale(.992)}to{opacity:1;transform:none}}
-.view.boot-in>.v-body{animation:viewIn var(--d4) var(--ease) both}
-/* El escalonado da orden a grupos cortos, pero se limita a cinco piezas y no
-   se aplica a filas de tablas ni a listas potencialmente largas. */
+/* La entrada de una vista es un FUNDIDO y nada más. El cuerpo de la vista y sus
+   piezas se movían a la vez —12 px el contenedor, 7 px cada pieza dentro—, de
+   modo que el mismo contenido viajaba dos veces a dos velocidades distintas: en
+   lugar de elegancia se leía como un tirón. Ahora el contenedor solo aparece y
+   el desplazamiento lo lleva la pieza que se escalona, que es la única con algo
+   que decir. Animar la opacidad del cuerpo lo resuelve el compositor, sin
+   repintar el layout de la vista entera. */
+@keyframes viewIn{from{opacity:0}to{opacity:1}}
+.view.boot-in>.v-body{animation:viewIn var(--d3) var(--ease) both}
+/* El escalonado da orden a grupos cortos: cinco piezas como máximo y solo al
+   entrar. En una lista larga la cascada no la recorre entera —la sexta fila ya
+   no espera turno—, porque veinte turnos no son un adorno, son una espera. */
 .stagger>*:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
 /* Entradas del Resumen SOLO al cargar la vista: la clase .boot-in se pone al
    construir la vista y se retira cuando termina — así el CSS no re-anima las
@@ -1910,7 +1930,10 @@ html.theme-anim .sb-item{
 
 /* ---------- Intro del primer análisis ----------
    La entrada se limita a un fundido corto y la barra sigue el progreso real.
-   No hay blur ni movimiento continuo: el análisis puede durar varios segundos. */
+   Se mueven dos cosas y ninguna más: la marca —una respiración lenta— y la
+   barra. Nada de adorno en bucle alrededor, que el análisis puede durar varios
+   segundos y la espera ya tiene bastante con esperar. Sin blur: aquí no hay
+   nada debajo que materializar. */
 #scan-intro{position:fixed;inset:0;z-index:200;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity var(--d4) var(--ease)}
 #scan-intro.on{opacity:1;pointer-events:auto}
 #scan-intro.done{opacity:0;pointer-events:none}
@@ -1922,14 +1945,16 @@ html.theme-anim .sb-item{
 #scan-intro.on .si-track{transition-delay:.08s}
 #scan-intro.on .si-sub{transition-delay:.2s}
 #scan-intro.done .si-box>*{opacity:0;transform:translateY(-5px);transition-delay:0s;transition-duration:var(--d2)}
-/* Marca estática durante el análisis: la barra inferior es el único progreso
-   animado y sigue el trabajo real, sin adornos en bucle. */
-.si-mark{position:relative;width:96px;height:96px;display:grid;place-items:center}
-.si-cubes{position:relative;display:block;width:40px;height:50px;scale:1.5}
-.si-cubes .cube{position:absolute;left:10px;top:0;width:20px;height:20px;opacity:1}
-.si-cubes .side-top{position:absolute;left:0;top:0;width:20px;height:20px;background:color-mix(in srgb, var(--acc) 66%, #ffffff);rotate:45deg;transform:skew(-20deg,-20deg)}
-.si-cubes .side-right{position:absolute;left:-9px;top:14px;width:19px;height:5px;background:var(--acc);transform:skew(0deg,25deg)}
-.si-cubes .side-left{position:absolute;left:10px;top:14px;width:19px;height:5px;background:color-mix(in srgb, var(--acc) 74%, #000000);transform:skew(0deg,-25deg)}
+/* La marca del análisis es la MISMA de la barra lateral plegada —el logotipo
+   de la app—, no una figura aparte: quien abre Brisa por primera vez ve su
+   símbolo, que es lo que ata la espera con el producto. Respira despacio,
+   un 6 % de escala en 2,6 s, y solo bajo .on: ni arranca ni consume cuando el
+   intro no está delante. Transform y opacidad nada más, cosas del compositor;
+   la barra de abajo sigue llevando el progreso de verdad. */
+.si-mark{position:relative;width:64px;height:64px;display:grid;place-items:center}
+.si-logo{display:block;height:46px;width:auto}
+#scan-intro.on .si-logo{animation:siBreath 2.6s var(--ease-io) infinite}
+@keyframes siBreath{0%,100%{transform:scale(.97);opacity:.9}50%{transform:scale(1.03);opacity:1}}
 
 .si-track{width:260px;height:3px;border-radius:99px;background:var(--track);overflow:hidden}
 /* La barra avanza por transform (escala) desde la izquierda: se anima en la GPU
@@ -2014,9 +2039,11 @@ html.theme-anim .sb-item{
   <div class="si-veil"></div>
   <div class="si-box">
     <div class="si-mark" aria-hidden="true">
-      <span class="si-cubes" aria-hidden="true">
-        <i class="cube"><i class="side-top"></i><i class="side-right"></i><i class="side-left"></i></i>
-      </span>
+      <!-- El mismo símbolo oficial que la barra lateral plegada (.sb-mark),
+           repetido aquí a propósito: este intro tiene que verse sin depender
+           del estado de la barra lateral ni de un <use> que pueda no resolver
+           en la primera impresión de la app. En línea, sin petición extra. -->
+      <svg class="si-logo" viewBox="0 0 512 590" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true"><path d="M447.339 278.449C476.406 276.83 502.324 294.691 509.692 323.15C510.746 327.152 511.412 331.25 511.666 335.379C512.495 348.814 511.485 366.722 511.751 380.665C511.43 394.663 512.623 408.855 511.23 422.786C508.276 452.422 481.291 463.029 459.659 476.13L402.471 511.385L328.886 556.629C316.547 564.252 299.661 575.362 287.165 582.191C282.667 584.606 277.866 586.404 272.896 587.542C259.806 590.539 246.141 589.759 233.481 585.285C223.372 581.646 197.793 564.488 187.027 557.907L80.3926 492.356C68.4928 484.752 55.9589 477.353 43.958 470.124C28.4154 460.758 15.2153 455.782 6.44142 438.818C-1.27539 423.9 0.25906 410.568 0.292982 394.319L0.295912 358.144C14.7688 399.519 49.6555 425.71 90.877 436.608C163.327 455.751 217.035 417.083 275.142 381.193C306.449 361.861 337.283 342.815 367.906 321.745L395.235 302.71C412.969 290.261 425.168 280.744 447.339 278.449ZM250.646 0.552131C278.435 -3.48367 302.089 15.4675 324.405 29.3295L387.401 68.2562L455.627 110.067C465.29 115.926 489.519 129.762 496.809 136.615C513.724 152.529 511.915 174.634 511.86 195.646L511.732 233.655C482.49 148.69 384.434 131.452 310.959 167.965C288.364 179.193 262.161 194.624 240.965 208.608C230.007 214.746 217.313 223.064 206.542 229.823C184.275 243.659 162.285 257.935 140.584 272.642C127.29 281.653 105.629 297.825 92.4902 304.739C85.523 308.468 77.9047 310.817 70.0498 311.67C52.9984 313.759 35.827 308.855 22.4512 298.078C-5.73352 275.463 0.821508 247.494 0.335951 215.524C0.244533 209.537 0.238846 203.454 0.306654 197.453C0.589379 187.026 -0.60433 176.402 1.15626 166.078C5.92721 138.103 31.3205 129.031 52.7461 116.196C76.8242 101.696 100.813 87.0494 124.711 72.2562L190.028 31.0101C208.909 18.887 227.966 2.80442 250.646 0.552131Z" fill="#FF4404"/></svg>
     </div>
     <div class="si-track"><span class="si-fill" id="si-fill"></span></div>
     <div class="si-sub" id="si-sub" data-i18n="intro.preparing">Preparando…</div>
