@@ -80,14 +80,6 @@ final class SystemHistory {
         }
     }
 
-    func stop() {
-        queue.async { [weak self] in
-            self?.timer?.cancel()
-            self?.timer = nil
-            self?.prevTicks = nil
-        }
-    }
-
     /// Puntos del tramo pedido, ya agrupados para lo que mide una gráfica.
     func series(for key: String) -> [[Double]] {
         let range = Self.seconds(key)
