@@ -47,6 +47,16 @@ struct WindowConfigurator: NSViewRepresentable {
             }
             window.isMovable = true
             window.isMovableByWindowBackground = false
+            /* La ventana se pone delante ella misma. Un arranque normal ya lo
+               hace —macOS trae al frente la app que se abre—, pero si Brisa se
+               lanza en segundo plano (desde un script, o ejecutando el binario
+               directamente) la ventana nace detrás y WebKit estrangula su reloj
+               de fotogramas: la animación de entrada se medía entonces a 31-37
+               fps, con parones de más de cien milisegundos. Con la ventana
+               delante la entrada corre a pleno ritmo; y si el usuario no está
+               mirando, la cortina espera en vez de animarse para nadie. */
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate()
             /* El ORDEN importa: tocar `styleMask` reinicia
                `titlebarAppearsTransparent` a false, así que el aspecto (barra
                sin banda opaca) se fija después del inset, no antes. */

@@ -2023,17 +2023,22 @@ html.theme-anim .sb-item{
    que dejaba la entrada a tirones. En su lugar la marca sube y se asienta
    (8 px, un 2 % de más y vuelta), que es el mismo gesto de entrada que usa el
    resto de la casa. */
-.boot-mark{position:relative;opacity:0;will-change:transform,opacity}
-.boot-logo{display:block;width:78px;height:auto;will-change:transform,opacity}
-/* `.on` solo enciende la cortina; la coreografía la dispara `.go`, que llega en
+.boot-mark{position:relative;will-change:transform,opacity}
+.boot-logo{display:block;width:78px;height:auto;opacity:0;will-change:transform,opacity}
+/* La entrada y la respiración son DOS animaciones encadenadas sobre la MISMA
+   pieza, y la segunda arranca exactamente donde acabó la primera (0,9 de
+   opacidad y 0,97 de escala). Antes la entrada iba sobre el envoltorio y la
+   respiración sobre el logotipo, así que en el relevo las opacidades se
+   MULTIPLICABAN —0,9 × 0,9— y la marca pegaba un bajón de brillo de un
+   fotograma para otro: medido en la grabación de la ventana, un 16 % en un solo
+   cuadro, justo cuando empezaba a respirar. Encadenadas sobre la misma pieza, el
+   relevo no existe.
+
+   `.on` solo enciende la cortina; la coreografía la dispara `.go`, que llega en
    el primer fotograma de verdad (ver bootSplash): si el reloj arranca mientras
    la interfaz todavía se está montando, corre por delante de los fotogramas y
    la entrada se ve a saltos. */
-#boot.go .boot-mark{animation:bootIn .78s var(--ease) forwards}
-#boot.go .boot-logo{animation:siBreath 2.6s var(--ease-io) .78s infinite}
-/* Y termina justo en el primer fotograma de la respiración de siempre
-   (siBreath: 0,97 de escala y 0,9 de opacidad), así que el relevo no da
-   ningún salto: la respiración empieza donde acabó la entrada. */
+#boot.go .boot-logo{animation:bootIn .78s var(--ease) forwards, siBreath 2.6s var(--ease-io) .78s infinite}
 @keyframes bootIn{0%{opacity:0;transform:translateY(8px) scale(.9)}60%{opacity:1;transform:translateY(-2px) scale(1.02)}100%{opacity:.9;transform:translateY(0) scale(.97)}}
 
 /* ---------- Intro del primer análisis ----------
@@ -7107,21 +7112,36 @@ function i18n(key){ return `data-i18n="${key}"`; }
 /* Primera impresión: la marca tapa el primer fotograma y se retira sola ~1,3 s
    después. Una vez por sesión —cada arranque de la app es una sesión nueva, y
    en el prototipo es «la primera vez que se entra»—, porque una cortina que
-   sale en cada recarga deja de ser una bienvenida y pasa a ser un peaje. */
+   sale en cada recarga deja de ser una bienvenida y pasa a ser un peaje.
+
+   El orden de la entrada está medido, no supuesto:
+
+     · la cortina se enciende YA, sin transición: es lo que tapa el primer
+       fotograma de la interfaz y el rato que WebKit tarda en pintarlo;
+     · el trabajo pesado que antes caía con un temporizador a 400 ms —en mitad
+       de la animación, y se medía como un parón de dos fotogramas— se hace en
+       el primer fotograma con la cortina ya puesta;
+     · la coreografía (`.go`) arranca con el hilo ya libre y solo si la ventana
+       está DELANTE. Con la página oculta WebKit estrangula su reloj de
+       fotogramas (medido: 31-37 fps frente a 60) y cualquier animación se ve a
+       saltos; si eso pasa, la cortina se queda quieta —sin gastar un solo
+       fotograma— hasta que la ventana aparece, y si no aparece nunca se retira
+       sin función: nadie la está mirando. */
 function bootSplash(){
-  const el=$("#boot"); if(!el)return;
-  let seen=false;
-  try{ seen=sessionStorage.getItem("brisa.boot")==="1"; }catch(e){}
-  if(seen){ el.remove(); return; }
+  const el=$("#boot");
+  const calentar=()=>{ renderResumen(); refreshSpace(); refreshScore(true); };
+  let visto=false;
+  try{ visto=sessionStorage.getItem("brisa.boot")==="1"; }catch(e){}
+  if(!el||visto){ if(el)el.remove(); calentar(); return; }
   try{ sessionStorage.setItem("brisa.boot","1"); }catch(e){}
-  /* La cortina se enciende YA —sin transición, para que tape el primer
-     fotograma—; lo que espera al primer fotograma de verdad es la coreografía
-     (`.go`). Con un solo fotograma puede colarse antes de que WebKit tenga
-     algo que pintar, y entonces los primeros cuadros se pierden y la entrada
-     se ve a saltos: es el mismo doble fotograma que usa el aviso de «ya he
-     pintado» de más abajo. */
+
   el.classList.add("on");
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  let lanzada=false, respaldo=0;
+  const lanzar=()=>{
+    if(lanzada)return;
+    lanzada=true;
+    clearTimeout(respaldo);
+    document.removeEventListener("visibilitychange",alVerse);
     el.classList.add("go");
     setTimeout(()=>{
       el.classList.add("out");
@@ -7135,7 +7155,38 @@ function bootSplash(){
          no queda un nodo a pantalla completa de recuerdo. */
       setTimeout(()=>el.remove(),300);
     },1000);
-  }));
+  };
+  /* Tres fotogramas: el primero pinta la cortina, el segundo hace el trabajo
+     pesado con la cortina ya en pantalla y el tercero arranca la coreografía
+     con el hilo libre, que es la única forma de que el primer cuadro de la
+     animación sea también el primero que se ve. */
+  const preparar=()=>{
+    if(lanzada)return;
+    document.removeEventListener("visibilitychange",alVerse);
+    clearTimeout(respaldo);
+    /* Respaldo: si el reloj de fotogramas no late —WebKit en pausa, una ventana
+       a medio ocluir—, la cortina no se queda puesta esperando un fotograma que
+       no llega. */
+    respaldo=setTimeout(lanzar,900);
+    requestAnimationFrame(()=>{
+      if(lanzada)return;
+      calentar();
+      requestAnimationFrame(()=>requestAnimationFrame(lanzar));
+    });
+  };
+  const alVerse=()=>{ if(!document.hidden) preparar(); };
+  if(document.hidden){
+    document.addEventListener("visibilitychange",alVerse);
+    setTimeout(()=>{
+      if(lanzada||!document.hidden)return;
+      lanzada=true;
+      document.removeEventListener("visibilitychange",alVerse);
+      calentar();
+      el.remove();
+    },3000);
+  } else {
+    preparar();
+  }
 }
 function boot(){
   setTheme(STATE.theme,false);
@@ -7276,7 +7327,8 @@ function boot(){
     if(e.key==="Escape"){closeSheet();}
   });
 
-  setTimeout(()=>{renderResumen();refreshSpace();refreshScore(true);},400);
+  /* El repintado de la vista no se deja aquí con un temporizador: lo hace
+     bootSplash, tapado por la cortina y antes de arrancar la coreografía. */
   sysDemoSeed();
   bootSplash();
 }
