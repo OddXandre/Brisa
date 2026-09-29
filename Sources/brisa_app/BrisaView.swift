@@ -75,21 +75,22 @@ struct BrisaView: NSViewRepresentable {
     func makeNSView(context: Context) -> WKWebView {
         let webView = BrisaWebView(frame: .zero, configuration: WKWebViewConfiguration())
         webView.navigationDelegate = context.coordinator
-        // Dos capas de color para que la apertura nunca enseñe blanco:
-        //  · el lienzo del WebView (lo que WebKit pinta antes de la página),
-        //  · y el WebView transparente hasta que la interfaz pueda pintarse
-        //    (lo revela la página con su primer fotograma: ver revealUI).
+        // El lienzo del WebView —lo que WebKit pinta antes de la página— va del
+        // color de la app, y la ventana ya pinta ese mismo fondo (ver
+        // WindowConfigurator): el rato que WebKit tarda en pintar su primer
+        // fotograma no se ve, ni blanco ni de otro tono.
+        //
+        // El WebView NO arranca transparente. Lo hacía para revelarse con un
+        // fundido en cuanto la página avisara de su primer fotograma, y ese
+        // aviso y la animación de la cortina de arranque corrían a la vez: la
+        // cortina empieza en el primer fotograma servido (~0,85 s) y el fundido
+        // llegaba a los ~0,97 s, así que el símbolo entraba ya empezado y a
+        // saltos. La cortina —que vive DENTRO de la página, es opaca y cubre la
+        // ventana entera— ya tapa el primer fotograma: la entrada la manda ella
+        // sola y no hay un segundo reloj que se le pueda cruzar.
         webView.underPageBackgroundColor = WindowConfigurator.Palette.background(for: webView.effectiveAppearance)
-        webView.alphaValue = 0
         bridge.attach(webView: webView)
         installDragRegion(in: webView)
-        // Red de seguridad: si la página nunca avisara de su primer fotograma
-        // (por ejemplo, porque no llegó a cargar), la interfaz se muestra igual
-        // en tres segundos. Antes de eso ya se ve el fondo de la app.
-        let bridge = bridge
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            bridge.revealUI()
-        }
         if let url = Bundle.module.url(forResource: "index", withExtension: "html"),
            let base = url.deletingLastPathComponent() as URL? {
             webView.loadFileURL(url, allowingReadAccessTo: base)

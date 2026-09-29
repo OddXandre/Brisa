@@ -1994,6 +1994,51 @@ html.theme-anim .sb-item{
 .pending-panel p{margin:0;max-width:380px;line-height:1.55;font-size:var(--t-body)}
 .pending-panel .btn{margin-top:10px}
 
+/* ---------- La primera impresión ----------
+   Antes de que se enseñe la interfaz, la marca sola sobre el fondo de la app:
+   lo primero que ve quien abre Brisa es su símbolo. Dura un gesto —algo más de
+   un segundo— y no espera a nada: ni al análisis ni a los datos. Es una
+   cortina, no un estado, y se retira sola; cuando se levanta, la vista entra
+   con su cascada de siempre, así que el orden se lee «Brisa se presenta» y
+   después «ya está aquí».
+
+   La marca es la MISMA pieza que el intro del análisis y la barra lateral
+   (mismo trazado, en línea, sin petición extra): el símbolo no se redibuja
+   para cada ocasión. Solo se mueven opacidad, escala y desenfoque —cosas del
+   compositor— y el fondo es --bg, el MISMO negro que pinta la ventana nativa:
+   la cortina y la ventana son el mismo lienzo, sin costura. */
+#boot{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:var(--bg);opacity:0;pointer-events:none;will-change:opacity}
+/* Sin transición al entrar: la cortina tiene que tapar el primer fotograma o
+   no sirve de nada. La transición que se ve es la de salida, que sí es un
+   fundido. */
+#boot.on{opacity:1}
+#boot.out{opacity:0;transition:opacity var(--d2) var(--ease)}
+/* El halo: un óvalo de acento detrás de la marca. Es el único adorno y va por
+   debajo, así que no compite con el símbolo — solo le da suelo. */
+.boot-halo{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(closest-side,var(--acc-soft),transparent 70%);opacity:0;transform:scale(.72);will-change:transform,opacity;transition:opacity var(--d4) var(--ease),transform 1s var(--ease)}
+#boot.go .boot-halo{opacity:1;transform:scale(1)}
+/* Todo lo que se mueve aquí —la cortina, el halo y la marca— queda declarado
+   como capa propia (`will-change`) ANTES de empezar y se mueve SOLO con
+   opacidad, transform y nada más: eso lo resuelve el compositor, así que el
+   arranque va fino aunque el hilo principal esté montando la interfaz debajo
+   —que es justo lo que está haciendo en ese momento—. Nada de desenfoque: un
+   `filter` animado se rasteriza en el hilo principal en cada fotograma y es lo
+   que dejaba la entrada a tirones. En su lugar la marca sube y se asienta
+   (8 px, un 2 % de más y vuelta), que es el mismo gesto de entrada que usa el
+   resto de la casa. */
+.boot-mark{position:relative;opacity:0;will-change:transform,opacity}
+.boot-logo{display:block;width:78px;height:auto;will-change:transform,opacity}
+/* `.on` solo enciende la cortina; la coreografía la dispara `.go`, que llega en
+   el primer fotograma de verdad (ver bootSplash): si el reloj arranca mientras
+   la interfaz todavía se está montando, corre por delante de los fotogramas y
+   la entrada se ve a saltos. */
+#boot.go .boot-mark{animation:bootIn .78s var(--ease) forwards}
+#boot.go .boot-logo{animation:siBreath 2.6s var(--ease-io) .78s infinite}
+/* Y termina justo en el primer fotograma de la respiración de siempre
+   (siBreath: 0,97 de escala y 0,9 de opacidad), así que el relevo no da
+   ningún salto: la respiración empieza donde acabó la entrada. */
+@keyframes bootIn{0%{opacity:0;transform:translateY(8px) scale(.9)}60%{opacity:1;transform:translateY(-2px) scale(1.02)}100%{opacity:.9;transform:translateY(0) scale(.97)}}
+
 /* ---------- Intro del primer análisis ----------
    La entrada se limita a un fundido corto y la barra sigue el progreso real.
    Se mueven dos cosas y ninguna más: la marca —una respiración lenta— y la
@@ -2019,7 +2064,11 @@ html.theme-anim .sb-item{
    la barra de abajo sigue llevando el progreso de verdad. */
 .si-mark{position:relative;width:64px;height:64px;display:grid;place-items:center}
 .si-logo{display:block;height:46px;width:auto}
-#scan-intro.on .si-logo{animation:siBreath 2.6s var(--ease-io) infinite}
+#scan-intro.on .si-logo{animation:siBreath 2.6s var(--ease-io) infinite;will-change:transform,opacity}
+/* El latido y la barra quedan declarados como capa propia mientras la intro está
+   delante: la sección sigue midiendo el disco por debajo y, sin capa, el
+   compositor se queda esperando al hilo principal para cada fotograma. */
+#scan-intro.on .si-fill{will-change:transform}
 @keyframes siBreath{0%,100%{transform:scale(.97);opacity:.9}50%{transform:scale(1.03);opacity:1}}
 
 .si-track{width:260px;height:3px;border-radius:99px;background:var(--track);overflow:hidden}
@@ -2100,7 +2149,18 @@ html.theme-anim .sb-item{
 </style>
 </head>
 <body>
-<!-- Intro del primer análisis: se muestra solo si no hay datos todavía -->
+<!-- Primera impresión: la marca sola, tapando el primer fotograma (ver #boot
+     en los estilos). Nace transparente y la enciende el script antes de que
+     se pinte nada; si el script no llegara a correr, lo que se ve es la app. -->
+<div id="boot" aria-hidden="true">
+  <div class="boot-halo"></div>
+  <div class="boot-mark">
+    <!-- El mismo símbolo oficial que la barra lateral plegada y el intro
+         (.sb-mark, .si-logo), repetido aquí a propósito: tiene que verse en el
+         primer fotograma, sin depender de otro nodo. En línea, sin petición. -->
+    <svg class="boot-logo" viewBox="0 0 512 590" preserveAspectRatio="xMidYMid meet" fill="none" aria-hidden="true"><path d="M447.339 278.449C476.406 276.83 502.324 294.691 509.692 323.15C510.746 327.152 511.412 331.25 511.666 335.379C512.495 348.814 511.485 366.722 511.751 380.665C511.43 394.663 512.623 408.855 511.23 422.786C508.276 452.422 481.291 463.029 459.659 476.13L402.471 511.385L328.886 556.629C316.547 564.252 299.661 575.362 287.165 582.191C282.667 584.606 277.866 586.404 272.896 587.542C259.806 590.539 246.141 589.759 233.481 585.285C223.372 581.646 197.793 564.488 187.027 557.907L80.3926 492.356C68.4928 484.752 55.9589 477.353 43.958 470.124C28.4154 460.758 15.2153 455.782 6.44142 438.818C-1.27539 423.9 0.25906 410.568 0.292982 394.319L0.295912 358.144C14.7688 399.519 49.6555 425.71 90.877 436.608C163.327 455.751 217.035 417.083 275.142 381.193C306.449 361.861 337.283 342.815 367.906 321.745L395.235 302.71C412.969 290.261 425.168 280.744 447.339 278.449ZM250.646 0.552131C278.435 -3.48367 302.089 15.4675 324.405 29.3295L387.401 68.2562L455.627 110.067C465.29 115.926 489.519 129.762 496.809 136.615C513.724 152.529 511.915 174.634 511.86 195.646L511.732 233.655C482.49 148.69 384.434 131.452 310.959 167.965C288.364 179.193 262.161 194.624 240.965 208.608C230.007 214.746 217.313 223.064 206.542 229.823C184.275 243.659 162.285 257.935 140.584 272.642C127.29 281.653 105.629 297.825 92.4902 304.739C85.523 308.468 77.9047 310.817 70.0498 311.67C52.9984 313.759 35.827 308.855 22.4512 298.078C-5.73352 275.463 0.821508 247.494 0.335951 215.524C0.244533 209.537 0.238846 203.454 0.306654 197.453C0.589379 187.026 -0.60433 176.402 1.15626 166.078C5.92721 138.103 31.3205 129.031 52.7461 116.196C76.8242 101.696 100.813 87.0494 124.711 72.2562L190.028 31.0101C208.909 18.887 227.966 2.80442 250.646 0.552131Z" fill="#FF4404"/></svg>
+  </div>
+</div>
 <div id="scan-intro" hidden aria-hidden="true">
   <div class="si-veil"></div>
   <div class="si-box">
@@ -7161,6 +7221,39 @@ function applyStaticI18n(){
 /* Marca un nodo para que la clave viaje sin tocar su texto (se rellena en
    cada render): usado por las vistas que se pintan por JS. */
 function i18n(key){ return `data-i18n="${key}"`; }
+/* Primera impresión: la marca tapa el primer fotograma y se retira sola ~1,3 s
+   después. Una vez por sesión —cada arranque de la app es una sesión nueva, y
+   en el prototipo es «la primera vez que se entra»—, porque una cortina que
+   sale en cada recarga deja de ser una bienvenida y pasa a ser un peaje. */
+function bootSplash(){
+  const el=$("#boot"); if(!el)return;
+  let seen=false;
+  try{ seen=sessionStorage.getItem("brisa.boot")==="1"; }catch(e){}
+  if(seen){ el.remove(); return; }
+  try{ sessionStorage.setItem("brisa.boot","1"); }catch(e){}
+  /* La cortina se enciende YA —sin transición, para que tape el primer
+     fotograma—; lo que espera al primer fotograma de verdad es la coreografía
+     (`.go`). Con un solo fotograma puede colarse antes de que WebKit tenga
+     algo que pintar, y entonces los primeros cuadros se pierden y la entrada
+     se ve a saltos: es el mismo doble fotograma que usa el aviso de «ya he
+     pintado» de más abajo. */
+  el.classList.add("on");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    el.classList.add("go");
+    setTimeout(()=>{
+      el.classList.add("out");
+      /* La vista entra CUANDO se levanta la cortina, no debajo de ella: así el
+         arranque se lee en dos tiempos —el símbolo, y luego la pantalla— en vez
+         de aparecer ya montada al fundido. Va aquí, y no antes, para que el
+         repintado de la sección no caiga encima de la entrada. */
+      const cur=document.querySelector(".view:not([hidden])");
+      if(cur)go(cur.id.slice(5));
+      /* Un pelo más que el fundido de salida (--d2) y la cortina se va del todo:
+         no queda un nodo a pantalla completa de recuerdo. */
+      setTimeout(()=>el.remove(),300);
+    },1000);
+  }));
+}
 function boot(){
   setTheme(STATE.theme,false);
   hydrateStatic();
@@ -7302,6 +7395,7 @@ function boot(){
 
   setTimeout(()=>{renderResumen();refreshSpace();refreshScore(true);},400);
   sysDemoSeed();
+  bootSplash();
 }
 boot();
 
@@ -7419,23 +7513,14 @@ if(window.brisa && window.brisa._state) window.BRISA_APPLY(window.brisa._state);
    queda solo como valor de partida de una instalación nueva. */
 if(inApp()) syncMaintenance(true);
 
-/* Primer fotograma de verdad de la interfaz.
-
-   En la app nativa el WebView nace transparente y se ve el fondo de la app:
-   WebKit tarda un par de segundos en poder pintar la primera vez y, mientras
-   tanto, su lienzo por defecto es blanco —un fogonazo al abrir una app oscura—.
-   Con este aviso, Swift revela la interfaz justo cuando ya hay algo que
-   enseñar, con un fundido corto. En el navegador no hace nada. */
-function brisaMarkPainted(){
-  if(window.__brisaPainted)return;
-  window.__brisaPainted=true;
-  postIntent('uiPainted', null);
-}
-/* Doble fotograma: el primero pide el frame, el segundo ya corre con el anterior
-   pintado. Con uno solo, Swift revelaba la interfaz en el hueco entre «voy a
-   pintar» y «ya está pintado» y ese hueco se veía blanco. */
-requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(brisaMarkPainted, 120)));
-setTimeout(brisaMarkPainted, 2500); /* respaldo si el navegador no da fotogramas */
+/* Aquí vivía el aviso de «primer fotograma»: la página le decía a Swift cuándo
+   podía pintarse y Swift revelaba el WebView con un fundido corto. Se quitó con
+   la cortina de arranque delante, porque eran DOS relojes para una sola
+   entrada: la cortina arranca en el primer fotograma que le sirve el navegador
+   —tras el primer trazado de la página, unos 0,85 s— y el aviso llegaba un
+   poco después, así que el símbolo aparecía ya empezado su movimiento y a
+   saltos. La cortina es opaca y cubre la ventana entera: tapa el primer
+   fotograma ella sola, y el lienzo del WebView ya va del color de la app. */
 </script>
 <noscript><p style="padding:40px;text-align:center;color:#888">Brisa necesita JavaScript para el prototipo interactivo.</p></noscript>
 </body>

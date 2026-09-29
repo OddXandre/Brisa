@@ -16,9 +16,7 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
     static var globalRef: JSBridge?
 
     private weak var webView: WKWebView?
-    /// La interfaz ya se ha revelado (ver revealUI).
     private var pendingIntents: [String] = []
-    private var uiRevealed = false
     private var scanTask: Task<Void, Never>?
     private var scanRunning = false
     /// Vigilancia del permiso de Acceso total al disco mientras se concede.
@@ -143,26 +141,6 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         handle(intent: intent, payload: payload)
     }
 
-    /// La interfaz ya está lista para verse: entra con un fundido corto.
-    ///
-    /// El WebView se crea transparente a propósito. WebKit tarda un par de
-    /// segundos en pintar su primer fotograma y hasta entonces su lienzo es
-    /// blanco: en una app oscura eso era un fogonazo al abrirla. Mientras no
-    /// hay nada que enseñar se ve el fondo de la ventana —el mismo de la app—,
-    /// y en cuanto la página avisa de su primer fotograma entra la interfaz.
-    /// Idempotente: también la llama un reloj de respaldo por si ese aviso no
-    /// llegara nunca.
-    func revealUI() {
-        guard !uiRevealed, let webView else { return }
-        uiRevealed = true
-        DispatchQueue.main.async {
-            NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.18
-                webView.animator().alphaValue = 1
-            }
-        }
-    }
-
     /// Ejecuta JS en el hilo principal, en orden. El escáner corre en segundo
     /// plano y WKWebView exige el hilo principal: sin esto los avisos de
     /// progreso y el estado final se quedaban sin llegar a la UI (la app se
@@ -257,9 +235,6 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             // El adaptador de la página ya está instalado: el análisis se lanza
             // cuando la página termina de cargar (pageDidLoad), no aquí.
             break
-        case "uiPainted":
-            // La interfaz ya puede pintarse: se revela el WebView (ver revealUI).
-            revealUI()
         case "settings":
             // La UI manda sus ajustes en cuanto arranca y cada vez que cambian:
             // idioma (para los diálogos y avisos nativos), retención de la
