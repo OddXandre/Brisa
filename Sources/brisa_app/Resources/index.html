@@ -6473,11 +6473,24 @@ function sysRequestRange(){
    escenario que se está mirando, a la resolución de cada tramo: revisar el
    diseño de una hora o de un día no puede depender de esperar una hora. */
 function sysDemoSeries(sec){
-  const n=Math.min(360,Math.max(24,Math.round(sec/10)));
+  const n=Math.min(180,Math.max(24,Math.round(sec/10)));
   const now=Date.now()/1000, pts=[];
-  for(let i=n;i>=1;i--){
-    const d=sysDemoSample(i*(sec/n)/2);
-    pts.push([now-(i*sec)/n,d.cpu.pct,d.mem.pct]);
+  const base=sysDemoSample(0);
+  /* La onda del escenario se compone EN SEGUNDOS y con la escala del tramo:
+     una tendencia lenta, un vaivén medio y una textura corta. Antes se pedía
+     una muestra por punto con la respiración de siempre —treinta segundos de
+     ciclo—, que a diez minutos de tramo son tres puntos por vuelta y salía un
+     diente de sierra; a un día, un ruido regular. Con el periodo atado al
+     tramo, un cuarto de hora se lee como un cuarto de hora y un día como un
+     día, y al volver a sembrar la serie la traza no salta: la fase va anclada
+     al reloj, no al índice de la muestra. */
+  const wave=(at,per,ph,amp)=>amp*Math.sin(at*2*Math.PI/per+ph);
+  for(let i=n-1;i>=0;i--){
+    const t=i*sec/n;               /* segundos que faltan para «ahora» */
+    const at=now-t;                /* el instante de la muestra, no su índice */
+    const cpu=clamp(base.cpu.pct+wave(at,sec*.29,0,2.6)+wave(at,sec*.11,1.7,1.5)+wave(at,sec*.037,3.1,.7),0,100);
+    const mem=clamp(base.mem.pct+wave(at,sec*.41,.9,1.5)+wave(at,sec*.13,2.4,.9)+wave(at,sec*.043,4.2,.4),0,100);
+    pts.push([at,cpu,mem]);
   }
   return pts;
 }
@@ -6570,22 +6583,48 @@ function sysChart(){
   const put=(sel,d)=>{ const el=$(sel); if(el&&el.getAttribute("d")!==d)el.setAttribute("d",d); };
   sysSlide(pts,r,step);
   if(empty){ put("#se-chart-cpu",""); put("#se-chart-mem",""); put("#se-chart-area",""); return; }
-  /* El trazado se dibuja MÁS LARGO que el hueco: el último valor se prolonga en
-     plano hasta el sobrante, así que lo que entra por la derecha ya está
-     pintado y el borde nunca se queda vacío. Es lo que se lee mientras el eje
-     avanza hacia la muestra siguiente: el útil no ha cambiado, y decirlo con
-     una raya plana es más honesto que dejar el hueco. */
-  const line=(pts,idx)=>{
-    const flat=Y(pts[pts.length-1][idx]).toFixed(1);
-    return pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ")
-      +"L"+edge.toFixed(1)+" "+flat;
-  };
-  const cpu=line(pts,1), mem=line(pts,2);
+  /* Un hueco de VERDAD —la app cerrada, el Mac dormido, un rato sin muestras—
+     se dibuja como lo que es: la traza SÓLIDA se corta, porque cruzarlo con
+     una recta fingiría dos horas de CPU plana donde no hubo ni una muestra.
+     El corte se marca a partir de tres veces la cadencia del propio tramo (dos
+     segundos en el de dos minutos; diez —o lo que deje el agrupado— en los
+     largos), así que un retraso normal de la muestra no rompe nada. */
+  const nominal=r.k==="2m"?step:Math.max(10,r.sec/180);
+  const runs=[];
+  let cut=0;
+  for(let i=1;i<pts.length;i++){
+    if(pts[i][0]-pts[i-1][0]>nominal*3){ runs.push(pts.slice(cut,i)); cut=i; }
+  }
+  runs.push(pts.slice(cut));
+  /* El último tramo se prolonga en plano solo lo justo para tapar el avance del
+     eje hasta la muestra siguiente —el sobrante—, no hasta el borde: si la
+     última muestra es de hace cinco minutos, a su derecha se ve el hueco que
+     hay, no una raya que lo rellene. */
+  const tipX=run=>Math.min(edge,X(run[run.length-1][0])+sysPad(r,step));
+  /* Un tramo de UN SOLO punto —una muestra suelta entre dos huecos, que con el
+     Mac dormido pasa— no tiene línea que dibujar, pero SÍ se midió: se marca
+     con un punto. Con el trazo a secas desaparecía de la gráfica un dato que
+     existe. El punto es un trazo de longitud cero: con la terminación redonda
+     que ya llevan las dos series, eso pinta un punto de su mismo grosor. */
+  const dot=(x,y)=>"M"+x.toFixed(1)+" "+y.toFixed(1)+"L"+x.toFixed(1)+" "+y.toFixed(1);
+  const trace=idx=>runs.map((run,ri)=>{
+    const last=run[run.length-1];
+    if(run.length===1)return dot(X(last[0]),Y(last[idx]));
+    return run.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ")
+      +(ri===runs.length-1?"L"+tipX(run).toFixed(1)+" "+Y(last[idx]).toFixed(1):"");
+  }).join(" ");
   /* El relleno va bajo la CPU, que es la serie con acento: da profundidad sin
-     pedir un segundo color. */
-  const area="M"+X(pts[0][0]).toFixed(1)+" "+SYS_CHART_H+" "+cpu.slice(1)
-      +" L"+edge.toFixed(1)+" "+SYS_CHART_H+" Z";
-  put("#se-chart-cpu",cpu); put("#se-chart-mem",mem); put("#se-chart-area",area);
+     pedir un segundo color. Tramo a tramo, para no tapar el hueco con una
+     mancha de acento. */
+  const area=runs.filter(run=>run.length>1).map(run=>"M"+X(run[0][0]).toFixed(1)+" "+SYS_CHART_H+" "
+      +run.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join(" ").slice(1)
+      +"L"+tipX(run).toFixed(1)+" "+SYS_CHART_H+" Z").join(" ");
+  /* Y donde no hay medidas NO se dibuja nada: ni una recta que una los dos
+     extremos —fingiría un valor— ni un trazo tenue que cruce el vacío, que
+     también es pintar por lo que no se ha medido. La rejilla y el eje ya
+     cuentan que ahí pasó tiempo; lo que no se midió se queda en blanco, y se
+     ve de un vistazo qué parte de la gráfica es dato y cuál no. */
+  put("#se-chart-cpu",trace(1)); put("#se-chart-mem",trace(2)); put("#se-chart-area",area);
 }
 /* ---------- El deslizamiento de la línea ----------
    La ventana avanzaba a saltos: cada vez que llegaba una muestra —cada dos
