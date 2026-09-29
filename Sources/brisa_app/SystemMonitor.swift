@@ -217,9 +217,9 @@ final class SystemMonitor {
 
     // MARK: - CPU (puro)
 
-    /// Tics acumulados del sistema, o nil si Mach no los da. Se expone porque
-    /// el histórico (SystemHistory) mide la CPU con la MISMA lectura: dos
-    /// formas de contar tics acabarían dando dos cifras distintas del mismo Mac.
+    /// Tics acumulados del sistema, o nil si Mach no los da. Una sola forma de
+    /// contar tics para todo el archivo: dos maneras acabarían dando dos cifras
+    /// distintas del mismo Mac.
     static func currentCPUTicks() -> (UInt32, UInt32, UInt32, UInt32)? {
         var info = host_cpu_load_info()
         var count = mach_msg_type_number_t(MemoryLayout<host_cpu_load_info_data_t>.size / MemoryLayout<integer_t>.size)
@@ -287,9 +287,6 @@ final class SystemMonitor {
     return (used, appBytes / gb, wireBytes / gb, compBytes / gb, cachedBytes / gb,
             total > 0 ? used / total * 100 : 0)
     }
-
-    /// Porcentaje de memoria en uso, en la forma corta que guarda el histórico.
-    static func memoryPct() -> Double? { memory()?["pct"] as? Double }
 
     private static func memory() -> [String: Any]? {
         var vm = vm_statistics64()

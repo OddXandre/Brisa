@@ -186,62 +186,6 @@ struct Verify {
         eq(box.count, countAtStop, "el monitor siguió entregando muestras después de apagarse")
         print("ciclo de vida: \(box.count) muestras antes de apagar · ninguna después")
 
-        // ---------------------------------------------------------------
-        // 7. Histórico: lo que permite mirar más atrás de dos minutos
-        // ---------------------------------------------------------------
-        eq(SystemHistory.seconds("2m"), 120, "el tramo de dos minutos")
-        eq(SystemHistory.seconds("10m"), 600, "el tramo de diez minutos")
-        eq(SystemHistory.seconds("1h"), 3600, "el tramo de una hora")
-        eq(SystemHistory.seconds("24h"), 86_400, "el tramo de un día")
-        eq(SystemHistory.seconds("vaya"), 3600, "un tramo desconocido no puede dejar la gráfica sin eje")
-
-        let point = SystemHistory.roundedPoint([1.23456, 12.3456, 99.999])
-        check(abs(point[0] - 1.235) < 1e-9 && abs(point[1] - 12.35) < 1e-9 && abs(point[2] - 100) < 1e-9,
-              "un punto se guarda con la precisión que se puede ver: \(point)")
-
-        eq(SystemHistory.pruned([[0.0, 10, 10], [1.0, 20, 20]], now: 100, retention: 50).count, 0,
-           "lo que se sale de la retención se va")
-        eq(SystemHistory.pruned([[10.0, 1, 1], [60.0, 2, 2], [99.0, 3, 3]], now: 100, retention: 50).count, 2,
-           "y solo eso: lo que entra en la retención se conserva")
-
-        let few = (0..<30).map { [Double($0), Double($0), Double($0)] }
-        eq(SystemHistory.aggregate(few, range: 3600, now: 29, maxPoints: 180).count, 30,
-           "con menos puntos que el tope, la serie se deja intacta")
-        let many = (0..<1000).map { [Double($0) * 10, Double($0 % 100), 50.0] }
-        let grouped = SystemHistory.aggregate(many, range: 86_400, now: 9990, maxPoints: 180)
-        check(grouped.count <= 180 && grouped.count > 1, "el agrupado no respeta su tope: \(grouped.count)")
-        if grouped.count > 1 {
-            let meanCpu = grouped.map { $0[1] }.reduce(0, +) / Double(grouped.count)
-            check(abs(meanCpu - 49.5) < 2, "el agrupado debe promediar, no elegir un punto: \(meanCpu)")
-            check(grouped[1][0] > grouped[0][0], "los puntos agrupados tienen que ir en orden")
-        }
-
-        /* Lectura real de un archivo de histórico, en un directorio temporal:
-           una prueba no puede escribir en los datos del usuario. */
-        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("brisa-history-test.json")
-        try? FileManager.default.removeItem(at: tmp)
-        SystemHistory.fileURL = tmp
-        let now = Date().timeIntervalSince1970
-        var raw: [[Double]] = (0..<900).map { i in [now - Double(900 - i) * 10, Double(i % 100), 50] }
-        raw.append([now - 30 * 3600, 20, 20]) // de hace 30 h: fuera de la retención
-        raw.append([now - 5, 10])             // mal formado: se descarta al leer
-        if let data = try? JSONSerialization.data(withJSONObject: raw) {
-            try? data.write(to: tmp)
-        }
-        SystemHistory.shared.reload()
-        eq(SystemHistory.shared.count(), 900,
-           "el archivo se lee y se poda al cargarlo (quedaron \(SystemHistory.shared.count()))")
-        let day = SystemHistory.shared.series(for: "24h")
-        check(!day.isEmpty && day.count <= SystemHistory.maxPoints, "el tramo de un día vino mal: \(day.count)")
-        let hour = SystemHistory.shared.series(for: "1h")
-        check(hour.allSatisfy { $0[0] >= now - 3600 - 10 }, "el tramo de una hora se sale de su ventana")
-        check(hour.count <= SystemHistory.maxPoints, "el tramo de una hora no respeta el tope")
-        SystemHistory.shared.saveNow()
-        SystemHistory.shared.reload()
-        check(SystemHistory.shared.count() > 0, "lo guardado tiene que poder releerse")
-        try? FileManager.default.removeItem(at: tmp)
-        print("histórico: \(day.count) puntos en el tramo de 24 h · archivo leído y reescrito en un directorio temporal")
-
         if failures.isEmpty {
             print("FASE 11 OK: estado del Mac verificado")
             return 0

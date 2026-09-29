@@ -47,10 +47,6 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         accessGranted = PermissionService.hasFullDiskAccess()
         super.init()
         AppLanguage.shared.set(BrisaSettings.shared.language)
-        // El histórico arranca con la app, no con la sección: dos contadores del
-        // kernel cada diez segundos cuestan microsegundos, y sin él los tramos
-        // largos de la gráfica (10 min, 1 h, 24 h) estarían siempre vacíos.
-        SystemHistory.shared.start()
         let cached = ScanCache.load()
         if let cached {
             bootState = (cached.state, cached.ts)
@@ -176,20 +172,6 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         evalMain("window.brisa && window.brisa.onSystem && window.brisa.onSystem(\(json));")
     }
 
-    /// Serie histórica del tramo pedido: puntos [instante, % de CPU, % de
-    /// memoria], ya agrupados por SystemHistory a lo que mide una gráfica. Se
-    /// lee y se prepara fuera del hilo principal: son hasta 8.640 puntos y el
-    /// filtrado, aunque barato, no tiene por qué ocurrir mientras se pinta.
-    private func sendSystemHistory(_ payload: Any?) {
-        let key = Self.stringValue((payload as? [String: Any])?["range"]) ?? SystemHistory.defaultRange
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            let points = SystemHistory.shared.series(for: key)
-            guard let data = try? JSONSerialization.data(withJSONObject: ["range": key, "points": points]),
-                  let json = String(data: data, encoding: .utf8) else { return }
-            self?.evalMain("window.brisa && window.brisa.onSystemHistory && window.brisa.onSystemHistory(\(json));")
-        }
-    }
-
     /// Los ajustes no son un resultado del análisis: van siempre con su valor
     /// vivo. Si no, un estado guardado hace horas devolvería a la interfaz una
     /// retención o un idioma que el usuario ya había cambiado.
@@ -251,11 +233,6 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             // Brisa seguiría leyendo el sistema cada dos segundos para una
             // pantalla que ya nadie está mirando.
             system.setLive(Self.boolValue((payload as? [String: Any])?["on"]) ?? false)
-        case "systemHistory":
-            // La gráfica pide el histórico al abrirse y cada vez que cambia de
-            // tramo. Los dos minutos viven en la memoria de la interfaz; de ahí
-            // para atrás, en el archivo que mantiene SystemHistory.
-            sendSystemHistory(payload)
         case "deleteFiles":
             // Fase 3: eliminar archivos → Papelera de Brisa (lote con deshacer)
             deleteFiles(payload: payload)
