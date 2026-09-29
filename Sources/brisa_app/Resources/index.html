@@ -6566,47 +6566,44 @@ function sysChart(){
   const put=(sel,d)=>{ const el=$(sel); if(el&&el.getAttribute("d")!==d)el.setAttribute("d",d); };
   sysSlide(pts,step);
   if(empty){ put("#se-chart-cpu",""); put("#se-chart-mem",""); put("#se-chart-area",""); return; }
-  /* Un hueco de VERDAD —la app cerrada, el Mac dormido, un rato sin muestras—
-     se dibuja como lo que es: la traza SÓLIDA se corta, porque cruzarlo con
-     una recta fingiría dos minutos de CPU plana donde no hubo ni una muestra.
-     El corte se marca a partir de tres veces la cadencia medida, así que un
-     retraso normal de la muestra no rompe nada. */
-  const nominal=step;
-  const runs=[];
-  let cut=0;
-  for(let i=1;i<pts.length;i++){
-    if(pts[i][0]-pts[i-1][0]>nominal*3){ runs.push(pts.slice(cut,i)); cut=i; }
-  }
-  runs.push(pts.slice(cut));
-  /* El último tramo se prolonga en plano solo lo justo para tapar el avance del
-     eje hasta la muestra siguiente —el sobrante—, no hasta el borde: si la
-     última muestra es de hace cinco minutos, a su derecha se ve el hueco que
-     hay, no una raya que lo rellene. */
-  const tipX=run=>Math.min(edge,X(run[run.length-1][0])+sysPad(step));
-  /* Un tramo de UN SOLO punto —una muestra suelta entre dos huecos, que con el
-     Mac dormido pasa— no tiene línea que dibujar, pero SÍ se midió: se marca
-     con un punto. Con el trazo a secas desaparecía de la gráfica un dato que
-     existe. El punto es un trazo de longitud cero: con la terminación redonda
-     que ya llevan las dos series, eso pinta un punto de su mismo grosor. */
+  /* La traza es UNA. El muestreo se para cuando nadie mira —se sale de la
+     sección, la app pasa a segundo plano—, y al volver quedan unos segundos sin
+     medir en MEDIO de la ventana. Cortar la línea por ahí partía la gráfica en
+     dos cada vez que se salía y se volvía: un hueco de segundos dentro de dos
+     minutos no es un dato del Mac, es el rato que Brisa no estuvo midiendo, y
+     la línea lo atraviesa.
+     Lo que SÍ se descarta es lo que cae fuera del eje: la muestra más vieja que
+     quede en memoria —el Mac dormido una hora la deja muy fuera del marco—
+     arrastraría una diagonal de esquina a esquina que nadie ha medido. Solo
+     entra la anterior al borde cuando cae JUSTO fuera, que es lo que hace que
+     la línea entre por la izquierda en vez de aparecer dentro del panel. */
+  let inWin=0;
+  while(inWin<pts.length&&pts[inWin][0]<from)inWin++;
+  const ENTRY=6*SYS_CHART_W/SYS_SEC;   /* seis segundos de eje: un paso y su sobrante */
+  const win=(inWin>0&&X(pts[inWin-1][0])>=-ENTRY)?pts.slice(inWin-1):pts.slice(inWin);
+  /* Una muestra SUELTA en la ventana —un Mac dormido deja una sola— no tiene
+     línea que dibujar, pero SÍ se midió: se marca con un punto. El punto es un
+     trazo de longitud cero: con la terminación redonda que ya llevan las dos
+     series, eso pinta un punto de su mismo grosor. */
   const dot=(x,y)=>"M"+x.toFixed(1)+" "+y.toFixed(1)+"L"+x.toFixed(1)+" "+y.toFixed(1);
-  const trace=idx=>runs.map((run,ri)=>{
-    const last=run[run.length-1];
-    if(run.length===1)return dot(X(last[0]),Y(last[idx]));
-    return run.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ")
-      +(ri===runs.length-1?"L"+tipX(run).toFixed(1)+" "+Y(last[idx]).toFixed(1):"");
-  }).join(" ");
-  /* El relleno va bajo la CPU, que es la serie con acento: da profundidad sin
-     pedir un segundo color. Tramo a tramo, para no tapar el hueco con una
-     mancha de acento. */
-  const area=runs.filter(run=>run.length>1).map(run=>"M"+X(run[0][0]).toFixed(1)+" "+SYS_CHART_H+" "
-      +run.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join(" ").slice(1)
-      +"L"+tipX(run).toFixed(1)+" "+SYS_CHART_H+" Z").join(" ");
-  /* Y donde no hay medidas NO se dibuja nada: ni una recta que una los dos
-     extremos —fingiría un valor— ni un trazo tenue que cruce el vacío, que
-     también es pintar por lo que no se ha medido. La rejilla y el eje ya
-     cuentan que ahí pasó tiempo; lo que no se midió se queda en blanco, y se
-     ve de un vistazo qué parte de la gráfica es dato y cuál no. */
-  put("#se-chart-cpu",trace(1)); put("#se-chart-mem",trace(2)); put("#se-chart-area",area);
+  let cpu="", mem="", area="";
+  if(win.length===1){
+    cpu=dot(X(win[0][0]),Y(win[0][1])); mem=dot(X(win[0][0]),Y(win[0][2]));
+  } else if(win.length>1){
+    /* La última muestra se prolonga en plano solo lo justo para tapar el avance
+       del eje hasta la siguiente —el sobrante—, no hasta el borde. */
+    const last=win[win.length-1];
+    const tip=Math.min(edge,X(last[0])+sysPad(step));
+    const trace=idx=>win.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[idx]).toFixed(1)).join(" ")
+      +"L"+tip.toFixed(1)+" "+Y(last[idx]).toFixed(1);
+    cpu=trace(1); mem=trace(2);
+    /* El relleno va bajo la CPU, que es la serie con acento: da profundidad sin
+       pedir un segundo color. */
+    area="M"+X(win[0][0]).toFixed(1)+" "+SYS_CHART_H+" "
+      +win.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join(" ").slice(1)
+      +"L"+tip.toFixed(1)+" "+SYS_CHART_H+" Z";
+  }
+  put("#se-chart-cpu",cpu); put("#se-chart-mem",mem); put("#se-chart-area",area);
 }
 /* ---------- El deslizamiento de la línea ----------
    La ventana avanzaba a saltos: cada vez que llegaba una muestra —cada dos
