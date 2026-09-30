@@ -32,6 +32,13 @@ struct BrisaApp: App {
                 .keyboardShortcut("z", modifiers: [.command, .shift])
             }
             CommandGroup(replacing: .help) {
+                // Las dos secciones a las que se entra «con una idea» —quitar una
+                // aplicación, recuperar lo eliminado— se alcanzan también desde
+                // el menú: son destinos, no un recorrido.
+                Button(lang.t("Desinstalar una aplicación", "Uninstall an application")) {
+                    JSBridge.shared?.dispatch(intent: "goView", payload: "apps")
+                }
+                .keyboardShortcut("d", modifiers: [.command, .shift])
                 Button(lang.t("Abrir la Papelera de Brisa", "Open Brisa Trash")) {
                     JSBridge.shared?.dispatch(intent: "goView", payload: "papelera")
                 }

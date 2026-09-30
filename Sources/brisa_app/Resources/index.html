@@ -1666,6 +1666,172 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 .pap-hint svg{width:15px;height:15px;flex:none}
 .pap-days{font-variant-numeric:tabular-nums;font-size:var(--t-small);color:var(--ink-3)}
 
+/* ---------- Aplicaciones (desinstalador) ----------
+   La sección contesta una pregunta —«¿qué me sobra de esta aplicación?»— y la
+   contesta en tres pantallas: la lista, el análisis y el resultado. No se
+   inventa ninguna pieza: la lista usa la fila del resto de la app (.row), su
+   búsqueda y sus chips son los de Archivos, el progreso es el de la hoja de
+   limpieza y el cierre, la misma marca de «listo» que ya usaba Optimizar. Lo
+   único nuevo es lo que hacía falta contar: la ficha de la app, las cuatro
+   cifras del análisis, las etiquetas de certeza y el pie de acción, que se
+   queda pegado abajo —donde no tapa la lista— con la única acción destructiva
+   de la sección. */
+/* Los escalones de la sección son columnas con el MISMO aire que .v-body.
+   Sus hijos no son hermanos de .v-body, así que ese `gap` no se hereda: sin
+   estas dos reglas, la ficha, los grupos, el pie y la nota caían uno debajo de
+   otro sin un píxel entre medias —pegados, que es como no se lee nada—. */
+#view-apps #un-detail,#view-apps #un-done{display:flex;flex-direction:column;gap:12px}
+/* La lista se monta como la de Archivos: una columna que ocupa el alto, la
+   barra de búsqueda fija arriba y las filas desplazándose por dentro. Con la
+   lista entera colgando del scroll de la vista, buscar y bajar se llevaba la
+   barra por delante. */
+#view-apps #un-list{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+#view-apps #un-list .files-toolbar{padding:10px 16px}
+#view-apps #un-rows{flex:0 1 auto;min-height:0;overflow-y:auto}
+#view-apps #un-list .un-note{margin-top:12px;padding:0 16px}
+/* Los anchos de las columnas viven en UN sitio y los usan la cabecera y las
+   filas: en ventana estrecha las dos encogen a la vez y siguen cuadrando. Y las
+   columnas de cifras no se encogen NUNCA —`flex:none`—, porque si una cede
+   antes que su gemela de la cabecera, la tabla se descuadra por dos píxeles
+   que se ven perfectamente. */
+#view-apps #un-list{--un-c-size:92px;--un-c-used:126px}
+/* La barra solo lleva dos cosas: cuánto hay y la búsqueda. El orden se fue a la
+   cabecera, que es donde se ordena una tabla. */
+.un-total{flex:1;min-width:0;font-size:var(--t-small);color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* La cabecera ES la tabla: los tres criterios, cada uno sobre su columna, con
+   el MISMO ancho, el mismo hueco y el mismo relleno que las filas de abajo. La
+   alineación no se ajusta a ojo: sale de compartir la fila. La columna activa
+   va en tinta llena y con la flecha en acento —la misma marca que la tabla de
+   Archivos—; las otras se apagan. Sin pastillas ni subrayados. */
+.un-chead{cursor:default;min-height:30px;max-height:none;padding-top:0;padding-bottom:0}
+.un-chead:hover{background:transparent}
+.un-chead::after{content:"";position:absolute;left:0;right:0;bottom:0;height:.5px;background:var(--line)}
+.un-hcol{display:flex;align-items:center;gap:5px;padding:2px 0;border:none;background:none;font:inherit;font-size:var(--t-label);color:var(--ink-4);text-align:left;transition:color var(--d1) var(--ease)}
+.un-hcol:hover{color:var(--ink-2)}
+.un-hcol.on{color:var(--ink)}
+.un-hcol .farr{color:var(--acc)}
+.un-hname{flex:0 1 320px;min-width:0;justify-content:flex-start}
+.un-hbar{flex:1 1 auto;min-width:56px}
+.un-hsize,.un-hused{justify-content:flex-end;text-align:right;flex:none}
+.un-hsize,.un-row .r-size{width:var(--un-c-size)}
+.un-hused,.un-used{width:var(--un-c-used)}
+.un-hspace{width:26px;flex:none}
+.un-hgo{width:14px;flex:none}
+/* El nombre y su etiqueta de estado en la misma línea, y debajo la versión:
+   dos renglones, como el resto de la app, para que la fila no crezca de alto.
+   Ocupa 320 px y NO se estira: el hueco que sobra lo absorbe la barra, que une
+   así el nombre con su cifra en vez de dejar medio panel de aire entre ambos
+   —el mismo reparto que la lista de quién consume en Estado del Mac—. */
+.un-row .un-nm{display:flex;flex-direction:column;gap:4px;min-width:0;flex:0 1 320px}
+.un-bar{flex:1 1 auto;min-width:56px;height:4px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--ink);transition:width var(--d3) var(--ease)}
+.un-nm-t{display:flex;align-items:center;gap:8px;min-width:0}
+.un-nm-t b{font-weight:400;font-size:var(--t-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.un-nm-t .un-tag{flex:none}
+.un-nm small{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* La columna del último uso: relativa y a la derecha, como un número. */
+.un-used{flex:none;text-align:right;font-size:var(--t-small);color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:820px){#view-apps #un-list{--un-c-size:74px;--un-c-used:96px}}
+/* «Buscando…»: una barra fina, centrada y pegada a la barra de búsqueda. No hay
+   progreso que contar —filtrar es instantáneo—, así que la barra no avanza,
+   late; y dura lo que dura escribir, sin dejar la lista tapada mientras se lee. */
+.un-busy{display:flex;justify-content:center;padding:8px 16px 2px}
+.un-busy[hidden]{display:none}
+.un-busy i{display:block;width:min(280px,46%);height:3px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-busy i::after{content:"";display:block;width:38%;height:100%;border-radius:9999px;background:var(--acc);animation:unBusy var(--spin) var(--ease) infinite}
+@keyframes unBusy{from{transform:translateX(-120%)}to{transform:translateX(360%)}}
+.un-back{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 6px;border-radius:var(--r-pill);color:var(--ink-2);font-size:var(--t-small);transition:var(--press)}
+.un-back svg{width:13px;height:13px}
+.un-back:hover{background:var(--sel);color:var(--ink)}
+/* Ficha de la app: su icono de verdad, el nombre y la ruta —la ruta se lee, no
+   se subraya: es contexto, no un enlace—. */
+.un-head{display:flex;align-items:center;gap:14px;padding:16px 18px}
+.un-icon{width:44px;height:44px;border-radius:10px;background:var(--sel);display:grid;place-items:center;flex:none;overflow:hidden}
+.un-icon img{width:44px;height:44px;display:block}
+.un-icon svg{width:24px;height:24px;color:var(--ink-2)}
+/* La marca de la app en el prototipo: su trazado sobre la ficha teñida con su
+   propio color, que es el MISMO recurso que .pp-mark usa con el acento. En la
+   app nativa esto no se pinta: allí el icono de verdad lo manda Swift. */
+.un-brand{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--bc) 15%,transparent);color:var(--bc)}
+.un-brand svg{width:15px;height:15px;fill:currentColor;stroke:none;display:block}
+/* Las marcas casi negras (Steam, Notion) no se ven sobre el fondo oscuro: en
+   tema oscuro suben a tinta clara y la ficha se aclara con ellas. */
+.un-brand.dk{background:color-mix(in srgb,#9a9a9a 16%,transparent)}
+html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
+.un-brand.xl{width:44px;height:44px;border-radius:11px}
+.un-brand.xl svg{width:25px;height:25px}
+/* Analizando: la pantalla no enseña una lista a medias —se queda con el aviso—
+   y la barra late en el centro del hueco, que es donde mira el ojo que espera. */
+#view-apps #un-detail.scanning{flex:1 1 auto;min-height:0}
+.un-scan{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 24px 56px;text-align:center}
+.un-scan h2{margin:0;font-size:var(--t-title);font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.un-scan p{margin:0;max-width:44ch;font-size:var(--t-body);line-height:1.55;color:var(--ink-3)}
+.un-scan-bar{display:block;width:min(260px,60%);height:3px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-scan-bar i{display:block;width:38%;height:100%;border-radius:9999px;background:var(--acc);animation:unBusy var(--spin) var(--ease) infinite}
+.un-id{flex:1;min-width:0}
+.un-id h2{font-size:var(--t-title);font-weight:600;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-id p{margin-top:3px;font-size:var(--t-small);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-tags{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:none;flex-wrap:wrap}
+.un-tag{font-size:var(--t-label);color:var(--ink-3);background:var(--sel);border-radius:var(--r-pill);padding:2px 9px;white-space:nowrap}
+.un-tag.hot{color:var(--acc-text);background:var(--acc-soft)}
+.un-tag.warn{color:var(--ink-2);background:var(--sel-2)}
+/* Las cuatro cifras del análisis, con filos en vez de marcos: el mismo recurso
+   que las seis cifras de Estado del Mac. */
+.un-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.un-stat{position:relative;display:flex;flex-direction:column;gap:4px;padding:13px 18px;min-width:0}
+.un-stat+.un-stat::before{content:"";position:absolute;left:0;top:13px;bottom:13px;width:.5px;background:var(--line)}
+.un-stat .k{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-stat .v{font-size:var(--t-title);font-weight:400;letter-spacing:-.022em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.un-stat .s{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:760px){.un-stats{grid-template-columns:1fr 1fr}.un-stat:nth-child(odd)::before{display:none}.un-stat:nth-child(n+3){box-shadow:inset 0 .5px 0 var(--line)}}
+/* Fila de la lista: ficha sin fondo —el icono real ya trae el suyo— y la cifra
+   con sitio para «Midiendo…», que es lo que se ve mientras se mide. */
+/* La fila no se estira para rellenar el marco —`.row` viene con `flex:1 0 auto`
+   y, con la lista ya de alto definido, un par de apps se repartían la ventana
+   entera a 64 px cada una—, y el nombre sí come el hueco: sin eso la cifra y el
+   filo quedaban flotando a media fila, con medio metro de vacío a su derecha. */
+.un-row{flex:0 0 auto}
+.un-row .r-ic{background:transparent}
+.un-row .r-ic img{width:26px;height:26px;display:block;border-radius:6px}
+.un-row .r-size{flex:none}
+/* Un elemento del análisis: casilla, nombre, ruta y su etiqueta de certeza. La
+   fila no reparte columnas fijas: la ruta es lo que sobra y se corta sola. */
+.un-item{min-height:56px;max-height:none;align-items:center;padding:0 12px 0 16px}
+.un-item .un-name{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto}
+.un-item .un-name b{font-weight:400;font-size:var(--t-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-item .un-name small{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-item .r-size{width:88px}
+.un-item.nested{opacity:.72}
+.un-item.nested .un-name b{color:var(--ink-2)}
+.un-item.sel{background:var(--surface)}
+.un-item .un-eye{flex:none}
+/* Lo que va dentro del bundle no se elige: se enseña para que se vea que la app
+   trae piezas de fondo, con su propia marca en lugar de una casilla. */
+/* El filo que separa dos elementos arranca donde arranca su texto —la casilla
+   más su hueco—, no donde lo hace el de una fila normal: el de `.row` está a
+   54 px, que aquí caería dentro del nombre. */
+.un-item+.un-item::before{left:43px}
+.un-item .un-nest{width:15px;flex:none;display:grid;place-items:center;color:var(--ink-4)}
+.un-item .un-nest svg{width:12px;height:12px}
+.un-cat h2{display:flex;align-items:center;gap:7px}
+.un-cat h2 svg{width:13px;height:13px;color:var(--ink-3)}
+/* El pie de acción se queda pegado abajo: es lo único que flota en la sección,
+   y flota porque tiene que estar a mano al final de una lista larga. */
+.un-foot{position:sticky;bottom:0;z-index:6;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-top:auto;background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge)}
+.un-foot .un-count{flex:1;min-width:140px}
+.un-foot .un-count b{font-size:var(--t-title);font-weight:400;font-variant-numeric:tabular-nums;letter-spacing:-.024em}
+.un-foot .un-count small{display:block;color:var(--ink-3);font-size:var(--t-label);margin-top:1px}
+.un-foot .un-acts{display:flex;align-items:center;gap:8px;flex:none}
+.un-note{margin:0;padding:0 2px;font-size:var(--t-small);color:var(--ink-3);line-height:1.55}
+.un-note.warn{color:var(--acc-text)}
+.un-run .prog-row b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400}
+.un-run .prog-row .ps{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+.un-fails{padding:0 0 8px;text-align:left}
+.un-fails h4{padding:15px 18px 5px;font-size:var(--t-body);font-weight:600;color:var(--ink)}
+.un-fails .un-note{padding:0 18px}
+.un-fails .rowlist{margin-top:6px}
+@media(max-width:760px){.un-foot .un-acts{width:100%}.un-foot .un-acts .btn{flex:1}}
+
 /* ---------- Hojas / diálogos ---------- */
 .overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,12,.3);display:grid;place-items:center;animation:fadeIn var(--d1) var(--ease)}
 .overlay.closing{animation:fadeOut var(--d2) var(--ease) forwards;pointer-events:none}
@@ -2192,6 +2358,9 @@ html.theme-anim .sb-item{
       <div class="tb-actions" id="tb-pap" hidden>
         <button class="btn btn-s btn-sm" id="pap-vaciar" hidden data-i18n="pap.emptyBtn">Vaciar</button>
       </div>
+      <div class="tb-actions" id="tb-apps" hidden>
+        <button class="btn btn-s btn-sm" id="un-refresh" data-i18n="un.refresh">Volver a leer</button>
+      </div>
       <button class="tb-scan" id="tb-scan" data-i18n-title="top.analyzeAgain" title="Analizar de nuevo" aria-live="polite">
         <span class="tbs-dot" aria-hidden="true"></span>
         <span class="tbs-txt" id="tb-scan-txt" data-i18n="top.pendingScan">Esperando el primer análisis</span>
@@ -2487,6 +2656,46 @@ html.theme-anim .sb-item{
         </div>
       </section>
 
+      <!-- ===================== APLICACIONES (DESINSTALADOR) =====================
+           Tres pantallas dentro de una sección: la lista de lo instalado, el
+           análisis de lo que deja una aplicación y el resultado de quitarla.
+           La confirmación no es una pantalla sino una hoja, porque es una
+           decisión y no un sitio donde estar. -->
+      <section class="view" id="view-apps" hidden>
+        <div class="v-body">
+          <div class="panel pending-panel" id="un-pending">
+            <div class="pp-mark"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="apps" aria-hidden="true"></svg></div>
+            <h2 data-i18n="un.readingH2">Leyendo tus aplicaciones</h2>
+            <p data-i18n="un.readingP">Un momento: Brisa mira qué hay instalado. No se toca nada.</p>
+            <button class="btn btn-p" id="un-retry" hidden data-i18n="un.retry">Reintentar</button>
+          </div>
+          <div id="un-list" hidden>
+            <div class="files-toolbar">
+              <span class="un-total" id="un-total"></span>
+              <label class="fsearch"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="search" aria-hidden="true"></svg><input type="search" id="unsearch" data-i18n-ph="un.searchPh" data-i18n-aria="un.searchAria" placeholder="Buscar una aplicación…" aria-label="Buscar una aplicación"></label>
+            </div>
+            <div class="un-busy" id="un-busy" hidden aria-hidden="true"><i></i></div>
+            <!-- El orden NO es un mando aparte: cada criterio vive encima de la
+                 columna que ordena, con su ancho y su hueco, así que la cabecera
+                 es la tabla. Mismo patrón que la lista de quién consume en
+                 Estado del Mac. -->
+            <div class="row un-row un-chead" role="group" data-i18n-aria="un.sortAria" aria-label="Ordenar la lista por">
+              <span class="un-hspace"></span>
+              <button class="un-hcol un-hname" data-usort="name" data-i18n-aria="un.sortByName" aria-label="Ordenar por nombre"><span data-i18n="un.sortName">Nombre</span><span class="farr" data-arr="name" hidden></span></button>
+              <span class="un-hbar"></span>
+              <button class="un-hcol un-hsize" data-usort="size" data-i18n-aria="un.sortBySize" aria-label="Ordenar por tamaño"><span data-i18n="un.sortSize">Tamaño</span><span class="farr" data-arr="size" hidden></span></button>
+              <button class="un-hcol un-hused" data-usort="recent" data-i18n-aria="un.sortByRecent" aria-label="Ordenar por último uso"><span data-i18n="un.sortRecent">Último uso</span><span class="farr" data-arr="recent" hidden></span></button>
+              <span class="un-hgo"></span>
+            </div>
+            <div class="rowlist" id="un-rows"></div>
+            <p class="un-note" data-i18n="un.hint">Brisa busca también lo que la aplicación dejó por el sistema antes de quitarla.</p>
+          </div>
+          <div id="un-detail" hidden></div>
+          <div id="un-run" hidden></div>
+          <div id="un-done" hidden></div>
+        </div>
+      </section>
+
       <!-- ===================== HISTORIAL ===================== -->
       <section class="view" id="view-historial" hidden>
         <div class="v-body">
@@ -2707,6 +2916,47 @@ function inApp(){
       const s=(typeof sample==="string")?JSON.parse(sample):sample;
       if(typeof applySystem==="function") applySystem(s);
     }catch(e){ console.error("[brisa] muestra del sistema inválida", e); }
+  };
+  /* --- Fase 9: aplicaciones y desinstalador ---
+     Cuatro avisos por el mismo camino que el estado del Mac, no por el estado
+     del disco: la lista de apps (inmediata: son los Info.plist), sus tamaños
+     (por tandas, porque medir cada bundle cuesta), el análisis de la app que se
+     abre y el resultado de quitarla. Ninguno inventa nada: lo que no llega, la
+     interfaz lo dice. */
+  window.brisa.onApps = function(json){
+    try{
+      const list=(typeof json==="string")?JSON.parse(json):json;
+      if(!Array.isArray(list))return;
+      UN.apps=list.map(a=>({bid:a.bid,name:a.name,version:a.version||"",path:a.path,
+        gb:Number(a.gb)||0,last:Number(a.last)||0,running:!!a.running,apple:!!a.apple,
+        store:!!a.store,icon:a.icon||""}));
+      UN.loaded=true; UN.loading=false; UN.failed=false;
+      clearTimeout(unWatchT);
+      const view=$("#view-apps");
+      if(view&&!view.hidden&&UN.phase==="list")renderApps(); else renderTitle();
+    }catch(e){ console.error("[brisa] lista de aplicaciones inválida", e); }
+  };
+  window.brisa.onAppSizes = function(json){
+    try{
+      const list=(typeof json==="string")?JSON.parse(json):json;
+      if(!Array.isArray(list))return;
+      list.forEach(s=>{ const a=unApp(s.bid); if(a)a.gb=Number(s.gb)||0; });
+      const view=$("#view-apps");
+      if(view&&!view.hidden&&UN.phase==="list")renderApps();
+    }catch(e){ console.error("[brisa] tamaños de aplicaciones inválidos", e); }
+  };
+  window.brisa.onAppAnalysis = function(json){
+    try{
+      unApplyAnalysis((typeof json==="string")?JSON.parse(json):json);
+    }catch(e){ console.error("[brisa] análisis de aplicación inválido", e); }
+  };
+  window.brisa.onUninstallProgress = function(phase,pct,item){
+    unApplyProgress(phase,pct,item);
+  };
+  window.brisa.onUninstallResult = function(json){
+    try{
+      unApplyResult((typeof json==="string")?JSON.parse(json):json);
+    }catch(e){ console.error("[brisa] resultado de desinstalación inválido", e); }
   };
   window.brisa._fda = false;
   window.brisa.onPermissions = function(json){
@@ -3002,6 +3252,77 @@ const I18N = {
     "set.notifWeekly":"Resumen tras cada limpieza", "set.notifWeeklyD":"Te avisamos al terminar, con lo que se recuperó.",
     "set.notifLow":"Aviso de poco espacio", "set.notifLowD":"Un aviso cuando quede poco espacio libre.",
     "set.notifNote":"Los avisos nunca incluyen tus datos.",    "set.fda":"Acceso total al disco", "set.fdaOff":"Sin conceder: Brisa no toca las carpetas protegidas", "set.fdaOn":"Concedido: Brisa lo mide todo", "set.fdaStale":"Pendiente de restablecer: macOS conserva el permiso anterior", "set.fdaReset":"Restablecer permiso",
+    /* ---------- Aplicaciones (desinstalador) ----------
+       Lo que dice el desinstalador, incluidos los MOTIVOS por los que algo no
+       se pudo quitar: Swift manda la clave (`un.fail.*`) y la frase se escribe
+       aquí, con las demás, para que el idioma lo decida un solo sitio. */
+    "nav.apps":"Aplicaciones",
+    "un.readingH2":"Leyendo tus aplicaciones",
+    "un.readingP":"Un momento: Brisa mira qué hay instalado. No se toca nada.",
+    "un.errorH2":"No se pudieron leer las aplicaciones",
+    "un.errorP":"El sistema no respondió a la petición. Puedes intentarlo otra vez.",
+    "un.retry":"Reintentar",
+    "un.searchPh":"Buscar una aplicación…",
+    "un.searchAria":"Buscar una aplicación",
+    "un.sortName":"Nombre", "un.sortSize":"Tamaño", "un.sortRecent":"Último uso",
+    "un.sortByName":"Ordenar por nombre", "un.sortBySize":"Ordenar por tamaño", "un.sortByRecent":"Ordenar por último uso",
+    "un.sortAria":"Ordenar la lista por",
+    "un.measuring":"Midiendo…",
+    "un.running":"En uso", "un.apple":"De Apple", "un.store":"App Store",
+    "un.noUse":"Sin registro de uso",
+    "un.emptyH2":"No hay aplicaciones que quitar",
+    "un.emptyP":"Aquí aparecen las aplicaciones instaladas en tus carpetas de Aplicaciones.",
+    "un.noMatch":"Ninguna aplicación coincide con tu búsqueda.",
+    "un.count":"{n} instaladas · {gb} GB", "un.countOne":"1 instalada · {gb} GB",
+    "un.hint":"Brisa busca también lo que la aplicación dejó por el sistema antes de quitarla.",
+    "un.back":"Volver a la lista",
+    "un.analyzingH2":"Buscando lo que dejó {name}",
+    "un.analyzingP":"Brisa recorre los sitios donde una aplicación guarda sus cosas.",
+    "un.app":"La aplicación", "un.assoc":"Archivos asociados",
+    "un.sure":"Relación segura", "un.review":"Por revisar",
+    "un.itemsN":"{n} elementos", "un.itemsOne":"1 elemento",
+    "un.statSure":"se marca solo", "un.statReview":"lo decides tú",
+    "un.cat.app":"La aplicación", "un.cat.support":"Datos y soporte", "un.cat.caches":"Cachés",
+    "un.cat.prefs":"Preferencias", "un.cat.state":"Estado guardado", "un.cat.containers":"Contenedores",
+    "un.cat.group":"Contenedores compartidos", "un.cat.web":"Datos web", "un.cat.logs":"Registros",
+    "un.cat.agents":"Elementos de fondo",
+    "un.refresh":"Volver a leer",
+    "un.tag.possible":"Por revisar", "un.tag.admin":"Permisos",
+    "un.tag.nested":"Dentro de la app",
+    "un.reveal":"Mostrar en Finder",
+    "un.selectAll":"Todo", "un.selectNone":"Nada",
+    "un.selected":"{n} elementos · {gb} GB",
+    "un.keepHint":"Lo que no marques se queda donde está.",
+    "un.adminHint":"{n} elementos necesitan permisos de administrador: Brisa no los eleva por su cuenta.",
+    "un.runningHint":"Está abierta ahora mismo: Brisa la cerrará para poder quitarla.",
+    "un.uninstall":"Desinstalar completamente",
+    "un.noSel":"No hay nada marcado",
+    "un.noSelSub":"Marca al menos un elemento para desinstalar.",
+    "un.lockedTitle":"No se puede desinstalar",
+    "un.lockedSub":"{name} es una aplicación de macOS.",
+    "un.askTitle":"Desinstalar {name}",
+    "un.askBody":"Se quitarán <b>{n}</b> elementos y se liberarán <b>{gb} GB</b>.",
+    "un.askSafety":"Todo va a la Papelera de Brisa {d} días. Podrás restaurarlo desde ahí.",
+    "un.askKeep":"{n} elementos se quedan donde están.",
+    "un.askGo":"Desinstalar", "un.cancel":"Cancelar",
+    "un.ph.stop":"Cerrando la aplicación", "un.ph.app":"Eliminando la aplicación",
+    "un.ph.files":"Eliminando archivos asociados", "un.ph.clean":"Limpiando componentes",
+    "un.ph.done":"Finalizando",
+    "un.runTitle":"Desinstalando {name}",
+    "un.runWait":"No cierres Brisa mientras trabaja.",
+    "un.doneTitle":"{name} desinstalada",
+    "un.doneFreed":"{gb} GB liberados · {n} elementos",
+    "un.doneSafety":"No se ha borrado nada: todo está en la Papelera de Brisa.",
+    "un.doneFailTitle":"{n} elementos no se pudieron quitar",
+    "un.doneFailBody":"Siguen donde estaban. Este es el motivo.",
+    "un.doneList":"Volver a la lista", "un.doneTrash":"Ver la Papelera",
+    "un.closed":"{n} procesos cerrados",
+    "un.fail.admin":"Necesita permisos de administrador",
+    "un.fail.perm":"macOS no permite modificarlo",
+    "un.fail.busy":"Está en uso",
+    "un.fail.gone":"Ya no estaba",
+    "un.fail.protected":"macOS lo protege",
+    "un.fail.other":"No se pudo eliminar",
     "set.fdaBtn":"Abrir Ajustes", "set.fdaAgain":"Analizar de nuevo", "set.help":"Ayudar a mejorar Brisa", "set.helpD":"Solo se envía lo que decidas; nada tuyo sale de este Mac.", "set.version":"Versión {v} · {channel}", "set.beta":"Beta"
   },
   en: {
@@ -3233,6 +3554,73 @@ const I18N = {
     "set.notifWeekly":"Summary after each cleanup", "set.notifWeeklyD":"We tell you when it's done and how much was recovered.",
     "set.notifLow":"Low space warning", "set.notifLowD":"A warning when free space runs low.",
     "set.notifNote":"Notifications never include your data.",    "set.fda":"Full Disk Access", "set.fdaOff":"Not granted: Brisa leaves protected folders alone", "set.fdaOn":"Granted: Brisa measures everything", "set.fdaStale":"Needs resetting: macOS still holds the previous permission", "set.fdaReset":"Reset permission",
+    "nav.apps":"Applications",
+    "un.readingH2":"Reading your applications",
+    "un.readingP":"One moment: Brisa looks at what's installed. Nothing is touched.",
+    "un.errorH2":"Couldn't read your applications",
+    "un.errorP":"The system didn't answer the request. You can try again.",
+    "un.retry":"Try again",
+    "un.searchPh":"Search an application…",
+    "un.searchAria":"Search an application",
+    "un.sortName":"Name", "un.sortSize":"Size", "un.sortRecent":"Last used",
+    "un.sortByName":"Sort by name", "un.sortBySize":"Sort by size", "un.sortByRecent":"Sort by last use",
+    "un.sortAria":"Sort the list by",
+    "un.measuring":"Measuring…",
+    "un.running":"In use", "un.apple":"Apple", "un.store":"App Store",
+    "un.noUse":"No usage record",
+    "un.emptyH2":"No applications to remove",
+    "un.emptyP":"Only the applications installed in your Applications folders show up here.",
+    "un.noMatch":"No application matches your search.",
+    "un.count":"{n} installed · {gb} GB", "un.countOne":"1 installed · {gb} GB",
+    "un.hint":"Brisa also finds what the app left around the system before removing it.",
+    "un.back":"Back to the list",
+    "un.analyzingH2":"Looking for what {name} left behind",
+    "un.analyzingP":"Brisa walks the places where an application keeps its things.",
+    "un.app":"The application", "un.assoc":"Associated files",
+    "un.sure":"Certain match", "un.review":"To review",
+    "un.itemsN":"{n} items", "un.itemsOne":"1 item",
+    "un.statSure":"selected for you", "un.statReview":"you decide",
+    "un.cat.app":"The application", "un.cat.support":"Data & support", "un.cat.caches":"Caches",
+    "un.cat.prefs":"Preferences", "un.cat.state":"Saved state", "un.cat.containers":"Containers",
+    "un.cat.group":"Shared containers", "un.cat.web":"Web data", "un.cat.logs":"Logs",
+    "un.cat.agents":"Background items",
+    "un.refresh":"Read again",
+    "un.tag.possible":"To review", "un.tag.admin":"Permissions",
+    "un.tag.nested":"Inside the app",
+    "un.reveal":"Show in Finder",
+    "un.selectAll":"All", "un.selectNone":"None",
+    "un.selected":"{n} items · {gb} GB",
+    "un.keepHint":"Whatever you don't tick stays where it is.",
+    "un.adminHint":"{n} items need administrator permissions: Brisa never grants those on its own.",
+    "un.runningHint":"It's open right now: Brisa will quit it so it can be removed.",
+    "un.uninstall":"Uninstall completely",
+    "un.noSel":"Nothing is selected",
+    "un.noSelSub":"Select at least one item to uninstall.",
+    "un.lockedTitle":"Can't be uninstalled",
+    "un.lockedSub":"{name} is a macOS application.",
+    "un.askTitle":"Uninstall {name}",
+    "un.askBody":"<b>{n}</b> items will be removed and <b>{gb} GB</b> freed.",
+    "un.askSafety":"Everything goes to Brisa Trash for {d} days. You can restore it from there.",
+    "un.askKeep":"{n} items stay where they are.",
+    "un.askGo":"Uninstall", "un.cancel":"Cancel",
+    "un.ph.stop":"Quitting the application", "un.ph.app":"Removing the application",
+    "un.ph.files":"Removing associated files", "un.ph.clean":"Cleaning up components",
+    "un.ph.done":"Finishing",
+    "un.runTitle":"Uninstalling {name}",
+    "un.runWait":"Don't quit Brisa while it works.",
+    "un.doneTitle":"{name} uninstalled",
+    "un.doneFreed":"{gb} GB freed · {n} items",
+    "un.doneSafety":"Nothing was deleted: it's all in Brisa Trash.",
+    "un.doneFailTitle":"{n} items couldn't be removed",
+    "un.doneFailBody":"They're still where they were. Here's why.",
+    "un.doneList":"Back to the list", "un.doneTrash":"See the Trash",
+    "un.closed":"{n} processes quit",
+    "un.fail.admin":"Needs administrator permissions",
+    "un.fail.perm":"macOS won't allow changes",
+    "un.fail.busy":"It's in use",
+    "un.fail.gone":"It was already gone",
+    "un.fail.protected":"macOS protects it",
+    "un.fail.other":"Couldn't be removed",
     "set.fdaBtn":"Open Settings", "set.fdaAgain":"Analyze again", "set.help":"Help improve Brisa", "set.helpD":"Only what you choose is sent; nothing of yours leaves this Mac.", "set.version":"Version {v} · {channel}", "set.beta":"Beta"
   }
 };
@@ -3474,6 +3862,7 @@ function repaintCurrent(){
     else if(cur==="ritmo") renderRitmo();
     else if(cur==="papelera") renderPapelera();
     else if(cur==="estado") renderEstado();
+    else if(cur==="apps") renderApps();
   },420);
 }
 
@@ -3484,6 +3873,9 @@ const NAV_ITEMS = [
   {v:"atlas",k:"nav.atlas",ic:"drive"},
   {v:"archivos",k:"nav.archivos",ic:"folder"},
   {v:"duplicados",k:"nav.duplicados",ic:"copy"},
+  /* Aplicaciones va justo detrás de Duplicados: son las dos herramientas de
+     retirar cosas, y comparten el sitio en la barra por ese motivo. */
+  {v:"apps",k:"nav.apps",ic:"apps"},
   {v:"historial",k:"nav.historial",ic:"chart"},
   {v:"ritmo",k:"nav.ritmo",ic:"cycle"},
   {v:"papelera",k:"nav.papelera",ic:"bin",badge:true}
@@ -3509,9 +3901,12 @@ function renderNav(){
    cada pantalla llevaba su propia fila de botones dentro del contenido, en una
    cabecera aparte que ya no existe. */
 function syncToolbar(name){
-  const f=$("#tb-files"), p=$("#tb-pap");
+  const f=$("#tb-files"), p=$("#tb-pap"), u=$("#tb-apps");
   if(f)f.hidden=name!=="archivos";
   if(p)p.hidden=name!=="papelera";
+  /* En Aplicaciones la barra solo lleva «volver a leer» mientras se mira la
+     lista: en el análisis y en el resultado no hay nada que refrescar. */
+  if(u)u.hidden=name!=="apps"||UN.phase!=="list";
 }
 function go(name){
   $$(".view").forEach(v=>v.hidden=v.id!=="view-"+name);
@@ -3541,6 +3936,7 @@ function go(name){
   if(name==="ritmo") renderRitmo();
   if(name==="papelera") renderPapelera();
   if(name==="estado") renderEstado();
+  if(name==="apps"){ renderApps(); unLoad(); }
   /* El estado del Mac se mide solo mientras su sección está delante: aquí se
      pide al llegar y se suelta al salir, con una sola llamada idempotente. */
   syncSystemWatch();
@@ -3568,7 +3964,10 @@ function renderTitle(force){
   /* El «pendiente de análisis» es del disco: la sección de Estado del Mac no
      depende de ningún análisis —lee contadores del sistema— así que no se
      queda esperando a que el usuario mida el disco. */
-  if(STATE.needsScan&&name!=="estado"){
+  /* El «pendiente de análisis» es del disco: ni Estado del Mac (lee contadores
+     del sistema) ni Aplicaciones (lee /Applications) dependen de él, así que
+     ninguna de las dos se queda esperando a que el usuario mida el disco. */
+  if(STATE.needsScan&&name!=="estado"&&name!=="apps"){
     const pend={resumen:t("nav.resumen"),atlas:t("nav.atlas"),archivos:t("nav.archivos"),duplicados:t("nav.duplicados"),historial:t("nav.historial"),ritmo:t("nav.ritmo"),papelera:t("nav.papelera")};
     el.innerHTML=`${ic}<b>${pend[name]||name}</b><small>· ${t("title.pending")}</small>`;
     return;
@@ -3581,6 +3980,12 @@ function renderTitle(force){
       return `<b>${t("nav.estado")}</b><small>· ${t("est.titleSub",{c:Math.round(sy.cpu.pct),m:Math.round(sy.mem.pct)})}</small>`;
     })(),
     atlas:`<b>${t("nav.atlas")}</b><small>· ${CATS.length} ${t("u.categories")} · ${fmt(CATS.reduce((s,c)=>s+c.gb,0))} GB</small>`,
+    apps:(()=>{
+      if(!UN.loaded)return `<b>${t("nav.apps")}</b><small>· ${t("un.readingH2").toLowerCase()}</small>`;
+      const n=UN.apps.length, gb=UN.apps.reduce((s,a)=>s+(Number(a.gb)||0),0);
+      if(!n)return `<b>${t("nav.apps")}</b><small>· 0</small>`;
+      return `<b>${t("nav.apps")}</b><small>· ${t(n===1?"un.countOne":"un.count",{n:n,gb:fmt(gb)})}</small>`;
+    })(),
     archivos:(()=>{const l=sortedFiles();return l.length?`<b>${t("nav.archivos")}</b><small>· ${l.length} · ${fmt(l.reduce((s,f)=>s+f.gb,0))} GB</small>`:`<b>${t("nav.archivos")}</b><small>· 0</small>`;})(),
     duplicados:`<b>${t("nav.duplicados")}</b><small>· ${DUP_GROUPS.reduce((s,g)=>s+g.count,0)} · ${fmt(STATE.avail.duplicados.gb)} GB ${t("dup.available")}</small>`,
     historial:STATE.history.length?`<b>${t("nav.historial")}</b><small>· ${STATE.history.length} ${t("hist.cleanups")} · ${fmt(STATE.history.reduce((s,h)=>s+h.gb,0))} GB ${t("hist.recovered")}</small>`:`<b>${t("nav.historial")}</b><small>· ${t("hist.noCleanups")}</small>`,
@@ -4707,6 +5112,633 @@ function restorePap(id){
   afterClean();
   renderPapelera();
   toast(t("t.restored"),t("t.backHome"));
+}
+
+/* ---------- Aplicaciones (desinstalador) ----------
+   Tres pantallas en una sección —la lista, el análisis y el resultado— y una
+   sola fuente de verdad para lo que se ve: el estado UN. QUÉ archivos son de
+   una aplicación se decide en Swift (Uninstaller.swift), con identidad y no con
+   parecido; aquí se decide cómo se enseña y qué queda marcado, con una regla
+   que no se negocia: lo que no es seguro NO se marca solo.
+
+   La confirmación es una hoja —es una decisión, no un sitio donde estar— y el
+   resultado cuenta también lo que NO se pudo quitar, que es la mitad de la
+   verdad. En el navegador, sin puente, la lista y el análisis son de ejemplo,
+   pero coherentes y con los casos incómodos dentro: una app en uso, restos
+   dudosos, algo que pide permisos y algo que falla al quitarlo. */
+const UN_CATS=[
+  {k:"app",        kk:"un.cat.app",        ic:"apps"},
+  {k:"support",    kk:"un.cat.support",    ic:"folder"},
+  {k:"caches",     kk:"un.cat.caches",     ic:"tray"},
+  {k:"prefs",      kk:"un.cat.prefs",      ic:"sliders"},
+  {k:"state",      kk:"un.cat.state",      ic:"restore"},
+  {k:"containers", kk:"un.cat.containers", ic:"shield"},
+  {k:"group",      kk:"un.cat.group",      ic:"copy"},
+  {k:"web",        kk:"un.cat.web",        ic:"net"},
+  {k:"logs",       kk:"un.cat.logs",       ic:"info"},
+  {k:"agents",     kk:"un.cat.agents",     ic:"cycle"}
+];
+const UN_PHASES=["stop","app","files","clean","done"];
+const UN_PHASE_IC={stop:"x",app:"apps",files:"folder",clean:"cycle",done:"check"};
+const UN_PHASE_KEYS={stop:"un.ph.stop",app:"un.ph.app",files:"un.ph.files",clean:"un.ph.clean",done:"un.ph.done"};
+/* El motivo del fallo viaja desde Swift como clave, y su frase se escribe aquí:
+   así el idioma de la app decide cómo suena un «no se pudo» en los dos idiomas. */
+const UN_FAIL={admin:"un.fail.admin",perm:"un.fail.perm",busy:"un.fail.busy",
+  gone:"un.fail.gone",protected:"un.fail.protected",other:"un.fail.other"};
+const UN={
+  phase:"list",      /* list | detail | running | done */
+  apps:[],           /* lo instalado; los tamaños llegan por tandas */
+  loaded:false,      /* ya se ha leído la lista (aunque salga vacía) */
+  loading:false,     /* hay una lectura en marcha */
+  failed:false,      /* se pidió y no llegó */
+  q:"", sort:"name", dir:1, searching:false,
+  bid:null,          /* la app abierta */
+  analysis:null,     /* lo que ha dejado: grupos, elementos y certezas */
+  analyzing:false,
+  checked:new Set(),
+  run:{phase:"",pct:0,item:null},
+  result:null
+};
+let unWatchT=null, unDemoT=null, unSearchT=null;
+const unEsc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* La ruta se enseña abreviada: «/Users/quien/Library/…» es información del
+   sistema operativo, no del usuario. */
+const unShort=p=>String(p||"").replace(/^\/Users\/[^/]+\//,"~/");
+const unApp=bid=>UN.apps.find(a=>a.bid===bid)||null;
+/* La marca de la app, del juego de marcas del prototipo. Sobre la ficha teñida
+   que ya usa la app para sus propias marcas, así que una fila de aplicaciones y
+   una fila de categorías se visten igual. Las marcas casi negras (Steam,
+   Notion) suben a tinta clara en tema oscuro: si no, desaparecen. */
+function unLum(hex){
+  const n=parseInt(String(hex).slice(1),16);
+  return (0.299*(n>>16&255)+0.587*(n>>8&255)+0.114*(n&255))/255;
+}
+function unBrand(bid,extra){
+  const g=UN_DEMO_GLYPHS[bid];
+  if(!g)return `<span class="r-ic">${SVG("apps")}</span>`;
+  const dark=unLum(g.c)<0.34?" dk":"";
+  return `<span class="un-brand${extra||""}${dark}" style="--bc:${g.c}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${g.d}"/></svg></span>`;
+}
+const unItems=()=>UN.analysis&&Array.isArray(UN.analysis.groups)?UN.analysis.groups.reduce((s,g)=>s.concat(g.items||[]),[]):[];
+const unItem=id=>unItems().find(i=>i.id===id)||null;
+/* Lo que va dentro del bundle se va con él: se enseña, no se elige. */
+const unCheckable=i=>!i.nested;
+const unSelected=()=>unItems().filter(i=>UN.checked.has(i.id));
+const unGB=list=>Math.round(list.reduce((s,i)=>s+(Number(i.gb)||0),0)*10)/10;
+
+function unLoad(){
+  if(UN.apps.length||UN.loading)return;
+  UN.loading=true;
+  if(inApp()){
+    postIntent("appsList");
+    /* Si el sistema no contesta, la sección no se queda girando: a los cuatro
+       segundos dice que no pudo y ofrece volver a intentarlo. */
+    clearTimeout(unWatchT);
+    unWatchT=setTimeout(()=>{ if(!UN.loaded){ UN.failed=true; UN.loaded=true; UN.loading=false; renderApps(); } },4000);
+  } else {
+    unDemoSeed();
+  }
+}
+function unReload(){
+  UN.apps=[]; UN.loaded=false; UN.loading=false; UN.failed=false;
+  clearTimeout(unWatchT);
+  renderApps();
+  unLoad();
+}
+/* La fecha va sin verbo: la columna ya se llama «Último uso», así que repetirlo
+   en cada fila es ruido. Solo el dato. */
+function unAgo(a){
+  const ts=Number(a.last)||0;
+  return ts?fmtWhen(ts*1000):t("un.noUse");
+}
+function unVisible(){
+  const q=UN.q.trim().toLowerCase(), lang=STATE.settings.language==="en"?"en":"es";
+  const list=UN.apps.filter(a=>!q||a.name.toLowerCase().includes(q)||String(a.bid||"").toLowerCase().includes(q));
+  const d=UN.dir<0?-1:1;
+  if(UN.sort==="size")list.sort((a,b)=>d*((Number(a.gb)||0)-(Number(b.gb)||0)));
+  else if(UN.sort==="recent")list.sort((a,b)=>d*((Number(a.last)||0)-(Number(b.last)||0)));
+  else list.sort((a,b)=>d*a.name.localeCompare(b.name,lang));
+  return list;
+}
+/* Ordenar se hace desde la cabecera, y pulsar de nuevo la misma columna le da
+   la vuelta. El sentido con el que nace cada una no es el mismo: una lista de
+   apps se mira de la A a la Z, pero el tamaño y el uso se miran de mayor a
+   menor —lo que más pesa y lo que se tocó ayer van arriba—. */
+function unSort(k){
+  if(UN.sort===k)UN.dir=-UN.dir;
+  else {UN.sort=k;UN.dir=k==="name"?1:-1;}
+  /* Reordenar no enciende la barra: la lista ya cambia delante de los ojos, así
+     que la barra no informaría de nada y solo parpadearía en cada clic. La
+     barra es de la búsqueda, que es lo único que se teclea. */
+  unPaintList();
+}
+/* La barra vive mientras dura la escritura y se retira sola. */
+function unWorking(){
+  UN.searching=true; unBusy();
+  clearTimeout(unSearchT);
+  unSearchT=setTimeout(()=>{UN.searching=false;unBusy();},300);
+}
+
+/* ---------- Pintado ---------- */
+function renderApps(){
+  const pend=$("#un-pending"), list=$("#un-list"), det=$("#un-detail"), run=$("#un-run"), done=$("#un-done");
+  if(!pend)return;
+  const waiting=!UN.loaded&&!UN.apps.length;
+  pend.hidden=!(UN.phase==="list"&&waiting);
+  list.hidden=UN.phase!=="list"||waiting;
+  det.hidden=UN.phase!=="detail";
+  run.hidden=UN.phase!=="running";
+  done.hidden=UN.phase!=="done";
+  if(!pend.hidden){
+    const fail=UN.failed;
+    $("#un-pending h2").textContent=t(fail?"un.errorH2":"un.readingH2");
+    $("#un-pending p").textContent=t(fail?"un.errorP":"un.readingP");
+    $("#un-retry").hidden=!fail;
+  }
+  if(!list.hidden)unPaintList();
+  unBusy();
+  if(!det.hidden)unPaintDetail();
+  if(!run.hidden)unPaintRun();
+  if(!done.hidden)unPaintDone();
+  syncToolbar($("#win-title")?($("#win-title").dataset.view||""):"");
+  renderTitle();
+}
+/* La barra de «buscando» se enseña mientras dura la escritura y se retira sola:
+   sin esto, filtrar una lista local no daría ninguna señal de que algo pasa. */
+function unBusy(){
+  const el=$("#un-busy"); if(!el)return;
+  el.hidden=!(UN.phase==="list"&&UN.searching);
+}
+function unPaintList(){
+  const rows=$("#un-rows"); if(!rows)return;
+  /* La cabecera ordenable: la columna activa en tinta llena con su flecha, las
+     otras apagadas. Es la misma marca que la tabla de Archivos. */
+  $$(".un-hcol").forEach(b=>{
+    const on=b.dataset.usort===UN.sort;
+    b.classList.toggle("on",on);
+    const arr=b.querySelector(".farr");
+    if(arr){arr.hidden=!on;arr.className="farr "+(on?(UN.dir<0?"desc":"asc"):"");}
+    /* El sentido del orden no puede vivir solo en la flecha: quien usa lector de
+       pantalla tiene que oírlo. Es la misma fórmula que la tabla de Archivos. */
+    const lab=b.dataset.i18nAria?t(b.dataset.i18nAria):b.textContent.trim();
+    b.setAttribute("aria-label",on?lab+", "+t(UN.dir<0?"files.sortDesc":"files.sortAsc"):lab);
+  });
+  const tot=$("#un-total");
+  if(tot){
+    const gb=Math.round(UN.apps.reduce((s,a)=>s+(Number(a.gb)||0),0)*10)/10;
+    tot.textContent=UN.apps.length?t(UN.apps.length===1?"un.countOne":"un.count",{n:UN.apps.length,gb:fmt(gb)}):"";
+  }
+  if(!UN.apps.length){
+    rows.innerHTML=`<div class="empty-note"><div class="pp-mark">${SVG("apps")}</div><h2>${t("un.emptyH2")}</h2><p>${t("un.emptyP")}</p></div>`;
+    return;
+  }
+  const list=unVisible();
+  if(!list.length){
+    rows.innerHTML=`<div class="empty-note"><div class="pp-mark">${SVG("search")}</div><h2>${t("un.noMatch")}</h2></div>`;
+    return;
+  }
+  /* La barra se mide contra la app MÁS grande de la lista: es una magnitud
+     relativa, para barrer la lista de un vistazo, no un porcentaje del disco. */
+  const maxGB=list.reduce((m,a)=>Math.max(m,Number(a.gb)||0),0);
+  rows.innerHTML=list.map((a,i)=>{
+    const sub=[a.version?"v"+unEsc(a.version):"",a.store?t("un.store"):""].filter(Boolean).join(" · ");
+    const tags=(a.running?`<span class="un-tag hot">${t("un.running")}</span>`:"")+(a.apple?`<span class="un-tag">${t("un.apple")}</span>`:"");
+    const ago=unAgo(a);
+    const pc=maxGB>0?Math.max(2,Math.round((Number(a.gb)||0)/maxGB*100)):0;
+    return `<div class="row un-row" role="button" tabindex="0" data-un="${unEsc(a.bid)}" aria-label="${unEsc(a.name)}" style="--i:${i}">
+      ${a.icon?`<span class="r-ic"><img src="${a.icon}" alt=""></span>`:unBrand(a.bid)}
+      <span class="r-name un-nm"><span class="un-nm-t"><b>${unEsc(a.name)}</b>${tags}</span><small>${sub}</small></span>
+      <span class="un-bar" aria-hidden="true"><i style="width:${pc}%"></i></span>
+      <span class="r-size num">${a.gb>0?fmt(a.gb)+" GB":t("un.measuring")}</span>
+      <span class="un-used" title="${unEsc(ago)}">${unEsc(ago)}</span>
+      <span class="r-go">${SVG("chevR")}</span>
+    </div>`;
+  }).join("");
+}
+function unPaintDetail(){
+  const host=$("#un-detail"); if(!host)return;
+  const a=unApp(UN.bid);
+  if(!a){ host.innerHTML=""; return; }
+  const back=`<button class="un-back" id="un-back">${SVG("chevL")}${t("un.back")}</button>`;
+  /* Mientras se busca, la pantalla NO enseña una lista a medias ni un aviso
+     colgado de arriba: se queda una barra fina latiendo en el CENTRO del hueco,
+     que es donde mira el ojo cuando espera algo. Debajo, en dos líneas, qué se
+     está haciendo. */
+  host.classList.toggle("scanning",!!UN.analyzing&&!UN.analysis);
+  if(UN.analyzing||!UN.analysis){
+    host.innerHTML=back+`<div class="un-scan" role="status">
+      <h2>${t("un.analyzingH2",{name:unEsc(a.name)})}</h2>
+      <span class="un-scan-bar" aria-hidden="true"><i></i></span>
+      <p>${t("un.analyzingP")}</p></div>`;
+    return;
+  }
+  host.classList.remove("scanning");
+  const an=UN.analysis, all=unItems();
+  const appGB=Number(an.gb)||0;
+  const assoc=Math.round((Number(an.total||0)-appGB)*10)/10;
+  const tags=[];
+  if(an.running||a.running)tags.push(`<span class="un-tag hot">${t("un.running")}</span>`);
+  if(a.apple)tags.push(`<span class="un-tag">${t("un.apple")}</span>`);
+  if(an.adminCount)tags.push(`<span class="un-tag warn">${t("un.tag.admin")} · ${an.adminCount}</span>`);
+  const notes=[];
+  if(an.running||a.running)notes.push(t("un.runningHint"));
+  if(an.adminCount)notes.push(t("un.adminHint",{n:an.adminCount}));
+  notes.push(t("un.keepHint"));
+  host.innerHTML=back+`
+    <div class="panel">
+      <div class="un-head">
+        <span class="un-icon">${(an.icon||a.icon)?`<img src="${an.icon||a.icon}" alt="">`:unBrand(a.bid," xl")}</span>
+        <div class="un-id"><h2>${unEsc(a.name)}</h2><p title="${unEsc(a.path)}">${unEsc(unShort(a.path))}${a.version?" · v"+unEsc(a.version):""}</p></div>
+        <div class="un-tags">${tags.join("")}</div>
+      </div>
+      <div class="un-stats">
+        <div class="un-stat"><span class="k">${t("un.app")}</span><span class="v">${fmt(appGB)} GB</span><span class="s">${a.version?"v"+unEsc(a.version):""}</span></div>
+        <div class="un-stat"><span class="k">${t("un.assoc")}</span><span class="v">${fmt(Math.max(0,assoc))} GB</span><span class="s">${t(all.filter(i=>i.cat!=="app").length===1?"un.itemsOne":"un.itemsN",{n:Math.max(0,all.filter(i=>i.cat!=="app").length)})}</span></div>
+        <div class="un-stat"><span class="k">${t("un.sure")}</span><span class="v">${fmt(Number(an.certain)||0)} GB</span><span class="s">${t("un.statSure")}</span></div>
+        <div class="un-stat"><span class="k">${t("un.review")}</span><span class="v">${fmt(Number(an.possible)||0)} GB</span><span class="s">${t("un.statReview")}</span></div>
+      </div>
+    </div>
+    ${(an.groups||[]).map(g=>unGroupHTML(g)).join("")}
+    <p class="un-note" id="un-detail-note">${notes.join(" ")}</p>
+    <div class="un-foot">
+      <span class="un-count"><b id="un-sel">0</b><small>${t("un.keepHint")}</small></span>
+      <span class="un-acts">
+        <button class="btn btn-s btn-sm" id="un-all">${t("un.selectAll")}</button>
+        <button class="btn btn-s btn-sm" id="un-none">${t("un.selectNone")}</button>
+        <button class="btn btn-p btn-lg" id="un-go">${t("un.uninstall")}</button>
+      </span>
+    </div>`;
+  unPaintFoot();
+}
+function unGroupHTML(g){
+  const cat=UN_CATS.find(c=>c.k===g.key)||{kk:"un.cat.app",ic:"folder"};
+  const items=Array.isArray(g.items)?g.items:[];
+  const gb=unGB(items);
+  const hint=items.length+" · "+fmt(gb)+" GB";
+  const rows=items.map((it,i)=>{
+    const on=UN.checked.has(it.id);
+    let tag="";
+    if(it.nested)tag=`<span class="un-tag warn">${t("un.tag.nested")}</span>`;
+    else if(it.admin)tag=`<span class="un-tag warn">${t("un.tag.admin")}</span>`;
+    else if(it.conf==="possible")tag=`<span class="un-tag warn">${t("un.tag.possible")}</span>`;
+    const mark=it.nested
+      ? `<span class="un-nest">${SVG("chevR")}</span>`
+      : `<input type="checkbox" class="fcheckbox" data-uit="${it.id}"${on?" checked":""} aria-label="${unEsc(it.name)}">`;
+    return `<div class="row un-item${it.nested?" nested":""}${on?" sel":""}" data-uitem="${it.id}" style="--i:${i}">
+      ${mark}
+      <span class="un-name"><b>${unEsc(it.name)}</b><small title="${unEsc(it.path)}">${unEsc(unShort(it.path))}</small></span>
+      ${tag}
+      <span class="r-size num">${fmt(Number(it.gb)||0)} GB</span>
+      <button class="icon-btn un-eye" data-reveal="${unEsc(it.path)}" title="${t("un.reveal")}" aria-label="${t("un.reveal")}">${SVG("folder")}</button>
+    </div>`;
+  }).join("");
+  return `<div class="v-section un-cat"><h2>${SVG(cat.ic)}<span>${t(cat.kk)}</span></h2><span class="hint">${hint}</span></div>
+    <div class="rowlist">${rows}</div>`;
+}
+function unPaintFoot(){
+  const sel=unSelected(), gb=unGB(sel);
+  const el=$("#un-sel");
+  if(el)el.textContent=t("un.selected",{n:sel.length,gb:fmt(gb)});
+  const go=$("#un-go"); if(go)go.disabled=!sel.length;
+  $$("#un-detail [data-uit]").forEach(cb=>{
+    const on=UN.checked.has(cb.dataset.uit);
+    cb.checked=on;
+    const row=cb.closest(".un-item");
+    if(row)row.classList.toggle("sel",on);
+  });
+}
+function unPaintRun(){
+  if(UN.phase!=="running")return;
+  const a=unApp(UN.bid)||{name:""};
+  const fill=$("#un-run-fill"), pct=$("#un-run-pct");
+  if(fill)fill.style.width=Math.max(2,Math.min(100,UN.run.pct)).toFixed(0)+"%";
+  if(pct)pct.textContent=Math.round(UN.run.pct)+" %";
+  const idx=UN_PHASES.indexOf(UN.run.phase);
+  UN_PHASES.forEach((ph,i)=>{
+    const row=$(`#un-run-list [data-ph="${ph}"]`); if(!row)return;
+    if(i<idx&&!row.dataset.tick){ row.dataset.tick="1"; row.classList.add("done"); const ps=row.querySelector(".ps"); if(ps)ps.textContent="✓"; }
+    if(i===idx&&ph==="files"&&UN.run.item){ const ps=row.querySelector(".ps"); if(ps)ps.textContent=unShort(UN.run.item); }
+  });
+  const cur=$("#un-run-item");
+  if(cur)cur.textContent=UN.run.item?unShort(UN.run.item):"";
+  const ttl=$("#un-run-title");
+  if(ttl)ttl.textContent=t("un.runTitle",{name:a.name});
+}
+function unPaintDone(){
+  const host=$("#un-done"); if(!host)return;
+  const r=UN.result||{name:"",freed:0,removed:0,failures:[],closed:0};
+  const fails=Array.isArray(r.failures)?r.failures:[];
+  const extra=r.closed?" · "+t("un.closed",{n:r.closed}):"";
+  host.innerHTML=`<div class="panel sheet-ok">
+      <span class="ok-ic">${SVG(fails.length?"info":"check")}</span>
+      <h4>${t("un.doneTitle",{name:unEsc(r.name||"")})}</h4>
+      <p>${t("un.doneFreed",{gb:fmt(Number(r.freed)||0),n:r.removed||0})}${extra}<br>${t("un.doneSafety")}</p>
+      <div class="ok-acts">
+        <button class="btn btn-s" id="un-see-trash">${t("un.doneTrash")}</button>
+        <button class="btn btn-p" id="un-back-list">${t("un.doneList")}</button>
+      </div>
+    </div>`+(fails.length?`
+    <div class="panel un-fails">
+      <h4>${t("un.doneFailTitle",{n:fails.length})}</h4>
+      <p class="un-note">${t("un.doneFailBody")}</p>
+      <div class="rowlist">${fails.map((f,i)=>`<div class="row un-item" style="--i:${i}">
+        <span class="un-nest">${SVG("info")}</span>
+        <span class="un-name"><b>${unEsc(f.name)}</b><small title="${unEsc(f.path)}">${unEsc(unShort(f.path))}</small></span>
+        <span class="un-tag warn">${t(UN_FAIL[f.reason]||UN_FAIL.other)}</span>
+        <button class="icon-btn un-eye" data-reveal="${unEsc(f.path)}" title="${t("un.reveal")}" aria-label="${t("un.reveal")}">${SVG("folder")}</button>
+      </div>`).join("")}</div>
+    </div>`:"");
+}
+
+/* ---------- Interacción ---------- */
+function unOpen(bid){
+  const a=unApp(bid); if(!a)return;
+  /* Una app de macOS no se desinstala: se dice, en vez de ofrecer un botón que
+     fallaria al final del camino. */
+  if(a.apple){ toast(t("un.lockedTitle"),t("un.lockedSub",{name:a.name})); return; }
+  UN.bid=bid; UN.phase="detail"; UN.analysis=null; UN.analyzing=true; UN.result=null; UN.checked=new Set();
+  renderApps();
+  if(inApp())postIntent("appAnalysis",{path:a.path,gb:Number(a.gb)||0});
+  else unDemoAnalyze(a);
+}
+function unApplyAnalysis(an){
+  if(!an||!Array.isArray(an.groups))return;
+  UN.analyzing=false;
+  UN.analysis=an;
+  UN.checked=new Set();
+  /* Se marca solo lo SEGURO y de casa: un resto dudoso, o algo que exige
+     permisos de administrador, espera a que el usuario lo diga. */
+  unItems().forEach(it=>{ if(it.conf==="certain"&&!it.admin&&!it.nested)UN.checked.add(it.id); });
+  if(UN.phase==="detail")renderApps();
+}
+function unToggle(id){
+  const it=unItem(id); if(!it||!unCheckable(it))return;
+  if(UN.checked.has(id))UN.checked.delete(id); else UN.checked.add(id);
+  unPaintFoot();
+}
+function unCheckAll(on){
+  unItems().forEach(it=>{ if(!unCheckable(it))return; if(on)UN.checked.add(it.id); else UN.checked.delete(it.id); });
+  unPaintFoot();
+}
+function unReveal(path){
+  if(!path)return;
+  if(inApp()){ postIntent("revealPath",path); return; }
+  toast(t("un.reveal"),unShort(path));
+}
+function unBackToList(){
+  const done=UN.result;
+  UN.phase="list"; UN.bid=null; UN.analysis=null; UN.analyzing=false; UN.result=null; UN.checked=new Set();
+  if(inApp()){
+    /* Aplicación quitada: la lista se vuelve a leer de verdad. */
+    if(done)unReload(); else renderApps();
+    return;
+  }
+  if(done&&done.bid)UN.apps=UN.apps.filter(a=>a.bid!==done.bid);
+  renderApps();
+}
+function unAsk(){
+  const a=unApp(UN.bid), an=UN.analysis;
+  if(!a||!an)return;
+  const sel=unSelected();
+  if(!sel.length){ toast(t("un.noSel"),t("un.noSelSub")); return; }
+  const gb=unGB(sel), keep=Math.max(0,unItems().length-sel.length);
+  const byCat=UN_CATS.map(c=>{
+    const items=sel.filter(i=>i.cat===c.k);
+    if(!items.length)return "";
+    return `<div class="prog-row">${SVG(c.ic)}<b>${t(c.kk)}</b><span class="ps">${t(items.length===1?"un.itemsOne":"un.itemsN",{n:items.length})} · ${fmt(unGB(items))} GB</span></div>`;
+  }).join("");
+  const sheet=overlay(`
+    <div class="sheet-h"><h3>${t("un.askTitle",{name:unEsc(a.name)})}</h3><button class="sheet-close" data-close aria-label="${t("ask.close")}">${SVG("x")}</button></div>
+    <div class="sheet-b">
+      <div class="note-safe">${SVG("shield")}<span>${t("un.askSafety",{d:STATE.settings.retention})}</span></div>
+      <p class="kill-msg">${t("un.askBody",{n:sel.length,gb:fmt(gb)})}</p>
+      ${byCat}
+      ${keep?`<p class="kill-msg">${t("un.askKeep",{n:keep})}</p>`:""}
+    </div>
+    <div class="sheet-f"><span class="finfo">${t("un.keepHint")}</span>
+      <button class="btn btn-s btn-lg" id="un-cancel">${t("un.cancel")}</button>
+      <button class="btn btn-danger btn-lg" id="un-do">${t("un.askGo")}</button>
+    </div>`);
+  sheet.querySelector("[data-close]").onclick=closeSheet;
+  sheet.querySelector("#un-cancel").onclick=closeSheet;
+  sheet.querySelector("#un-do").onclick=()=>{ closeSheet(); unRun(sel); };
+}
+function unRun(sel){
+  const a=unApp(UN.bid); if(!a)return;
+  UN.phase="running";
+  UN.run={phase:"stop",pct:2,item:null};
+  unPaintRunShell();
+  renderApps();
+  if(inApp()){
+    const sizes={};
+    sel.forEach(i=>{ sizes[i.path]=Number(i.gb)||0; });
+    postIntent("uninstall",{path:a.path,paths:sel.map(i=>i.path),sizes:sizes,name:a.name,bid:a.bid});
+    return;
+  }
+  unDemoRun(a,sel);
+}
+/* La cuenta del proceso se pinta ENTERA antes de empezar: así el usuario ve los
+   cuatro pasos que va a dar Brisa en vez de una barra sin nombre. */
+function unPaintRunShell(){
+  const a=unApp(UN.bid)||{name:""};
+  const host=$("#un-run"); if(!host)return;
+  host.innerHTML=`<div class="panel un-run">
+    <div class="prog-cap"><span id="un-run-title">${t("un.runTitle",{name:unEsc(a.name)})}</span><b id="un-run-pct">0 %</b></div>
+    <div class="prog-track"><i id="un-run-fill"></i></div>
+    <div id="un-run-list">${UN_PHASES.map(ph=>`<div class="prog-row" data-ph="${ph}">${SVG(UN_PHASE_IC[ph])}<b>${t(UN_PHASE_KEYS[ph])}</b><span class="ps"></span></div>`).join("")}</div>
+    <p class="un-note" id="un-run-item" style="margin-top:12px">${t("un.runWait")}</p>
+  </div>`;
+}
+function unApplyProgress(phase,pct,item){
+  if(phase)UN.run.phase=phase;
+  UN.run.pct=Number(pct)||0;
+  UN.run.item=item||null;
+  if(UN.phase==="running")unPaintRun();
+}
+function unApplyResult(r){
+  clearTimeout(unDemoT);
+  UN.result=r||null;
+  /* En el prototipo, lo quitado aparece también en la Papelera y en el espacio
+     libre: el resto de la app tiene que contar lo mismo que esta pantalla. En
+     la app eso lo hacen pushTrashState y el reanálisis de verdad. */
+  if(!inApp()&&r){
+    const gb=Number(r.freed)||0;
+    if(gb>0){
+      STATE.papelera.unshift({id:"p"+Date.now()+Math.random(),kind:"file",name:r.name,availName:r.name,icon:"apps",gb:gb,taken:Date.now()-STATE.settings.retention*864e5+60000,fileObj:null});
+      STATE.free=Math.round((STATE.free+gb)*10)/10;
+      STATE.ser=scoreOf(STATE.free);
+      pushHistory([{name:r.name,icon:"apps",gb:gb}],"bin");
+      refreshSpace(); updateBadges(); renderPapelera();
+    }
+  }
+  UN.phase="done";
+  renderApps();
+}
+
+/* ---------- Prototipo: aplicaciones de ejemplo ----------
+   Sin puente no hay nada instalado que leer, y la sección tiene que poder
+   recorrerse ENTERA: la lista, el análisis con sus tres certezas, el progreso y
+   un resultado con un fallo dentro —porque el caso que más importa enseñar es
+   el que sale mal—. Todo es coherente entre sí: lo que el análisis dice que va
+   a desaparecer es lo que luego desaparece. */
+/* La marca oficial de cada app típica del prototipo, en vectorial: un
+   trazado de simple-icons (CC0) con el color de marca, sobre la ficha
+   teñida que ya usa la app para sus marcas. El navegador no tiene puente,
+   así que estas apps de ejemplo no existen en el disco: de ahí que su
+   identidad viaje dentro del archivo. En la app nativa no se usa —el
+   icono de verdad lo manda Swift, y ahí sí es el .icns de cada app—. */
+const UN_DEMO_GLYPHS={
+  "com.apple.dt.Xcode":{c:"#147EFB",d:"M19.06 5.3327c.4517-.1936.7744-.2581 1.097-.1936.5163.1291.7744.5163.968.7098.1936.3872.9034.7744 1.2261.8389.2581.0645.7098-.6453 1.0325-1.2906.3227-.5808.5163-1.3552.4517-1.5488-.0645-.1936-.968-.5808-1.1616-.5808-.1291 0-.3872.1291-.8389.0645-.4517-.0645-.9034-.5808-1.1616-.968-.4517-.6453-1.097-1.0325-1.6778-1.3552-.6453-.3227-1.3552-.5163-2.065-.6453-1.0325-.2581-2.065-.4517-3.0975-.3227-.5808.0645-1.2906.1291-1.8069.3227-.0645 0-.1936.1936-.0645.1936s.5808.0645.5808.0645-.5807.1292-.5807.2583c0 .1291.0645.1291.1291.1291.0645 0 1.4842-.0645 2.065 0 .6453.1291 1.3552.4517 1.8069 1.2261.7744 1.4197.4517 2.7749.2581 3.2266-.968 2.1295-8.6472 15.2294-9.0344 16.1328-.3873.9034-.5163 1.4842.5807 2.065s1.6778.3227 2.0005-.0645c.3872-.5163 7.0339-17.1654 9.2925-18.2624zm-3.6138 8.7117h1.5488c1.0325 0 1.2261.5163 1.2261.7098.0645.5163-.1936 1.1616-1.2261 1.1616h-.968l.7744 1.2906c.4517.7744.2581 1.1616 0 1.4197-.3872.3872-1.2261.3872-1.6778-.4517l-.9034-1.5488c-.6453 1.4197-1.2906 2.9684-2.065 4.7753h4.0009c1.9359 0 3.5492-1.6133 3.5492-3.5492V6.5588c-.0645-.1291-.1936-.0645-.2581 0-.3872.4517-1.4842 2.0004-4.001 7.4856zm-9.8087 8.0019h-.3227c-2.3231 0-4.1945-1.8714-4.1945-4.1945V7.0105c0-2.3231 1.8714-4.1945 4.1945-4.1945h9.3571c-.1936-.1936-.968-.5163-1.7423-.4517-.3227 0-.968.1291-1.3552-.1291-.3872-.3227-.3227-.5163-.9034-.5163H4.9277c-2.6458 0-4.7753 2.1295-4.7753 4.7753v11.7447c0 2.6458 2.1295 4.7753 4.4527 4.7108.6452 0 .8388-.5162 1.0324-.9034zM20.4152 6.9459v10.9058c0 2.3231-1.8714 4.1945-4.1945 4.1945H11.897s-.3872 1.0325.8389 1.0325h3.8719c2.6458 0 4.7753-2.1295 4.7753-4.7753V8.8173c.0646-.9034-.7098-1.4842-.9679-1.8714zm-18.5851.0646v10.8413c0 1.9359 1.6133 3.5492 3.5492 3.5492h.5808c0-.0645.7744-1.4197 2.4522-4.2591.1936-.3872.4517-.7744.7098-1.2261H4.4114c-.5808 0-.9034-.3872-.968-.7098-.1291-.5163.1936-1.1616.9034-1.1616h2.3877l3.033-5.2916s-.7098-1.2906-.9034-1.6133c-.2582-.4517-.1291-.9034.129-1.1615.3872-.3872 1.0325-.5808 1.6778.4517l.2581.3872.2581-.3872c.5808-.8389.968-.7744 1.2906-.7098.5163.1291.8389.7098.3872 1.6133L8.864 14.0444h1.3552c.4517-.7744.9034-1.5488 1.3552-2.3877-.0645-.3227-.1291-.7098-.0645-1.0325.0645-.5163.3227-.968.6453-1.3552l.3872.6453c1.2261-2.1295 2.1295-3.9364 2.3877-4.6463.1291-.3872.3227-1.1616.1291-1.8069H5.3794c-2.0005.0001-3.5493 1.6134-3.5493 3.5494zM4.605 17.7872c0-.0645.7744-1.4197.7744-1.4197 1.2261-.3227 1.8069.4517 1.8714.5163 0 0-.8389 1.4842-1.097 1.7423s-.5808.3227-.9034.2581c-.5164-.129-.839-.6453-.6454-1.097z"},
+  "com.valvesoftware.steam":{c:"#000000",d:"M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"},
+  "com.docker.docker":{c:"#2496ED",d:"M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z"},
+  "com.google.Chrome":{c:"#4285F4",d:"M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728Z"},
+  "org.blenderfoundation.blender":{c:"#E87D0D",d:"M12.51 13.214c.046-.8.438-1.506 1.03-2.006a3.424 3.424 0 0 1 2.212-.79c.85 0 1.631.3 2.211.79.592.5.983 1.206 1.028 2.005.045.823-.285 1.586-.865 2.153a3.389 3.389 0 0 1-2.374.938 3.393 3.393 0 0 1-2.376-.938c-.58-.567-.91-1.33-.865-2.152M7.35 14.831c.006.314.106.922.256 1.398a7.372 7.372 0 0 0 1.593 2.757 8.227 8.227 0 0 0 2.787 2.001 8.947 8.947 0 0 0 3.66.76 8.964 8.964 0 0 0 3.657-.772 8.285 8.285 0 0 0 2.785-2.01 7.428 7.428 0 0 0 1.592-2.762 6.964 6.964 0 0 0 .25-3.074 7.123 7.123 0 0 0-1.016-2.779 7.764 7.764 0 0 0-1.852-2.043h.002L13.566 2.55l-.02-.015c-.492-.378-1.319-.376-1.86.002-.547.382-.609 1.015-.123 1.415l-.001.001 3.126 2.543-9.53.01h-.013c-.788.001-1.545.518-1.695 1.172-.154.665.38 1.217 1.2 1.22V8.9l4.83-.01-8.62 6.617-.034.025c-.813.622-1.075 1.658-.563 2.313.52.667 1.625.668 2.447.004L7.414 14s-.069.52-.063.831zm12.09 1.741c-.97.988-2.326 1.548-3.795 1.55-1.47.004-2.827-.552-3.797-1.538a4.51 4.51 0 0 1-1.036-1.622 4.282 4.282 0 0 1 .282-3.519 4.702 4.702 0 0 1 1.153-1.371c.942-.768 2.141-1.183 3.396-1.185 1.256-.002 2.455.41 3.398 1.175.48.391.87.854 1.152 1.367a4.28 4.28 0 0 1 .522 1.706 4.236 4.236 0 0 1-.239 1.811 4.54 4.54 0 0 1-1.035 1.626"},
+  "com.figma.Desktop":{c:"#F24E1E",d:"M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z"},
+  "com.tinyspeck.slackmacgap":{c:"#4A154B",d:"M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"},
+  "com.microsoft.VSCode":{c:"#007ACC",d:"M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"},
+  "notion.id":{c:"#000000",d:"M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"},
+  "com.spotify.client":{c:"#1DB954",d:"M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"},
+  "org.mozilla.firefox":{c:"#FF7139",d:"M20.452 3.445a11.002 11.002 0 00-2.482-1.908C16.944.997 15.098.093 12.477.032c-.734-.017-1.457.03-2.174.144-.72.114-1.398.292-2.118.56-1.017.377-1.996.975-2.574 1.554.583-.349 1.476-.733 2.55-.992a10.083 10.083 0 013.729-.167c2.341.34 4.178 1.381 5.48 2.625a8.066 8.066 0 011.298 1.587c1.468 2.382 1.33 5.376.184 7.142-.85 1.312-2.67 2.544-4.37 2.53-.583-.023-1.438-.152-2.25-.566-2.629-1.343-3.021-4.688-1.118-6.306-.632-.136-1.82.13-2.646 1.363-.742 1.107-.7 2.816-.242 4.028a6.473 6.473 0 01-.59-1.895 7.695 7.695 0 01.416-3.845A8.212 8.212 0 019.45 5.399c.896-1.069 1.908-1.72 2.75-2.005-.54-.471-1.411-.738-2.421-.767C8.31 2.583 6.327 3.061 4.7 4.41a8.148 8.148 0 00-1.976 2.414c-.455.836-.691 1.659-.697 1.678.122-1.445.704-2.994 1.248-4.055-.79.413-1.827 1.668-2.41 3.042C.095 9.37-.2 11.608.14 13.989c.966 5.668 5.9 9.982 11.843 9.982C18.62 23.971 24 18.591 24 11.956a11.93 11.93 0 00-3.548-8.511z"},
+  "org.videolan.vlc":{c:"#FF8800",d:"M12.0319 0c-.8823 0-1.0545.136-1.0545.136-.1738.056-.3556.255-.4105.43L9.683 3.3808c.4729.1729 1.3222.4266 2.2337.4266 1.0987 0 2.017-.3494 2.3763-.5075L13.4352.566c-.055-.1755-.237-.3707-.4067-.4374 0 0-.1142-.1286-.9966-.1286zm3.5645 7.455c-.3601.34-1.3276.9373-3.6797.9373-2.2929 0-3.189-.5678-3.5213-.9113l-1.3887 4.4227c.2272.3614 1.2539 1.5594 4.8847 1.5594 3.7569 0 4.8539-1.3467 5.0649-1.6737zm-8.5897 4.4487l-1.0025 3.1922H4.3428c-.2486 0-.5097.1932-.5826.4315l-2.334 7.6317a.3962.3962 0 0 0-.0169.1537c-.0008.0053-.002.0099-.002.016 0 .0839.0233.226.0233.226.0322.2456.2612.4452.5098.4452h20.1192c.2487 0 .4768-.1994.5098-.4453 0 0 .0234-.142.0234-.226a.0245.0245 0 0 0-.0025-.01.3201.3201 0 0 0 .0024-.0313.4096.4096 0 0 0-.019-.1282l-2.3339-7.6318c-.0729-.2383-.334-.4314-.5826-.4314h-1.6636l.2005.6391c-.2407.4854-1.4886 2.38-6.3027 2.38-4.6003 0-5.8288-1.73-6.1107-2.3072z"},
+  "org.telegram.desktop":{c:"#26A5E4",d:"M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"},
+  "com.hnc.Discord":{c:"#5865F2",d:"M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"},
+  "com.apple.Safari":{c:"#006CFF",d:"M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm-.004.953h.006c.063 0 .113.05.113.113v1.842c0 .063-.05.113-.113.113h-.006a.112.112 0 0 1-.113-.113V1.066c0-.063.05-.113.113-.113zm-.941.041c.056.001.104.046.11.104l.077.918a.112.112 0 0 1-.101.12h-.01a.11.11 0 0 1-.12-.1l-.08-.919a.112.112 0 0 1 .102-.12h.01l.012-.003zm1.892 0H12.965a.113.113 0 0 1 .103.121l-.08.92a.111.111 0 0 1-.12.102h-.009a.111.111 0 0 1-.101-.121l.078-.92a.112.112 0 0 1 .111-.102zm-2.838.123a.11.11 0 0 1 .106.092l.32 1.818c.01.06-.03.119-.09.13l-.01.001a.111.111 0 0 1-.128-.09l-.32-1.818a.111.111 0 0 1 .09-.129l.01-.002a.103.103 0 0 1 .022-.002zm3.784.002h.021l.008.002c.061.01.102.07.092.131l-.32 1.814c-.011.062-.07.101-.132.09h-.005a.113.113 0 0 1-.092-.13l.32-1.815a.111.111 0 0 1 .108-.092zm-4.715.203c.048.002.09.035.103.084l.239.893a.112.112 0 0 1-.079.139l-.005.001a.114.114 0 0 1-.14-.08l-.237-.894a.11.11 0 0 1 .078-.137l.006-.002a.123.123 0 0 1 .035-.004zm5.644 0a.11.11 0 0 1 .033.004l.006.002c.06.016.097.079.08.139l-.24.892a.112.112 0 0 1-.137.08l-.005-.002a.114.114 0 0 1-.08-.138l.24-.893a.112.112 0 0 1 .103-.084zm-6.562.285a.11.11 0 0 1 .107.073L9 3.42a.107.107 0 0 1-.064.139l-.012.005a.11.11 0 0 1-.14-.066L8.15 1.76a.11.11 0 0 1 .065-.14l.014-.005a.106.106 0 0 1 .03-.008zm7.469.002c.014 0 .028.001.042.006l.012.006c.057.02.087.082.067.139l-.633 1.738a.11.11 0 0 1-.14.066l-.013-.003A.11.11 0 0 1 15 3.42l.633-1.738a.108.108 0 0 1 .096-.073zm-8.352.366a.112.112 0 0 1 .105.064l.393.838a.112.112 0 0 1-.055.148l-.008.004a.11.11 0 0 1-.146-.054l-.395-.838a.112.112 0 0 1 .055-.149l.008-.004a.11.11 0 0 1 .043-.01zm9.246 0a.11.11 0 0 1 .043.01l.006.003a.11.11 0 0 1 .053.149l-.391.838a.112.112 0 0 1-.148.054l-.006-.002a.112.112 0 0 1-.055-.148l.393-.84a.112.112 0 0 1 .105-.064zm-10.092.44c.04-.002.08.018.102.056l.922 1.597a.113.113 0 0 1-.041.155l-.006.002a.113.113 0 0 1-.154-.041l-.922-1.598a.113.113 0 0 1 .04-.154l.007-.002a.11.11 0 0 1 .052-.016zm10.94.001c.018 0 .035.004.052.014l.004.002a.114.114 0 0 1 .041.156l-.923 1.596a.114.114 0 0 1-.157.04l-.004-.001a.112.112 0 0 1-.04-.155l.925-1.595a.113.113 0 0 1 .102-.057zM5.729 2.93a.11.11 0 0 1 .093.047l.532.753a.114.114 0 0 1-.028.159l-.004.002a.114.114 0 0 1-.158-.028l-.531-.752a.114.114 0 0 1 .027-.158l.006-.002a.113.113 0 0 1 .063-.021zm12.542 0a.11.11 0 0 1 .063.02l.006.003a.112.112 0 0 1 .027.156l-.531.756a.112.112 0 0 1-.156.028l-.006-.004a.112.112 0 0 1-.028-.157l.532-.755a.11.11 0 0 1 .093-.047zm.747.578a.11.11 0 0 1 .08.027l.006.004c.047.04.053.111.013.158L17.932 5.11a.11.11 0 0 1-.157.016l-.005-.006a.11.11 0 0 1-.014-.156l1.185-1.414a.114.114 0 0 1 .077-.041zM4.984 3.51a.11.11 0 0 1 .077.039L6.244 4.96a.112.112 0 0 1-.014.158l-.003.004a.112.112 0 0 1-.159-.014L4.883 3.697a.112.112 0 0 1 .013-.158l.006-.004a.111.111 0 0 1 .082-.025zm-.714.64c.027 0 .055.01.076.032l.658.66a.107.107 0 0 1 0 .152l-.01.01a.107.107 0 0 1-.152 0l-.66-.658a.11.11 0 0 1 0-.155l.01-.01a.111.111 0 0 1 .078-.03zm15.462 0c.028 0 .055.01.077.032l.007.007a.109.109 0 0 1 0 .155l-.658.66a.109.109 0 0 1-.154 0l-.008-.008a.109.109 0 0 1 0-.154l.658-.66a.11.11 0 0 1 .078-.032zm.707.66c.038 0 .071.02.092.075a.112.112 0 0 1-.023.117l-7.606 8.08c-3.084 2.024-6.149 4.04-9.222 6.05-.078.051-.17.082-.211-.028a.112.112 0 0 1 .023-.118l7.594-8.08c3.084-2.023 6.161-4.039 9.234-6.049a.247.247 0 0 1 .12-.046zm-16.824.045a.109.109 0 0 1 .08.026l1.416 1.187a.11.11 0 0 1 .014.157l-.006.005a.11.11 0 0 1-.156.014L3.549 5.057a.109.109 0 0 1-.014-.155l.006-.007a.108.108 0 0 1 .074-.04zm17.336.756c.036 0 .072.017.094.05l.004.003a.114.114 0 0 1-.028.158l-.753.53a.112.112 0 0 1-.157-.028l-.004-.004a.114.114 0 0 1 .028-.158l.754-.53a.113.113 0 0 1 .062-.02zm-17.904.002c.02 0 .042.007.06.02l.76.531c.05.035.06.103.026.152l-.006.01a.109.109 0 0 1-.153.026l-.76-.532a.109.109 0 0 1-.025-.152l.006-.01a.108.108 0 0 1 .092-.045zm-.512.803c.018 0 .036.006.053.016l1.596.923a.111.111 0 0 1 .04.153l-.003.006a.111.111 0 0 1-.153.04L2.473 6.63a.111.111 0 0 1-.041-.152l.004-.006a.11.11 0 0 1 .1-.055zm18.932 0a.11.11 0 0 1 .1.055l.001.004a.113.113 0 0 1-.04.154l-1.596.926a.113.113 0 0 1-.155-.041l-.002-.004a.113.113 0 0 1 .041-.155l1.596-.925a.115.115 0 0 1 .055-.014zm-19.373.846c.014 0 .029.003.043.01l.838.392a.11.11 0 0 1 .052.147l-.004.01a.11.11 0 0 1-.146.052l-.838-.393a.11.11 0 0 1-.053-.146l.004-.01a.109.109 0 0 1 .104-.062zm19.81.002a.11.11 0 0 1 .106.062l.002.008a.11.11 0 0 1-.053.146l-.838.393a.11.11 0 0 1-.146-.053l-.004-.008a.11.11 0 0 1 .052-.146l.838-.393a.11.11 0 0 1 .043-.01zm-20.183.88c.014 0 .028.001.043.006l1.732.631a.112.112 0 0 1 .067.145l-.002.006a.11.11 0 0 1-.143.066l-1.732-.63a.113.113 0 0 1-.069-.145l.002-.004a.115.115 0 0 1 .102-.074zm20.549 0a.113.113 0 0 1 .11.075l.003.004a.115.115 0 0 1-.069.146l-1.732.629a.112.112 0 0 1-.145-.066l-.001-.006a.113.113 0 0 1 .068-.145l1.732-.63a.11.11 0 0 1 .034-.006zm-20.836.909a.11.11 0 0 1 .033.004l.892.24c.06.016.096.077.08.137l-.002.007a.11.11 0 0 1-.136.079l-.895-.239a.113.113 0 0 1-.078-.138l.002-.006a.113.113 0 0 1 .104-.084zm21.13.002a.115.115 0 0 1 .106.084v.004a.112.112 0 0 1-.078.138l-.893.239a.112.112 0 0 1-.138-.079v-.005a.112.112 0 0 1 .078-.14l.892-.237a.11.11 0 0 1 .033-.004zm-21.335.93.023.001 1.814.323c.062.01.101.069.09.13v.006a.111.111 0 0 1-.13.09l-1.815-.322a.113.113 0 0 1-.092-.131l.002-.006a.11.11 0 0 1 .108-.092zm21.519.001h.022c.052.002.1.038.109.092v.006c.01.062-.03.12-.092.13l-1.814.321a.113.113 0 0 1-.131-.092v-.005a.113.113 0 0 1 .092-.131l1.814-.32zm-21.644.944h.011l.922.084a.11.11 0 0 1 .102.119l-.002.01a.11.11 0 0 1-.121.1l-.922-.083a.11.11 0 0 1-.1-.12v-.009a.111.111 0 0 1 .11-.101zm21.779.002h.012c.056 0 .106.043.11.101v.008a.111.111 0 0 1-.1.121l-.923.08a.111.111 0 0 1-.12-.101v-.008a.111.111 0 0 1 .1-.121l.92-.08zm-11.82.73L6.091 16.95c2.02-1.324 4.039-2.646 6.066-3.976l-1.095-1.31zm11.87.219c.063 0 .114.05.114.113v.004c0 .063-.05.113-.113.113l-1.844.004a.113.113 0 0 1-.113-.113v-.004c0-.063.05-.113.113-.113l1.844-.004zm-21.869.002h1.844c.062 0 .112.05.112.111v.008c0 .062-.05.111-.112.111H1.064a.111.111 0 0 1-.11-.111v-.008c0-.061.049-.111.11-.111zm.952.875h.011a.11.11 0 0 1 .11.101v.006a.111.111 0 0 1-.102.121l-.922.08a.11.11 0 0 1-.119-.101l-.002-.006a.111.111 0 0 1 .102-.121l.922-.08zm19.955 0h.011l.922.08a.11.11 0 0 1 .102.119v.008a.112.112 0 0 1-.121.101l-.922-.08a.11.11 0 0 1-.102-.119v-.008a.111.111 0 0 1 .11-.101zm-18.924.705c.053.001.098.04.107.094l.002.004c.011.061-.03.12-.092.13l-1.812.32a.113.113 0 0 1-.13-.091v-.004a.115.115 0 0 1 .09-.133l1.811-.318a.117.117 0 0 1 .024-.002zm17.902 0c.008 0 .016 0 .024.002l1.816.32c.061.011.1.07.09.131v.004a.113.113 0 0 1-.131.092l-1.816-.32a.112.112 0 0 1-.09-.131v-.004a.113.113 0 0 1 .107-.094zM2.332 14.477a.11.11 0 0 1 .104.082l.002.005c.016.06-.02.121-.08.137l-.891.24a.112.112 0 0 1-.137-.08l-.002-.006a.112.112 0 0 1 .08-.136l.89-.239a.112.112 0 0 1 .034-.003zm19.332 0c.011 0 .024 0 .035.003l.893.239c.06.016.096.077.08.136l-.002.006a.111.111 0 0 1-.137.078l-.894-.238a.111.111 0 0 1-.078-.137l.002-.005a.109.109 0 0 1 .101-.082zm-18.213.517a.11.11 0 0 1 .11.074l.002.004a.112.112 0 0 1-.067.145l-1.732.63a.113.113 0 0 1-.145-.068l-.002-.004a.113.113 0 0 1 .069-.144L3.418 15a.11.11 0 0 1 .033-.006zm17.086 0c.015 0 .029 0 .043.006l1.734.63a.111.111 0 0 1 .067.143l-.002.008a.111.111 0 0 1-.143.067l-1.734-.631a.111.111 0 0 1-.066-.143l.002-.008a.111.111 0 0 1 .1-.072zM2.92 16.117a.109.109 0 0 1 .103.063l.004.01a.108.108 0 0 1-.052.144l-.838.393a.11.11 0 0 1-.147-.055l-.004-.008a.11.11 0 0 1 .053-.146l.838-.391a.112.112 0 0 1 .043-.01zm18.158 0a.11.11 0 0 1 .043.01l.838.39c.056.027.08.093.055.149l-.002.004a.112.112 0 0 1-.149.055l-.838-.391a.112.112 0 0 1-.054-.148l.002-.004a.112.112 0 0 1 .105-.065zm-16.957.315c.04-.001.078.02.1.056l.004.004a.11.11 0 0 1-.041.153l-1.596.921a.113.113 0 0 1-.154-.04l-.002-.005a.113.113 0 0 1 .04-.154l1.596-.922a.109.109 0 0 1 .053-.013zm15.756 0c.018 0 .036.004.053.013l1.597.924a.11.11 0 0 1 .041.152l-.002.004a.11.11 0 0 1-.152.041l-1.598-.921a.113.113 0 0 1-.04-.155l.001-.002a.111.111 0 0 1 .1-.056zm.328 1.193a.11.11 0 0 1 .06.021l.758.534c.05.035.061.102.026.152l-.004.008a.111.111 0 0 1-.154.027l-.756-.535a.109.109 0 0 1-.028-.152l.006-.008a.11.11 0 0 1 .092-.047zm-16.412.002c.035 0 .072.016.094.047l.004.008a.109.109 0 0 1-.028.152l-.756.531a.108.108 0 0 1-.152-.025l-.006-.008a.109.109 0 0 1 .028-.152l.755-.534a.107.107 0 0 1 .061-.019zm15.162.102a.112.112 0 0 1 .082.025l1.414 1.187a.11.11 0 0 1 .014.157l-.004.004a.113.113 0 0 1-.158.013L18.89 17.93a.11.11 0 0 1-.014-.157l.004-.005a.108.108 0 0 1 .074-.04zm-12.812 1.12a.11.11 0 0 1 .08.026l.007.008a.11.11 0 0 1 .014.154L5.06 20.451a.11.11 0 0 1-.155.012l-.008-.006a.11.11 0 0 1-.013-.154l1.185-1.414a.11.11 0 0 1 .075-.04zm11.703 0c.032 0 .065.015.088.042l1.181 1.41c.04.048.035.12-.013.16l-.002.002a.114.114 0 0 1-.16-.014l-1.182-1.41a.114.114 0 0 1 .013-.16l.002-.002a.115.115 0 0 1 .073-.027zm-12.928.114c.027 0 .054.01.074.031l.014.012a.107.107 0 0 1 0 .15l-.662.66a.105.105 0 0 1-.149 0l-.011-.011a.105.105 0 0 1 0-.149l.66-.662a.105.105 0 0 1 .074-.031zm14.164 0c.027 0 .053.01.074.031l.66.662a.106.106 0 0 1 0 .15l-.011.012a.106.106 0 0 1-.15-.002l-.66-.66a.106.106 0 0 1 .001-.15l.01-.012a.108.108 0 0 1 .076-.031zm-11.627.797c.018 0 .034.006.05.015l.007.004a.11.11 0 0 1 .04.15l-.921 1.598a.11.11 0 0 1-.15.041l-.008-.004a.111.111 0 0 1-.04-.152l.922-1.596a.113.113 0 0 1 .1-.056zm9.088.002a.11.11 0 0 1 .1.054l.925 1.596a.113.113 0 0 1-.04.154h-.005a.11.11 0 0 1-.152-.039l-.926-1.595a.113.113 0 0 1 .041-.155l.004-.002a.108.108 0 0 1 .053-.013zm-10.285.324c.021 0 .043.008.062.021l.004.002c.051.036.063.106.028.157l-.53.755a.112.112 0 0 1-.156.028l-.004-.002a.112.112 0 0 1-.027-.156l.53-.756a.113.113 0 0 1 .093-.05zm11.484.002c.036 0 .072.015.094.047l.53.756c.035.05.023.12-.028.156l-.004.002a.112.112 0 0 1-.156-.028l-.53-.755a.112.112 0 0 1 .028-.157l.004-.002a.112.112 0 0 1 .062-.02zm-8.863.342a.11.11 0 0 1 .043.006l.012.005c.056.02.084.081.064.137l-.633 1.74a.105.105 0 0 1-.136.063l-.014-.004a.106.106 0 0 1-.065-.137l.633-1.74a.107.107 0 0 1 .096-.07zm6.232 0a.107.107 0 0 1 .106.07l.633 1.738a.107.107 0 0 1-.065.137l-.015.006a.107.107 0 0 1-.137-.065L15 20.578a.107.107 0 0 1 .064-.137l.014-.005a.117.117 0 0 1 .033-.006zm-4.695.41c.008 0 .014 0 .021.002l.006.002c.062.01.101.067.09.129l-.318 1.812a.113.113 0 0 1-.131.092l-.004-.002a.111.111 0 0 1-.092-.129l.32-1.812a.113.113 0 0 1 .108-.094zm3.146.002c.008-.002.015 0 .022 0a.111.111 0 0 1 .107.092l.32 1.812c.012.061-.03.12-.091.131l-.004.002a.113.113 0 0 1-.13-.092l-.321-1.812a.113.113 0 0 1 .092-.131l.005-.002zm-5.79.119a.11.11 0 0 1 .042.01l.004.002a.114.114 0 0 1 .055.15l-.393.834a.112.112 0 0 1-.148.055l-.004-.002a.112.112 0 0 1-.055-.149l.393-.836a.112.112 0 0 1 .105-.064zm8.458 0a.108.108 0 0 1 .104.062l.39.84a.11.11 0 0 1-.052.147l-.008.004a.11.11 0 0 1-.146-.055l-.391-.838a.11.11 0 0 1 .053-.146l.008-.004a.11.11 0 0 1 .042-.01zm-4.236.018H12c.063 0 .115.05.115.113l.002 1.84c0 .063-.05.113-.113.113h-.006a.113.113 0 0 1-.113-.113l-.004-1.838c0-.063.05-.115.113-.115zm-2.592.578c.011 0 .022 0 .034.004l.005.002c.06.016.095.077.079.136l-.24.893a.111.111 0 0 1-.137.078l-.006-.002a.111.111 0 0 1-.078-.137l.24-.89a.113.113 0 0 1 .103-.084zm5.196.002a.11.11 0 0 1 .103.082l.24.89a.11.11 0 0 1-.078.137l-.006.002a.11.11 0 0 1-.136-.078l-.24-.89a.11.11 0 0 1 .078-.138l.005-.002a.112.112 0 0 1 .034-.003zm-3.475.302h.01l.008.002c.061.006.107.06.101.121l-.08.92a.112.112 0 0 1-.121.102h-.008a.11.11 0 0 1-.1-.121l.08-.922a.111.111 0 0 1 .11-.102zm1.736 0h.02a.11.11 0 0 1 .107.102l.08.924a.11.11 0 0 1-.101.119l-.008.002a.11.11 0 0 1-.12-.102l-.08-.924a.112.112 0 0 1 .102-.12z"}
+};
+/* Las apps de ejemplo: las de siempre, las que conoce cualquiera. Un listado con
+   lo que hay instalado en este Mac no vale como ejemplo —no se parece al de
+   nadie y mezcla lo de quien mira con lo que la sección enseña—. En la app
+   nativa esta tabla no se usa: allí la lista sale del disco. */
+const UN_DEMO_APPS=[
+  {bid:"com.apple.dt.Xcode",      name:"Xcode",              version:"16.2", gb:21.4, days:2,   apple:true,  running:false, store:false},
+  {bid:"com.valvesoftware.steam", name:"Steam",              version:"1.0",  gb:5.2,  days:34,  running:false, store:false},
+  {bid:"com.docker.docker",       name:"Docker",             version:"4.38", gb:3.6,  days:46,  running:false, store:false},
+  {bid:"com.google.Chrome",       name:"Google Chrome",      version:"131.0",gb:2.1,  days:0,   running:true,  store:false},
+  {bid:"org.blenderfoundation.blender",name:"Blender",       version:"4.3",  gb:1.9,  days:12,  running:false, store:false},
+  {bid:"com.figma.Desktop",       name:"Figma",              version:"124.6",gb:1.4,  days:0,   running:true,  store:false},
+  {bid:"com.tinyspeck.slackmacgap",name:"Slack",            version:"2.40", gb:1.1,  days:1,   running:false, store:true},
+  {bid:"com.microsoft.VSCode",    name:"Visual Studio Code", version:"1.96", gb:0.8,  days:3,   running:false, store:false},
+  {bid:"notion.id",               name:"Notion",             version:"4.4",  gb:0.6,  days:5,   running:false, store:true},
+  {bid:"com.spotify.client",      name:"Spotify",            version:"1.2",  gb:0.5,  days:1,   running:false, store:false},
+  {bid:"com.hnc.Discord",         name:"Discord",            version:"0.0.412",gb:0.5,days:0,   running:true,  store:false},
+  {bid:"org.mozilla.firefox",     name:"Firefox",            version:"134.0",gb:0.4,  days:21,  running:false, store:false},
+  {bid:"org.videolan.vlc",        name:"VLC",                version:"3.0.21",gb:0.3, days:88,  running:false, store:false},
+  {bid:"org.telegram.desktop",    name:"Telegram",           version:"11.4", gb:0.2,  days:1,   running:false, store:false},
+  {bid:"com.apple.Safari",        name:"Safari",             version:"18.2", gb:0.2,  days:0,   apple:true,  running:true,  store:false}
+];
+/* Restos concretos de algunas apps: los que enseñan los casos que importan
+   —contenedores compartidos, un demonio que pide permisos, una carpeta con el
+   nombre en vez del identificador—. El resto se genera con la plantilla. */
+const UN_DEMO_EXTRA={
+  "com.docker.docker":[
+    ["group","~/Library/Group Containers/9Z9Y5F7Q2D.com.docker.docker",1.9,"certain",false],
+    ["containers","~/Library/Containers/com.docker.docker",0.4,"certain",false]
+  ],
+  "com.google.Chrome":[
+    ["support","~/Library/Application Support/Google/Chrome",1.4,"possible",false],
+    ["agents","/Library/LaunchAgents/com.google.keystone.agent.plist",0.0,"certain",true]
+  ],
+  "com.spotify.client":[
+    ["agents","/Library/LaunchDaemons/com.spotify.client.plist",0.0,"certain",true],
+    ["support","~/Library/Application Support/Spotify",0.3,"possible",false]
+  ],
+  "com.figma.Desktop":[
+    ["containers","~/Library/Containers/com.figma.Desktop",0.4,"certain",false],
+    ["web","~/Library/HTTPStorages/com.figma.Desktop",0.1,"certain",false]
+  ],
+  "com.hnc.Discord":[
+    ["support","~/Library/Application Support/discord",0.9,"possible",false],
+    ["caches","~/Library/Caches/com.hnc.Discord",0.3,"certain",false]
+  ],
+  "org.telegram.desktop":[
+    ["group","~/Library/Group Containers/6N38VWS5BX.ru.keepcoder.Telegram",0.3,"certain",false],
+    ["containers","~/Library/Containers/org.telegram.desktop",0.2,"certain",false]
+  ],
+  "com.valvesoftware.steam":[
+    ["logs","/Library/Logs/Steam",0.0,"possible",true],
+    ["state","~/Library/Saved Application State/com.valvesoftware.steam.savedState",0.0,"certain",false]
+  ]
+};
+function unDemoRows(a){
+  const bid=a.bid;
+  const rows=[
+    ["app",a.path,Number(a.gb)||0,"certain",false,false],
+    ["support","~/Library/Application Support/"+bid,0.4,"certain",false,false],
+    ["caches","~/Library/Caches/"+bid,0.7,"certain",false,false],
+    ["prefs","~/Library/Preferences/"+bid+".plist",0.0,"certain",false,false],
+    ["logs","~/Library/Logs/"+bid,0.1,"certain",false,false],
+    ["web","~/Library/WebKit/"+bid,0.2,"certain",false,false],
+    ["support","~/Library/Application Support/"+a.name,0.3,"possible",false],
+    ["caches","~/Library/Caches/"+a.name,0.1,"possible",false]
+  ];
+  (UN_DEMO_EXTRA[bid]||[]).forEach(r=>rows.push([r[0],r[1],r[2],r[3],r[4],false]));
+  rows.push(["app",a.path+"/Contents/Library/LoginItems/"+a.name+" Helper.app",0.0,"certain",false,true]);
+  /* El nombre visible del bundle es el de la app, no el del archivo: en Swift
+     es el CFBundleDisplayName, y aquí tiene que contar lo mismo. */
+  return rows.map((r,i)=>({cat:r[0],path:r[1],gb:r[2],conf:r[3],admin:r[4],nested:r[5],id:"ud"+i,
+    name:(r[0]==="app"&&!r[5])?a.name:r[1].split("/").pop()}));
+}
+function unDemoSeed(){
+  if(inApp())return;
+  const now=Date.now()/1000;
+  UN.apps=UN_DEMO_APPS.map(a=>({bid:a.bid,name:a.name,version:a.version,path:"/Applications/"+a.name+".app",
+    gb:a.gb,last:a.days>0?now-a.days*86400:now-3600,running:!!a.running,apple:!!a.apple,store:!!a.store,icon:""}));
+  UN.loaded=true; UN.loading=false; UN.failed=false;
+  renderApps();
+}
+function unDemoAnalyze(a){
+  clearTimeout(unDemoT);
+  unDemoT=setTimeout(()=>{ if(UN.phase==="detail"&&UN.bid===a.bid)unApplyAnalysis(unDemoAnalysis(a)); },900);
+}
+function unDemoAnalysis(a){
+  const items=unDemoRows(a);
+  const groups=UN_CATS.map(c=>({key:c.k,items:items.filter(i=>i.cat===c.k)})).filter(g=>g.items.length);
+  const sum=f=>Math.round(items.filter(f).reduce((s,i)=>s+i.gb,0)*10)/10;
+  return {
+    bid:a.bid, name:a.name, path:a.path, version:a.version, icon:a.icon||"",
+    gb:Number(a.gb)||0, running:!!a.running, team:"",
+    groups:groups, total:sum(()=>true),
+    certain:sum(i=>!i.admin&&i.conf==="certain"),
+    possible:sum(i=>!i.admin&&i.conf==="possible"),
+    adminCount:items.filter(i=>i.admin).length,
+    possibleCount:items.filter(i=>i.conf==="possible").length,
+    count:items.length
+  };
+}
+/* El recorrido del prototipo: los mismos cuatro pasos que da la app, con los
+   tiempos repartidos como los de verdad —cerrar tarda, mover archivos tarda— y
+   con dos fallos dentro: un demonio que pide permisos y una caché en uso. */
+function unDemoRun(a,sel){
+  const appItem=sel.find(i=>i.path===a.path)||null;
+  const files=sel.filter(i=>i.path!==a.path);
+  const removed=[]; const fails=[];
+  const finish=()=>{
+    unApplyResult({name:a.name,bid:a.bid,removed:removed.length,freed:unGB(removed),closed:a.running?3:0,
+      done:removed.map(i=>i.path),
+      failures:fails.map(f=>({name:f.name,path:f.path,reason:f.reason}))});
+  };
+  unApplyProgress("stop",3,null);
+  unDemoT=setTimeout(()=>{
+    unApplyProgress("stop",16,null);
+    unApplyProgress("app",20,null);
+    unDemoT=setTimeout(()=>{
+      if(appItem)removed.push(appItem);
+      unApplyProgress("app",40,null);
+      let k=0;
+      const step=()=>{
+        if(k<files.length){
+          const it=files[k]; k++;
+          unApplyProgress("files",40+48*(k/Math.max(1,files.length)),it.path);
+          if(it.admin||/\/Caches\//.test(it.path))fails.push({name:it.name,path:it.path,reason:it.admin?"admin":"busy"});
+          else removed.push(it);
+          unDemoT=setTimeout(step,300);
+        } else {
+          unApplyProgress("clean",92,null);
+          unDemoT=setTimeout(()=>{ unApplyProgress("done",100,null); unDemoT=setTimeout(finish,380); },420);
+        }
+      };
+      step();
+    },700);
+  },1100);
 }
 
 /* ---------- historial ---------- */
@@ -7307,6 +8339,42 @@ function boot(){
   onEv("#pap-list","click",e=>{
     const r=e.target.closest("[data-restore]"); if(r){restorePap(r.dataset.restore);return;}
     const k=e.target.closest("[data-kill]"); if(k)delPap(k.dataset.kill);
+  });
+  /* aplicaciones (desinstalador) */
+  onEv("#un-rows","click",e=>{ const r=e.target.closest("[data-un]"); if(r)unOpen(r.dataset.un); });
+  onEv("#un-rows","keydown",e=>{
+    if(e.key!=="Enter"&&e.key!==" ")return;
+    const r=e.target.closest("[data-un]");
+    if(r){e.preventDefault();unOpen(r.dataset.un);}
+  });
+  onEv("#un-list","click",e=>{ const c=e.target.closest(".un-hcol[data-usort]"); if(c)unSort(c.dataset.usort); });
+  onEv("#unsearch","input",e=>{
+    UN.q=e.target.value;
+    unWorking();
+    unPaintList();
+  });
+  on("#un-retry",()=>{ UN.failed=false; unReload(); });
+  on("#un-refresh",()=>unReload());
+  /* Un solo delegado para toda la pantalla de análisis: la fila alterna la
+     casilla, y los botones —volver, todo, nada, desinstalar— se atienden antes
+     para que un clic en ellos no cuente además como un clic en la fila. */
+  onEv("#un-detail","click",e=>{
+    if(e.target.closest("#un-back")){ unBackToList(); return; }
+    const rev=e.target.closest("[data-reveal]");
+    if(rev){ unReveal(rev.dataset.reveal); return; }
+    if(e.target.closest("#un-all")){ unCheckAll(true); return; }
+    if(e.target.closest("#un-none")){ unCheckAll(false); return; }
+    if(e.target.closest("#un-go")){ unAsk(); return; }
+    const cb=e.target.closest("[data-uit]");
+    if(cb){ if(cb.checked)UN.checked.add(cb.dataset.uit); else UN.checked.delete(cb.dataset.uit); unPaintFoot(); return; }
+    const row=e.target.closest("[data-uitem]");
+    if(row)unToggle(row.dataset.uitem);
+  });
+  onEv("#un-done","click",e=>{
+    const rev=e.target.closest("[data-reveal]");
+    if(rev){ unReveal(rev.dataset.reveal); return; }
+    if(e.target.closest("#un-see-trash")){ unBackToList(); go("papelera"); return; }
+    if(e.target.closest("#un-back-list")){ unBackToList(); }
   });
   on("#pap-vaciar",()=>{
     const n=STATE.papelera.length; if(!n)return;

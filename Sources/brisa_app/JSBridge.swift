@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import WebKit
 
@@ -233,6 +234,22 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             // Brisa seguiría leyendo el sistema cada dos segundos para una
             // pantalla que ya nadie está mirando.
             system.setLive(Self.boolValue((payload as? [String: Any])?["on"]) ?? false)
+        case "appsList":
+            // Fase 9: la sección «Aplicaciones» pide su lista al abrirse y cada
+            // vez que el usuario la refresca. Es lectura pura: no toca nada.
+            pushApps()
+        case "appAnalysis":
+            // «¿Qué ha dejado esta app por el sistema?». Se responde con
+            // archivos reales, medidos y clasificados.
+            analyzeApp(payload)
+        case "uninstall":
+            uninstall(payload)
+        case "revealPath":
+            // «Ver en Finder»: lo único honesto que se puede hacer con un
+            // archivo que el usuario quiere mirar antes de decidir.
+            if let path = payload as? String {
+                NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)])
+            }
         case "deleteFiles":
             // Fase 3: eliminar archivos → Papelera de Brisa (lote con deshacer)
             deleteFiles(payload: payload)
@@ -485,6 +502,131 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                                       "\(gb) GB in Brisa Trash. Kept for \(days) days."))
     }
 
+    // MARK: - Fase 9: desinstalador
+
+    /// Una desinstalación a la vez. Dos en paralelo se pisarían en la Papelera
+    /// y en el lanzador, así que la segunda se rechaza y se dice por qué.
+    private var uninstallRunning = false
+    /// Ya hay una medida de tamaños en marcha: no se encadenan dos recorridos
+    /// del mismo disco por pedir la lista dos veces seguidas.
+    private var appsMeasuring = false
+
+    /// La lista de aplicaciones instaladas. Se lee en el hilo principal porque
+    /// pide los iconos a AppKit —es inmediato: son los Info.plist de cada
+    /// bundle— y sale volando hacia la interfaz, para que la sección se abra de
+    /// golpe. Los TAMAÑOS, que sí cuestan, van después y llegan de uno en uno.
+    private func pushApps() {
+        let entries = AppInventory.list()
+        var payload: [[String: Any]] = []
+        for entry in entries {
+            var item = entry.json
+            if let icon = AppInventory.iconDataURL(path: entry.path) { item["icon"] = icon }
+            payload.append(item)
+        }
+        if let data = try? JSONSerialization.data(withJSONObject: payload),
+           let json = String(data: data, encoding: .utf8) {
+            evalMain("window.brisa && window.brisa.onApps && window.brisa.onApps(\(json));")
+        }
+        NSLog("Brisa ▶ desinstalador: \(entries.count) aplicaciones instaladas")
+        measureApps(entries)
+    }
+
+    /// Los tamaños reales, medidos de fondo y enviados a trozos. Recorrer todos
+    /// los bundles de golpe bloquearía el hilo justo cuando la lista se está
+    /// mirando; así cada fila dice «midiendo» y se va rellenando sola.
+    private func measureApps(_ entries: [AppEntry]) {
+        guard !appsMeasuring, !entries.isEmpty else { return }
+        appsMeasuring = true
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            guard let self else { return }
+            var batch: [[String: Any]] = []
+            for (i, entry) in entries.enumerated() {
+                let gb = Double(AppInventory.size(of: entry.path)) / 1_000_000_000
+                batch.append(["bid": entry.bid, "gb": (gb * 10).rounded() / 10])
+                if batch.count >= 5 || i == entries.count - 1 {
+                    if let data = try? JSONSerialization.data(withJSONObject: batch),
+                       let json = String(data: data, encoding: .utf8) {
+                        self.evalMain("window.brisa && window.brisa.onAppSizes && window.brisa.onAppSizes(\(json));")
+                    }
+                    batch.removeAll()
+                }
+            }
+            NSLog("Brisa ▶ desinstalador: tamaños medidos (\(entries.count) apps)")
+            self.appsMeasuring = false
+        }
+    }
+
+    /// Analiza UNA aplicación: qué archivos son suyos, con su tamaño y su grado
+    /// de certeza. Va de fondo porque medir cada candidato recorre carpetas
+    /// enteras.
+    private func analyzeApp(_ payload: Any?) {
+        guard let obj = payload as? [String: Any],
+              let path = obj["path"] as? String else { return }
+        let gb = Self.doubleValue(obj["gb"]) ?? 0
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            guard var entry = AppInventory.describe(path: path) else {
+                self.pushToast(title: AppLanguage.t("No se pudo analizar", "Couldn't analyze"),
+                               text: path)
+                return
+            }
+            entry.gb = gb
+            entry.team = AppInventory.teamIdentifier(of: path)
+            let home = FileManager.default.homeDirectoryForCurrentUser.path
+            let analysis = Leftovers.analyze(app: entry, home: home)
+            guard let data = try? JSONSerialization.data(withJSONObject: analysis),
+                  let json = String(data: data, encoding: .utf8) else { return }
+            self.evalMain("window.brisa && window.brisa.onAppAnalysis && window.brisa.onAppAnalysis(\(json));")
+            NSLog("Brisa ▶ desinstalador: \(entry.name) analizada · \(analysis["count"] ?? 0) elementos")
+        }
+    }
+
+    /// Desinstala de verdad. El resultado no es un acuse: es el recuento de lo
+    /// que se movió a la Papelera, lo que se liberó y lo que no se pudo tocar,
+    /// con su motivo.
+    private func uninstall(_ payload: Any?) {
+        guard let obj = payload as? [String: Any],
+              let path = obj["path"] as? String, !path.isEmpty else { return }
+        guard !uninstallRunning else {
+            pushToast(title: AppLanguage.t("Ya hay una desinstalación en marcha",
+                                           "An uninstall is already running"),
+                      text: AppLanguage.t("Espera a que termine.", "Wait for it to finish."))
+            return
+        }
+        guard var entry = AppInventory.describe(path: path) else { return }
+        let paths = (obj["paths"] as? [String]) ?? [path]
+        var sizes: [String: Double] = [:]
+        if let raw = obj["sizes"] as? [String: Any] {
+            for (key, value) in raw { if let d = Self.doubleValue(value) { sizes[key] = d } }
+        }
+        entry.gb = sizes[path] ?? 0
+        uninstallRunning = true
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            let result = AppRemover.run(app: entry, paths: paths, sizes: sizes) { phase, pct, item in
+                // El número entra en un literal de JavaScript: con punto
+                // decimal pase lo que pase, como su idioma local.
+                let value = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), pct)
+                var js = "window.brisa && window.brisa.onUninstallProgress && window.brisa.onUninstallProgress(\"\(phase)\", \(value)"
+                if let item {
+                    let safe = item.replacingOccurrences(of: "\\", with: "\\\\")
+                        .replacingOccurrences(of: "\"", with: "\\\"")
+                    js += ", \"\(safe)\""
+                }
+                js += ");"
+                self.evalMain(js)
+            }
+            guard let data = try? JSONSerialization.data(withJSONObject: result),
+                  let json = String(data: data, encoding: .utf8) else { return }
+            DispatchQueue.main.async {
+                self.uninstallRunning = false
+                self.evalMain("window.brisa && window.brisa.onUninstallResult && window.brisa.onUninstallResult(\(json));")
+                self.pushTrashState()
+                self.refreshAfterTrash()
+            }
+        }
+    }
+
     private func pushToast(title: String, text: String) {
         let t = title.replacingOccurrences(of: "\"", with: "\\\"")
         let x = text.replacingOccurrences(of: "\"", with: "\\\"")
@@ -580,6 +722,13 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
     static func boolValue(_ v: Any?) -> Bool? {
         if let b = v as? Bool { return b }
         if let n = v as? NSNumber { return n.boolValue }
+        return nil
+    }
+
+    static func doubleValue(_ v: Any?) -> Double? {
+        if let d = v as? Double { return d }
+        if let n = v as? NSNumber { return n.doubleValue }
+        if let s = v as? String { return Double(s) }
         return nil
     }
 
