@@ -533,7 +533,7 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
 
     /// Los tamaños reales, medidos de fondo y enviados a trozos. Recorrer todos
     /// los bundles de golpe bloquearía el hilo justo cuando la lista se está
-    /// mirando; así cada fila dice «midiendo» y se va rellenando sola.
+    /// mirando; así cada fila sale sin cifra y se va rellenando sola.
     private func measureApps(_ entries: [AppEntry]) {
         guard !appsMeasuring, !entries.isEmpty else { return }
         appsMeasuring = true
@@ -542,7 +542,12 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             var batch: [[String: Any]] = []
             for (i, entry) in entries.enumerated() {
                 let gb = Double(AppInventory.size(of: entry.path)) / 1_000_000_000
-                batch.append(["bid": entry.bid, "gb": (gb * 10).rounded() / 10])
+                /* Sin redondear: redondear a una décima convertía en CERO todo lo
+                   que baja de 50 MB, y la interfaz lee el cero como «aún
+                   midiendo». Media docena de apps se quedaban midiendo para
+                   siempre. El número viaja entero y quien lo enseña decide
+                   cuántos decimales tiene sentido ver. */
+                batch.append(["bid": entry.bid, "gb": gb])
                 if batch.count >= 5 || i == entries.count - 1 {
                     if let data = try? JSONSerialization.data(withJSONObject: batch),
                        let json = String(data: data, encoding: .utf8) {

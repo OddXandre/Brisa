@@ -427,7 +427,7 @@ enum Leftovers {
         // La app en sí va primero: es lo que el usuario ha venido a quitar.
         let appSize = app.gb > 0 ? app.gb : Double(AppInventory.size(of: app.path)) / 1_000_000_000
         items.append(["id": "un-app", "name": app.name, "path": app.path,
-                      "gb": round1(appSize), "conf": "certain", "admin": false,
+                      "gb": round3(appSize), "conf": "certain", "admin": false,
                       "nested": false, "cat": "app"])
 
         // Los sitios donde una app se deja ver con su nombre, no con su
@@ -448,7 +448,7 @@ enum Leftovers {
                 items.append(["id": "un-\(index)",
                               "name": (e.path as NSString).lastPathComponent,
                               "path": e.path,
-                              "gb": round1(gb),
+                              "gb": round3(gb),
                               "conf": e.conf.rawValue,
                               "admin": e.admin,
                               "nested": e.nested,
@@ -468,7 +468,7 @@ enum Leftovers {
         }
 
         func sum(_ filter: ([String: Any]) -> Bool) -> Double {
-            round1(items.filter(filter).reduce(0.0) { $0 + (($1["gb"] as? Double) ?? 0) })
+            round3(items.filter(filter).reduce(0.0) { $0 + (($1["gb"] as? Double) ?? 0) })
         }
         let adminCount = items.filter { ($0["admin"] as? Bool) == true }.count
         let possibleCount = items.filter { ($0["conf"] as? String) == "possible" }.count
@@ -476,7 +476,7 @@ enum Leftovers {
         return [
             "bid": app.bid, "name": app.name, "path": app.path, "version": app.version,
             "icon": AppInventory.iconDataURL(path: app.path) ?? "",
-            "gb": round1(appSize), "running": app.running, "team": app.team,
+            "gb": round3(appSize), "running": app.running, "team": app.team,
             "groups": groups,
             "total": sum({ _ in true }),
             "certain": sum({ ($0["admin"] as? Bool) == false && ($0["conf"] as? String) == "certain" }),
@@ -487,7 +487,12 @@ enum Leftovers {
         ]
     }
 
-    static func round1(_ v: Double) -> Double { (v * 10).rounded() / 10 }
+    /// Redondeo con precisión de MEGABYTE, no de décima de gigabyte. Con una
+    /// décima, cada resto pequeño —un plist, una caché de unos megas— se
+    /// convertía en 0 y sumar veinte así daba 0: el total mentía a la baja. Con
+    /// tres decimales el número que se enseña sigue siendo corto, pero la suma
+    /// de debajo cuadra.
+    static func round3(_ v: Double) -> Double { (v * 1000).rounded() / 1000 }
 }
 
 // MARK: - 3 · Eliminación

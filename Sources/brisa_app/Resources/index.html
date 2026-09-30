@@ -100,7 +100,12 @@
      contenido —listas, filas, secciones— NO llevan radio: van de canto a
      canto, que es lo que hace que la app deje de parecer una pila de cajas. */
   --r-btn:12px;
-  --r-pill:999px;
+  /* El escalón de los MANDOS: botones, buscadores y pastillas de filtro. Va a
+     8 px —el mismo radio que las fichas pequeñas y los botones de icono— para
+     que un botón y la etiqueta que tiene al lado compartan curva. Lo redondo de
+     verdad —puntos, interruptores, insignias y barras finas— se queda en
+     cápsula, escrito en su sitio: no es un escalón de forma, es una figura. */
+  --r-ctl:8px;
   --r-panel:12px;
   --r-sheet:12px;
   --content-max:1120px;
@@ -331,7 +336,7 @@ html,body{overscroll-behavior:none}
 .tb-right{display:flex;align-items:center;gap:8px}
 /* chip de estado de análisis: el único elemento informativo vivo de la topbar */
 .tb-scan{
-  display:flex;align-items:center;gap:8px;height:28px;padding:0 12px;border-radius:var(--r-pill);
+  display:flex;align-items:center;gap:8px;height:28px;padding:0 12px;border-radius:var(--r-ctl);
   border:none;background:var(--sel);font-size:var(--t-small);color:var(--ink-2);
   letter-spacing:-.01em;white-space:nowrap;cursor:pointer;
   transition:var(--press);
@@ -426,7 +431,7 @@ html,body{overscroll-behavior:none}
 .dc-rail-top{display:flex;flex-direction:column;align-items:center}
 .dc-acts2{display:none}
 .dc-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.dc-act{flex:1;min-width:0;height:26px;padding:0 8px;border-radius:var(--r-pill);border:none;background:var(--sel);font-size:var(--t-small);font-weight:400;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;overflow:hidden;transition:var(--press)}
+.dc-act{flex:1;min-width:0;height:26px;padding:0 8px;border-radius:var(--r-ctl);border:none;background:var(--sel);font-size:var(--t-small);font-weight:400;color:var(--ink-2);display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;overflow:hidden;transition:var(--press)}
 .dc-act svg{width:12px;height:12px;flex:none}
 /* La etiqueta puede encogerse: en el peor caso se corta con puntos suspensivos,
    nunca se sale del botón. */
@@ -498,9 +503,9 @@ html,body{overscroll-behavior:none}
 /* Botones */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  /* Cápsula: los botones del sistema no son rectángulos con las esquinas
-     limadas. El relleno lateral sube para que el texto no toque el canto. */
-  height:32px;padding:0 16px;border-radius:var(--r-pill);
+  /* El mismo radio que un buscador y que una ficha: un solo escalón de mando.
+     El relleno lateral sube para que el texto no toque el canto. */
+  height:32px;padding:0 16px;border-radius:var(--r-ctl);
   font-size:var(--t-body);font-weight:400;letter-spacing:-.024em;white-space:nowrap;
   /* filter y transform también transicionan: el brillo del botón lleno y el
      encogido al pulsar son los dos gestos más frecuentes de la app y antes
@@ -518,7 +523,7 @@ html,body{overscroll-behavior:none}
 .btn-lg{height:38px;padding:0 20px;font-size:var(--t-body)}
 .btn-sm{height:26px;padding:0 12px;font-size:var(--t-small)}
 .btn[disabled]{opacity:.4;pointer-events:none}
-.icon-btn{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--ink-3);border:1px solid transparent;transition:var(--press)}
+.icon-btn{width:28px;height:28px;border-radius:var(--r-ctl);display:grid;place-items:center;color:var(--ink-3);border:1px solid transparent;transition:var(--press)}
 .icon-btn:hover{background:var(--sel);color:var(--ink)}
 .icon-btn:active{transform:scale(.9)}
 .icon-btn.on{color:var(--ink);background:var(--sel)}
@@ -690,7 +695,7 @@ html,body{overscroll-behavior:none}
 .se-say{flex:1;min-width:0}
 .se-say h2{margin:0;font-size:var(--t-title);font-weight:600;letter-spacing:-.02em;line-height:1.3;color:var(--ink)}
 .se-say p{margin:3px 0 0;font-size:var(--t-body);line-height:1.45;color:var(--ink-3);max-width:64ch}
-.se-live{display:flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:var(--r-pill);border:none;background:var(--sel);color:var(--ink-2);font-size:var(--t-small);flex:none;transition:var(--press)}
+.se-live{display:flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:var(--r-ctl);border:none;background:var(--sel);color:var(--ink-2);font-size:var(--t-small);flex:none;transition:var(--press)}
 .se-live:hover{background:var(--sel-2);color:var(--ink)}
 .se-dot{width:6px;height:6px;border-radius:50%;background:var(--acc-text);flex:none}
 .se-live[aria-pressed="true"] .se-dot{background:var(--ink-4)}
@@ -897,7 +902,7 @@ html,body{overscroll-behavior:none}
 .t-clean svg{width:9px;height:9px}
 .map-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-3);font-size:var(--t-body)}
 /* conmutador de modo bloques/lista */
-.map-modes{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:var(--r-pill);flex:none}
+.map-modes{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:10px;flex:none}
 /* El modo activo dice su nombre: sin él, cinco iconos seguidos no explican qué
    hace ninguno y hay que probarlos todos. Los inactivos se quedan compactos
    —el nombre se despliega solo en el que está en uso—, así la cabecera no se
@@ -909,7 +914,7 @@ html,body{overscroll-behavior:none}
    patrón de los controles segmentados del sistema: el marco no se mueve, se
    mueve la pieza; por eso los inactivos van en tinta suave y el activo se lleva
    la superficie y su sombra, sin crecer de alto. */
-.mm{display:flex;align-items:center;justify-content:center;gap:0;width:30px;max-width:30px;height:26px;margin:0;padding:0;overflow:hidden;white-space:nowrap;border-radius:var(--r-pill);color:var(--ink-2);transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),max-width var(--d2) var(--ease),padding var(--d2) var(--ease)}
+.mm{display:flex;align-items:center;justify-content:center;gap:0;width:30px;max-width:30px;height:26px;margin:0;padding:0;overflow:hidden;white-space:nowrap;border-radius:var(--r-ctl);color:var(--ink-2);transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),max-width var(--d2) var(--ease),padding var(--d2) var(--ease)}
 .mm-l{display:block;max-width:0;overflow:hidden;opacity:0;font-size:var(--t-label);letter-spacing:-.01em;transition:opacity var(--d2) var(--ease),max-width var(--d2) var(--ease)}
 .mm.on .mm-l{max-width:120px;opacity:1}
 .mm .ic{width:14px;height:14px}
@@ -1417,8 +1422,8 @@ html,body{overscroll-behavior:none}
 @media(max-width:980px){.hc-head{flex-wrap:wrap}}
 /* 2 px de aire por dentro y control de 8: la pastilla queda en 10 y las dos
    esquinas son concéntricas de verdad (radio de fuera = radio de dentro + hueco). */
-.range-seg{display:inline-flex;gap:4px;padding:2px;margin:16px 16px 0;background:var(--sel);border-radius:var(--r-pill);flex:none}
-.range-seg .rs{height:24px;padding:0 12px;border-radius:var(--r-pill);font-size:var(--t-label);font-weight:400;color:var(--ink-2);letter-spacing:-.024em;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),box-shadow var(--d1) var(--ease)}
+.range-seg{display:inline-flex;gap:4px;padding:2px;margin:16px 16px 0;background:var(--sel);border-radius:10px;flex:none}
+.range-seg .rs{height:24px;padding:0 12px;border-radius:var(--r-ctl);font-size:var(--t-label);font-weight:400;color:var(--ink-2);letter-spacing:-.024em;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),box-shadow var(--d1) var(--ease)}
 .range-seg .rs:hover{color:var(--ink)}
 .range-seg .rs.on{background:var(--surface);color:var(--ink);box-shadow:none}
 .hc-stats{display:flex;gap:8px;padding:14px 16px 0;flex-wrap:wrap}
@@ -1520,11 +1525,11 @@ html,body{overscroll-behavior:none}
    pie apoyados en el fondo y separados por filos, como una ventana de Finder. */
 .files-panel{display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .files-toolbar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.chip{height:26px;padding:0 12px;border-radius:var(--r-pill);font-size:var(--t-small);font-weight:400;color:var(--ink-2);border:none;transition:var(--press)}
+.chip{height:26px;padding:0 12px;border-radius:var(--r-ctl);font-size:var(--t-small);font-weight:400;color:var(--ink-2);border:none;transition:var(--press)}
 .chip:active{transform:scale(.96)}
 .chip:hover{background:var(--sel);color:var(--ink)}
 .chip.on{background:var(--acc);color:#ffffff;font-weight:400}
-.fsearch{margin-left:auto;display:flex;align-items:center;gap:8px;height:26px;padding:0 9px;border:none;border-radius:var(--r-btn);background:var(--surface-2);min-width:170px}
+.fsearch{margin-left:auto;display:flex;align-items:center;gap:8px;height:26px;padding:0 9px;border:none;border-radius:var(--r-ctl);background:var(--surface-2);min-width:170px}
 .fsearch svg{width:13px;height:13px;color:var(--ink-3);flex:none}
 .fsearch input{border:none;background:none;outline:none;font:inherit;font-size:var(--t-small);color:var(--ink);width:100%}
 .fsearch input::placeholder{color:var(--ink-3)}
@@ -1715,7 +1720,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 .un-hsize,.un-hused{justify-content:flex-end;text-align:right;flex:none}
 .un-hsize,.un-row .r-size{width:var(--un-c-size)}
 .un-hused,.un-used{width:var(--un-c-used)}
-.un-hspace{width:26px;flex:none}
+.un-hspace{width:30px;flex:none}
 .un-hgo{width:14px;flex:none}
 /* El nombre y su etiqueta de estado en la misma línea, y debajo la versión:
    dos renglones, como el resto de la app, para que la fila no crezca de alto.
@@ -1723,7 +1728,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
    así el nombre con su cifra en vez de dejar medio panel de aire entre ambos
    —el mismo reparto que la lista de quién consume en Estado del Mac—. */
 .un-row .un-nm{display:flex;flex-direction:column;gap:4px;min-width:0;flex:0 1 320px}
-.un-bar{flex:1 1 auto;min-width:56px;height:4px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-bar{flex:1 1 auto;min-width:56px;height:3px;border-radius:9999px;background:var(--track);overflow:hidden}
 .un-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--ink);transition:width var(--d3) var(--ease)}
 .un-nm-t{display:flex;align-items:center;gap:8px;min-width:0}
 .un-nm-t b{font-weight:400;font-size:var(--t-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -1737,63 +1742,84 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
    late; y dura lo que dura escribir, sin dejar la lista tapada mientras se lee. */
 .un-busy{display:flex;justify-content:center;padding:8px 16px 2px}
 .un-busy[hidden]{display:none}
-.un-busy i{display:block;width:min(280px,46%);height:3px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-busy i{display:block;width:min(280px,46%);height:2px;border-radius:9999px;background:var(--track);overflow:hidden}
 .un-busy i::after{content:"";display:block;width:38%;height:100%;border-radius:9999px;background:var(--acc);animation:unBusy var(--spin) var(--ease) infinite}
 @keyframes unBusy{from{transform:translateX(-120%)}to{transform:translateX(360%)}}
-.un-back{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 6px;border-radius:var(--r-pill);color:var(--ink-2);font-size:var(--t-small);transition:var(--press)}
+.un-back{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 6px;border-radius:var(--r-ctl);color:var(--ink-2);font-size:var(--t-small);transition:var(--press)}
 .un-back svg{width:13px;height:13px}
 .un-back:hover{background:var(--sel);color:var(--ink)}
 /* Ficha de la app: su icono de verdad, el nombre y la ruta —la ruta se lee, no
    se subraya: es contexto, no un enlace—. */
-.un-head{display:flex;align-items:center;gap:14px;padding:16px 18px}
-.un-icon{width:44px;height:44px;border-radius:10px;background:var(--sel);display:grid;place-items:center;flex:none;overflow:hidden}
-.un-icon img{width:44px;height:44px;display:block}
-.un-icon svg{width:24px;height:24px;color:var(--ink-2)}
+.un-head{display:flex;align-items:center;gap:15px;padding:18px 18px 15px}
+/* La ficha de la app, a 56 px —el tamaño con el que macOS presenta una app—.
+   Su esquina va a 12 px, el mismo escalón que las tarjetas: en toda la sección
+   solo hay DOS curvas —8 px para lo pequeño, 12 px para lo grande— y las barras
+   finas, que son píldoras. Antes convivían 6, 7, 8, 10, 11, 13 y 14 px: cada
+   pieza se veía bien sola y el conjunto no encajaba. */
+.un-icon{width:56px;height:56px;border-radius:12px;background:var(--sel);display:grid;place-items:center;flex:none;overflow:hidden}
+.un-icon img{width:56px;height:56px;display:block}
+.un-icon svg{width:28px;height:28px;color:var(--ink-2)}
 /* La marca de la app en el prototipo: su trazado sobre la ficha teñida con su
    propio color, que es el MISMO recurso que .pp-mark usa con el acento. En la
    app nativa esto no se pinta: allí el icono de verdad lo manda Swift. */
-.un-brand{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--bc) 15%,transparent);color:var(--bc)}
-.un-brand svg{width:15px;height:15px;fill:currentColor;stroke:none;display:block}
+.un-brand{width:30px;height:30px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--bc) 15%,transparent);color:var(--bc)}
+.un-brand svg{width:17px;height:17px;fill:currentColor;stroke:none;display:block}
 /* Las marcas casi negras (Steam, Notion) no se ven sobre el fondo oscuro: en
    tema oscuro suben a tinta clara y la ficha se aclara con ellas. */
 .un-brand.dk{background:color-mix(in srgb,#9a9a9a 16%,transparent)}
 html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
-.un-brand.xl{width:44px;height:44px;border-radius:11px}
-.un-brand.xl svg{width:25px;height:25px}
+.un-brand.xl{width:56px;height:56px;border-radius:12px}
+.un-brand.xl svg{width:31px;height:31px}
 /* Analizando: la pantalla no enseña una lista a medias —se queda con el aviso—
    y la barra late en el centro del hueco, que es donde mira el ojo que espera. */
 #view-apps #un-detail.scanning{flex:1 1 auto;min-height:0}
 .un-scan{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px 24px 56px;text-align:center}
 .un-scan h2{margin:0;font-size:var(--t-title);font-weight:600;letter-spacing:-.02em;color:var(--ink)}
 .un-scan p{margin:0;max-width:44ch;font-size:var(--t-body);line-height:1.55;color:var(--ink-3)}
-.un-scan-bar{display:block;width:min(260px,60%);height:3px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-scan-bar{display:block;width:min(260px,60%);height:2px;border-radius:9999px;background:var(--track);overflow:hidden}
 .un-scan-bar i{display:block;width:38%;height:100%;border-radius:9999px;background:var(--acc);animation:unBusy var(--spin) var(--ease) infinite}
 .un-id{flex:1;min-width:0}
-.un-id h2{font-size:var(--t-title);font-weight:600;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-id h2{font-size:20px;font-weight:600;letter-spacing:-.022em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .un-id p{margin-top:3px;font-size:var(--t-small);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .un-tags{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:none;flex-wrap:wrap}
-.un-tag{font-size:var(--t-label);color:var(--ink-3);background:var(--sel);border-radius:var(--r-pill);padding:2px 9px;white-space:nowrap}
+.un-tag{font-size:var(--t-label);color:var(--ink-3);background:var(--sel);border-radius:var(--r-ctl);padding:2px 9px;white-space:nowrap}
 .un-tag.hot{color:var(--acc-text);background:var(--acc-soft)}
 .un-tag.warn{color:var(--ink-2);background:var(--sel-2)}
-/* Las cuatro cifras del análisis, con filos en vez de marcos: el mismo recurso
-   que las seis cifras de Estado del Mac. */
-.un-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
-.un-stat{position:relative;display:flex;flex-direction:column;gap:4px;padding:13px 18px;min-width:0}
-.un-stat+.un-stat::before{content:"";position:absolute;left:0;top:13px;bottom:13px;width:.5px;background:var(--line)}
-.un-stat .k{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.un-stat .v{font-size:var(--t-title);font-weight:400;letter-spacing:-.022em;font-variant-numeric:tabular-nums;white-space:nowrap}
-.un-stat .s{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media(max-width:760px){.un-stats{grid-template-columns:1fr 1fr}.un-stat:nth-child(odd)::before{display:none}.un-stat:nth-child(n+3){box-shadow:inset 0 .5px 0 var(--line)}}
+/* El desglose: cuánto se va a quitar y EN QUÉ SE REPARTE. Cuatro cifras sueltas
+   no decían nada; una barra con tres pesos sí: de un vistazo se ve si lo que
+   pesa es la app o son sus restos, y cuánto de eso viene ya marcado. */
+.un-brief{display:flex;flex-direction:column;gap:11px;padding:14px 18px 16px;border-top:1px solid var(--line)}
+.un-brief-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.un-brief-k{font-size:var(--t-small);color:var(--ink-3)}
+.un-brief-v{display:flex;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums}
+.un-brief-v b{font-size:20px;font-weight:400;letter-spacing:-.024em;color:var(--ink)}
+.un-brief-v small{font-size:var(--t-small);color:var(--ink-3)}
+.un-brief-bar{display:flex;height:6px;border-radius:9999px;background:var(--track);overflow:hidden}
+.un-brief-bar i{display:block;height:100%;transition:width var(--d3) var(--ease)}
+.un-brief-bar i.a,.un-legend .a i{background:var(--acc)}
+.un-brief-bar i.y,.un-legend .y i{background:color-mix(in srgb,var(--acc) 34%,var(--track))}
+.un-brief-bar i.n,.un-legend .n i{background:var(--line-2)}
+.un-legend{display:flex;flex-wrap:wrap;gap:6px 18px}
+.un-legend span{display:inline-flex;align-items:center;gap:7px;font-size:var(--t-small);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.un-legend i{width:7px;height:7px;border-radius:50%;flex:none}
+/* Avisos: lo que cambia lo que va a pasar —la app está abierta, o hay algo que
+   pide permisos— dicho con su icono y antes de la lista. */
+.un-alerts{display:flex;flex-direction:column;gap:8px}
+.un-alert{display:flex;align-items:flex-start;gap:9px;padding:11px 13px;border-radius:var(--r-btn);background:var(--surface);box-shadow:var(--rim);font-size:var(--t-small);color:var(--ink-2);line-height:1.5}
+.un-alert svg{width:15px;height:15px;flex:none;margin-top:1px;color:var(--ink-3)}
+.un-alert.hot svg{color:var(--acc-text)}
 /* Fila de la lista: ficha sin fondo —el icono real ya trae el suyo— y la cifra
    con sitio para «Midiendo…», que es lo que se ve mientras se mide. */
 /* La fila no se estira para rellenar el marco —`.row` viene con `flex:1 0 auto`
    y, con la lista ya de alto definido, un par de apps se repartían la ventana
    entera a 64 px cada una—, y el nombre sí come el hueco: sin eso la cifra y el
    filo quedaban flotando a media fila, con medio metro de vacío a su derecha. */
-.un-row{flex:0 0 auto}
-.un-row .r-ic{background:transparent}
-.un-row .r-ic img{width:26px;height:26px;display:block;border-radius:6px}
+.un-row{flex:0 0 auto;min-height:56px}
+.un-row .r-ic{width:30px;height:30px;background:transparent}
+.un-row .r-ic img{width:30px;height:30px;display:block;border-radius:var(--r-ctl)}
 .un-row .r-size{flex:none}
+/* Sin cifra todavía: en gris, para que no compita con los números ya medidos. */
+.un-row .r-size.wait{color:var(--ink-3)}
 /* Un elemento del análisis: casilla, nombre, ruta y su etiqueta de certeza. La
    fila no reparte columnas fijas: la ruta es lo que sobra y se corta sola. */
 .un-item{min-height:56px;max-height:none;align-items:center;padding:0 12px 0 16px}
@@ -1813,11 +1839,30 @@ html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
 .un-item+.un-item::before{left:43px}
 .un-item .un-nest{width:15px;flex:none;display:grid;place-items:center;color:var(--ink-4)}
 .un-item .un-nest svg{width:12px;height:12px}
-.un-cat h2{display:flex;align-items:center;gap:7px}
-.un-cat h2 svg{width:13px;height:13px;color:var(--ink-3)}
+/* La cabecera de cada grupo: marca de la categoría, nombre, cuántos y cuánto.
+   Es un encabezado con peso —y con icono— en vez de una línea de texto: lo que
+   agrupa se ve antes que lo agrupado. */
+.un-cat{display:flex;align-items:center;gap:12px;width:100%;padding:0 16px;margin:var(--section-gap) 0 8px;border-radius:var(--r-ctl);cursor:pointer;text-align:left}
+/* La marca del grupo: entera, a medias o vacía. Es LA MISMA caja que una
+   casilla —así no hay que explicarla— y pulsarla marca la categoría entera. Va
+   a la IZQUIERDA, donde va un check: en el mismo sitio en el que está la casilla
+   de cada fila de abajo, así que se lee como lo que es. Sin fondo al pasar por
+   encima: es una cabecera, no un botón. */
+.un-cat-chk{position:relative;flex:none;width:15px;height:15px;border-radius:5px;border:1.4px solid var(--line-2);background:var(--surface);display:grid;place-items:center;transition:background-color var(--d1) var(--ease),border-color var(--d1) var(--ease)}
+.un-cat-chk svg{width:9px;height:9px;color:var(--acc-ink);stroke-width:3;opacity:0;transition:opacity var(--d1) var(--ease)}
+.un-cat.all .un-cat-chk{background:var(--acc);border-color:var(--acc)}
+.un-cat.all .un-cat-chk svg{opacity:1}
+.un-cat.some .un-cat-chk{background:var(--acc-soft);border-color:var(--acc)}
+.un-cat.some .un-cat-chk::after{content:"";position:absolute;width:7px;height:1.6px;border-radius:2px;background:var(--acc-text)}
+.un-cat-ic{width:26px;height:26px;border-radius:var(--r-ctl);background:var(--sel);display:grid;place-items:center;flex:none;color:var(--ink-2)}
+.un-cat-ic svg{width:14px;height:14px}
+.un-cat-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.un-cat-n b{font-size:var(--t-small);font-weight:600;letter-spacing:-.008em;color:var(--ink-2)}
+.un-cat-n small{font-size:var(--t-label);color:var(--ink-3)}
+
 /* El pie de acción se queda pegado abajo: es lo único que flota en la sección,
    y flota porque tiene que estar a mano al final de una lista larga. */
-.un-foot{position:sticky;bottom:0;z-index:6;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-top:auto;background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge)}
+.un-foot{position:sticky;bottom:0;z-index:6;display:flex;align-items:center;gap:12px;flex-wrap:wrap;  padding:12px 16px;margin-top:auto;background:var(--float);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge)}
 .un-foot .un-count{flex:1;min-width:140px}
 .un-foot .un-count b{font-size:var(--t-title);font-weight:400;font-variant-numeric:tabular-nums;letter-spacing:-.024em}
 .un-foot .un-count small{display:block;color:var(--ink-3);font-size:var(--t-label);margin-top:1px}
@@ -1924,8 +1969,8 @@ html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 .set-lede{font-size:var(--t-body);color:var(--ink-2);line-height:1.65;margin:0 0 6px}
 /* El selector del tema es el MISMO control segmentado de la barra: fondo de
    pista y la pieza elegida elevada un pelo, en vez de dos botones enmarcados. */
-.set-seg{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:var(--r-pill);flex:none}
-.set-seg button{height:26px;padding:0 14px;border-radius:var(--r-pill);font-size:var(--t-small);color:var(--ink-2);transition:var(--press)}
+.set-seg{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:10px;flex:none}
+.set-seg button{height:26px;padding:0 14px;border-radius:var(--r-ctl);font-size:var(--t-small);color:var(--ink-2);transition:var(--press)}
 .set-seg button:hover{color:var(--ink)}
 .set-seg button.on{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:var(--rim)}
 select.set-sel{height:28px;border:none;border-radius:var(--r-btn);background:var(--sel);color:var(--ink);font-size:var(--t-small);padding:0 9px;outline:none;flex:none;transition:var(--press)}
@@ -2359,7 +2404,7 @@ html.theme-anim .sb-item{
         <button class="btn btn-s btn-sm" id="pap-vaciar" hidden data-i18n="pap.emptyBtn">Vaciar</button>
       </div>
       <div class="tb-actions" id="tb-apps" hidden>
-        <button class="btn btn-s btn-sm" id="un-refresh" data-i18n="un.refresh">Volver a leer</button>
+        <button class="btn btn-s btn-sm" id="un-refresh" data-i18n="un.refresh" data-i18n-title="un.refreshAria" data-i18n-aria="un.refreshAria" title="Volver a leer las aplicaciones instaladas" aria-label="Volver a leer las aplicaciones instaladas">Actualizar</button>
       </div>
       <button class="tb-scan" id="tb-scan" data-i18n-title="top.analyzeAgain" title="Analizar de nuevo" aria-live="polite">
         <span class="tbs-dot" aria-hidden="true"></span>
@@ -2927,8 +2972,11 @@ function inApp(){
     try{
       const list=(typeof json==="string")?JSON.parse(json):json;
       if(!Array.isArray(list))return;
+      /* `measured` nace en falso: la lista llega sin tamaños y cada fila lo dice.
+         Es lo que permite distinguir «aún no medido» de «medido y no llega a un
+         MB», que son dos cosas distintas y antes se enseñaban igual. */
       UN.apps=list.map(a=>({bid:a.bid,name:a.name,version:a.version||"",path:a.path,
-        gb:Number(a.gb)||0,last:Number(a.last)||0,running:!!a.running,apple:!!a.apple,
+        gb:Number(a.gb)||0,measured:false,last:Number(a.last)||0,running:!!a.running,apple:!!a.apple,
         store:!!a.store,icon:a.icon||""}));
       UN.loaded=true; UN.loading=false; UN.failed=false;
       clearTimeout(unWatchT);
@@ -2940,7 +2988,7 @@ function inApp(){
     try{
       const list=(typeof json==="string")?JSON.parse(json):json;
       if(!Array.isArray(list))return;
-      list.forEach(s=>{ const a=unApp(s.bid); if(a)a.gb=Number(s.gb)||0; });
+      list.forEach(s=>{ const a=unApp(s.bid); if(a){a.gb=Number(s.gb)||0;a.measured=true;} });
       const view=$("#view-apps");
       if(view&&!view.hidden&&UN.phase==="list")renderApps();
     }catch(e){ console.error("[brisa] tamaños de aplicaciones inválidos", e); }
@@ -3274,26 +3322,32 @@ const I18N = {
     "un.emptyP":"Aquí aparecen las aplicaciones instaladas en tus carpetas de Aplicaciones.",
     "un.noMatch":"Ninguna aplicación coincide con tu búsqueda.",
     "un.count":"{n} instaladas · {gb} GB", "un.countOne":"1 instalada · {gb} GB",
+    "un.countShort":"{n} instaladas", "un.countShortOne":"1 instalada",
+    "un.refreshAria":"Volver a leer las aplicaciones instaladas",
     "un.hint":"Brisa busca también lo que la aplicación dejó por el sistema antes de quitarla.",
     "un.back":"Volver a la lista",
     "un.analyzingH2":"Buscando lo que dejó {name}",
     "un.analyzingP":"Brisa recorre los sitios donde una aplicación guarda sus cosas.",
-    "un.app":"La aplicación", "un.assoc":"Archivos asociados",
-    "un.sure":"Relación segura", "un.review":"Por revisar",
     "un.itemsN":"{n} elementos", "un.itemsOne":"1 elemento",
-    "un.statSure":"se marca solo", "un.statReview":"lo decides tú",
+    "un.groupSelect":"{name}: marcar o desmarcar todo el grupo",
+    "un.none":"—", "un.tiny":"menos de 1 MB",
+    "un.briefTitle":"Qué se va a quitar",
+    "un.briefAuto":"Se quitan solos", "un.briefYou":"Decide tú", "un.briefIn":"Dentro de la app",
+    "un.briefAria":"Se quitan solos {auto}; lo decides tú {you}; dentro de la app {inset}",
     "un.cat.app":"La aplicación", "un.cat.support":"Datos y soporte", "un.cat.caches":"Cachés",
     "un.cat.prefs":"Preferencias", "un.cat.state":"Estado guardado", "un.cat.containers":"Contenedores",
     "un.cat.group":"Contenedores compartidos", "un.cat.web":"Datos web", "un.cat.logs":"Registros",
     "un.cat.agents":"Elementos de fondo",
-    "un.refresh":"Volver a leer",
+    "un.refresh":"Actualizar",
     "un.tag.possible":"Por revisar", "un.tag.admin":"Permisos",
     "un.tag.nested":"Dentro de la app",
     "un.reveal":"Mostrar en Finder",
     "un.selectAll":"Todo", "un.selectNone":"Nada",
-    "un.selected":"{n} elementos · {gb} GB",
+    "un.selected":"{n} elementos · {size}", "un.selectedOne":"1 elemento · {size}",
+    "un.selectedNone":"Nada marcado",
     "un.keepHint":"Lo que no marques se queda donde está.",
     "un.adminHint":"{n} elementos necesitan permisos de administrador: Brisa no los eleva por su cuenta.",
+    "un.adminHintOne":"1 elemento necesita permisos de administrador: Brisa no lo eleva por su cuenta.",
     "un.runningHint":"Está abierta ahora mismo: Brisa la cerrará para poder quitarla.",
     "un.uninstall":"Desinstalar completamente",
     "un.noSel":"No hay nada marcado",
@@ -3302,8 +3356,10 @@ const I18N = {
     "un.lockedSub":"{name} es una aplicación de macOS.",
     "un.askTitle":"Desinstalar {name}",
     "un.askBody":"Se quitarán <b>{n}</b> elementos y se liberarán <b>{gb} GB</b>.",
+    "un.askBodyOne":"Se quitará <b>1</b> elemento y se liberarán <b>{gb} GB</b>.",
     "un.askSafety":"Todo va a la Papelera de Brisa {d} días. Podrás restaurarlo desde ahí.",
     "un.askKeep":"{n} elementos se quedan donde están.",
+    "un.askKeepOne":"1 elemento se queda donde está.",
     "un.askGo":"Desinstalar", "un.cancel":"Cancelar",
     "un.ph.stop":"Cerrando la aplicación", "un.ph.app":"Eliminando la aplicación",
     "un.ph.files":"Eliminando archivos asociados", "un.ph.clean":"Limpiando componentes",
@@ -3314,6 +3370,7 @@ const I18N = {
     "un.doneFreed":"{gb} GB liberados · {n} elementos",
     "un.doneSafety":"No se ha borrado nada: todo está en la Papelera de Brisa.",
     "un.doneFailTitle":"{n} elementos no se pudieron quitar",
+    "un.doneFailTitleOne":"1 elemento no se pudo quitar",
     "un.doneFailBody":"Siguen donde estaban. Este es el motivo.",
     "un.doneList":"Volver a la lista", "un.doneTrash":"Ver la Papelera",
     "un.closed":"{n} procesos cerrados",
@@ -3572,26 +3629,32 @@ const I18N = {
     "un.emptyP":"Only the applications installed in your Applications folders show up here.",
     "un.noMatch":"No application matches your search.",
     "un.count":"{n} installed · {gb} GB", "un.countOne":"1 installed · {gb} GB",
+    "un.countShort":"{n} installed", "un.countShortOne":"1 installed",
+    "un.refreshAria":"Read the installed applications again",
     "un.hint":"Brisa also finds what the app left around the system before removing it.",
     "un.back":"Back to the list",
     "un.analyzingH2":"Looking for what {name} left behind",
     "un.analyzingP":"Brisa walks the places where an application keeps its things.",
-    "un.app":"The application", "un.assoc":"Associated files",
-    "un.sure":"Certain match", "un.review":"To review",
     "un.itemsN":"{n} items", "un.itemsOne":"1 item",
-    "un.statSure":"selected for you", "un.statReview":"you decide",
+    "un.groupSelect":"{name}: select or clear the whole group",
+    "un.none":"—", "un.tiny":"under 1 MB",
+    "un.briefTitle":"What will be removed",
+    "un.briefAuto":"Removed for you", "un.briefYou":"You decide", "un.briefIn":"Inside the app",
+    "un.briefAria":"Removed for you {auto}; you decide {you}; inside the app {inset}",
     "un.cat.app":"The application", "un.cat.support":"Data & support", "un.cat.caches":"Caches",
     "un.cat.prefs":"Preferences", "un.cat.state":"Saved state", "un.cat.containers":"Containers",
     "un.cat.group":"Shared containers", "un.cat.web":"Web data", "un.cat.logs":"Logs",
     "un.cat.agents":"Background items",
-    "un.refresh":"Read again",
+    "un.refresh":"Refresh",
     "un.tag.possible":"To review", "un.tag.admin":"Permissions",
     "un.tag.nested":"Inside the app",
     "un.reveal":"Show in Finder",
     "un.selectAll":"All", "un.selectNone":"None",
-    "un.selected":"{n} items · {gb} GB",
+    "un.selected":"{n} items · {size}", "un.selectedOne":"1 item · {size}",
+    "un.selectedNone":"Nothing selected",
     "un.keepHint":"Whatever you don't tick stays where it is.",
     "un.adminHint":"{n} items need administrator permissions: Brisa never grants those on its own.",
+    "un.adminHintOne":"1 item needs administrator permissions: Brisa never grants them on its own.",
     "un.runningHint":"It's open right now: Brisa will quit it so it can be removed.",
     "un.uninstall":"Uninstall completely",
     "un.noSel":"Nothing is selected",
@@ -3600,8 +3663,10 @@ const I18N = {
     "un.lockedSub":"{name} is a macOS application.",
     "un.askTitle":"Uninstall {name}",
     "un.askBody":"<b>{n}</b> items will be removed and <b>{gb} GB</b> freed.",
+    "un.askBodyOne":"<b>1</b> item will be removed and <b>{gb} GB</b> freed.",
     "un.askSafety":"Everything goes to Brisa Trash for {d} days. You can restore it from there.",
     "un.askKeep":"{n} items stay where they are.",
+    "un.askKeepOne":"1 item stays where it is.",
     "un.askGo":"Uninstall", "un.cancel":"Cancel",
     "un.ph.stop":"Quitting the application", "un.ph.app":"Removing the application",
     "un.ph.files":"Removing associated files", "un.ph.clean":"Cleaning up components",
@@ -3612,6 +3677,7 @@ const I18N = {
     "un.doneFreed":"{gb} GB freed · {n} items",
     "un.doneSafety":"Nothing was deleted: it's all in Brisa Trash.",
     "un.doneFailTitle":"{n} items couldn't be removed",
+    "un.doneFailTitleOne":"1 item couldn't be removed",
     "un.doneFailBody":"They're still where they were. Here's why.",
     "un.doneList":"Back to the list", "un.doneTrash":"See the Trash",
     "un.closed":"{n} processes quit",
@@ -5165,6 +5231,15 @@ const unEsc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;
    sistema operativo, no del usuario. */
 const unShort=p=>String(p||"").replace(/^\/Users\/[^/]+\//,"~/");
 const unApp=bid=>UN.apps.find(a=>a.bid===bid)||null;
+/* Una cifra de tamaño en la unidad que le toca: por debajo de 100 MB, en MB
+   —«0,0 GB» no dice nada de una app de 20 MB—, y una raya cuando no hay nada
+   que sumar, en vez de un «0 GB» que parece un error. */
+function unSize(gb){
+  const v=Number(gb)||0;
+  if(v<=0)return t("un.none");
+  if(v<0.1){ const mb=Math.round(v*1024); return mb<1?t("un.tiny"):mb.toLocaleString(locale())+" MB"; }
+  return fmt(v)+" GB";
+}
 /* La marca de la app, del juego de marcas del prototipo. Sobre la ficha teñida
    que ya usa la app para sus propias marcas, así que una fila de aplicaciones y
    una fila de categorías se visten igual. Las marcas casi negras (Steam,
@@ -5285,8 +5360,16 @@ function unPaintList(){
   });
   const tot=$("#un-total");
   if(tot){
-    const gb=Math.round(UN.apps.reduce((s,a)=>s+(Number(a.gb)||0),0)*10)/10;
-    tot.textContent=UN.apps.length?t(UN.apps.length===1?"un.countOne":"un.count",{n:UN.apps.length,gb:fmt(gb)}):"";
+    const n=UN.apps.length;
+    /* Mientras falte una sola cifra el total no se enseña: un «0,0 GB» a media
+       medida no es un dato, es una cifra que se corrige sola dos segundos
+       después. Se dice cuántas hay y ya. */
+    if(!n) tot.textContent="";
+    else if(UN.apps.some(a=>!a.measured)) tot.textContent=t(n===1?"un.countShortOne":"un.countShort",{n:n});
+    else {
+      const gb=Math.round(UN.apps.reduce((s,a)=>s+(Number(a.gb)||0),0)*10)/10;
+      tot.textContent=t(n===1?"un.countOne":"un.count",{n:n,gb:fmt(gb)});
+    }
   }
   if(!UN.apps.length){
     rows.innerHTML=`<div class="empty-note"><div class="pp-mark">${SVG("apps")}</div><h2>${t("un.emptyH2")}</h2><p>${t("un.emptyP")}</p></div>`;
@@ -5309,7 +5392,7 @@ function unPaintList(){
       ${a.icon?`<span class="r-ic"><img src="${a.icon}" alt=""></span>`:unBrand(a.bid)}
       <span class="r-name un-nm"><span class="un-nm-t"><b>${unEsc(a.name)}</b>${tags}</span><small>${sub}</small></span>
       <span class="un-bar" aria-hidden="true"><i style="width:${pc}%"></i></span>
-      <span class="r-size num">${a.gb>0?fmt(a.gb)+" GB":t("un.measuring")}</span>
+      <span class="r-size num${a.measured?"":" wait"}">${a.measured?unSize(a.gb):t("un.measuring")}</span>
       <span class="un-used" title="${unEsc(ago)}">${unEsc(ago)}</span>
       <span class="r-go">${SVG("chevR")}</span>
     </div>`;
@@ -5335,33 +5418,50 @@ function unPaintDetail(){
   host.classList.remove("scanning");
   const an=UN.analysis, all=unItems();
   const appGB=Number(an.gb)||0;
-  const assoc=Math.round((Number(an.total||0)-appGB)*10)/10;
   const tags=[];
   if(an.running||a.running)tags.push(`<span class="un-tag hot">${t("un.running")}</span>`);
   if(a.apple)tags.push(`<span class="un-tag">${t("un.apple")}</span>`);
   if(an.adminCount)tags.push(`<span class="un-tag warn">${t("un.tag.admin")} · ${an.adminCount}</span>`);
-  const notes=[];
-  if(an.running||a.running)notes.push(t("un.runningHint"));
-  if(an.adminCount)notes.push(t("un.adminHint",{n:an.adminCount}));
-  notes.push(t("un.keepHint"));
+  /* Los avisos suben al principio y llevan icono: que la app esté abierta o que
+     algo pida permisos cambia lo que va a pasar, así que tiene que leerse ANTES
+     de la lista, no en un párrafo al final donde ya no se mira. */
+  const alerts=[];
+  if(an.running||a.running)alerts.push(`<div class="un-alert hot">${SVG("info")}<span>${t("un.runningHint")}</span></div>`);
+  if(an.adminCount)alerts.push(`<div class="un-alert">${SVG("shield")}<span>${t(an.adminCount===1?"un.adminHintOne":"un.adminHint",{n:an.adminCount})}</span></div>`);
+  /* El desglose que hace entendible la pantalla: el total, y de ese total qué
+     parte se marca sola, qué parte decides tú y qué parte es la propia app por
+     dentro. Tres pesos sobre una barra, con su leyenda justo debajo. */
+  const total=Math.max(appGB,Number(an.total)||0);
+  const auto=all.filter(i=>!i.nested&&!i.admin&&i.conf==="certain");
+  const you=all.filter(i=>!i.nested&&(i.admin||i.conf!=="certain"));
+  const inner=all.filter(i=>i.nested);
+  const gbAuto=unGB(auto), gbYou=unGB(you), gbInner=unGB(inner);
+  const w=v=>Math.max(0,(v/Math.max(gbAuto+gbYou+gbInner,0.001))*100);
+  const itemsTxt=t(all.length===1?"un.itemsOne":"un.itemsN",{n:all.length});
   host.innerHTML=back+`
-    <div class="panel">
+    <div class="panel un-hero">
       <div class="un-head">
         <span class="un-icon">${(an.icon||a.icon)?`<img src="${an.icon||a.icon}" alt="">`:unBrand(a.bid," xl")}</span>
         <div class="un-id"><h2>${unEsc(a.name)}</h2><p title="${unEsc(a.path)}">${unEsc(unShort(a.path))}${a.version?" · v"+unEsc(a.version):""}</p></div>
         <div class="un-tags">${tags.join("")}</div>
       </div>
-      <div class="un-stats">
-        <div class="un-stat"><span class="k">${t("un.app")}</span><span class="v">${fmt(appGB)} GB</span><span class="s">${a.version?"v"+unEsc(a.version):""}</span></div>
-        <div class="un-stat"><span class="k">${t("un.assoc")}</span><span class="v">${fmt(Math.max(0,assoc))} GB</span><span class="s">${t(all.filter(i=>i.cat!=="app").length===1?"un.itemsOne":"un.itemsN",{n:Math.max(0,all.filter(i=>i.cat!=="app").length)})}</span></div>
-        <div class="un-stat"><span class="k">${t("un.sure")}</span><span class="v">${fmt(Number(an.certain)||0)} GB</span><span class="s">${t("un.statSure")}</span></div>
-        <div class="un-stat"><span class="k">${t("un.review")}</span><span class="v">${fmt(Number(an.possible)||0)} GB</span><span class="s">${t("un.statReview")}</span></div>
+      <div class="un-brief">
+        <div class="un-brief-top">
+          <span class="un-brief-k">${t("un.briefTitle")}</span>
+          <span class="un-brief-v"><b>${unSize(total)}</b><small>${itemsTxt}</small></span>
+        </div>
+        <div class="un-brief-bar" role="img" aria-label="${unEsc(t("un.briefAria",{auto:unSize(gbAuto),you:unSize(gbYou),inset:unSize(gbInner)}))}">${[["a",w(gbAuto)],["y",w(gbYou)],["n",w(gbInner)]].filter(s=>s[1]>0).map(s=>`<i class="${s[0]}" style="width:${s[1]}%"></i>`).join("")}</div>
+        <div class="un-legend">
+          <span class="a"><i></i>${t("un.briefAuto")}</span>
+          <span class="y"><i></i>${t("un.briefYou")}</span>
+          <span class="n"><i></i>${t("un.briefIn")}</span>
+        </div>
       </div>
     </div>
+    ${alerts.length?`<div class="un-alerts">${alerts.join("")}</div>`:""}
     ${(an.groups||[]).map(g=>unGroupHTML(g)).join("")}
-    <p class="un-note" id="un-detail-note">${notes.join(" ")}</p>
     <div class="un-foot">
-      <span class="un-count"><b id="un-sel">0</b><small>${t("un.keepHint")}</small></span>
+      <span class="un-count"><b id="un-sel" aria-live="polite">0</b><small>${t("un.keepHint")}</small></span>
       <span class="un-acts">
         <button class="btn btn-s btn-sm" id="un-all">${t("un.selectAll")}</button>
         <button class="btn btn-s btn-sm" id="un-none">${t("un.selectNone")}</button>
@@ -5373,8 +5473,6 @@ function unPaintDetail(){
 function unGroupHTML(g){
   const cat=UN_CATS.find(c=>c.k===g.key)||{kk:"un.cat.app",ic:"folder"};
   const items=Array.isArray(g.items)?g.items:[];
-  const gb=unGB(items);
-  const hint=items.length+" · "+fmt(gb)+" GB";
   const rows=items.map((it,i)=>{
     const on=UN.checked.has(it.id);
     let tag="";
@@ -5388,17 +5486,24 @@ function unGroupHTML(g){
       ${mark}
       <span class="un-name"><b>${unEsc(it.name)}</b><small title="${unEsc(it.path)}">${unEsc(unShort(it.path))}</small></span>
       ${tag}
-      <span class="r-size num">${fmt(Number(it.gb)||0)} GB</span>
+      <span class="r-size num">${unSize(it.gb)}</span>
       <button class="icon-btn un-eye" data-reveal="${unEsc(it.path)}" title="${t("un.reveal")}" aria-label="${t("un.reveal")}">${SVG("folder")}</button>
     </div>`;
   }).join("");
-  return `<div class="v-section un-cat"><h2>${SVG(cat.ic)}<span>${t(cat.kk)}</span></h2><span class="hint">${hint}</span></div>
+  /* La cabecera del grupo es un MANDO, no un rótulo: pulsarla marca o desmarca
+     todo lo que hay dentro —"si pincho en caché, que seleccione toda la caché"—
+     y su caja de la derecha dice si el grupo está entero, a medias o vacío. */
+  return `<button type="button" class="un-cat" data-ugroup="${unEsc(g.key)}" aria-label="${unEsc(t("un.groupSelect",{name:t(cat.kk)}))}">
+      <span class="un-cat-chk" aria-hidden="true">${SVG("check")}</span>
+      <span class="un-cat-ic">${SVG(cat.ic)}</span>
+      <span class="un-cat-n"><b>${t(cat.kk)}</b><small>${t(items.length===1?"un.itemsOne":"un.itemsN",{n:items.length})}</small></span>
+    </button>
     <div class="rowlist">${rows}</div>`;
 }
 function unPaintFoot(){
   const sel=unSelected(), gb=unGB(sel);
   const el=$("#un-sel");
-  if(el)el.textContent=t("un.selected",{n:sel.length,gb:fmt(gb)});
+  if(el)el.textContent=sel.length?t(sel.length===1?"un.selectedOne":"un.selected",{n:sel.length,size:unSize(gb)}):t("un.selectedNone");
   const go=$("#un-go"); if(go)go.disabled=!sel.length;
   $$("#un-detail [data-uit]").forEach(cb=>{
     const on=UN.checked.has(cb.dataset.uit);
@@ -5406,6 +5511,31 @@ function unPaintFoot(){
     const row=cb.closest(".un-item");
     if(row)row.classList.toggle("sel",on);
   });
+  /* El estado de cada categoría se recalcula aquí, que es el único sitio por el
+     que pasa cualquier cambio de selección: así la caja del grupo nunca miente. */
+  $$("#un-detail [data-ugroup]").forEach(b=>{
+    const g=unGroup(b.dataset.ugroup);
+    const items=((g&&g.items)||[]).filter(unCheckable);
+    const on=items.filter(i=>UN.checked.has(i.id)).length;
+    const all=items.length>0&&on===items.length, some=on>0&&!all;
+    b.classList.toggle("all",all);
+    b.classList.toggle("some",some);
+    b.setAttribute("aria-pressed",all?"true":(some?"mixed":"false"));
+  });
+}
+/* El grupo de una categoría, por su clave. */
+function unGroup(key){
+  return (UN.analysis&&Array.isArray(UN.analysis.groups)?UN.analysis.groups:[]).find(g=>g.key===key)||null;
+}
+/* Pulsar la categoría es un interruptor: si ya está entera, se vacía; si le
+   falta algo, se marca del todo. Nunca la deja a medias. */
+function unGroupToggle(key){
+  const g=unGroup(key); if(!g)return;
+  const items=(g.items||[]).filter(unCheckable);
+  if(!items.length)return;
+  const all=items.every(i=>UN.checked.has(i.id));
+  items.forEach(i=>{ if(all)UN.checked.delete(i.id); else UN.checked.add(i.id); });
+  unPaintFoot();
 }
 function unPaintRun(){
   if(UN.phase!=="running")return;
@@ -5439,7 +5569,7 @@ function unPaintDone(){
       </div>
     </div>`+(fails.length?`
     <div class="panel un-fails">
-      <h4>${t("un.doneFailTitle",{n:fails.length})}</h4>
+      <h4>${t(fails.length===1?"un.doneFailTitleOne":"un.doneFailTitle",{n:fails.length})}</h4>
       <p class="un-note">${t("un.doneFailBody")}</p>
       <div class="rowlist">${fails.map((f,i)=>`<div class="row un-item" style="--i:${i}">
         <span class="un-nest">${SVG("info")}</span>
@@ -5511,9 +5641,9 @@ function unAsk(){
     <div class="sheet-h"><h3>${t("un.askTitle",{name:unEsc(a.name)})}</h3><button class="sheet-close" data-close aria-label="${t("ask.close")}">${SVG("x")}</button></div>
     <div class="sheet-b">
       <div class="note-safe">${SVG("shield")}<span>${t("un.askSafety",{d:STATE.settings.retention})}</span></div>
-      <p class="kill-msg">${t("un.askBody",{n:sel.length,gb:fmt(gb)})}</p>
+      <p class="kill-msg">${t(sel.length===1?"un.askBodyOne":"un.askBody",{n:sel.length,gb:fmt(gb)})}</p>
       ${byCat}
-      ${keep?`<p class="kill-msg">${t("un.askKeep",{n:keep})}</p>`:""}
+      ${keep?`<p class="kill-msg">${t(keep===1?"un.askKeepOne":"un.askKeep",{n:keep})}</p>`:""}
     </div>
     <div class="sheet-f"><span class="finfo">${t("un.keepHint")}</span>
       <button class="btn btn-s btn-lg" id="un-cancel">${t("un.cancel")}</button>
@@ -5681,7 +5811,7 @@ function unDemoSeed(){
   if(inApp())return;
   const now=Date.now()/1000;
   UN.apps=UN_DEMO_APPS.map(a=>({bid:a.bid,name:a.name,version:a.version,path:"/Applications/"+a.name+".app",
-    gb:a.gb,last:a.days>0?now-a.days*86400:now-3600,running:!!a.running,apple:!!a.apple,store:!!a.store,icon:""}));
+    gb:a.gb,measured:true,last:a.days>0?now-a.days*86400:now-3600,running:!!a.running,apple:!!a.apple,store:!!a.store,icon:""}));
   UN.loaded=true; UN.loading=false; UN.failed=false;
   renderApps();
 }
@@ -8365,6 +8495,8 @@ function boot(){
     if(e.target.closest("#un-all")){ unCheckAll(true); return; }
     if(e.target.closest("#un-none")){ unCheckAll(false); return; }
     if(e.target.closest("#un-go")){ unAsk(); return; }
+    const grp=e.target.closest("[data-ugroup]");
+    if(grp){ unGroupToggle(grp.dataset.ugroup); return; }
     const cb=e.target.closest("[data-uit]");
     if(cb){ if(cb.checked)UN.checked.add(cb.dataset.uit); else UN.checked.delete(cb.dataset.uit); unPaintFoot(); return; }
     const row=e.target.closest("[data-uitem]");
