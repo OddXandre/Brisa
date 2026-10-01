@@ -291,8 +291,8 @@ html,body{overscroll-behavior:none}
 /* ---------- Shell: topbar + contenido ---------- */
 #app{display:grid;grid-template-rows:52px 1fr;height:100vh;height:100dvh;width:100%;overflow:hidden;min-width:0}
 #layout,#main,#topbar,#tb-right,.tb-title{min-width:0}
-@media(max-width:900px){#sidebar{width:52px!important}#app:not(.rail) #sidebar{width:52px!important}#app:not(.rail) .sb-brand{justify-content:center}#app:not(.rail) .sb-label,#app:not(.rail) .sc-label,#app:not(.rail) .dc-info{display:none}#app:not(.rail) .sb-item{justify-content:center;padding:6px 0}
-#app:not(.rail) .sb-item:active{transform:none}#app:not(.rail) .sb-item .badge{position:absolute;right:4px;top:2px;min-width:0;width:7px;height:7px;padding:0;border-radius:9999px;font-size:0}#app:not(.rail) .sb-collapse{width:29px;height:29px;justify-content:center;padding:0;margin:0 auto 6px}#app:not(.rail) .dc-rail{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;padding:0 6px 10px}#app:not(.rail) .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:auto}#app:not(.rail) .dc-ring{display:block}#app:not(.rail) .disk-card{display:flex;height:122px;padding:0}#app:not(.rail) .dc-rail-top{flex:1;display:flex;align-items:center;justify-content:center}#app:not(.rail) .dc-rail .dc-act{width:28px;height:28px;flex:none}}
+@media(max-width:900px){#sidebar{width:52px!important}#app:not(.rail) #sidebar{width:52px!important}#app:not(.rail) .sb-brand{justify-content:center}#app:not(.rail) .sc-label{opacity:0}#app:not(.rail) .sb-label{opacity:0}#app:not(.rail) .dc-info{opacity:0;visibility:hidden;transform:translateY(-6px);pointer-events:none}
+#app:not(.rail) .sb-item:active{transform:none}#app:not(.rail) .sb-item .badge{position:absolute;right:4px;top:2px;min-width:0;width:7px;height:7px;padding:0;border-radius:9999px;font-size:0}#app:not(.rail) .sb-collapse{height:29px;padding:0 12px;gap:0}#app:not(.rail) .dc-rail{opacity:1;visibility:visible;transform:none;pointer-events:auto}#app:not(.rail) .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:auto}#app:not(.rail) .dc-ring{display:block}#app:not(.rail) .disk-card{height:122px;padding:0}#app:not(.rail) .dc-rail-top{flex:1;display:flex;align-items:center;justify-content:center}#app:not(.rail) .dc-rail .dc-act{width:28px;height:28px;flex:none}}
 
 #topbar{
   display:flex;align-items:center;gap:8px;
@@ -390,23 +390,37 @@ html,body{overscroll-behavior:none}
    anchura anima y un elemento centrado se arrastraría con ella. Anclado,
    solo funde en su sitio. 14,5 px = centro del carril de 52 px menos medio
    símbolo (26 − 11,5). */
-.sb-mark{height:26px;width:23px;display:block;flex:none;color:var(--acc);opacity:0;position:absolute;left:14.5px;top:50%;transform:translateY(-50%);transition:opacity var(--d1) var(--ease)}
-.sb-wordmark{height:15px;width:auto;display:block;flex:none;color:var(--ink);opacity:1;transition:opacity var(--d1) var(--ease)}
-#app.rail .sb-wordmark{opacity:0}
-#app.rail .sb-mark{opacity:1}
-@media(max-width:900px){#app:not(.rail) .sb-wordmark{opacity:0}#app:not(.rail) .sb-mark{opacity:1}}
-#app.rail .sb-label{display:none}
+/* El trueque de marca (wordmark ↔ símbolo) va con la misma duración que la
+   anchura, y no es un fundido plano: el símbolo entra asentándose —de 0,88 a su
+   tamaño, anclado a la izquierda— mientras el wordmark sale deslizándose 3 px
+   hacia el canto que se cierra. Así el cambio se lee como un solo movimiento.
+   El desplazamiento va en el `transform` del propio elemento, no en un envoltorio:
+   el símbolo ya lo usa para centrarse en vertical. */
+.sb-mark{height:26px;width:23px;display:block;flex:none;color:var(--acc);opacity:0;position:absolute;left:14.5px;top:50%;transform:translateY(-50%) scale(.88);transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease)}
+.sb-wordmark{height:15px;width:auto;display:block;flex:none;color:var(--ink);opacity:1;transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease)}
+#app.rail .sb-wordmark{opacity:0;transform:translateX(-3px)}
+#app.rail .sb-mark{opacity:1;transform:translateY(-50%)}
+@media(max-width:900px){#app:not(.rail) .sb-wordmark{opacity:0;transform:translateX(-3px)}#app:not(.rail) .sb-mark{opacity:1;transform:translateY(-50%)}}
+#app.rail .sb-label{opacity:0}
 /* el logo en flujo (.exp, invisible en rail) manda la altura de la marca: 15px como
    en expandido, para que nav/foot queden en la misma Y en ambos estados */
 .sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:2px 8px 8px;min-height:0}
 .sb-item{
   display:flex;align-items:center;gap:12px;width:100%;text-align:left;
-  padding:6px 12px;height:32px;margin-bottom:3px;border-radius:var(--r-btn);color:var(--ink-2);font-size:var(--t-body);font-weight:400;
-  letter-spacing:-.024em;white-space:nowrap;position:relative;
+  /* 9 px de relleno + los 8 del carril de filas = el icono a 17 px del borde del
+     panel, que es exactamente donde cae si se centra en el carril plegado
+     ((52 − 18) / 2 + 8). El mismo sitio en los DOS estados, así que al plegar el
+     icono no se mueve: antes el ítem se centraba, el icono saltaba al medio del
+     panel ancho y se deslizaba a la izquierda mientras la anchura animaba. */
+  padding:6px 9px;height:32px;margin-bottom:3px;border-radius:var(--r-btn);color:var(--ink-2);font-size:var(--t-body);font-weight:400;
+  letter-spacing:-.024em;white-space:nowrap;position:relative;overflow:hidden;
   transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease);
 }
 .sb-item>svg.ic{width:18px;height:18px;flex:none;display:block;align-self:center}
-.sb-item .sb-label{min-width:0}
+/* La etiqueta no se apaga de golpe: funde mientras el ítem se estrecha y el
+   texto queda recortado por el canto del panel —el mismo movimiento del
+   sistema—. Sin el `overflow:hidden` de arriba el texto se saldría del carril. */
+.sb-item .sb-label{min-width:0;transition:opacity var(--d1) var(--ease)}
 .sb-item:hover{background:var(--sel);color:var(--ink)}
 /* La sección actual se marca como en las barras laterales del sistema: la fila
    se rellena y su icono toma el acento. Antes llevaba además una barrita de
@@ -421,14 +435,21 @@ html,body{overscroll-behavior:none}
   transition:transform var(--d2) var(--ease-spring),opacity var(--d1) var(--ease);
 }
 
-#app.rail .sb-item{justify-content:center;padding:6px 0;height:32px}
-#app.rail .sb-item .sb-label{display:none}
+#app.rail .sb-item{height:32px}
+#app.rail .sb-item .sb-label{opacity:0}
 #app.rail .sb-item:active{transform:none}
 #app.rail .badge{position:absolute;right:4px;top:2px;min-width:0;width:7px;height:7px;padding:0;border-radius:9999px;font-size:0}
 .sb-foot{padding:8px;border-top:1px solid var(--line)}
 /* La tarjeta de disco no es una tarjeta: es el pie de la barra lateral. Sin
    caja ni relleno —ya está sobre el cristal—, separada por la línea de arriba. */
-.disk-card{padding:11px 12px;height:122px}
+/* El pie cambia de forma —leyenda y botones con nombre arriba, anillo y botones
+   de icono en el carril—, y antes lo hacía de golpe: `display:none` en una
+   variante y en la otra. Ahora las dos viven en la MISMA celda de una rejilla y
+   se cruzan con un fundido y un deslizamiento corto, con el relleno de la
+   tarjeta animando a la vez. Nada aparece ni desaparece: una se va mientras la
+   otra llega. La que no toca se queda invisible Y sin recibir clics. */
+.disk-card{display:grid;padding:11px 12px;height:122px;transition:padding var(--d2) var(--ease-io)}
+.dc-info,.dc-rail{grid-area:1/1;min-width:0;transition:opacity var(--d2) var(--ease),transform var(--d2) var(--ease),visibility var(--d2)}
 .dc-info{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
 /* anillo + leyenda, estilo panel de almacenamiento */
 .dc-main{display:flex;align-items:center;gap:12px}
@@ -445,7 +466,7 @@ html,body{overscroll-behavior:none}
 .dcl small{font-size:var(--t-label);color:var(--ink-3);letter-spacing:.02em}
 .dcl b{font-size:var(--t-small);font-weight:400;font-variant-numeric:tabular-nums;letter-spacing:-.024em;white-space:nowrap}
 .dcl-acc{color:var(--acc-text)}
-.dc-rail{display:none}
+.dc-rail{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;padding:0 6px 10px;opacity:0;visibility:hidden;transform:translateY(6px);pointer-events:none}
 .dc-rail-top{display:flex;flex-direction:column;align-items:center}
 .dc-acts2{display:none}
 .dc-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
@@ -461,13 +482,18 @@ html,body{overscroll-behavior:none}
    Resumen: el acento es para lo accionable y aquí solo hay una acción. */
 .dc-act.p{background:var(--acc);color:var(--acc-ink)}
 .dc-act.p:hover{filter:brightness(1.08)}
-.sb-collapse{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:29px;padding:7px 10px;border-radius:var(--r-btn);color:var(--ink-2);font-size:var(--t-small);font-weight:400;letter-spacing:-.024em;margin-bottom:6px;white-space:nowrap;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease)}
+/* El mando de plegar tampoco salta: conserva el ancho de la columna en los dos
+   estados —así el chevron se desliza hasta el centro con el ancho, en vez de
+   aparecer allí de golpe— y lo único que cambia es su relleno, que anima con el
+   panel. Su etiqueta se recorta contra el canto como la de una fila. */
+.sb-collapse{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;height:29px;padding:7px 10px;border-radius:var(--r-btn);color:var(--ink-2);font-size:var(--t-small);font-weight:400;letter-spacing:-.024em;margin-bottom:6px;white-space:nowrap;overflow:hidden;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),padding var(--d2) var(--ease-io)}
+.sb-collapse .sc-label{min-width:0}
 .sb-collapse:hover{background:var(--sel);color:var(--ink)}
 .sb-collapse:active{transform:scale(.97)}
 .sb-collapse svg{width:12px;height:12px;color:var(--ink-3);flex:none}
 .sb-collapse:hover svg{color:var(--ink-2)}
-#app.rail .sb-collapse{width:29px;height:29px;justify-content:center;padding:0;margin:0 auto 6px}
-#app.rail .sb-collapse .sc-label{display:none}
+#app.rail .sb-collapse{height:29px;padding:0 12px;gap:0}
+#app.rail .sb-collapse .sc-label{opacity:0}
 #app.rail .sb-collapse svg{width:12px;height:12px;color:var(--ink-2)}
 /* El chevron NO gira: `applyRail` ya intercambia el icono (chevL al ocultar,
    chevR al mostrar). Girarlo además lo dejaba apuntando al lado contrario —
@@ -481,11 +507,11 @@ html,body{overscroll-behavior:none}
    durante los primeros 120 ms; a mitad del recorrido se intercambia (invisible)
    y el entrante funde los 120 ms restantes → texto, iconos y logo cierran
    exactamente cuando termina el movimiento de la anchura. */
-#sidebar :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition:opacity var(--d1) var(--ease)}
-#sidebar.fx-hide :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){opacity:0}
-#sidebar.fx-in :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){opacity:0!important;transition:none!important}
-#sidebar.fx-soft :is(.sb-label,.sc-label,.dc-info,.dc-rail,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition:opacity var(--d0) var(--ease) var(--d0)!important}
-/* Durante la transición el contenido expandido se maqueta a su ancho final (232 px):
+#sidebar :is(.sb-label,.sc-label,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition:opacity var(--d1) var(--ease)}
+#sidebar.fx-hide :is(.sb-label,.sc-label,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){opacity:0}
+#sidebar.fx-in :is(.sb-label,.sc-label,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){opacity:0!important;transition:none!important}
+#sidebar.fx-soft :is(.sb-label,.sc-label,.sb-item svg,.sb-collapse svg,.sb-brand svg,.badge){transition:opacity var(--d0) var(--ease) var(--d0)!important}
+/* Durante la transición el contenido expandido se maqueta a su ancho final (208 px):
    nada se re-ajusta de línea mientras la anchura anima — el texto no se apila,
    overflow:hidden lo recorta y el fundido cubre la revelación. */
 @media(min-width:901px){
@@ -2080,9 +2106,9 @@ select.set-sel:hover{background:var(--sel-2)}
   position:absolute;inset:0;display:grid;place-items:center;
   font-size:var(--t-micro);font-weight:400;letter-spacing:-.024em;font-variant-numeric:tabular-nums;
   color:var(--ink)}
-#app.rail .disk-card{display:flex;height:122px;padding:0}
-#app.rail .dc-info{display:none}
-#app.rail .dc-rail{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;padding:0 6px 10px}
+#app.rail .disk-card{height:122px;padding:0}
+#app.rail .dc-info{opacity:0;visibility:hidden;transform:translateY(-6px);pointer-events:none}
+#app.rail .dc-rail{opacity:1;visibility:visible;transform:none;pointer-events:auto}
 #app.rail .dc-rail-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #app.rail .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:auto}
 #app.rail .dc-ring{display:block}
