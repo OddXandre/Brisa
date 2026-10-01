@@ -73,6 +73,11 @@
      se despegaban del fondo. */
   --glass:rgba(15,15,15,.72);   /* el cromo */
   --float:rgba(18,18,18,.80);   /* lo que se apoya encima de otra cosa */
+  /* `--surface` en oscuro es un velo blanco al 5,3 %: sobre el lienzo negro se
+     lee como una tarjeta, pero sobre una CAPA deja ver el texto de detrás. Para
+     eso está este escalón: el mismo tono que resulta de ese velo sobre el
+     lienzo (#171717), pero opaco. */
+  --float-solid:#171717;
   --rim:inset 0 .5px 0 rgba(255,255,255,.09);
   /* --edge: la separación, y solo la separación. Aquí la sombra se queda
      fuera —una caja suelta sobre otra se leía como calcomanía— así que la
@@ -80,7 +85,10 @@
      flota, y la sombra queda solo para lo que de verdad flota (hojas, avisos). */
   --edge:inset 0 0 0 1px var(--line);
   --blur:blur(30px) saturate(180%);
-  --rail:transparent;
+  /* La barra lateral flota, así que tiene que verse: un velo blanco al 4,5 %
+     sobre el lienzo negro —el mismo trato que una tarjeta—, no un hueco
+     transparente. El filo lo pone `--edge`. */
+  --rail:rgba(255,255,255,.045);
   --tip-bg:rgba(33,33,33,.97);   /* el escalón «raised» de Freebuff (#212121) */
   --tip-ink:#FFFFFF;
   --acc:#ff5900;
@@ -196,10 +204,13 @@ html[data-theme="light"]{
      blanco en vez de bajar: si heredara el valor del tema oscuro, las hojas
      saldrían negras sobre el hormigón. */
   --float:rgba(255,255,255,.86);
+  --float-solid:#ffffff;   /* el mismo escalón, opaco: en claro ya era blanco */
   --rim:inset 0 .5px 0 rgba(255,255,255,.7);
   --edge:inset 0 0 0 1px var(--line);
   --blur:blur(30px) saturate(180%);
-  --rail:transparent;
+  /* En claro, un velo blanco no se vería sobre blanco: el panel se separa con
+     el gris del sistema (el mismo tono que `--sel`), no con luz. */
+  --rail:rgba(120,120,128,.08);
   --tip-bg:rgba(10,10,14,.95);
   --tip-ink:#FFFFFF;
   --acc:#ff5900;
@@ -280,7 +291,7 @@ html,body{overscroll-behavior:none}
 /* ---------- Shell: topbar + contenido ---------- */
 #app{display:grid;grid-template-rows:52px 1fr;height:100vh;height:100dvh;width:100%;overflow:hidden;min-width:0}
 #layout,#main,#topbar,#tb-right,.tb-title{min-width:0}
-@media(max-width:900px){#sidebar{width:58px!important}#app:not(.rail) #sidebar{width:58px!important}#app:not(.rail) .sb-brand{justify-content:center}#app:not(.rail) .sb-label,#app:not(.rail) .sc-label,#app:not(.rail) .dc-info{display:none}#app:not(.rail) .sb-item{justify-content:center;padding:6px 0}
+@media(max-width:900px){#sidebar{width:52px!important}#app:not(.rail) #sidebar{width:52px!important}#app:not(.rail) .sb-brand{justify-content:center}#app:not(.rail) .sb-label,#app:not(.rail) .sc-label,#app:not(.rail) .dc-info{display:none}#app:not(.rail) .sb-item{justify-content:center;padding:6px 0}
 #app:not(.rail) .sb-item:active{transform:none}#app:not(.rail) .sb-item .badge{position:absolute;right:4px;top:2px;min-width:0;width:7px;height:7px;padding:0;border-radius:9999px;font-size:0}#app:not(.rail) .sb-collapse{width:29px;height:29px;justify-content:center;padding:0;margin:0 auto 6px}#app:not(.rail) .dc-rail{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;padding:0 6px 10px}#app:not(.rail) .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:auto}#app:not(.rail) .dc-ring{display:block}#app:not(.rail) .disk-card{display:flex;height:122px;padding:0}#app:not(.rail) .dc-rail-top{flex:1;display:flex;align-items:center;justify-content:center}#app:not(.rail) .dc-rail .dc-act{width:28px;height:28px;flex:none}}
 
 #topbar{
@@ -356,13 +367,20 @@ html,body{overscroll-behavior:none}
 /* ---------- Layout ---------- */
 #layout{display:flex;min-height:0;overflow:hidden}
 #sidebar{
-  width:232px;flex:none;display:flex;flex-direction:column;min-height:0;
+  /* La barra lateral no es el canto del lienzo: es una pieza que se apoya
+     ENCIMA. Por eso lleva aire alrededor, esquinas, filo propio y el
+     desenfoque de lo que pasa por debajo —el mismo tratamiento que una hoja—
+     en vez de una línea pegada a su derecha. */
+  width:208px;flex:none;display:flex;flex-direction:column;min-height:0;
+  margin:8px 0 8px 10px;
+  border-radius:var(--r-panel);
   background:var(--rail);
-  box-shadow:inset -.5px 0 0 var(--line);
+  -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  box-shadow:var(--rim),var(--edge);
   transition:width var(--d2) var(--ease-io);
   overflow:hidden;
 }
-#app.rail #sidebar{width:58px}
+#app.rail #sidebar{width:52px}
 .sb-brand{display:flex;align-items:center;height:54px;min-height:54px;padding:0 17px;justify-content:flex-start;position:relative}
 /* Marca oficial: símbolo (AppLogo) con la sidebar plegada, wordmark
    (TextLogo) con la sidebar abierta. viewBox de cada recurso = proporción
@@ -370,9 +388,9 @@ html,body{overscroll-behavior:none}
    trazo va con currentColor: tinta del tema, sin filtros. */
 /* El símbolo va anclado a la IZQUIERDA (no centrado): al plegar la sidebar la
    anchura anima y un elemento centrado se arrastraría con ella. Anclado,
-   solo funde en su sitio. 17 px = centro del carril de 58 px menos medio
-   símbolo (29 − 11,5). */
-.sb-mark{height:26px;width:23px;display:block;flex:none;color:var(--acc);opacity:0;position:absolute;left:17px;top:50%;transform:translateY(-50%);transition:opacity var(--d1) var(--ease)}
+   solo funde en su sitio. 14,5 px = centro del carril de 52 px menos medio
+   símbolo (26 − 11,5). */
+.sb-mark{height:26px;width:23px;display:block;flex:none;color:var(--acc);opacity:0;position:absolute;left:14.5px;top:50%;transform:translateY(-50%);transition:opacity var(--d1) var(--ease)}
 .sb-wordmark{height:15px;width:auto;display:block;flex:none;color:var(--ink);opacity:1;transition:opacity var(--d1) var(--ease)}
 #app.rail .sb-wordmark{opacity:0}
 #app.rail .sb-mark{opacity:1}
@@ -471,7 +489,7 @@ html,body{overscroll-behavior:none}
    nada se re-ajusta de línea mientras la anchura anima — el texto no se apila,
    overflow:hidden lo recorta y el fundido cubre la revelación. */
 @media(min-width:901px){
-  #app:not(.rail) #sidebar .sb-scroll,#app:not(.rail) #sidebar .sb-foot{min-width:232px}
+  #app:not(.rail) #sidebar .sb-scroll,#app:not(.rail) #sidebar .sb-foot{min-width:208px}
 }
 
 /* ---------- Main: scroll por sección ---------- */
@@ -1685,7 +1703,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
    Sus hijos no son hermanos de .v-body, así que ese `gap` no se hereda: sin
    estas dos reglas, la ficha, los grupos, el pie y la nota caían uno debajo de
    otro sin un píxel entre medias —pegados, que es como no se lee nada—. */
-#view-apps #un-detail,#view-apps #un-done{display:flex;flex-direction:column;gap:12px}
+#view-apps #un-detail{display:flex;flex-direction:column;gap:12px}
 /* La lista se monta como la de Archivos: una columna que ocupa el alto, la
    barra de búsqueda fija arriba y las filas desplazándose por dentro. Con la
    lista entera colgando del scroll de la vista, buscar y bajar se llevaba la
@@ -1818,6 +1836,19 @@ html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
 .un-row .r-ic{width:30px;height:30px;background:transparent}
 .un-row .r-ic img{width:30px;height:30px;display:block;border-radius:var(--r-ctl)}
 .un-row .r-size{flex:none}
+/* El relevo al terminar el popup: la ficha no desaparece de golpe. Se apaga y
+   se hunde despacio MIENTRAS el velo se va, y la lista entra por debajo con su
+   propia entrada en cascada. Las tres cosas se pisan —el relevo cambia de
+   pantalla a los 380 ms, cuando la ficha ya casi no se ve—, así que el cambio
+   se lee como un movimiento continuo y no como un corte. */
+@keyframes unLeave{from{opacity:1;transform:none}to{opacity:0;transform:scale(.992) translateY(-6px)}}
+#view-apps #un-detail.leaving{animation:unLeave var(--d4) var(--ease) forwards;pointer-events:none;will-change:opacity,transform}
+/* La lista entra como un bloque, no solo fila a fila: aparece desde un poco
+   abajo con un fundido, y encima las filas se escalonan. Sin el bloque, el
+   primer fotograma de la lista era un salto. */
+@keyframes unEnterIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#view-apps #un-list.enter{animation:unEnterIn var(--d3) var(--ease) both}
+#un-rows.enter .un-row{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*18ms)}
 /* Sin cifra todavía: en gris, para que no compita con los números ya medidos. */
 .un-row .r-size.wait{color:var(--ink-3)}
 /* Un elemento del análisis: casilla, nombre, ruta y su etiqueta de certeza. La
@@ -1869,9 +1900,60 @@ html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
 .un-foot .un-acts{display:flex;align-items:center;gap:8px;flex:none}
 .un-note{margin:0;padding:0 2px;font-size:var(--t-small);color:var(--ink-3);line-height:1.55}
 .un-note.warn{color:var(--acc-text)}
-.un-run .prog-row b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400}
-.un-run .prog-row .ps{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
-.un-fails{padding:0 0 8px;text-align:left}
+/* El progreso y el resultado no son pantallas: son una CAPA sobre la ventana,
+   con el fondo atenuado —el mismo trato que una hoja de confirmación— y un
+   popup de 420 px como mucho en el centro. El progreso se va solo al acabar y
+   el resultado cuando ya se ha podido leer; los dos entran y salen con el mismo
+   movimiento corto, así que el conjunto no da saltos. */
+/* El velo apaga lo de detrás de verdad —el popup es una tarjeta y necesita
+   contra para leerse—, pero un paso por debajo del de una hoja: aquí no se
+   pide ninguna decisión. Lo de atrás no desaparece: la ficha de la app se
+   sigue viendo, solo que apagada. */
+#view-apps #un-run,#view-apps #un-done{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;background:rgba(10,10,12,.26);animation:fadeIn var(--d2) var(--ease)}
+#view-apps #un-run[hidden],#view-apps #un-done[hidden]{display:none}
+html[data-theme="dark"] #view-apps #un-run,html[data-theme="dark"] #view-apps #un-done{background:rgba(0,0,0,.42)}
+/* La salida es más larga que la entrada: el velo se apaga despacio mientras la
+   lista ya está entrando por debajo, así que las dos cosas se cruzan en vez de
+   sucederse. Nunca se ve el fondo desnudo entre una y otra. */
+#view-apps #un-run.closing,#view-apps #un-done.closing{animation:fadeOut var(--d4) var(--ease) forwards;pointer-events:none}
+#view-apps #un-done.closing .un-pop{animation:popOut var(--d4) var(--ease) forwards}
+.un-pop{position:relative;width:100%;max-width:420px;overflow:hidden;background:var(--float-solid);box-shadow:var(--rim),var(--edge),var(--shadow-pop);animation:pop var(--d3) var(--ease) both}
+.un-pop-x{position:absolute;top:10px;right:10px;z-index:2}
+.un-pop-h{display:flex;align-items:center;gap:12px;padding:16px 44px 14px 18px}
+.un-pop-ic{width:30px;height:30px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none;overflow:hidden}
+.un-pop-ic img{width:30px;height:30px;border-radius:var(--r-ctl);display:block}
+.un-pop-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.un-pop-t b{font-size:var(--t-body);font-weight:400;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-pop-t small{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-pop-n{flex:none;font-size:18px;font-weight:400;letter-spacing:-.022em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.un-pop>.prog-track{margin:0 18px 12px}
+.un-phases{padding:0 18px 6px}
+/* La fase que está pasando ahora se enciende: es la única viva de la lista. */
+.prog-row.now{color:var(--ink)}
+.prog-row.now b{color:var(--ink)}
+.prog-row.now svg{color:var(--acc)}
+/* La barra de «Borrando…»: el nombre del elemento que se está quitando tiene
+   sitio propio y relleno, en vez de colgar del filo de la fila. */
+.un-tick{display:flex;align-items:center;gap:9px;margin:4px 18px 16px;padding:8px 11px;border-radius:var(--r-ctl);background:var(--sel);min-width:0;overflow:hidden}
+.un-tick-k{flex:none;font-size:var(--t-label);color:var(--ink-3)}
+.un-tick-k::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acc);margin-left:7px;vertical-align:middle;animation:unBlink 1.1s var(--ease) infinite}
+.un-tick-n{flex:1;min-width:0;font-size:var(--t-small);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+@keyframes unBlink{0%,100%{opacity:.25}50%{opacity:1}}
+/* El resultado: un icono con peso, el nombre de lo que se ha quitado y el
+   número que el usuario ha venido a ver —el espacio— en grande. Nada más. */
+.un-pop-done{padding:24px 18px 18px;text-align:center}
+.un-done-ic{width:44px;height:44px;border-radius:var(--r-panel);background:var(--acc-soft);color:var(--acc-text);display:grid;place-items:center;margin:0 auto 12px}
+.un-done-ic svg{width:21px;height:21px;stroke-width:2}
+.un-done-ic.warn{background:var(--sel-2);color:var(--ink-2)}
+.un-pop-done h4{font-size:var(--t-title);font-weight:600;letter-spacing:-.022em;color:var(--ink)}
+.un-done-num{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-top:9px;flex-wrap:wrap}
+.un-done-num b{font-size:24px;font-weight:400;letter-spacing:-.026em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.un-done-num small{font-size:var(--t-small);color:var(--ink-3)}
+.un-pop-done p{margin-top:10px;font-size:var(--t-small);color:var(--ink-3);line-height:1.5}
+/* La vida del popup: una línea que se agota, para saber que se cierra solo. */
+.un-pop-life{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--track)}
+.un-pop-life i{display:block;height:100%;width:100%;background:var(--acc);transition:width linear}
+.un-fails{padding:0 0 8px;text-align:left;border-top:1px solid var(--line);max-height:32vh;overflow-y:auto}
 .un-fails h4{padding:15px 18px 5px;font-size:var(--t-body);font-weight:600;color:var(--ink)}
 .un-fails .un-note{padding:0 18px}
 .un-fails .rowlist{margin-top:6px}
@@ -3357,7 +3439,7 @@ const I18N = {
     "un.askTitle":"Desinstalar {name}",
     "un.askBody":"Se quitarán <b>{n}</b> elementos y se liberarán <b>{gb} GB</b>.",
     "un.askBodyOne":"Se quitará <b>1</b> elemento y se liberarán <b>{gb} GB</b>.",
-    "un.askSafety":"Todo va a la Papelera de Brisa {d} días. Podrás restaurarlo desde ahí.",
+    "un.askSafety":"Esta acción no se puede deshacer: los archivos se borran de forma permanente.",
     "un.askKeep":"{n} elementos se quedan donde están.",
     "un.askKeepOne":"1 elemento se queda donde está.",
     "un.askGo":"Desinstalar", "un.cancel":"Cancelar",
@@ -3367,12 +3449,13 @@ const I18N = {
     "un.runTitle":"Desinstalando {name}",
     "un.runWait":"No cierres Brisa mientras trabaja.",
     "un.doneTitle":"{name} desinstalada",
-    "un.doneFreed":"{gb} GB liberados · {n} elementos",
-    "un.doneSafety":"No se ha borrado nada: todo está en la Papelera de Brisa.",
+    "un.doneFreedWord":"liberados",
+    "un.doneSafety":"Borrado de forma permanente: ese espacio ya está libre en tu disco.",
     "un.doneFailTitle":"{n} elementos no se pudieron quitar",
     "un.doneFailTitleOne":"1 elemento no se pudo quitar",
     "un.doneFailBody":"Siguen donde estaban. Este es el motivo.",
-    "un.doneList":"Volver a la lista", "un.doneTrash":"Ver la Papelera",
+    "un.doneList":"Volver a la lista",
+    "un.tick":"Borrando",
     "un.closed":"{n} procesos cerrados",
     "un.fail.admin":"Necesita permisos de administrador",
     "un.fail.perm":"macOS no permite modificarlo",
@@ -3664,7 +3747,7 @@ const I18N = {
     "un.askTitle":"Uninstall {name}",
     "un.askBody":"<b>{n}</b> items will be removed and <b>{gb} GB</b> freed.",
     "un.askBodyOne":"<b>1</b> item will be removed and <b>{gb} GB</b> freed.",
-    "un.askSafety":"Everything goes to Brisa Trash for {d} days. You can restore it from there.",
+    "un.askSafety":"This can't be undone: the files are deleted permanently.",
     "un.askKeep":"{n} items stay where they are.",
     "un.askKeepOne":"1 item stays where it is.",
     "un.askGo":"Uninstall", "un.cancel":"Cancel",
@@ -3674,12 +3757,13 @@ const I18N = {
     "un.runTitle":"Uninstalling {name}",
     "un.runWait":"Don't quit Brisa while it works.",
     "un.doneTitle":"{name} uninstalled",
-    "un.doneFreed":"{gb} GB freed · {n} items",
-    "un.doneSafety":"Nothing was deleted: it's all in Brisa Trash.",
+    "un.doneFreedWord":"freed",
+    "un.doneSafety":"Deleted permanently: that space is free on your disk now.",
     "un.doneFailTitle":"{n} items couldn't be removed",
     "un.doneFailTitleOne":"1 item couldn't be removed",
     "un.doneFailBody":"They're still where they were. Here's why.",
-    "un.doneList":"Back to the list", "un.doneTrash":"See the Trash",
+    "un.doneList":"Back to the list",
+    "un.tick":"Deleting",
     "un.closed":"{n} processes quit",
     "un.fail.admin":"Needs administrator permissions",
     "un.fail.perm":"macOS won't allow changes",
@@ -5225,7 +5309,7 @@ const UN={
   run:{phase:"",pct:0,item:null},
   result:null
 };
-let unWatchT=null, unDemoT=null, unSearchT=null;
+let unWatchT=null, unDemoT=null, unSearchT=null, unDoneT=null, unEnterT=null;
 const unEsc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* La ruta se enseña abreviada: «/Users/quien/Library/…» es información del
    sistema operativo, no del usuario. */
@@ -5321,7 +5405,11 @@ function renderApps(){
   const waiting=!UN.loaded&&!UN.apps.length;
   pend.hidden=!(UN.phase==="list"&&waiting);
   list.hidden=UN.phase!=="list"||waiting;
-  det.hidden=UN.phase!=="detail";
+  /* La ficha sigue DETRÁS mientras se borra y mientras se enseña el resultado:
+     la capa va SOBRE la pantalla, no en su lugar. Si se ocultara, el hueco
+     quedaría con el lienzo desnudo —que en tema oscuro es negro— y el velo se
+     leería como un apagón en vez de como un fondo atenuado. */
+  det.hidden=["detail","running","done"].indexOf(UN.phase)<0;
   run.hidden=UN.phase!=="running";
   done.hidden=UN.phase!=="done";
   if(!pend.hidden){
@@ -5400,6 +5488,7 @@ function unPaintList(){
 }
 function unPaintDetail(){
   const host=$("#un-detail"); if(!host)return;
+  host.classList.remove("leaving");
   const a=unApp(UN.bid);
   if(!a){ host.innerHTML=""; return; }
   const back=`<button class="un-back" id="un-back">${SVG("chevL")}${t("un.back")}</button>`;
@@ -5546,11 +5635,20 @@ function unPaintRun(){
   const idx=UN_PHASES.indexOf(UN.run.phase);
   UN_PHASES.forEach((ph,i)=>{
     const row=$(`#un-run-list [data-ph="${ph}"]`); if(!row)return;
+    row.classList.toggle("now",i===idx);
     if(i<idx&&!row.dataset.tick){ row.dataset.tick="1"; row.classList.add("done"); const ps=row.querySelector(".ps"); if(ps)ps.textContent="✓"; }
-    if(i===idx&&ph==="files"&&UN.run.item){ const ps=row.querySelector(".ps"); if(ps)ps.textContent=unShort(UN.run.item); }
   });
-  const cur=$("#un-run-item");
-  if(cur)cur.textContent=UN.run.item?unShort(UN.run.item):"";
+  /* El nombre del elemento que se está borrando vive en su propia barra: es el
+     dato que cambia todo el rato, así que tiene sitio fijo y entra con un
+     movimiento corto en vez de aparecer de golpe. */
+  const cur=$("#un-run-cur");
+  const name=UN.run.item?unShort(UN.run.item):"";
+  if(cur&&cur.textContent!==name){
+    cur.textContent=name;
+    cur.style.animation="none";
+    void cur.offsetWidth;
+    cur.style.animation="riseIn var(--d2) var(--ease)";
+  }
   const ttl=$("#un-run-title");
   if(ttl)ttl.textContent=t("un.runTitle",{name:a.name});
 }
@@ -5559,25 +5657,91 @@ function unPaintDone(){
   const r=UN.result||{name:"",freed:0,removed:0,failures:[],closed:0};
   const fails=Array.isArray(r.failures)?r.failures:[];
   const extra=r.closed?" · "+t("un.closed",{n:r.closed}):"";
-  host.innerHTML=`<div class="panel sheet-ok">
-      <span class="ok-ic">${SVG(fails.length?"info":"check")}</span>
-      <h4>${t("un.doneTitle",{name:unEsc(r.name||"")})}</h4>
-      <p>${t("un.doneFreed",{gb:fmt(Number(r.freed)||0),n:r.removed||0})}${extra}<br>${t("un.doneSafety")}</p>
-      <div class="ok-acts">
-        <button class="btn btn-s" id="un-see-trash">${t("un.doneTrash")}</button>
-        <button class="btn btn-p" id="un-back-list">${t("un.doneList")}</button>
+  host.classList.remove("closing");
+  const n=Number(r.removed)||0;
+  host.innerHTML=`<div class="un-pop panel">
+      <button class="icon-btn un-pop-x" id="un-done-close" title="${t("un.doneList")}" aria-label="${t("un.doneList")}">${SVG("x")}</button>
+      <div class="un-pop-done" role="status">
+        <span class="un-done-ic${fails.length?" warn":""}">${SVG(fails.length?"info":"check")}</span>
+        <h4>${t("un.doneTitle",{name:unEsc(r.name||"")})}</h4>
+        <div class="un-done-num"><b>${unSize(Number(r.freed)||0)}</b><small>${t("un.doneFreedWord")} · ${t(n===1?"un.itemsOne":"un.itemsN",{n:n})}${extra}</small></div>
+        <p>${t("un.doneSafety")}</p>
       </div>
-    </div>`+(fails.length?`
-    <div class="panel un-fails">
-      <h4>${t(fails.length===1?"un.doneFailTitleOne":"un.doneFailTitle",{n:fails.length})}</h4>
-      <p class="un-note">${t("un.doneFailBody")}</p>
-      <div class="rowlist">${fails.map((f,i)=>`<div class="row un-item" style="--i:${i}">
-        <span class="un-nest">${SVG("info")}</span>
-        <span class="un-name"><b>${unEsc(f.name)}</b><small title="${unEsc(f.path)}">${unEsc(unShort(f.path))}</small></span>
-        <span class="un-tag warn">${t(UN_FAIL[f.reason]||UN_FAIL.other)}</span>
-        <button class="icon-btn un-eye" data-reveal="${unEsc(f.path)}" title="${t("un.reveal")}" aria-label="${t("un.reveal")}">${SVG("folder")}</button>
-      </div>`).join("")}</div>
-    </div>`:"");
+      ${fails.length?`<div class="un-fails">
+        <h4>${t(fails.length===1?"un.doneFailTitleOne":"un.doneFailTitle",{n:fails.length})}</h4>
+        <p class="un-note">${t("un.doneFailBody")}</p>
+        <div class="rowlist">${fails.map((f,i)=>`<div class="row un-item" style="--i:${i}">
+          <span class="un-nest">${SVG("info")}</span>
+          <span class="un-name"><b>${unEsc(f.name)}</b><small title="${unEsc(f.path)}">${unEsc(unShort(f.path))}</small></span>
+          <span class="un-tag warn">${t(UN_FAIL[f.reason]||UN_FAIL.other)}</span>
+          <button class="icon-btn un-eye" data-reveal="${unEsc(f.path)}" title="${t("un.reveal")}" aria-label="${t("un.reveal")}">${SVG("folder")}</button>
+        </div>`).join("")}</div>
+      </div>`:""}
+      <span class="un-pop-life" aria-hidden="true"><i></i></span>
+    </div>`;
+  unDoneLife(r);
+}
+/* El resultado dura lo que se estima que hace falta para leerlo —más tiempo
+   cuanto más se ha quitado y, sobre todo, si hay algo que no se pudo quitar— y
+   luego vuelve sola a la lista. La línea de abajo enseña que se está agotando,
+   así que el cierre no sorprende a nadie. */
+function unDoneLife(r){
+  clearTimeout(unDoneT);
+  const f=(r&&Array.isArray(r.failures))?r.failures.length:0;
+  /* Tres segundos: lo justo para leer el número y saber que ha ido bien. Si
+     algo NO se pudo quitar, se le da un poco más, porque eso hay que verlo. */
+  const ms=Math.max(3000,Math.min(4200,3000+300*f));
+  const host=$("#un-done"), life=host&&host.querySelector(".un-pop-life i");
+  if(life){
+    life.style.transitionDuration="0ms"; life.style.width="100%";
+    requestAnimationFrame(()=>{ life.style.transitionDuration=ms+"ms"; life.style.width="0%"; });
+  }
+  unDoneT=setTimeout(unDismissDone,ms);
+}
+/* Cerrar el popup tiene que poder hacerse antes de tiempo: quien ya lo ha leído
+   no espera a que se acabe el contador. */
+function unDismissDone(){
+  if(UN.phase!=="done")return;
+  clearTimeout(unDoneT);
+  const host=$("#un-done");
+  if(!host){ unBackToList(); return; }
+  /* Se apaga la CAPA entera —el velo y el popup—, no solo la caja: si el velo
+     se quedara, el cambio a la lista ocurriría debajo de un gris que se va. */
+  host.classList.add("closing");
+  /* Y la ficha que hay detrás se despide también: el velo se apaga y ella se
+     hunde despacio (440 ms), así que el cambio a la lista se hace a los 380 ms
+     —cuando la ficha ya casi no se ve— y su último tramo se cruza con la
+     entrada de la lista en vez de sucederle. */
+  const det=$("#un-detail");
+  if(det)det.classList.add("leaving");
+  unDoneT=setTimeout(unBackToList,380);
+}
+/* Al volver, la lista entra como un bloque y sus filas se escalonan; y el scroll
+   se pone arriba del todo ANTES de pintar, para que la entrada se vea desde el
+   principio y no desde donde se quedó la ficha (ver unTop). */
+function unListEnter(){
+  const list=$("#un-list"), rows=$("#un-rows");
+  unTop();
+  if(list)list.classList.add("enter");
+  if(rows)rows.classList.add("enter");
+  /* Se quita DESPUÉS del último escalón, no antes: con una lista larga, cortar
+     a los 1.000 ms dejaba la mitad de las filas sin entrar. */
+  clearTimeout(unEnterT);
+  unEnterT=setTimeout(()=>{
+    if(list)list.classList.remove("enter");
+    if(rows)rows.classList.remove("enter");
+  },1400);
+}
+/* El scroll de una sección no es un solo número: la lista se desplaza dentro de
+   `#un-rows` y la ficha dentro del `v-body`, y cada uno se queda donde estaba al
+   cambiar de pantalla. Al volver, los dos vuelven arriba: si no, la lista
+   aparecía desplazada por lo que se había movido la ficha —y sin cabecera ni
+   columnas a la vista—, que es el «scroll bugueado» que se veía. */
+function unTop(){
+  const vb=document.querySelector("#view-apps .v-body");
+  if(vb)vb.scrollTop=0;
+  const rows=$("#un-rows");
+  if(rows)rows.scrollTop=0;
 }
 
 /* ---------- Interacción ---------- */
@@ -5587,6 +5751,9 @@ function unOpen(bid){
      fallaria al final del camino. */
   if(a.apple){ toast(t("un.lockedTitle"),t("un.lockedSub",{name:a.name})); return; }
   UN.bid=bid; UN.phase="detail"; UN.analysis=null; UN.analyzing=true; UN.result=null; UN.checked=new Set();
+  /* La ficha se abre por arriba: el `v-body` puede venir desplazado de la
+     lista, y una ficha abierta a media altura empieza mintiendo. */
+  unTop();
   renderApps();
   if(inApp())postIntent("appAnalysis",{path:a.path,gb:Number(a.gb)||0});
   else unDemoAnalyze(a);
@@ -5616,15 +5783,18 @@ function unReveal(path){
   toast(t("un.reveal"),unShort(path));
 }
 function unBackToList(){
+  clearTimeout(unDoneT);
   const done=UN.result;
   UN.phase="list"; UN.bid=null; UN.analysis=null; UN.analyzing=false; UN.result=null; UN.checked=new Set();
   if(inApp()){
     /* Aplicación quitada: la lista se vuelve a leer de verdad. */
     if(done)unReload(); else renderApps();
+    unListEnter();
     return;
   }
   if(done&&done.bid)UN.apps=UN.apps.filter(a=>a.bid!==done.bid);
   renderApps();
+  unListEnter();
 }
 function unAsk(){
   const a=unApp(UN.bid), an=UN.analysis;
@@ -5640,7 +5810,7 @@ function unAsk(){
   const sheet=overlay(`
     <div class="sheet-h"><h3>${t("un.askTitle",{name:unEsc(a.name)})}</h3><button class="sheet-close" data-close aria-label="${t("ask.close")}">${SVG("x")}</button></div>
     <div class="sheet-b">
-      <div class="note-safe">${SVG("shield")}<span>${t("un.askSafety",{d:STATE.settings.retention})}</span></div>
+      <div class="note-safe">${SVG("info")}<span>${t("un.askSafety")}</span></div>
       <p class="kill-msg">${t(sel.length===1?"un.askBodyOne":"un.askBody",{n:sel.length,gb:fmt(gb)})}</p>
       ${byCat}
       ${keep?`<p class="kill-msg">${t(keep===1?"un.askKeepOne":"un.askKeep",{n:keep})}</p>`:""}
@@ -5672,11 +5842,15 @@ function unRun(sel){
 function unPaintRunShell(){
   const a=unApp(UN.bid)||{name:""};
   const host=$("#un-run"); if(!host)return;
-  host.innerHTML=`<div class="panel un-run">
-    <div class="prog-cap"><span id="un-run-title">${t("un.runTitle",{name:unEsc(a.name)})}</span><b id="un-run-pct">0 %</b></div>
+  host.innerHTML=`<div class="un-pop panel">
+    <div class="un-pop-h">
+      <span class="un-pop-ic">${a.icon?`<img src="${a.icon}" alt="">`:unBrand(a.bid)}</span>
+      <span class="un-pop-t"><b id="un-run-title">${t("un.runTitle",{name:unEsc(a.name)})}</b><small>${t("un.runWait")}</small></span>
+      <b class="un-pop-n" id="un-run-pct">0 %</b>
+    </div>
     <div class="prog-track"><i id="un-run-fill"></i></div>
-    <div id="un-run-list">${UN_PHASES.map(ph=>`<div class="prog-row" data-ph="${ph}">${SVG(UN_PHASE_IC[ph])}<b>${t(UN_PHASE_KEYS[ph])}</b><span class="ps"></span></div>`).join("")}</div>
-    <p class="un-note" id="un-run-item" style="margin-top:12px">${t("un.runWait")}</p>
+    <div class="un-phases stagger" id="un-run-list">${UN_PHASES.map(ph=>`<div class="prog-row" data-ph="${ph}">${SVG(UN_PHASE_IC[ph])}<b>${t(UN_PHASE_KEYS[ph])}</b><span class="ps"></span></div>`).join("")}</div>
+    <div class="un-tick" role="status"><span class="un-tick-k">${t("un.tick")}</span><span class="un-tick-n" id="un-run-cur"></span></div>
   </div>`;
 }
 function unApplyProgress(phase,pct,item){
@@ -5694,11 +5868,10 @@ function unApplyResult(r){
   if(!inApp()&&r){
     const gb=Number(r.freed)||0;
     if(gb>0){
-      STATE.papelera.unshift({id:"p"+Date.now()+Math.random(),kind:"file",name:r.name,availName:r.name,icon:"apps",gb:gb,taken:Date.now()-STATE.settings.retention*864e5+60000,fileObj:null});
       STATE.free=Math.round((STATE.free+gb)*10)/10;
       STATE.ser=scoreOf(STATE.free);
       pushHistory([{name:r.name,icon:"apps",gb:gb}],"bin");
-      refreshSpace(); updateBadges(); renderPapelera();
+      refreshSpace(); updateBadges();
     }
   }
   UN.phase="done";
@@ -8503,10 +8676,10 @@ function boot(){
     if(row)unToggle(row.dataset.uitem);
   });
   onEv("#un-done","click",e=>{
+    /* Enseñar una ruta en el Finder no es cerrar el popup. */
     const rev=e.target.closest("[data-reveal]");
     if(rev){ unReveal(rev.dataset.reveal); return; }
-    if(e.target.closest("#un-see-trash")){ unBackToList(); go("papelera"); return; }
-    if(e.target.closest("#un-back-list")){ unBackToList(); }
+    unDismissDone();
   });
   on("#pap-vaciar",()=>{
     const n=STATE.papelera.length; if(!n)return;
