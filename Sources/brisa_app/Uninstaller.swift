@@ -91,6 +91,7 @@ enum AppInventory {
                 guard var entry = describe(path: url.path) else { continue }
                 guard entry.bid != own else { continue }
                 entry.running = runningIDs.contains(entry.bid)
+                entry.last = lastUsed(bid: entry.bid, running: entry.running)
                 out.append(entry)
             }
         }
@@ -112,7 +113,7 @@ enum AppInventory {
         let exec = (info["CFBundleExecutable"] as? String) ?? url.deletingPathExtension().lastPathComponent
         return AppEntry(
             bid: bid, name: name, version: version, exec: exec, path: path,
-            gb: 0, last: lastUsed(path), running: false,
+            gb: 0, last: 0, running: false,
             // App de Apple: por identificador o por vivir en el sistema. Las dos
             // señales juntas cubren tanto Safari (que está en /Applications)
             // como cualquier cosa que macOS traiga dentro.
@@ -122,16 +123,19 @@ enum AppInventory {
         )
     }
 
-    /// Cuándo se usó por última vez. Lo sabe Spotlight (es lo mismo que enseña
-    /// el Finder); sin metadato se cae a la fecha del bundle antes que inventar
-    /// una cifra.
-    static func lastUsed(_ path: String) -> TimeInterval {
-        if let item = MDItemCreateWithURL(kCFAllocatorDefault, URL(fileURLWithPath: path) as CFURL),
-           let date = MDItemCopyAttribute(item, kMDItemLastUsedDate) as? Date {
-            return date.timeIntervalSince1970
-        }
-        let values = try? URL(fileURLWithPath: path).resourceValues(forKeys: [.contentModificationDateKey])
-        return values?.contentModificationDate?.timeIntervalSince1970 ?? 0
+    /// Cuándo se usó por última vez. NO se pregunta a Spotlight: en un Mac con
+    /// el índice apagado —lo habitual— `kMDItemLastUsedDate` de un bundle
+    /// devuelve su fecha de MODIFICACIÓN, así que la columna acababa enseñando
+    /// cuándo se instaló cada app. Ahora manda el arranque que Brisa ha visto
+    /// (AppUsage), y si no lo ha visto, la última vez que la app tocó sus
+    /// propios datos; sin ninguna de las dos señales, 0 —que la interfaz enseña
+    /// como «sin registro de uso», no como una fecha inventada.
+    static func lastUsed(bid: String, running: Bool, now: TimeInterval = Date().timeIntervalSince1970) -> TimeInterval {
+        if let seen = AppUsage.shared.lastLaunch(bid: bid) { return seen }
+        /* Está abierta justo ahora: eso ES usarla, y no hay lectura mejor. */
+        if running { AppUsage.shared.mark(bid: bid, at: now); return now }
+        let home = FileManager.default.homeDirectoryForCurrentUser.path
+        return AppUsage.shared.inferredTouch(bid: bid, home: home) ?? 0
     }
 
     /// Tamaño real ocupado en disco: se suma el espacio ASIGNADO de cada archivo

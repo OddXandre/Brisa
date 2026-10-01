@@ -116,6 +116,19 @@
   --r-ctl:8px;
   --r-panel:12px;
   --r-sheet:12px;
+  /* Un GRUPO es la única pieza que existe para ENVOLVER controles: la fila de
+     pastillas de una sección, el conmutador de tres de Ajustes, los modos del
+     mapa. Su radio no sale de la nada —es el del control de dentro MÁS el aire
+     que lo separa del borde—, y de ahí sale la regla de la DISTANCIA DEL BORDE
+     que usa toda la app:
+
+         radio interior = radio exterior − relleno
+
+     Con 2 px de aire y controles de 8, el grupo mide 10, y la curva de la
+     pastilla y la del grupo quedan paralelas en vez de cruzarse. Si el
+     interior no encaja, el conjunto se lee como una caja dentro de otra, que
+     es justo lo que la app evita en todas partes. */
+  --r-group:10px;
   --content-max:1120px;
   --gutter:30px;
   --section-gap:20px;
@@ -230,6 +243,15 @@ body{
   letter-spacing:-.024em;
   line-height:1.45;
   font-feature-settings:'cv11';
+  /* Dos mandatos de SF Pro que faltaban. `optical-sizing` deja al sistema
+     elegir el corte de la familia por tamaño —SF Pro Text en los cuerpos
+     pequeños y SF Pro Display en los titulares—, que es como la propia Apple
+     consigue que el mismo tipo se lea igual a 11 y a 34 px. Y `synthesis`
+     apagado impide que el navegador FABRIQUE una negrita con un contorno
+     cuando la familia no la trae: si un peso no existe, se cae al más cercano
+     de verdad en vez de a un falso más grueso que desalinea la mancha. */
+  font-optical-sizing:auto;
+  font-synthesis-weight:none;
   background:var(--bg);
   color:var(--ink);
   overflow:hidden;
@@ -665,7 +687,7 @@ html,body{overscroll-behavior:none}
 .hs{position:relative;padding:22px 24px 20px;min-width:0}
 .hs + .hs::before{content:"";position:absolute;left:0;top:16px;bottom:16px;width:0.5px;background:var(--line)}
 .hs .k{font-size:var(--t-small);font-family:var(--font);font-weight:500;letter-spacing:-.006em;color:var(--ink-3);display:flex;align-items:center;gap:8px}
-.hs .k svg{width:12px;height:12px}  .hs .v{font-family:var(--font-display);font-size:var(--t-num);font-weight:500;letter-spacing:-.024em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:8px;white-space:nowrap}
+.hs .k svg{width:12px;height:12px}  .hs .v{font-family:var(--font-display);font-size:var(--t-num);font-weight:500;letter-spacing:-.032em;font-variant-numeric:tabular-nums;line-height:1.1;margin-top:8px;white-space:nowrap}
 .space-legend{display:flex;align-items:center;gap:16px;margin-top:8px;color:var(--ink-3);font-size:var(--t-label)}
 .space-legend span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .space-legend i{width:7px;height:7px;border-radius:2px;display:inline-block}
@@ -1025,7 +1047,7 @@ html,body{overscroll-behavior:none}
 .t-clean svg{width:9px;height:9px}
 .map-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-3);font-size:var(--t-body)}
 /* conmutador de modo bloques/lista */
-.map-modes{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:10px;flex:none}
+.map-modes{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:var(--r-group);flex:none}
 /* El modo activo dice su nombre: sin él, cinco iconos seguidos no explican qué
    hace ninguno y hay que probarlos todos. Los inactivos se quedan compactos
    —el nombre se despliega solo en el que está en uso—, así la cabecera no se
@@ -1545,7 +1567,7 @@ html,body{overscroll-behavior:none}
 @media(max-width:980px){.hc-head{flex-wrap:wrap}}
 /* 2 px de aire por dentro y control de 8: la pastilla queda en 10 y las dos
    esquinas son concéntricas de verdad (radio de fuera = radio de dentro + hueco). */
-.range-seg{display:inline-flex;gap:4px;padding:2px;margin:16px 16px 0;background:var(--sel);border-radius:10px;flex:none}
+.range-seg{display:inline-flex;gap:4px;padding:2px;margin:16px 16px 0;background:var(--sel);border-radius:var(--r-group);flex:none}
 .range-seg .rs{height:24px;padding:0 12px;border-radius:var(--r-ctl);font-size:var(--t-label);font-weight:400;color:var(--ink-2);letter-spacing:-.024em;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),box-shadow var(--d1) var(--ease)}
 .range-seg .rs:hover{color:var(--ink)}
 .range-seg .rs.on{background:var(--surface);color:var(--ink);box-shadow:none}
@@ -1575,8 +1597,8 @@ html,body{overscroll-behavior:none}
 .lc-tip{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:var(--tip-bg);color:var(--tip-ink);font-size:var(--t-label);font-weight:500;padding:5px 9px;border-radius:var(--r-btn);white-space:nowrap;pointer-events:none;z-index:6;font-variant-numeric:tabular-nums;box-shadow:var(--shadow-pop);animation:fadeIn var(--d1) var(--ease)}
 .lc-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--ink)}
 .hist-side{overflow:hidden;display:flex;flex-direction:column;min-height:300px;height:auto}
-.hist-scroll{flex:1;min-height:0;overflow-y:auto;padding:6px 8px 10px;display:flex;flex-direction:column;gap:4px}
-.h-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 10px;border-radius:var(--r-btn);border:1px solid transparent;color:var(--ink);cursor:pointer;transition:background-color var(--d1) var(--ease),border-color var(--d1) var(--ease),transform var(--d2) var(--ease)}
+.hist-scroll{flex:1;min-height:0;overflow-y:auto;padding:4px 4px 10px;display:flex;flex-direction:column;gap:4px}
+.h-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:9px 10px;border-radius:var(--r-ctl);border:1px solid transparent;color:var(--ink);cursor:pointer;transition:background-color var(--d1) var(--ease),border-color var(--d1) var(--ease),transform var(--d2) var(--ease)}
 .h-row:hover{background:var(--sel)}
 .h-row:active{transform:scale(.995)}
 .h-row.sel{background:var(--acc-soft);border-color:var(--acc-soft-2)}
@@ -1591,6 +1613,15 @@ html,body{overscroll-behavior:none}
 /* Mismo estado vacío que el resto (marca, titular, texto): es la misma pieza
    en otra sección, así que se lee igual y se centra igual. */
 .hist-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:36px 20px;text-align:center;color:var(--ink-2);font-size:var(--t-small);line-height:1.6}
+/* Vaciar el historial: texto, no botón relleno —vive en la cabecera de la
+   lista, al lado del recuento— y solo asoma cuando hay algo que vaciar. */
+.hist-clear{flex:none;font-size:var(--t-small);color:var(--ink-3);padding:4px 8px;border-radius:var(--r-ctl);transition:var(--press)}
+/* El extremo de una cabecera de sección: el dato y su acción, juntos al canto
+   de la derecha. Sin agrupar, el `space-between` de `.v-section` repartía los
+   tres hijos y el recuento se iba al centro. */
+.v-section-end{display:flex;align-items:baseline;gap:10px;margin-left:auto;min-width:0}
+.hist-clear:hover{background:var(--sel);color:var(--ink)}
+.hist-clear:active{transform:scale(.96)}
 .cmp-wrap{margin-top:12px}
 /* El marco lo pone .panel: aquí solo va el aire. Antes se le sumaba 14 al radio
    del panel para «compensar» el relleno, pero ningún hijo toca la esquina (van
@@ -2156,7 +2187,7 @@ html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 .set-lede{font-size:var(--t-body);color:var(--ink-2);line-height:1.65;margin:0 0 6px}
 /* El selector del tema es el MISMO control segmentado de la barra: fondo de
    pista y la pieza elegida elevada un pelo, en vez de dos botones enmarcados. */
-.set-seg{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:10px;flex:none}
+.set-seg{display:flex;align-items:center;gap:2px;padding:2px;background:var(--sel);border-radius:var(--r-group);flex:none}
 .set-seg button{height:26px;padding:0 14px;border-radius:var(--r-ctl);font-size:var(--t-small);color:var(--ink-2);transition:var(--press)}
 .set-seg button:hover{color:var(--ink)}
 .set-seg button.on{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:var(--rim)}
@@ -2556,6 +2587,19 @@ html.theme-anim .sb-item{
    «Almacenamiento.» con una palabra huérfana— y `pretty` impide que la
    entradilla deje una sola palabra colgando en la última línea. El tracking se
    aprieta en el tamaño de display, que es donde el aire sobra. */
+/* ---------- microinteracciones y movimiento reducido ----------
+   El último escalón de respuesta, del mismo tamaño que el resto: el hundimiento
+   de las piezas que se tocan mucho y que antes no devolvían nada —las pastillas
+   de una fila de opciones, los botones de rango, los modos del mapa—. Es medio
+   milímetro, el mínimo que se lee como «te he oído». */
+.chip:active,.rs:active,.set-seg button:active,.map-modes button:active{transform:scale(.96)}
+/* Y quien ha pedido a macOS que no se mueva nada, no ve nada moverse: la app se
+   queda quieta —sin transiciones ni animaciones— pero completa. Antes no había
+   ni una línea para esto, así que la preferencia del sistema se ignoraba. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0ms!important;transition-duration:.001ms!important;transition-delay:0ms!important}
+  .lc,.se-chart-drift,.osb{animation:none!important}
+}
 </style>
 </head>
 <body>
@@ -2958,7 +3002,7 @@ html.theme-anim .sb-item{
               <div class="chart-wrap" id="hist-chart"></div>
             </div>
             <div class="panel hist-side">
-              <div class="v-section" style="margin:16px 16px 0"><h2 data-i18n="hist.all">Todo</h2><span class="hint" id="hist-count"></span></div>
+              <div class="v-section" style="margin:16px 16px 0"><h2 data-i18n="hist.all">Todo</h2><span class="v-section-end"><span class="hint" id="hist-count"></span><button class="hist-clear" id="hist-clear" hidden data-i18n="hist.clear">Limpiar historial</button></span></div>
               <div class="hist-scroll" id="hist-list"></div>
             </div>
           </div>
@@ -3388,6 +3432,7 @@ const I18N = {
     "hist.freedPeriod":"liberados en este periodo", "hist.bestRound":"la mejor limpieza",
     "hist.noneInRange":"Sin limpiezas en este rango.", "hist.rangeGroup":"Rango de fechas",
     "hist.emptyTitle":"Aún no has limpiado nada.", "hist.emptyBody":"Cuando retires algo, quedará registrado aquí.",
+    "hist.clear":"Limpiar historial", "hist.clearAsk":"¿Vaciar el historial?", "hist.clearAskD":"Se borrarán las limpiezas registradas. Lo que hay en tu Papelera de Brisa no se toca.", "hist.clearInfo":"Esta acción no se puede deshacer.",
     "hist.uncompare":"Quitar de la comparación",
     "hist.pointAria":"Limpieza del {d}, {gb} GB", "hist.chartAria":"Total liberado en el rango: {gb} GB",
     "hist.pendingH2":"Aún sin análisis", "hist.pendingP":"Tu historial de limpiezas aparecerá aquí, con datos reales.",
@@ -3400,7 +3445,7 @@ const I18N = {
     "ritmo.step1":"Elimina", "ritmo.step1d":"Solo lo seguro: cachés, descargas antiguas y copias.",
     "ritmo.step2":"Protege", "ritmo.step2d":"Lo guarda 30 días en tu Papelera.",
     "ritmo.step3":"Informa", "ritmo.step3d":"Cada mañana sabrás qué hizo y cuánto recuperó.",
-    "ritmo.recent":"Actividad reciente", "ritmo.nextTonight":"próxima revisión: esta noche", "ritmo.disabled":"Mantenimiento desactivado",
+    "ritmo.recent":"Actividad reciente", "ritmo.nextTonight":"próxima revisión: esta noche", "ritmo.nextWeekends":"próxima revisión: este fin de semana", "ritmo.nextMonthly":"próxima revisión: este mes", "ritmo.disabled":"Mantenimiento desactivado",
     "ritmo.inTrash":"en tu Papelera",
     "ritmo.whatCleans":"Qué limpia", "ritmo.rulesHint":"activa cada regla",
     "ritmo.note":"Nunca toca fotos, documentos ni música.",
@@ -3424,6 +3469,7 @@ const I18N = {
     "t.scanFail":"No se pudo analizar", "t.scanFailSub":"Vuelve a intentarlo en un momento.",
     "t.scanDone":"Análisis completado", "t.scanDoneSub":"Brisa terminó de revisar tu Mac.",
     "t.deleted":"Eliminado", "t.deletedSub":"{gb} GB movidos a la Papelera de Brisa. Se conservan 30 días.",
+    "t.histCleared":"Historial vaciado", "t.histClearedSub":"Empezarás de cero. Tu Papelera de Brisa sigue igual.",
     "t.inTrash":"En tu Papelera", "t.inTrashSub":"{gb} GB eliminados. Puedes restaurarlos durante {d} días.",
     "t.restored":"Restaurado", "t.langEs":"Idioma: Español", "t.langEn":"Language: English",
     "t.emptyTrash":"Papelera vaciada", "t.permanent":"eliminado para siempre",
@@ -3700,6 +3746,7 @@ const I18N = {
     "hist.freedPeriod":"freed in this period", "hist.bestRound":"your best cleanup",
     "hist.noneInRange":"No cleanups in this range.", "hist.rangeGroup":"Date range",
     "hist.emptyTitle":"You haven't cleaned anything yet.", "hist.emptyBody":"When you remove something, it will be listed here.",
+    "hist.clear":"Clear history", "hist.clearAsk":"Clear your history?", "hist.clearAskD":"The recorded cleanups will be erased. What's in your Brisa Trash stays untouched.", "hist.clearInfo":"This can't be undone.",
     "hist.uncompare":"Remove from comparison",
     "hist.pointAria":"Cleanup on {d}, {gb} GB", "hist.chartAria":"Total freed in range: {gb} GB",
     "hist.pendingH2":"No scan yet", "hist.pendingP":"Your cleanup history will appear here, with real data.",
@@ -3713,7 +3760,7 @@ const I18N = {
     "ritmo.step1":"Removes", "ritmo.step1d":"Only the safe stuff: caches, old downloads and copies.",
     "ritmo.step2":"Protects", "ritmo.step2d":"Keeps it 30 days in your Trash.",
     "ritmo.step3":"Reports", "ritmo.step3d":"Every morning you know what it did and how much it recovered.",
-    "ritmo.recent":"Recent activity", "ritmo.nextTonight":"next review: tonight", "ritmo.disabled":"Maintenance disabled",
+    "ritmo.recent":"Recent activity", "ritmo.nextTonight":"next review: tonight", "ritmo.nextWeekends":"next review: this weekend", "ritmo.nextMonthly":"next review: this month", "ritmo.disabled":"Maintenance disabled",
     "ritmo.inTrash":"in your Trash",
     "ritmo.whatCleans":"What it cleans", "ritmo.rulesHint":"toggle each rule",
     "ritmo.note":"Never touches photos, documents or music.",
@@ -3741,6 +3788,7 @@ const I18N = {
     /* Toasts y hojas */
     "t.scanDone":"Scan complete", "t.scanDoneSub":"Brisa finished reviewing your Mac.",
     "t.deleted":"Deleted", "t.deletedSub":"{gb} GB moved to Brisa Trash. Kept for 30 days.",
+    "t.histCleared":"History cleared", "t.histClearedSub":"You're starting fresh. Your Brisa Trash is untouched.",
     "t.inTrash":"In your Trash", "t.inTrashSub":"{gb} GB removed. You can restore them for {d} days.",
     "t.restored":"Restored", "t.langEs":"Language: Español", "t.langEn":"Language: English",
     "t.emptyTrash":"Trash emptied", "t.permanent":"removed for good",
@@ -3969,6 +4017,23 @@ try{const st=JSON.parse(localStorage.getItem("brisa-settings"));if(st&&typeof st
 function saveSettings(){try{localStorage.setItem("brisa-settings",JSON.stringify(STATE.settings));}catch(e){}}
 const totalClean = () => Object.values(STATE.avail).reduce((s,a)=>s+a.gb,0);
 const usedGB = () => TOTAL - STATE.free;
+
+/* ---------- mantenimiento: una sola tabla de frecuencias ----------
+   El dato guardado es un identificador estable (`daily`, `weekends` o
+   `monthly`) y el texto vive en el diccionario de idiomas. La interfaz traduce
+   el identificador; nunca COMPONE una clave con él. Antes el rótulo del pie
+   pegaba el dato detrás del prefijo para armar la clave, así que en cuanto el
+   ajuste guardaba «weekly» —el valor al que el sistema reducía dos de los tres
+   botones— salía a la pantalla el literal «ritmo.weekly». */
+const SCHED=[
+  {id:"daily",    key:"ritmo.nightly",  next:"ritmo.nextTonight"},
+  {id:"weekends", key:"ritmo.weekends", next:"ritmo.nextWeekends"},
+  {id:"monthly",  key:"ritmo.monthly",  next:"ritmo.nextMonthly"}
+];
+const SCHED_ALIAS={weekly:"weekends"};   /* el valor viejo del almacén */
+function schedId(id){return SCHED.some(s=>s.id===id)?id:(SCHED_ALIAS[id]||"daily");}
+function schedOf(id){return SCHED.find(s=>s.id===schedId(id))||SCHED[0];}
+function schedLabel(id){return t(schedOf(id).key);}
 
 /* ---------- iconos ---------- */
 /* ---------- familia de iconos ----------
@@ -4257,7 +4322,7 @@ function renderTitle(force){
     archivos:(()=>{const l=sortedFiles();return l.length?`<b>${t("nav.archivos")}</b><small>· ${l.length} · ${fmt(l.reduce((s,f)=>s+f.gb,0))} GB</small>`:`<b>${t("nav.archivos")}</b><small>· 0</small>`;})(),
     duplicados:`<b>${t("nav.duplicados")}</b><small>· ${DUP_GROUPS.reduce((s,g)=>s+g.count,0)} · ${fmt(STATE.avail.duplicados.gb)} GB ${t("dup.available")}</small>`,
     historial:STATE.history.length?`<b>${t("nav.historial")}</b><small>· ${STATE.history.length} ${t("hist.cleanups")} · ${fmt(STATE.history.reduce((s,h)=>s+h.gb,0))} GB ${t("hist.recovered")}</small>`:`<b>${t("nav.historial")}</b><small>· ${t("hist.noCleanups")}</small>`,
-    ritmo:STATE.ritmo?`<b>${t("nav.ritmo")}</b><small>· ${t("ritmo.on").toLowerCase()} · ${t("ritmo."+(STATE.sched==="daily"?"nightly":STATE.sched)).toLowerCase()}</small>`:`<b>${t("nav.ritmo")}</b><small>· ${t("ritmo.off").toLowerCase()}</small>`,
+    ritmo:STATE.ritmo?`<b>${t("nav.ritmo")}</b><small>· ${t("ritmo.on").toLowerCase()} · ${schedLabel(STATE.sched).toLowerCase()}</small>`:`<b>${t("nav.ritmo")}</b><small>· ${t("ritmo.off").toLowerCase()}</small>`,
     papelera:STATE.papelera.length?`<b>${t("nav.papelera")}</b><small>· ${STATE.papelera.length} ${t("pap.items")} · ${fmt(STATE.papelera.reduce((s,p)=>s+p.gb,0))} GB</small>`:`<b>${t("nav.papelera")}</b><small>· ${t("pap.empty").toLowerCase()}</small>`
   })[name];
   el.innerHTML=sub?ic+sub:`<b>${name}</b>`;
@@ -5357,11 +5422,16 @@ function delPap(id){
     toast(t("t.deleted"),name);
   });
 }
-function confirmKill(title,msg,onOk){
+/* La hoja de confirmación, una sola para toda la app: cambia el texto, el
+   aviso del pie y la etiqueta del botón, no la mecánica. Antes el botón decía
+   siempre «Eliminar para siempre» —lo dice el borrado definitivo— y no servía
+   para confirmar nada que no fuera borrar. */
+function confirmKill(title,msg,onOk,o){
+  o=o||{};
   const sheet=overlay(`
     <div class="sheet-h"><h3>${title}</h3><button class="sheet-close" data-close aria-label="${t("ask.close")}">${SVG("x")}</button></div>
     <div class="sheet-b"><p class="kill-msg">${msg}</p></div>
-    <div class="sheet-f"><span class="finfo">${t("ask.noUndo")}</span><button class="btn btn-danger btn-lg" id="kill-ok">${t("pap.deleteForever")}</button></div>`);
+    <div class="sheet-f"><span class="finfo">${o.info||t("ask.noUndo")}</span><button class="btn ${o.plain?"btn-lg":"btn-danger btn-lg"}" id="kill-ok">${o.ok||t("pap.deleteForever")}</button></div>`);
   sheet.querySelector("[data-close]").onclick=closeSheet;
   sheet.querySelector("#kill-ok").onclick=()=>{closeSheet();onOk();};
 }
@@ -6193,6 +6263,18 @@ function rangeFilter(){
   const lim=days[histRange];
   return lim?STATE.history.filter(h=>h.ts>=Date.now()-lim*D7):STATE.history.slice();
 }
+/* Vaciar el historial. Es irreversible, así que se pide confirmación primero y
+   se vacía a la vez la copia de la interfaz y la que guarda el sistema. Lo que
+   hay en la Papelera de Brisa NO se toca: el historial es la memoria de lo
+   limpiado, no los archivos. */
+function clearHistory(){
+  histSel=[]; histBooted=false; histLastHtml="";
+  if(inApp())postIntent("clearHistory");
+  STATE.history=[];
+  renderHistorial();
+  renderTitle();
+  toast(t("t.histCleared"),t("t.histClearedSub"));
+}
 function histStats(filtered,animate){
   const total=Math.round(filtered.reduce((s,h)=>s+h.gb,0)*10)/10;
   const n=filtered.length;
@@ -6202,7 +6284,7 @@ function histStats(filtered,animate){
   $("#hist-stats").classList.toggle("stagger",!!animate);
   $("#hist-stats").innerHTML=`
     <div class="hstat" style="--i:0"><span class="hs-v num">${fmt(total)} GB</span><span class="hs-k">${t("hist.freedPeriod")}</span></div>
-    <div class="hstat" style="--i:1"><span class="hs-v num">${n}</span><span class="hs-k">limpiezas</span></div>
+    <div class="hstat" style="--i:1"><span class="hs-v num">${n}</span>  <span class="hs-k">${t("hist.cleanups")}</span></div>
     <div class="hstat" style="--i:2"><span class="hs-v num">${fmt(best)} GB</span><span class="hs-k">${t("hist.bestRound")}</span></div>`;
 }
 /* La línea se anima una vez; los puntos permanecen fijos para no competir con ella. */
@@ -6314,6 +6396,7 @@ function renderHistorial(){
   }
   const hv=$("#view-historial"); if(hv)hv.classList.remove("pending");
   $("#hist-count").textContent=(H.length===1?t("hist.one"):H.length+" "+t("hist.cleanups"));
+  const hc=$("#hist-clear"); if(hc)hc.hidden=H.length===0;
   $$("#hist-range .rs").forEach(b=>b.classList.toggle("on",b.dataset.r===histRange));
   const filtered=rangeFilter();
   const list=$("#hist-list");
@@ -7568,7 +7651,7 @@ function renderRitmo(){
     what:h.items.map(i=>i.name).join(", ")||t("ritmo.brisaCleanup")
   }));
   $("#last-run").innerHTML=`
-    <div class="v-section" style="margin:16px 16px 0"><h2>${t("ritmo.recent")}</h2><span class="hint">${STATE.ritmo?t("ritmo.nextTonight"):t("ritmo.disabled")}</span></div>
+    <div class="v-section" style="margin:16px 16px 0"><h2>${t("ritmo.recent")}</h2><span class="hint">${STATE.ritmo?t(schedOf(STATE.sched).next):t("ritmo.disabled")}</span></div>
     <div class="rounds${boot?" stagger":""}">${rounds.map((r,i)=>`
       <div class="round" style="--i:${i}"><span class="rnd-ic">${SVG("moon")}</span>
         <span class="rnd-t">${r.what}<small>${r.when}</small></span>
@@ -8745,6 +8828,7 @@ function boot(){
 
   /* historial */
   onEv("#hist-range","click",e=>{const b=e.target.closest(".rs");if(b){histRange=b.dataset.r;renderHistorial();}});
+  onEv("#hist-clear","click",()=>{if(!STATE.history.length)return;confirmKill(t("hist.clearAsk"),t("hist.clearAskD"),clearHistory,{plain:true,ok:t("hist.clear"),info:t("hist.clearInfo")});});
 
   /* ritmo */
   onEv("#ritmo-switch","click",()=>{
@@ -8754,7 +8838,7 @@ function boot(){
     toast(STATE.ritmo?t("ritmo.on"):t("ritmo.off"),STATE.ritmo?t("ritmo.onDesc"):t("ritmo.offDesc"));
   });
   /* El horario se guarda como clave (daily/weekends/monthly) y se envía tal cual */
-  onEv("#sched-pills","click",e=>{const b=e.target.closest(".chip");if(b){STATE.sched=b.dataset.sched;saveSettings();renderRitmo();syncMaintenance();}});
+  onEv("#sched-pills","click",e=>{const b=e.target.closest(".chip");if(b){STATE.sched=schedId(b.dataset.sched);saveSettings();renderRitmo();syncMaintenance();}});
 
   /* papelera */
   onEv("#pap-list","click",e=>{
@@ -8899,7 +8983,7 @@ window.BRISA_APPLY = function(s){
       const st=s.settings;
       if(st.retention) STATE.settings.retention=st.retention;
       if(typeof st.autoMaintenance==="boolean") STATE.ritmo=st.autoMaintenance;
-      if(st.frequency) STATE.sched=st.frequency;
+      if(st.frequency) STATE.sched=schedId(st.frequency);
       if(st.language&&st.language!==STATE.settings.language){
         STATE.settings.language=st.language;
         saveSettings();

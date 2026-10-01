@@ -158,6 +158,24 @@ struct Verify {
         check(!apps.contains { $0.path.hasPrefix("/System/") }, "el listado no incluye aplicaciones del sistema")
         check(Set(apps.map(\.bid)).count == apps.count, "sin aplicaciones repetidas")
         check(apps.allSatisfy { !$0.bid.isEmpty && $0.name.count > 0 }, "toda app listada tiene identificador y nombre")
+
+        // ---- 6b. «Último uso»: la fecha que no miente -----------------------
+        // Bug de origen: macOS devolvía en `kMDItemLastUsedDate` la fecha de
+        // MODIFICACIÓN del bundle —cuándo se instaló la app— y la columna la
+        // enseñaba como si fuera el último uso (basta con tener Spotlight
+        // desactivado para que el metadato sea un espejo de la instalación).
+        // Ahora la fecha sale del registro real de arranques (AppUsage) y,
+        // cuando no hay ninguna señal, se devuelve 0 («sin registro de uso») en
+        // vez de inventarla.
+        let marca: TimeInterval = 1_700_000_000
+        AppUsage.shared.mark(bid: "com.acme.Widget", at: marca)
+        defer { AppUsage.shared.forget(bid: "com.acme.Widget") }
+        check(AppUsage.shared.lastLaunch(bid: "com.acme.Widget") == marca,
+              "el registro de uso guarda el último arranque visto")
+        check(AppInventory.lastUsed(bid: "com.acme.Widget", running: false) == marca,
+              "«último uso» sale del arranque registrado, no de la fecha del bundle")
+        check(AppInventory.lastUsed(bid: "com.brisa.ninguna.senal", running: false) == 0,
+              "sin ninguna señal, «último uso» es 0 (se enseña «sin registro»), no la fecha de instalación")
         if let real = apps.first(where: { !$0.apple }) {
             var entry = real
             entry.gb = Double(AppInventory.size(of: real.path)) / 1_000_000_000

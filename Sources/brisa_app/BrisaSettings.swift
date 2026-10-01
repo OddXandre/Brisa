@@ -46,11 +46,30 @@ final class BrisaSettings {
         set { defaults.set(newValue, forKey: Key.auto) }
     }
 
-    /// «daily» o «weekly». El valor de fábrica es el mismo que enseña la app
-    /// recién instalada, para que antes del primer ajuste no haya dos verdades.
+    /// Las tres frecuencias que ofrece la app, con un identificador ESTABLE:
+    /// `daily`, `weekends` o `monthly`. El texto no se guarda aquí —vive en el
+    /// diccionario de idiomas—, solo el identificador.
+    ///
+    /// Antes el almacén entendía dos valores («daily» y «weekly») y la interfaz
+    /// ofrecía tres botones: elegir «Fines de semana» o «Una vez al mes» se
+    /// guardaba como «weekly» y, al reabrir la app, la interfaz pedía la
+    /// traducción de `ritmo.weekly` —una clave que no existía— y el literal
+    /// salía a la pantalla. Con los tres identificadores reales, lo guardado y
+    /// lo que se enseña son lo mismo.
+    static let frequencies = ["daily", "weekends", "monthly"]
+
+    /// El valor de fábrica es el mismo que enseña la app recién instalada, para
+    /// que antes del primer ajuste no haya dos verdades.
     var frequency: String {
-        get { defaults.string(forKey: Key.frequency) ?? "daily" }
-        set { defaults.set(newValue == "daily" ? "daily" : "weekly", forKey: Key.frequency) }
+        get {
+            let v = defaults.string(forKey: Key.frequency) ?? "daily"
+            if Self.frequencies.contains(v) { return v }
+            /* «weekly» era el valor viejo de las tres opciones de cadencia
+               semanal: se reapunta al de fines de semana en vez de perder la
+               elección del usuario. */
+            return v == "weekly" ? "weekends" : "daily"
+        }
+        set { defaults.set(Self.frequencies.contains(newValue) ? newValue : "daily", forKey: Key.frequency) }
     }
 
     /// Idioma de la app, compartido con el chrome nativo (menús, diálogos y

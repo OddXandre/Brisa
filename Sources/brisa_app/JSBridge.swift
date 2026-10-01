@@ -261,6 +261,12 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             purgeTrashItem(payload)
         case "purgeTrash":
             purgeTrash()
+        case "clearHistory":
+            // Vaciar el historial: solo el registro. La Papelera de Brisa —y lo
+            // que aún se puede restaurar— se queda como estaba. La interfaz ya
+            // vacía su copia; aquí se hace persistente.
+            HistoryService.shared.clear()
+            NSLog("Brisa ▶ historial vaciado")
         case "openFDASettings":
             PermissionService.openFDASettings()
         case "requestAccess":

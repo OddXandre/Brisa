@@ -9,6 +9,10 @@ import UserNotifications
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        /* La sección de Aplicaciones necesita una fecha de «último uso» que no
+           mienta: macOS no la expone, así que Brisa empieza a registrar los
+           arranques en cuanto la app arranca (ver AppUsage). */
+        AppUsage.shared.observe()
     }
 
     /// Al volver a la app (habitualmente, de conceder un permiso en Ajustes)

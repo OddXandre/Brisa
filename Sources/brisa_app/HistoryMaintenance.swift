@@ -44,6 +44,16 @@ final class HistoryService {
         save()
     }
 
+    /// Vacía el historial entero. Es una acción del usuario, no un efecto
+    /// colateral, y solo toca el REGISTRO de lo que se ha limpiado: lo que la
+    /// Papelera de Brisa guarda —y que todavía se puede restaurar— no se
+    /// toca. Una cosa es la memoria de lo hecho y otra los archivos.
+    func clear() {
+        guard !entries.isEmpty else { return }
+        entries.removeAll()
+        save()
+    }
+
     // MARK: - Persistencia
 
     private func load() {
@@ -63,7 +73,8 @@ final class HistoryService {
 //
 // Diseño:
 //  - El LaunchAgent ejecuta el binario con --maintenance en la frecuencia
-//    elegida (daily/weekly): purga la Papelera de Brisa según retención.
+//    elegida (daily/weekends/monthly): purga la Papelera de Brisa según
+//    retención.
 //    Es la operación segura y no interactiva por excelencia.
 //  - El resultado se notifica vía UNUserNotificationCenter (permiso solicitado
 //    en el primer arranque interactivo).
@@ -86,7 +97,16 @@ final class MaintenanceScheduler {
 
     /// Escribe/actualiza el plist y lo carga en launchd.
     func install(frequency: String) throws {
-        let interval = frequency == "daily" ? 86_400 : 604_800
+        /* La cadencia que de verdad se programa. Las tres opciones de la app
+           —cada noche, fines de semana, una vez al mes— tienen intervalos
+           distintos; antes solo existían dos, así que «una vez al mes» corría
+           en realidad cada semana. */
+        let interval: Int
+        switch frequency {
+        case "daily": interval = 86_400        // cada 24 h
+        case "monthly": interval = 2_592_000    // cada 30 días
+        default: interval = 604_800             // «weekends»: cada 7 días
+        }
         let exec = Bundle.main.executableURL?.path ?? CommandLine.arguments[0]
         let plist = """
         <?xml version="1.0" encoding="UTF-8"?>
