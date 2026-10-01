@@ -82,11 +82,17 @@ diskutil image create from \
 read -r DEV MNT <<<"$(attach_image --nobrowse "$RWDMG")"
 [ -n "$MNT" ]
 
+# El volumen se llama como se pide, pero macOS le añade un sufijo («Brisa 1») si
+# ya hay otro montado con ese nombre. Finder se dirige a los discos POR NOMBRE,
+# así que el nombre hay que preguntárselo al montaje real: con «Brisa» a fuego
+# el diseño se escribía en el volumen ajeno y el DMG salía sin ventana.
+VOLNAME=$(basename "$MNT")
+
 # Diseño de la ventana: 900×520, sin barra de herramientas ni de estado, iconos
 # en la fila de arriba y el mensaje de beta a su lado.
 osascript >/dev/null <<APPLESCRIPT
 tell application "Finder"
-  tell disk "Brisa"
+  tell disk "$VOLNAME"
     open
     set theWindow to container window
     set current view of theWindow to icon view
@@ -143,13 +149,14 @@ fi
 # imagen de fondo no cabia. Si el script no puede capturar la pantalla
 # (permiso de grabación denegado), se dice y se sigue: no es motivo para tirar
 # el DMG.
-MEDIDA=$(/usr/bin/python3 - <<'PY'
-import collections, subprocess, struct
+MEDIDA=$(VOLNAME="$VOLNAME" /usr/bin/python3 - <<'PY'
+import collections, os, subprocess, struct
+vol = os.environ.get("VOLNAME") or "Brisa"
 bounds = subprocess.run(
     ["osascript", "-e",
-     'tell application "Finder" to tell disk "Brisa" to open',
+     'tell application "Finder" to tell disk "%s" to open' % vol,
      "-e",
-     'tell application "Finder" to tell disk "Brisa" to get bounds of container window'],
+     'tell application "Finder" to tell disk "%s" to get bounds of container window' % vol],
     capture_output=True, text=True).stdout.strip()
 if bounds.count(",") != 3:
     raise SystemExit("sin ventana")
@@ -198,7 +205,7 @@ case "$MEDIDA" in
     set -- $MEDIDA
     if [ $# -ne 3 ]; then
       echo "AVISO: la medición de la ventana del instalador no se entiende ($MEDIDA)" >&2
-      osascript -e 'tell application "Finder" to tell disk "Brisa" to close container window' >/dev/null 2>&1 || true
+      osascript -e "tell application \"Finder\" to tell disk \"$VOLNAME\" to close container window" >/dev/null 2>&1 || true
       detach_image "$VDEV" "$VERIFY"
       exit 1
     fi
@@ -219,7 +226,7 @@ case "$MEDIDA" in
     fi
     ;;
 esac
-osascript -e 'tell application "Finder" to tell disk "Brisa" to close container window' >/dev/null 2>&1 || true
+osascript -e "tell application \"Finder\" to tell disk \"$VOLNAME\" to close container window" >/dev/null 2>&1 || true
 detach_image "$VDEV" "$VERIFY"
 
 # El DMG conserva su diseño limpio; la guía se entrega junto al instalador,
