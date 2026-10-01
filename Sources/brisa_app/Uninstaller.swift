@@ -626,18 +626,34 @@ enum AppRemover {
         }
     }
 
-    /// Desinstala: cierra, retira del lanzador y mueve a la Papelera de Brisa
-    /// elemento a elemento. Devuelve el resultado en JSON.
+    /// Lo que va saliendo bien mientras se quita: las rutas para el resultado,
+    /// los elementos para el historial y el espacio que se libera de verdad.
+    private struct Tally {
+        var paths: [String] = []
+        var items: [BrisaTrashService.TrashItem] = []
+        var freed: Double = 0
+    }
+
+    /// Desinstala: cierra, retira del lanzador y BORRA elemento a elemento.
+    /// Devuelve el resultado en JSON.
     ///
-    /// Va de uno en uno —y no en un lote— porque la Papelera es atómica: con
-    /// todo junto, un solo archivo que macOS no deje tocar impediría quitar
-    /// hasta la app. Así se quita todo lo que se puede y se cuenta lo que no.
+    /// A diferencia del resto de Brisa —que mueve a su Papelera para poder
+    /// deshacer—, desinstalar borra de verdad: una aplicación que se va deja de
+    /// ocupar sitio en el mismo momento en que se va, y por eso el espacio que
+    /// se anuncia es espacio libre de verdad y no una cifra guardada en otro
+    /// sitio. La red de seguridad no es una copia, son las tres guardias que ya
+    /// había: `isRemovable` acota qué rutas entran, `ScannerService.isProtected`
+    /// deja fuera lo que macOS protege y el análisis no marca solo nada dudoso.
+    ///
+    /// Va de uno en uno —y no en un lote— para que un solo archivo que macOS no
+    /// deje tocar no impida quitar hasta la app: se quita todo lo que se puede y
+    /// se cuenta lo que no.
     static func run(app: AppEntry, paths: [String], sizes: [String: Double],
                     progress: @escaping (String, Double, String?) -> Void) -> [String: Any] {
         let home = FileManager.default.homeDirectoryForCurrentUser.path
+        let opID = UUID().uuidString
         var failures: [Failure] = []
-        var removed: [String] = []
-        var freed: Double = 0
+        var tally = Tally()
 
         let wanted = paths.filter { isRemovable($0, appPath: app.path, home: home) }
         // La app primero; después lo de casa (que sí se puede) y al final lo que
@@ -656,44 +672,70 @@ enum AppRemover {
 
         progress("app", 20, nil)
         if wanted.contains(app.path) {
-            trash(app.path, sizes: sizes, kind: "bin", home: home,
-                  failure: { failures.append($0) }, removed: &removed, freed: &freed)
+            remove(app.path, sizes: sizes, opID: opID, home: home,
+                   failure: { failures.append($0) }, tally: &tally)
         }
         progress("app", 40, nil)
 
         let span = 48.0 / Double(max(rest.count, 1))
         for (i, path) in rest.enumerated() {
             progress("files", 40 + span * Double(i), (path as NSString).lastPathComponent)
-            trash(path, sizes: sizes, kind: "bin", home: home,
-                  failure: { failures.append($0) }, removed: &removed, freed: &freed)
+            remove(path, sizes: sizes, opID: opID, home: home,
+                   failure: { failures.append($0) }, tally: &tally)
         }
         progress("clean", 92, nil)
         progress("done", 100, nil)
 
+        /* El historial no distingue cómo se quitó una cosa, así que la entrada
+           se arma a mano: es el mismo registro que deja una limpieza, y sin él
+           la sección de Historial no contaría esta desinstalación. */
+        if !tally.items.isEmpty {
+            HistoryService.shared.record(operation: BrisaTrashService.Operation(
+                id: opID, ts: Date().timeIntervalSince1970,
+                gb: (tally.freed * 1000).rounded() / 1000,
+                items: tally.items, kind: "bin"))
+        }
+
         return [
             "name": app.name, "bid": app.bid,
-            "removed": removed.count,
-            "freed": (freed * 10).rounded() / 10,
+            "removed": tally.paths.count,
+            "freed": (tally.freed * 1000).rounded() / 1000,
             "closed": closed,
-            "done": removed,
+            "done": tally.paths,
             "failures": failures.map { ["name": $0.name, "path": $0.path, "reason": $0.reason] }
         ]
     }
 
-    /// Mueve UNA ruta a la Papelera de Brisa y anota el resultado. El espacio se
-    /// toma de lo ya medido en el análisis cuando está (`sizes`), porque medir un
-    /// bundle recién movido ya no diría nada.
-    private static func trash(_ path: String, sizes: [String: Double], kind: String, home: String,
-                              failure: (Failure) -> Void, removed: inout [String], freed: inout Double) {
+    /// Borra UNA ruta de forma definitiva y anota el resultado. El espacio se
+    /// toma de lo ya medido en el análisis cuando está (`sizes`), porque medir
+    /// un bundle recién borrado ya no diría nada.
+    ///
+    /// Las guardias se repiten aquí —aunque quien llama ya las pasó— porque esta
+    /// es la última milla y es la única que borra: no se fía de nadie.
+    private static func remove(_ path: String, sizes: [String: Double], opID: String, home: String,
+                               failure: (Failure) -> Void, tally: inout Tally) {
         let name = (path as NSString).lastPathComponent
         let measured = sizes[path] ?? Double(AppInventory.size(of: path)) / 1_000_000_000
         do {
-            let op = try BrisaTrashService.shared.trash(paths: [path], kind: kind,
-                                                        sizes: [path: (measured * 10).rounded() / 10],
-                                                        allowing: ["/Applications/", "/Library/"])
-            HistoryService.shared.record(operation: op)
-            removed.append(path)
-            freed += op.gb
+            let standard = URL(fileURLWithPath: path).standardizedFileURL
+            // No se sigue un enlace simbólico: borrar `~/enlace/fichero` podría
+            // acabar con un recurso que el usuario nunca señaló.
+            guard standard.resolvingSymlinksInPath().path == standard.path else {
+                throw BrisaTrashService.TrashError.outsideHome
+            }
+            guard !ScannerService.isProtected(path: standard.path, home: home) else {
+                throw BrisaTrashService.TrashError.protected
+            }
+            guard FileManager.default.fileExists(atPath: standard.path) else {
+                throw BrisaTrashService.TrashError.notFound
+            }
+            try FileManager.default.removeItem(atPath: standard.path)
+            tally.paths.append(path)
+            tally.items.append(BrisaTrashService.TrashItem(
+                id: UUID().uuidString, opID: opID, originalPath: path, name: name,
+                gb: (measured * 1000).rounded() / 1000,
+                taken: Date().timeIntervalSince1970))
+            tally.freed += measured
         } catch {
             let reason = Self.reason(for: error, path: path, home: home).rawValue
             NSLog("Brisa ▶ desinstalador: no se pudo quitar \(path) (\(reason))")

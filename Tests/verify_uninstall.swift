@@ -173,9 +173,13 @@ struct Verify {
 
         // ---- 7. Quitar de verdad, con material propio -------------------------
         // Se crea una aplicación de mentira DENTRO de casa y se pasa por el
-        // mismo camino que usa la app: análisis → eliminar → Papelera de Brisa →
-        // resultado. Solo se toca lo que crea este verificador: al terminar se
-        // retira lo movido y su registro, y la papelera queda como estaba.
+        // mismo camino que usa la app: análisis → borrado → resultado.
+        //
+        // Desinstalar BORRA —no manda a la Papelera de Brisa— para que el
+        // espacio se libere de verdad, así que lo que se comprueba aquí es lo
+        // contrario que antes: que no queda copia en ninguna papelera. Solo se
+        // toca lo que crea este verificador, y al terminar se retira su registro
+        // del historial y la papelera real queda como estaba.
         let sandbox = home + "/Library/Caches/brisa-uninstall-test"
         let fakeApp = sandbox + "/Widget.app"
         let fakeLeftover = sandbox + "/com.acme.Widget"
@@ -218,14 +222,17 @@ struct Verify {
                 fases.append(phase)
             }
             check(outcome["removed"] as? Int == 2,
-                  "se movieron los dos elementos de prueba (movidos: \(outcome["removed"] ?? -1))")
+                  "se borraron los dos elementos de prueba (quitados: \(outcome["removed"] ?? -1))")
             check((outcome["freed"] as? Double ?? 0) > 0, "el espacio liberado se cuenta")
             check(Array(Set(fases)).count >= 4, "el progreso recorre las fases (\(Array(Set(fases)).sorted()))")
             check((outcome["failures"] as? [[String: Any]])?.isEmpty == true, "sin fallos en material propio")
             check(!fm.fileExists(atPath: fakeApp) && !fm.fileExists(atPath: fakeLeftover),
-                  "ya no están donde estaban: acabaron en la Papelera de Brisa")
-            check(BrisaTrashService.shared.items.contains { $0.originalPath == fakeApp },
-                  "la aplicación de prueba está en la Papelera de Brisa, no borrada")
+                  "ya no están donde estaban: se han borrado")
+            BrisaTrashService.shared.loadFromDiskIfNeeded()
+            check(!BrisaTrashService.shared.items.contains { $0.originalPath.hasPrefix(sandbox) },
+                  "no queda copia en la Papelera de Brisa: el borrado es definitivo")
+            check(HistoryService.shared.entries.contains { $0.items.contains { $0.name == "Widget.app" } },
+                  "la desinstalación queda registrada en el historial")
             retirarLoDeLaPrueba()
         } else {
             failures.append("no se pudo crear una aplicación de prueba analizable")
