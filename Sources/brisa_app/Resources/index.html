@@ -157,26 +157,35 @@
   --t-h1:27px;
   --t-num:34px;
 
-  /* Movimiento: estados rápidos, transiciones de piezas breves y una entrada
-     algo mayor solo para superficies completas.
-     Los números subieron un tercio sobre los que había (120, 180, 240 y 320
-     ms). No es capricho: a 120 ms un cambio de estado se ve como un corte y no
-     como una transición, y con diez piezas encadenadas el conjunto entero
-     parecía instantáneo. Ahora cada pieza tarda lo justo para leerse —de 160 a
-     440 ms, dentro del margen de 100–400 ms que da la guía de duración de
-     animación de NN/g, con la excepción lenta solo para la pieza mayor, la
-     vista entera—, y el escalonado pasa de 26 a 34 ms para que la cadena se
-     siga leyendo como cadena y no como un bloque. */
+  /* Movimiento: la escala de macOS, ni más rápida ni más lenta.
+
+     Una animación no se siente fluida por durar mucho, sino por la CURVA y por
+     durar lo justo: alargarla de más la convierte en una espera y el conjunto
+     se siente pesado, y acortarla de más la convierte en un corte. La banda de
+     Apple en escritorio está entre 120 y 460 ms, y cada pieza cae donde le toca
+     por lo que es:
+
+     · d0   el gesto mínimo (el hundimiento de un control al pulsarlo)
+     · d1   el estado (hover, foco, color)
+     · d2   la superficie pequeña (fila, pastilla, aviso)
+     · d3   la pieza que aparece o se recorre (tarjeta, barra lateral, rango)
+     · d4   la entrada mayor (la vista entera) y la vuelta de un aviso
+
+     Y las tres curvas son las que hacen el trabajo: la de respuesta arranca
+     rápido y frena largo —por eso 260 ms se sienten suaves y no bruscos—; la de
+     recorrido es una S simétrica de verdad, con sus dos extremos visibles; y la
+     de rebote tiene un solo milímetro de vuelta, lo justo para que un
+     interruptor se lea como algo que se toca. */
   --ease:cubic-bezier(.22,1,.36,1);
-  --ease-io:cubic-bezier(.45,0,.25,1);
-  --ease-spring:cubic-bezier(.34,1.12,.64,1);
-  --d0:.10s;
-  --d1:.16s;
-  --d2:.24s;
-  --d3:.32s;
-  --d4:.44s;
+  --ease-io:cubic-bezier(.4,0,.2,1);
+  --ease-spring:cubic-bezier(.32,1.16,.56,1);
+  --d0:.12s;
+  --d1:.18s;
+  --d2:.26s;
+  --d3:.36s;
+  --d4:.46s;
   --spin:1s;                        /* el giro de los indicadores de espera */
-  --stagger-step:34ms;
+  --stagger-step:28ms;
   /* El desenfoque de entrada tiene UNA medida y una sola regla: se usa donde la
      pieza aparece ENCIMA de algo —la hoja, el aviso, los bloques del Atlas—,
      porque ahí el desenfoque dice «esto acaba de materializarse». En filas,
@@ -338,7 +347,7 @@ html,body{overscroll-behavior:none}
   background:linear-gradient(90deg,transparent,var(--line-2) 7%,var(--line-2) 93%,transparent);
 }
 .tb-btn{
-  width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2);
+  width:30px;height:30px;border-radius:var(--r-ctl);display:grid;place-items:center;color:var(--ink-2);
   transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),transform var(--d2) var(--ease);
 }
 .tb-btn:hover{background:var(--sel);color:var(--ink)}
@@ -399,7 +408,7 @@ html,body{overscroll-behavior:none}
   background:var(--rail);
   -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
   box-shadow:var(--rim),var(--edge);
-  transition:width var(--d2) var(--ease-io);
+  transition:width var(--d3) var(--ease-io);
   overflow:hidden;
 }
 #app.rail #sidebar{width:52px}
@@ -719,7 +728,7 @@ html,body{overscroll-behavior:none}
   border:none;border-radius:var(--r-panel);box-shadow:var(--rim),var(--edge);
   font-size:var(--t-body);
 }
-.banner-ok .bo-tick{width:24px;height:24px;border-radius:8px;background:var(--surface);color:var(--ink);display:grid;place-items:center;flex:none}
+.banner-ok .bo-tick{width:24px;height:24px;border-radius:var(--r-ctl);background:var(--surface);color:var(--ink);display:grid;place-items:center;flex:none}
 .banner-ok .bo-tick svg{width:13px;height:13px;stroke-width:2}
 .banner-ok b{font-weight:400}
 .banner-ok .bo-acts{margin-left:auto;display:flex;gap:8px}
@@ -734,7 +743,7 @@ html,body{overscroll-behavior:none}
 .row + .row::before{content:"";position:absolute;left:54px;right:0;top:0;height:.5px;background:var(--line)}
 .row:focus-visible,.h-row:focus-visible,.dg:focus-visible,.dp-ver:focus-visible,.sb-item:focus-visible,.tb-btn:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
 .row:hover{background:var(--surface)}
-.row .r-ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none}
+.row .r-ic{width:26px;height:26px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none}
 /* Chips de identidad (categoría, elemento de la Papelera): grafito, no acento.
    El acento se reserva a lo accionable, así que una ficha que solo IDENTIFICA
    no puede vestirse de botón. Las filas del Resumen llevan en línea el tono de
@@ -796,7 +805,7 @@ html,body{overscroll-behavior:none}
 .hero-foot{display:flex;flex-wrap:wrap;align-items:center;gap:12px;width:100%;padding:12px 16px;border-top:1px solid var(--line);color:var(--ink)}
 .hf-acts{display:flex;align-items:center;gap:8px;flex:none}
 .hf-acts .btn{min-width:110px;flex:1;justify-content:center}
-.hf-ic{width:30px;height:30px;border-radius:8px;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;flex:none}
+.hf-ic{width:30px;height:30px;border-radius:var(--r-ctl);background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;flex:none}
 .hf-ic svg{width:15px;height:15px}
 .hf-t{flex:1;min-width:180px;font-size:var(--t-body);font-weight:400}
 .hf-t b{font-size:var(--t-title);font-weight:400;letter-spacing:-.024em;font-variant-numeric:tabular-nums}
@@ -830,7 +839,7 @@ html,body{overscroll-behavior:none}
 /* La marca, la frase y el mando forman UNA línea centrada entre sí: con la marca
    arriba y dos renglones al lado, el encabezado se leía descuadrado. */
 .se-verdict{display:flex;align-items:center;gap:14px;padding:17px 20px}
-.se-mark{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--sel);color:var(--ink-2);transition:var(--press)}
+.se-mark{width:32px;height:32px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none;background:var(--sel);color:var(--ink-2);transition:var(--press)}
 .se-mark svg{width:17px;height:17px}
 /* El acento aparece solo cuando hay algo que atender, y con más intensidad
    cuanto más urgente: fondo teñido para «atención» y, además, un filo interior
@@ -863,9 +872,15 @@ html,body{overscroll-behavior:none}
 .se-v.nodata{font-size:var(--t-body);color:var(--ink-3)}
 .se-s{font-size:var(--t-label);color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .se-bar{height:3px;border-radius:9999px;background:var(--track);overflow:hidden;margin-top:2px}
-.se-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--ink);transition:width var(--d3) var(--ease),background-color var(--d1) var(--ease)}
-.se-cell[data-state="warn"] .se-bar i{background:var(--acc-text)}
-.se-cell[data-state="bad"] .se-bar i{background:var(--acc)}
+/* La barra de una lectura del Mac es ACENTO, siempre: naranja sobre el carril
+   gris. Antes iba en tinta —blanca en oscuro, negra en claro— y competía con el
+   texto por el mismo peso; en una pantalla de cifras, una barra de progreso es
+   la parte que dice «cuánto», y eso se lee en el color de la marca. El estado
+   (normal, aviso, mal) no se pierde: lo llevan la intensidad de la barra y el
+   color de la cifra de al lado, no el tono. */
+.se-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--acc);transition:width var(--d3) var(--ease),background-color var(--d1) var(--ease),opacity var(--d1) var(--ease)}
+.se-cell[data-state="warn"] .se-bar i{opacity:.74}
+.se-cell[data-state="bad"] .se-bar i{filter:brightness(1.22)}
 /* La gráfica. Dos series sobre la misma escala 0–100 % —la CPU en el acento, la
    memoria en tinta apagada y a trazos—: la sección tiene UN color de acento, así
    que distinguirlas no puede depender del color. El SVG se estira al ancho del
@@ -956,6 +971,20 @@ html,body{overscroll-behavior:none}
 .se-col.cpu{width:56px}
 .se-col.mem{width:76px;font-size:var(--t-body)}
 .se-row .se-bar{flex:1 1 auto;min-width:56px;margin-top:0}
+/* El icono de una fila de consumidores es el de la app DE VERDAD: la app nativa
+   manda el PNG de su bundle y el prototipo dibuja la marca conocida. Solo lo
+   que no es una aplicación —un demonio del sistema— se queda con el símbolo
+   genérico, porque no hay icono suyo que enseñar.
+   Y es el MISMO recuadro que el de Aplicaciones, al mismo tamaño: la marca
+   sobre su cuadro redondeado teñido, y el icono real como imagen redondeada.
+   Antes esta lista llevaba un símbolo genérico sobre un cuadro gris, así que
+   ninguna de las cinco filas se distinguía de las demás justo donde hay que
+   distinguirlas — y medía 28 px donde Aplicaciones mide 30, de modo que el
+   mismo icono cambiaba de tamaño al cruzar de una pantalla a otra. */
+.se-row .r-ic{width:30px;height:30px;background:transparent}
+.se-row .r-ic img{width:30px;height:30px;display:block;border-radius:var(--r-ctl)}
+.se-row .r-ic .un-brand{width:30px;height:30px}
+.se-row .r-ic .un-brand svg{width:17px;height:17px}
 .se-cons-empty{padding:22px 16px;color:var(--ink-3);font-size:var(--t-small)}
 
 /* Las acciones sugeridas llevan a las herramientas de Brisa: el overview no
@@ -1032,7 +1061,7 @@ html,body{overscroll-behavior:none}
 .tile:active{transform:scale(.985)}
 .tile:focus-visible{box-shadow:inset 0 0 0 0.5px rgba(0,0,0,.08),0 0 0 2px var(--acc)}
 .tile.scrim::after{content:"";position:absolute;left:0;right:0;bottom:0;height:58%;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.55));pointer-events:none}
-.t-ic{position:absolute;top:10px;left:10px;width:26px;height:26px;border-radius:8px;background:rgba(0,0,0,.28);display:grid;place-items:center;box-shadow:inset 0 0 0 0.5px rgba(253,253,253,.22);z-index:2}
+.t-ic{position:absolute;top:10px;left:10px;width:26px;height:26px;border-radius:var(--r-ctl);background:rgba(0,0,0,.28);display:grid;place-items:center;box-shadow:inset 0 0 0 0.5px rgba(253,253,253,.22);z-index:2}
 .t-ic svg{width:14px;height:14px}
 .t-meta{position:absolute;left:10px;right:10px;bottom:8px;display:flex;flex-direction:column;gap:4px;min-width:0;z-index:2}
 .tile .t-name{font-size:var(--t-small);font-weight:400;letter-spacing:-.024em;white-space:normal;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;color:inherit}
@@ -1089,7 +1118,7 @@ html,body{overscroll-behavior:none}
 .alist:hover{background:var(--sel)}
 .alist:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
 .alist .al-n{font-size:var(--t-label);color:var(--ink-4);font-variant-numeric:tabular-nums}
-.alist .al-ic{width:20px;height:20px;border-radius:8px;display:grid;place-items:center;flex:none}
+.alist .al-ic{width:20px;height:20px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none}
 .alist .al-ic svg{width:12px;height:12px}
 .alist .al-name{font-size:var(--t-small);font-weight:400;letter-spacing:-.024em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .alist .al-files{font-size:var(--t-label);color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
@@ -1146,7 +1175,7 @@ html,body{overscroll-behavior:none}
    sería la misma animación escrita dos veces. Solo cambia el NIVEL (ver
    renderAtlasFolders): marcar una carpeta repinta la clase y la rejilla no
    parpadea, porque .stagger ya no está puesto. */
-.fol::before{content:"";position:absolute;left:0;top:-9px;width:44%;height:9px;border-radius:8px 8px 0 0;background:var(--ft1);transition:background-color var(--d1) var(--ease)}
+.fol::before{content:"";position:absolute;left:0;top:-9px;width:44%;height:9px;border-radius:var(--r-ctl) var(--r-ctl) 0 0;background:var(--ft1);transition:background-color var(--d1) var(--ease)}
 .fol:hover,.fol.hov{background-color:var(--ft2)}
 .fol:active{transform:translateY(0) scale(.99)}
 .fol:hover::before,.fol.hov::before{background-color:var(--ft2)}
@@ -1158,7 +1187,7 @@ html,body{overscroll-behavior:none}
 .fol.on::before{background-color:var(--ft3)}
 .fol.on .fol-ic{background:var(--fcol);color:var(--fic)}
 .fol-top{display:flex;align-items:center;gap:8px;min-width:0}
-.fol-ic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--fc1);color:var(--fcol);transition:background-color var(--d2) var(--ease),color var(--d2) var(--ease)}
+.fol-ic{width:26px;height:26px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none;background:var(--fc1);color:var(--fcol);transition:background-color var(--d2) var(--ease),color var(--d2) var(--ease)}
 .fol-ic svg{width:14px;height:14px}
 .fol-name{font-size:var(--t-small);letter-spacing:-.024em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .fol-meta{font-size:var(--t-small);color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1182,7 +1211,7 @@ html,body{overscroll-behavior:none}
   .fol{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"ic name size" ". bar pct";gap:4px 9px;align-items:center;min-height:0;padding:9px 11px 10px;border-radius:0 var(--r-panel) var(--r-panel) var(--r-panel)}
   .fol-top,.fol-foot{display:contents}
   .fol-sp,.fol-meta{display:none}
-  .fol-ic{grid-area:ic;width:22px;height:22px;border-radius:8px}
+  .fol-ic{grid-area:ic;width:22px;height:22px;border-radius:var(--r-ctl)}
   .fol-ic svg{width:12px;height:12px}
   .fol-name{grid-area:name}
   .fol-size{grid-area:size}
@@ -1402,7 +1431,7 @@ html,body{overscroll-behavior:none}
 .ap-steps svg{width:14px;height:14px;flex:none;margin-top:1px;color:var(--acc)}
 /* cabecera: chip de color + nombre + tamaño, jerarquía clara */
 .ap-head{display:flex;align-items:center;gap:12px;margin-bottom:2px}
-.ap-ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex:none}
+.ap-ic{width:28px;height:28px;border-radius:var(--r-ctl);display:grid;place-items:center;flex:none}
 .ap-ic svg{width:16px;height:16px}
 .ap-hd-t{flex:1;min-width:0}
 .ap-title{font-size:var(--t-body);font-weight:400;letter-spacing:-.024em;display:flex;align-items:center;gap:8px}
@@ -1470,7 +1499,7 @@ html,body{overscroll-behavior:none}
 /* el tile del icono en la lista de grupos: fondo transparente cuando el grupo
    no está activo —el cuadradito gris de antes se leía como un artefacto— y
    solo se tiñe en el grupo activo, coherente con las parejas de la derecha */
-.dg .dg-ic{width:30px;height:30px;border-radius:8px;background:transparent;display:grid;place-items:center;flex:none;transition:background-color var(--d1) var(--ease)}
+.dg .dg-ic{width:30px;height:30px;border-radius:var(--r-ctl);background:transparent;display:grid;place-items:center;flex:none;transition:background-color var(--d1) var(--ease)}
 .dg.on .dg-ic{background:var(--acc-soft-2)}
 .dg .dg-ic svg{width:15px;height:15px}
 .dg b{font-size:var(--t-body);font-weight:400;display:block}
@@ -1537,7 +1566,7 @@ html,body{overscroll-behavior:none}
 @media(max-width:620px){.dp-ver{padding:10px 11px}.dp-vname{font-size:var(--t-small)}}
 /* badge "Esta se queda": chip anclado a la tarjeta elegida (flex item, nunca absoluto):
    no puede salir de la card ni pisar la otra, y el fondo lo vincula visualmente a ella */
-.dp-ok{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-label);font-weight:400;color:var(--acc-text);white-space:nowrap;margin-top:auto;padding:6px 11px;border-radius:8px;background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc);max-width:100%;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),box-shadow var(--d1) var(--ease)}
+.dp-ok{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-label);font-weight:400;color:var(--acc-text);white-space:nowrap;margin-top:auto;padding:6px 11px;border-radius:var(--r-ctl);background:var(--acc-soft);box-shadow:inset 0 0 0 1px var(--acc);max-width:100%;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),box-shadow var(--d1) var(--ease)}
 .dp-ok svg{width:10px;height:10px;flex:none}
 .dp-gain{font-size:var(--t-small);color:var(--ink-2);white-space:nowrap;flex:none}
 .dp-gain b{color:var(--ink);font-variant-numeric:tabular-nums}
@@ -1602,7 +1631,7 @@ html,body{overscroll-behavior:none}
 .h-row:hover{background:var(--sel)}
 .h-row:active{transform:scale(.995)}
 .h-row.sel{background:var(--acc-soft);border-color:var(--acc-soft-2)}
-.h-row .hr-ic{width:28px;height:28px;border-radius:8px;background:var(--sel-2);display:grid;place-items:center;flex:none}
+.h-row .hr-ic{width:28px;height:28px;border-radius:var(--r-ctl);background:var(--sel-2);display:grid;place-items:center;flex:none}
 .h-row .hr-ic svg{width:14px;height:14px}
 .h-row.sel .hr-ic{background:var(--surface);color:var(--ink)}
 .h-row .hr-main{flex:1;min-width:0}
@@ -1634,19 +1663,19 @@ html,body{overscroll-behavior:none}
 .cmp{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:stretch}
 .cmp-slot{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-panel);border:none;background:var(--surface);box-shadow:var(--rim);min-height:54px}
 .cmp-slot.empty{border:1.4px dashed var(--line-2);background:transparent;justify-content:center;color:var(--ink-3);font-size:var(--t-small);gap:8px}
-.cmp-slot .cs-ic{width:28px;height:28px;border-radius:8px;background:var(--sel);color:var(--ink-2);display:grid;place-items:center;flex:none}
+.cmp-slot .cs-ic{width:28px;height:28px;border-radius:var(--r-ctl);background:var(--sel);color:var(--ink-2);display:grid;place-items:center;flex:none}
 /* número de hueco (1 o 2): vincula cada tarjeta con su punto del gráfico */
 .cs-num{width:18px;height:18px;border-radius:50%;background:var(--acc);color:#fff;font-size:var(--t-micro);font-weight:600;display:grid;place-items:center;flex:none}
 .cmp-slot .cs-ic svg{width:14px;height:14px}
 .cmp-slot .cs-main{flex:1;min-width:0}
 .cmp-slot .cs-main b{display:block;font-size:var(--t-body);font-weight:400;font-variant-numeric:tabular-nums}
 .cmp-slot .cs-main small{display:block;font-size:var(--t-label);color:var(--ink-3);margin-top:1px}
-.cmp-slot .cs-plus{width:24px;height:24px;border-radius:8px;border:1.4px dashed var(--line-2);display:grid;place-items:center;color:var(--ink-3)}
+.cmp-slot .cs-plus{width:24px;height:24px;border-radius:var(--r-ctl);border:1.4px dashed var(--line-2);display:grid;place-items:center;color:var(--ink-3)}
 .cmp-slot .cs-plus svg{width:11px;height:11px}
 .cmp-col{border:none;border-radius:var(--r-panel);background:var(--surface);padding:14px 16px;box-shadow:var(--rim),var(--edge)}
 .cmp-head{display:flex;align-items:center;gap:8px;margin-bottom:2px}
 .cmp-date{font-size:var(--t-label);color:var(--ink-3)}
-.cmp-x{margin-left:auto;color:var(--ink-3);width:22px;height:22px;border-radius:8px;display:grid;place-items:center;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),transform var(--d2) var(--ease)}
+.cmp-x{margin-left:auto;color:var(--ink-3);width:22px;height:22px;border-radius:var(--r-ctl);display:grid;place-items:center;transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),transform var(--d2) var(--ease)}
 .cmp-x:hover{background:var(--sel);color:var(--ink)}
 .cmp-x:active{transform:scale(.88)}
 .cmp-x svg{width:12px;height:12px}
@@ -1660,7 +1689,7 @@ html,body{overscroll-behavior:none}
 .cmp-item .ci-gb{font-weight:400;font-variant-numeric:tabular-nums}
 .cmp-vs{align-self:center;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink-3);font-size:var(--t-label);font-weight:500;letter-spacing:-.006em;text-align:center;line-height:1.4}
 .cmp-vs b{font-size:var(--t-body);font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.024em}
-.vs-badge{width:36px;height:36px;border-radius:8px;background:var(--sel);color:var(--ink-2);display:grid;place-items:center}
+.vs-badge{width:36px;height:36px;border-radius:var(--r-ctl);background:var(--sel);color:var(--ink-2);display:grid;place-items:center}
 .vs-badge svg{width:16px;height:16px}
 @media(max-width:980px){.hist-top{grid-template-columns:1fr;overflow-y:auto}.hist-chart,.hist-side{height:auto}.hist-side{min-height:0;align-self:start;overflow:visible}.chart-wrap{flex:none;height:210px}.hist-scroll{flex:none;max-height:280px}}
 @media(max-width:900px){.cmp{grid-template-columns:1fr;gap:0}.cmp-vs{flex-direction:row;padding:10px 0}}
@@ -1751,19 +1780,22 @@ html,body{overscroll-behavior:none}
 
 /* ---------- Ritmo ---------- */
 .ritmo-note{font-size:var(--t-small);color:var(--ink-3);line-height:1.55}
+/* El estado vacío de «Actividad reciente» ocupa la tarjeta con un alto mínimo,
+   para que el panel no se quede como una banda fina con cuatro palabras. */
+.ritmo-empty{min-height:150px;justify-content:center}
 .ritmo-hero{display:flex;flex-direction:column;gap:12px;padding:14px 18px}
 .rh-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .rh-title b{font-size:var(--t-body);font-weight:400;display:block;letter-spacing:-.024em}
 .rh-title small{display:block;color:var(--ink-3);font-size:var(--t-small);margin-top:1px}
 .rh-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding-top:12px;border-top:1px solid var(--line)}
 .rh-s{display:flex;gap:8px;align-items:flex-start;min-width:0}
-.rh-s .rh-n{width:18px;height:18px;border-radius:8px;background:var(--sel);color:var(--ink);font-size:var(--t-label);font-weight:400;display:grid;place-items:center;flex:none;margin-top:1px}
+.rh-s .rh-n{width:18px;height:18px;border-radius:var(--r-ctl);background:var(--sel);color:var(--ink);font-size:var(--t-label);font-weight:400;display:grid;place-items:center;flex:none;margin-top:1px}
 .rh-s b{font-size:var(--t-small);font-weight:400;display:block}
 .rh-s small{display:block;color:var(--ink-3);font-size:var(--t-label);line-height:1.4;margin-top:1px}
 .rounds{display:flex;flex-direction:column}
 .round{display:flex;align-items:center;gap:12px;padding:11px 16px;border-top:1px solid var(--line);flex:0 0 auto}
 .round:first-child{border-top:none}
-.rnd-ic{width:24px;height:24px;border-radius:8px;background:var(--acc-soft);display:grid;place-items:center;flex:none}
+.rnd-ic{width:24px;height:24px;border-radius:var(--r-ctl);background:var(--acc-soft);display:grid;place-items:center;flex:none}
 .rnd-ic svg{width:12px;height:12px;color:var(--ink-2)}
 .rnd-t{flex:1;min-width:0;max-width:100%;font-size:var(--t-small);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rnd-t small{display:block;max-width:100%;color:var(--ink-3);font-weight:400;font-size:var(--t-label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1773,18 +1805,17 @@ html,body{overscroll-behavior:none}
 /* en ventana estrecha queda la marca de visto: el texto se comía la fecha */
 @media(max-width:700px){.rnd-ok span{display:none}}
 @media(max-width:760px){.rh-steps{grid-template-columns:1fr}}
-/* Interruptor: dos tiradores, no uno que viaja. Al cambiar, el tirador de un
-   lado se encoge mientras el del otro crece — el mando no se desliza, aparece
-   ya hecho al otro lado, que es el gesto del interruptor de iOS. La pista
-   conserva el color del acento y su radio completo. */
+/* Interruptor: UN tirador que viaja. Antes eran dos que se encendían y se
+   apagaban a escala en cada extremo —un cruce—, y un interruptor que no recorre
+   nada no se lee como un interruptor: se lee como dos pastillas que parpadean.
+   Ahora el tirador desliza 20 px (50 − 24 − 3 − 3) y vuelve a su sitio con un
+   milímetro de rebote, que es el gesto del sistema. La pista conserva el color
+   del acento y su radio completo. */
 .bigswitch{position:relative;width:50px;height:30px;border-radius:9999px;background:var(--track);transition:background-color var(--d3) var(--ease),transform var(--d2) var(--ease);flex:none}
-.bigswitch::before,.bigswitch::after{content:"";position:absolute;top:3px;width:24px;height:24px;border-radius:9999px;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform var(--d3) var(--ease),background-color var(--d3) var(--ease)}
-.bigswitch::before{left:3px;transform:scale(1)}
-.bigswitch::after{right:3px;transform:scale(0)}
+.bigswitch::before{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:9999px;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform var(--d3) var(--ease-spring),background-color var(--d3) var(--ease-spring)}
 .bigswitch[aria-checked="true"]{background:var(--acc)}
 html[data-theme="light"] .bigswitch[aria-checked="true"]{background:var(--acc)}
-.bigswitch[aria-checked="true"]::before{transform:scale(0)}
-.bigswitch[aria-checked="true"]::after{transform:scale(1);background:#fff}
+.bigswitch[aria-checked="true"]::before{transform:translateX(20px);background:#fff}
 /* Al pulsar, el conjunto se aprieta: el control se siente agarrado antes de
    cambiar, el mismo detalle que ya tenía el tirador al ensancharse. */
 .bigswitch:active{transform:scale(.97)}
@@ -1794,13 +1825,10 @@ html[data-theme="light"] .bigswitch[aria-checked="true"]{background:var(--acc)}
 .rule small{display:block;color:var(--ink-3);font-size:var(--t-small);margin-top:2px;max-width:480px}
 .rule .rt{flex:1}
 .mini-switch{position:relative;width:32px;height:19px;border-radius:9999px;background:var(--track);flex:none;transition:background-color var(--d2) var(--ease),transform var(--d2) var(--ease)}
-.mini-switch::before,.mini-switch::after{content:"";position:absolute;top:2px;width:15px;height:15px;border-radius:9999px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform var(--d2) var(--ease),background-color var(--d2) var(--ease)}
-.mini-switch::before{left:2px;transform:scale(1)}
-.mini-switch::after{right:2px;transform:scale(0)}
+.mini-switch::before{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:9999px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform var(--d3) var(--ease-spring),background-color var(--d3) var(--ease-spring)}
 .mini-switch[aria-checked="true"]{background:var(--acc)}
 html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)}
-.mini-switch[aria-checked="true"]::before{transform:scale(0)}
-.mini-switch[aria-checked="true"]::after{transform:scale(1);background:#fff}
+.mini-switch[aria-checked="true"]::before{transform:translateX(13px);background:#fff}
 .mini-switch:active{transform:scale(.96)}
 /* Horario dentro del panel principal: etiqueta + píldoras + nota en una sola fila */
 .rh-sched{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:8px;border-top:0;min-width:0;overflow-x:hidden}
@@ -1883,7 +1911,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
    —el mismo reparto que la lista de quién consume en Estado del Mac—. */
 .un-row .un-nm{display:flex;flex-direction:column;gap:4px;min-width:0;flex:0 1 320px}
 .un-bar{flex:1 1 auto;min-width:56px;height:3px;border-radius:9999px;background:var(--track);overflow:hidden}
-.un-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--ink);transition:width var(--d3) var(--ease)}
+.un-bar i{display:block;height:100%;width:0;border-radius:9999px;background:var(--acc);transition:width var(--d3) var(--ease)}
 .un-nm-t{display:flex;align-items:center;gap:8px;min-width:0}
 .un-nm-t b{font-weight:400;font-size:var(--t-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .un-nm-t .un-tag{flex:none}
@@ -1910,7 +1938,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
    solo hay DOS curvas —8 px para lo pequeño, 12 px para lo grande— y las barras
    finas, que son píldoras. Antes convivían 6, 7, 8, 10, 11, 13 y 14 px: cada
    pieza se veía bien sola y el conjunto no encajaba. */
-.un-icon{width:56px;height:56px;border-radius:12px;background:var(--sel);display:grid;place-items:center;flex:none;overflow:hidden}
+.un-icon{width:56px;height:56px;border-radius:var(--r-panel);background:var(--sel);display:grid;place-items:center;flex:none;overflow:hidden}
 .un-icon img{width:56px;height:56px;display:block}
 .un-icon svg{width:28px;height:28px;color:var(--ink-2)}
 /* La marca de la app en el prototipo: su trazado sobre la ficha teñida con su
@@ -1922,7 +1950,7 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
    tema oscuro suben a tinta clara y la ficha se aclara con ellas. */
 .un-brand.dk{background:color-mix(in srgb,#9a9a9a 16%,transparent)}
 html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
-.un-brand.xl{width:56px;height:56px;border-radius:12px}
+.un-brand.xl{width:56px;height:56px;border-radius:var(--r-panel)}
 .un-brand.xl svg{width:31px;height:31px}
 /* Analizando: la pantalla no enseña una lista a medias —se queda con el aviso—
    y la barra late en el centro del hueco, que es donde mira el ojo que espera. */
@@ -1951,7 +1979,7 @@ html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
 .un-brief-bar{display:flex;height:6px;border-radius:9999px;background:var(--track);overflow:hidden}
 .un-brief-bar i{display:block;height:100%;transition:width var(--d3) var(--ease)}
 .un-brief-bar i.a,.un-legend .a i{background:var(--acc)}
-.un-brief-bar i.y,.un-legend .y i{background:color-mix(in srgb,var(--acc) 34%,var(--track))}
+.un-brief-bar i.y,.un-legend .y i{background:color-mix(in srgb,var(--acc) 58%,var(--track))}
 .un-brief-bar i.n,.un-legend .n i{background:var(--line-2)}
 .un-legend{display:flex;flex-wrap:wrap;gap:6px 18px}
 .un-legend span{display:inline-flex;align-items:center;gap:7px;font-size:var(--t-small);color:var(--ink-2);font-variant-numeric:tabular-nums}
@@ -1984,7 +2012,11 @@ html[data-theme="dark"] .un-brand.dk{color:#e8e8e8}
    primer fotograma de la lista era un salto. */
 @keyframes unEnterIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 #view-apps #un-list.enter{animation:unEnterIn var(--d3) var(--ease) both}
-#un-rows.enter .un-row{animation:riseIn var(--d3) var(--ease) backwards;animation-delay:calc(var(--i,0)*18ms)}
+/* La cascada recorre TODA la lista —la lista es la pantalla, no un grupo de cinco—
+   pero con un TOPE: en un Mac con cuarenta apps, cuarenta turnos de 18 ms son
+   700 ms de espera antes de que la última entre. Con el tope, la última fila
+   arranca a los ~0,2 s y la entrada se lee entera y a una sola velocidad. */
+#un-rows.enter .un-row{animation:riseIn var(--d2) var(--ease) backwards;animation-delay:min(calc(var(--i,0)*16ms),200ms)}
 /* Sin cifra todavía: en gris, para que no compita con los números ya medidos. */
 .un-row .r-size.wait{color:var(--ink-3)}
 /* Un elemento del análisis: casilla, nombre, ruta y su etiqueta de certeza. La
@@ -2096,7 +2128,7 @@ html[data-theme="dark"] #view-apps #un-run,html[data-theme="dark"] #view-apps #u
 @media(max-width:760px){.un-foot .un-acts{width:100%}.un-foot .un-acts .btn{flex:1}}
 
 /* ---------- Hojas / diálogos ---------- */
-.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,12,.3);display:grid;place-items:center;animation:fadeIn var(--d1) var(--ease)}
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(10,10,12,.3);display:grid;place-items:center;animation:fadeIn var(--d2) var(--ease)}
 .overlay.closing{animation:fadeOut var(--d2) var(--ease) forwards;pointer-events:none}
 html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -2112,7 +2144,7 @@ html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 .overlay.closing .sheet{animation:popOut var(--d2) var(--ease) forwards}
 .sheet-h{display:flex;align-items:center;gap:12px;padding:16px 18px 8px}
 .sheet-h h3{font-size:var(--t-title);font-weight:400;letter-spacing:-.024em;flex:1}
-.sheet-close{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--ink-3);transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),transform var(--d2) var(--ease)}
+.sheet-close{width:28px;height:28px;border-radius:var(--r-ctl);display:grid;place-items:center;color:var(--ink-3);transition:background-color var(--d1) var(--ease),color var(--d1) var(--ease),transform var(--d2) var(--ease)}
 .sheet-close:active{transform:scale(.9)}
 .sheet-close:hover{background:var(--sel);color:var(--ink)}
 .sheet-close svg{width:15px;height:15px}
@@ -2141,7 +2173,7 @@ html[data-theme="dark"] .overlay{background:rgba(0,0,0,.5)}
 .prog-cap{display:flex;justify-content:space-between;font-size:var(--t-small);color:var(--ink-2);margin-bottom:14px}
 .prog-cap b{color:var(--ink);font-variant-numeric:tabular-nums}
 .sheet-ok{text-align:center;padding:26px 10px 10px}
-.sheet-ok .ok-ic{width:40px;height:40px;border-radius:8px;background:var(--surface);color:var(--ink);display:grid;place-items:center;margin:0 auto 14px}
+.sheet-ok .ok-ic{width:40px;height:40px;border-radius:var(--r-ctl);background:var(--surface);color:var(--ink);display:grid;place-items:center;margin:0 auto 14px}
 .sheet-ok .ok-ic svg{width:19px;height:19px;stroke-width:2}
 .sheet-ok h4{font-size:var(--t-title);font-weight:400;letter-spacing:-.024em}
 .sheet-ok p{color:var(--ink-2);font-size:var(--t-body);margin-top:7px;line-height:1.55}
@@ -2232,7 +2264,7 @@ select.set-sel:hover{background:var(--sel-2)}
 #app.rail .dc-rail-top{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #app.rail .dc-acts2{display:flex;flex-direction:column;gap:8px;margin-top:0}
 #app.rail .dc-ring{display:block}
-#app.rail .dc-rail .dc-act{width:100%;height:26px;flex:none;border-radius:8px}
+#app.rail .dc-rail .dc-act{width:100%;height:26px;flex:none;border-radius:var(--r-ctl)}
 
 /* ---------- Toasts ---------- */
 #toasts{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;max-width:340px}
@@ -2270,7 +2302,7 @@ select.set-sel:hover{background:var(--sel-2)}
 @keyframes numChange{from{opacity:.7}to{opacity:1}}
 .num-up,.num-down{animation:numChange var(--d1) var(--ease)}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes riseIn{from{opacity:0;transform:translateY(7px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes riseIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
 /* La entrada de una vista es un FUNDIDO y nada más. El cuerpo de la vista y sus
    piezas se movían a la vez —12 px el contenedor, 7 px cada pieza dentro—, de
    modo que el mismo contenido viajaba dos veces a dos velocidades distintas: en
@@ -2284,19 +2316,28 @@ select.set-sel:hover{background:var(--sel-2)}
    entrar. En una lista larga la cascada no la recorre entera —la sexta fila ya
    no espera turno—, porque veinte turnos no son un adorno, son una espera. */
 .stagger>*:nth-child(-n+5){animation:riseIn var(--d2) var(--ease) backwards;animation-delay:calc(var(--i,0)*var(--stagger-step))}
+/* Archivos grandes: la cascada es de TODA la lista.
+   La regla general corta en cinco piezas para que una lista larga no se
+   convierta en una espera —veinte turnos de cascada son una demora, no un
+   adorno—. Está bien para un grupo de tarjetas, pero en Archivos la lista ES la
+   pantalla: si solo entraran las cinco primeras filas, el resto aparecería de
+   golpe y la entrada se leería a medias, que es justo lo que pasaba. Aquí se
+   escalona entera, con un paso corto (16 ms) y un TOPE de retardo (220 ms), así
+   la última fila entra a los ~0,2 s y no a los dos segundos. */
+.fscroll.stagger .frow{animation:riseIn var(--d2) var(--ease) backwards;animation-delay:min(calc(var(--i,0) * 16ms), 220ms)}
 /* Entradas del Resumen SOLO al cargar la vista: la clase .boot-in se pone al
    construir la vista y se retira cuando termina — así el CSS no re-anima las
    tarjetas en cada repintado (bump de cifras, banner tras limpiar, tema…).
    Antes las .hs y .hero-foot llevaban animation directa: cada render del
    Resumen las hacía aparecer de nuevo. */
-.boot-in .hs:nth-child(1){animation:riseIn var(--d2) var(--ease) backwards}
-.boot-in .hs:nth-child(2){animation:riseIn var(--d2) var(--ease) calc(1 * var(--stagger-step)) backwards}
-.boot-in .hero-foot{animation:riseIn var(--d2) var(--ease) calc(2 * var(--stagger-step)) backwards}
-.banner-ok.b-in{animation:riseIn var(--d2) var(--ease)}
+.boot-in .hs:nth-child(1){animation:riseIn var(--d3) var(--ease) backwards}
+.boot-in .hs:nth-child(2){animation:riseIn var(--d3) var(--ease) calc(1 * var(--stagger-step)) backwards}
+.boot-in .hero-foot{animation:riseIn var(--d3) var(--ease) calc(2 * var(--stagger-step)) backwards}
+.banner-ok.b-in{animation:riseIn var(--d3) var(--ease)}
 /* El detalle del Atlas es el nivel de dentro, y vive a la derecha de la lista:
    entra desde ahí, no desde abajo. Así el gesto de abrir una categoría se lee
    como «he entrado», que es lo que ha pasado. */
-@keyframes panelIn{from{opacity:0;transform:translateX(6px)}}
+@keyframes panelIn{from{opacity:0;transform:translateX(8px)}}
 .ap-main.p-in{animation:panelIn var(--d2) var(--ease)}
 @keyframes lineIn{to{stroke-dashoffset:0}}
 /* Fundido de tema: transición SOLO en el elemento raíz y mediante variables.
@@ -2319,7 +2360,7 @@ html.theme-anim .row,
 html.theme-anim .btn,
 html.theme-anim .tb-btn,
 html.theme-anim .sb-item{
-  transition:background-color var(--d3) var(--ease),border-color var(--d3) var(--ease),box-shadow var(--d3) var(--ease),color var(--d3) var(--ease),fill var(--d2) var(--ease),stroke var(--d2) var(--ease);
+  transition:background-color var(--d3) var(--ease-io),border-color var(--d3) var(--ease-io),box-shadow var(--d3) var(--ease-io),color var(--d3) var(--ease-io),fill var(--d3) var(--ease-io),stroke var(--d3) var(--ease-io);
 }
 /* Un solo bloque para ventana estrecha. Aquí había además un @media anidado
    dentro de otro (resto de una edición) que dejaba el cuerpo con 0 de aire
@@ -2421,7 +2462,7 @@ html.theme-anim .sb-item{
    Papelera —que no es un «aún sin análisis»— no podía llevarla y salía con el
    icono suelto, distinto al de las demás secciones. */
 .pp-mark{
-  width:52px;height:52px;border-radius:12px;display:grid;place-items:center;
+  width:52px;height:52px;border-radius:var(--r-panel);display:grid;place-items:center;
   background:color-mix(in srgb, var(--acc) 10%, transparent);color:var(--acc);
   margin-bottom:6px;
 }
@@ -2587,19 +2628,25 @@ html.theme-anim .sb-item{
    «Almacenamiento.» con una palabra huérfana— y `pretty` impide que la
    entradilla deje una sola palabra colgando en la última línea. El tracking se
    aprieta en el tamaño de display, que es donde el aire sobra. */
-/* ---------- microinteracciones y movimiento reducido ----------
+/* ---------- microinteracciones ----------
    El último escalón de respuesta, del mismo tamaño que el resto: el hundimiento
    de las piezas que se tocan mucho y que antes no devolvían nada —las pastillas
    de una fila de opciones, los botones de rango, los modos del mapa—. Es medio
    milímetro, el mínimo que se lee como «te he oído». */
 .chip:active,.rs:active,.set-seg button:active,.map-modes button:active{transform:scale(.96)}
-/* Y quien ha pedido a macOS que no se mueva nada, no ve nada moverse: la app se
-   queda quieta —sin transiciones ni animaciones— pero completa. Antes no había
-   ni una línea para esto, así que la preferencia del sistema se ignoraba. */
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0ms!important;transition-duration:.001ms!important;transition-delay:0ms!important}
-  .lc,.se-chart-drift,.osb{animation:none!important}
-}
+/* El pulsado responde ANTES de que el dedo se levante. La transición larga
+   (`--press`) es la de VUELTA —el botón se asienta—, y al hundir se acorta a
+   `--d0`: sin esto, el hundimiento tarda lo mismo que la vuelta y el control se
+   siente pesado justo en el momento en que más se nota. */
+.btn:active,.tb-btn:active,.sb-item:active,.sb-collapse:active,.dc-act:active,.icon-btn:active,.se-live:active,.sheet-close:active,.cmp-x:active,.hist-clear:active,.set-seg button:active,.map-modes button:active,.chip:active,.rs:active,.h-row:active,.dg:active,.alist:active,.row:active,.set-tgl:active,.rule-sw:active{transition-duration:var(--d0)}
+/* Sobre `prefers-reduced-motion`: aquí había un bloque que dejaba TODAS las
+   transiciones y animaciones en 0,001 ms, y se ha quitado. macOS trae esa
+   preferencia activada de fábrica en muchas máquinas, así que el resultado no
+   era una app más calmada sino una app sin movimiento: la barra lateral y el
+   cambio de tema dejaban de leerse, que es peor que el problema que decía
+   resolver. Si algún día se quiere respetar de verdad, será ACORTANDO
+   distancias —una entrada de solo opacidad, un recorrido de 2 px— y nunca
+   borrándolas. */
 </style>
 </head>
 <body>
@@ -3446,6 +3493,7 @@ const I18N = {
     "ritmo.step2":"Protege", "ritmo.step2d":"Lo guarda 30 días en tu Papelera.",
     "ritmo.step3":"Informa", "ritmo.step3d":"Cada mañana sabrás qué hizo y cuánto recuperó.",
     "ritmo.recent":"Actividad reciente", "ritmo.nextTonight":"próxima revisión: esta noche", "ritmo.nextWeekends":"próxima revisión: este fin de semana", "ritmo.nextMonthly":"próxima revisión: este mes", "ritmo.disabled":"Mantenimiento desactivado",
+    "ritmo.emptyH2":"Aún sin actividad", "ritmo.emptyP":"Cuando el mantenimiento se ejecute, verás aquí cada ronda y cuánto ha recuperado.",
     "ritmo.inTrash":"en tu Papelera",
     "ritmo.whatCleans":"Qué limpia", "ritmo.rulesHint":"activa cada regla",
     "ritmo.note":"Nunca toca fotos, documentos ni música.",
@@ -3761,6 +3809,7 @@ const I18N = {
     "ritmo.step2":"Protects", "ritmo.step2d":"Keeps it 30 days in your Trash.",
     "ritmo.step3":"Reports", "ritmo.step3d":"Every morning you know what it did and how much it recovered.",
     "ritmo.recent":"Recent activity", "ritmo.nextTonight":"next review: tonight", "ritmo.nextWeekends":"next review: this weekend", "ritmo.nextMonthly":"next review: this month", "ritmo.disabled":"Maintenance disabled",
+    "ritmo.emptyH2":"No activity yet", "ritmo.emptyP":"When maintenance runs, you'll see every round here and how much it recovered.",
     "ritmo.inTrash":"in your Trash",
     "ritmo.whatCleans":"What it cleans", "ritmo.rulesHint":"toggle each rule",
     "ritmo.note":"Never touches photos, documents or music.",
@@ -4155,7 +4204,10 @@ function setTheme(t,persist=true){
      así que el tema volvía al del sistema cada vez que abrías la app. */
   if(persist){ try{ localStorage.setItem("brisa-theme",t); }catch(e){} }
   const d=document.documentElement; d.classList.add("theme-anim");
-  clearTimeout(setTheme._t); setTheme._t=setTimeout(()=>d.classList.remove("theme-anim"),360);
+  /* El fundido dura `--d3` (0,36 s): la marca de «estoy fundiendo» tiene que
+     vivir algo MÁS que la transición, o se apaga antes de que el color llegue y
+     el último tramo se corta en seco. */
+  clearTimeout(setTheme._t); setTheme._t=setTimeout(()=>d.classList.remove("theme-anim"),430);
   const tb=$("#tb-theme"); if(tb)tb.innerHTML=SVG(t==="light"?"moon":"sun");
   $$(".set-seg button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
   repaintCurrent();
@@ -5526,6 +5578,16 @@ function unBrand(bid,extra){
   const dark=unLum(g.c)<0.34?" dk":"";
   return `<span class="un-brand${extra||""}${dark}" style="--bc:${g.c}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${g.d}"/></svg></span>`;
 }
+/* El contenido de la casilla de icono de una fila de consumidores. Tres
+   caminos, por orden: el icono REAL que manda la app nativa (sacado del bundle
+   del proceso); la marca conocida, si el prototipo la trae en su tabla; y el
+   símbolo genérico, que se reserva a lo que de verdad no es una aplicación. */
+function sysProcIcon(p){
+  if(p.icon)return `<img src="${p.icon}" alt="">`;
+  const g=p.bid?UN_DEMO_GLYPHS[p.bid]:null;
+  if(g)return `<span class="un-brand${unLum(g.c)<0.34?" dk":""}" style="--bc:${g.c}" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${g.d}"/></svg></span>`;
+  return SVG(p.kind==="app"?"apps":"cpu");
+}
 const unItems=()=>UN.analysis&&Array.isArray(UN.analysis.groups)?UN.analysis.groups.reduce((s,g)=>s.concat(g.items||[]),[]):[];
 const unItem=id=>unItems().find(i=>i.id===id)||null;
 /* Lo que va dentro del bundle se va con él: se enseña, no se elige. */
@@ -5708,12 +5770,22 @@ function unPaintDetail(){
   /* El desglose que hace entendible la pantalla: el total, y de ese total qué
      parte se marca sola, qué parte decides tú y qué parte es la propia app por
      dentro. Tres pesos sobre una barra, con su leyenda justo debajo. */
-  const total=Math.max(appGB,Number(an.total)||0);
   const auto=all.filter(i=>!i.nested&&!i.admin&&i.conf==="certain");
   const you=all.filter(i=>!i.nested&&(i.admin||i.conf!=="certain"));
   const inner=all.filter(i=>i.nested);
-  const gbAuto=unGB(auto), gbYou=unGB(you), gbInner=unGB(inner);
-  const w=v=>Math.max(0,(v/Math.max(gbAuto+gbYou+gbInner,0.001))*100);
+  /* El reparto tiene que SUMAR el total, y antes no lo hacía: lo que hay DENTRO
+     del bundle —los inicios de sesión y los servicios de fondo— ya está contado
+     en el tamaño de la propia app, así que sumarlo otra vez como tramo aparte
+     duplicaba ese espacio y el número de arriba mentía al alza (y la barra
+     repartía un total que no era el que se enseñaba). El tramo «se quitan
+     solos» pierde lo de dentro —que se queda con su propio trozo, el tercero—
+     y los tres, juntos, vuelven a ser el espacio de verdad. */
+  const gbInner=unGB(inner);
+  const gbAuto=Math.max(0,unGB(auto)-gbInner);
+  const gbYou=unGB(you);
+  const sum=gbAuto+gbYou+gbInner;
+  const total=Math.max(sum,appGB);
+  const w=v=>Math.max(0,(v/Math.max(total,0.001))*100);
   const itemsTxt=t(all.length===1?"un.itemsOne":"un.itemsN",{n:all.length});
   host.innerHTML=back+`
     <div class="panel un-hero">
@@ -7640,23 +7712,34 @@ function renderRitmo(){
   $("#rit-title").textContent=STATE.ritmo?t("ritmo.on"):t("ritmo.off");
   $("#rit-desc").textContent=STATE.ritmo?t("ritmo.onDesc"):t("ritmo.offDesc");
   /* Rondas reales: las registra el mantenimiento (LaunchAgent) en el historial.
-     En el prototipo, si no hay rondas reales mostramos datos de ejemplo
-     para que la sección no aparezca vacía. */
-  const src=STATE.history.length?STATE.history:(STATE.prototypeDemo?[
+     En el prototipo NUNCA se enseña el hueco vacío —igual que Aplicaciones, que
+     ya arranca con apps de ejemplo (UN_DEMO_APPS)—: si aún no hay historial, se
+     enseñan rondas de ejemplo para que la sección esté a punto delante de
+     cualquiera. Antes el ejemplo solo aparecía DESPUÉS de pulsar «Analizar»:
+     quien abría Mantenimiento antes se encontraba «Actividad reciente» con el
+     titular y nada debajo. La app nativa (inApp) jamás inventa: o historial
+     real, o un estado vacío que explica que todavía no ha corrido nada. */
+  const src=STATE.history.length?STATE.history:(inApp()?[]:[
     {ts:Date.now()-2*864e5,gb:4.8,items:[{name:"Descargas antiguas",gb:4.8}]},
     {ts:Date.now()-9*864e5,gb:2.1,items:[{name:"Caché de navegadores",gb:2.1}]},
-    {ts:Date.now()-23*864e5,gb:3.5,items:[{name:"Papelera del sistema",gb:3.5}]}]:[]);
+    {ts:Date.now()-23*864e5,gb:3.5,items:[{name:"Papelera del sistema",gb:3.5}]}]);
   const rounds=src.slice(0,3).map(h=>({
     when:fmtWhen(h.ts), gb:h.gb,
     what:h.items.map(i=>i.name).join(", ")||t("ritmo.brisaCleanup")
   }));
-  $("#last-run").innerHTML=`
-    <div class="v-section" style="margin:16px 16px 0"><h2>${t("ritmo.recent")}</h2><span class="hint">${STATE.ritmo?t(schedOf(STATE.sched).next):t("ritmo.disabled")}</span></div>
-    <div class="rounds${boot?" stagger":""}">${rounds.map((r,i)=>`
+  /* Una lista vacía no es una sección: es un titular sin nada debajo. Cuando de
+     verdad no hay rondas —solo en la app real, antes del primer mantenimiento—
+     se dice con el mismo estado vacío que usa el resto de la app. */
+  const body=rounds.length
+    ? `<div class="rounds${boot?" stagger":""}">${rounds.map((r,i)=>`
       <div class="round" style="--i:${i}"><span class="rnd-ic">${SVG("moon")}</span>
         <span class="rnd-t">${r.what}<small>${r.when}</small></span>
         <span class="rnd-gb num">${fmt(r.gb)} GB</span>
-        <span class="rnd-ok">${SVG("check")}<span>${t("ritmo.inTrash")}</span></span></div>`).join("")}</div>`;
+        <span class="rnd-ok">${SVG("check")}<span>${t("ritmo.inTrash")}</span></span></div>`).join("")}</div>`
+    : `<div class="empty-note ritmo-empty">${SVG("cycle")}<h2>${t("ritmo.emptyH2")}</h2><p>${t("ritmo.emptyP")}</p></div>`;
+  $("#last-run").innerHTML=`
+    <div class="v-section" style="margin:16px 16px 0"><h2>${t("ritmo.recent")}</h2><span class="hint">${STATE.ritmo?t(schedOf(STATE.sched).next):t("ritmo.disabled")}</span></div>
+    ${body}`;
   lastRoundStagger=boot;
   $$("#sched-pills .chip").forEach(b=>b.classList.toggle("on",b.dataset.sched===STATE.sched));
 }
@@ -8275,7 +8358,7 @@ function sysConsumers(){
       const n=p.procs>1?t("est.procs",{n:p.procs}):t("est.procsOne",{n:p.procs||1});
 
       return '<div class="row se-row" style="--i:'+i+'">'+
-             '<span class="r-ic">'+SVG(p.kind==="app"?"apps":"cpu")+'</span>'+
+             '<span class="r-ic">'+sysProcIcon(p)+'</span>'+
              '<span class="r-name">'+sysEsc(p.name)+'<small>'+sysEsc(n)+'</small></span>'+
              '<span class="se-bar"><i></i></span>'+
              '<span class="se-col cpu"></span><span class="se-col mem"></span></div>';
@@ -8427,11 +8510,17 @@ const SYS_BASE={
   thermal:{state:"nominal",lowPower:false},
   battery:{avail:true,pct:64,state:"discharging",minutes:203,cycles:201},
   net:{avail:true,iface:"en0",down:184000,up:26000},
+  /* Las apps de ejemplo de esta lista son las de siempre —las que trae
+     instaladas cualquiera y que el ojo reconoce por su marca—, no lo que hay en
+     este Mac: un listado con lo de aquí no se parece al de nadie. Cada una
+     lleva su identificador porque es lo que le da su icono: el prototipo no
+     puede pedirle a macOS el icono de una app que no está ejecutando, así que lo
+     dibuja con la MISMA tabla de marcas que usa la lista de Aplicaciones. */
   procs:[
-    {name:"Contenido web de Safari",kind:"app",procs:6,cpu:3.1,mem:2140},
-    {name:"Freebuff",kind:"app",procs:11,cpu:1.8,mem:868},
-    {name:"Figma",kind:"app",procs:15,cpu:1.2,mem:9410},
-    {name:"Safari",kind:"app",procs:1,cpu:0.6,mem:392},
+    {name:"Google Chrome",bid:"com.google.Chrome",kind:"app",procs:11,cpu:2.8,mem:1640},
+    {name:"Safari",bid:"com.apple.Safari",kind:"app",procs:5,cpu:1.4,mem:1180},
+    {name:"Visual Studio Code",bid:"com.microsoft.VSCode",kind:"app",procs:6,cpu:1.1,mem:980},
+    {name:"Figma",bid:"com.figma.Desktop",kind:"app",procs:3,cpu:0.5,mem:720},
     {name:"photoanalysisd",kind:"other",procs:1,cpu:0.2,mem:126}
   ]
 };
@@ -8443,21 +8532,21 @@ const SYS_DEMO={
   /* Un proceso comiéndose la CPU: el veredicto nombra al culpable y la lista
      lo pone el primero, muy por encima del resto. */
   cpu:{cpu:{pct:88,load:7.4},
-       procs:[{name:"Google Chrome",kind:"app",procs:14,cpu:64.2,mem:3180},
-              {name:"Contenido web de Safari",kind:"app",procs:6,cpu:11.4,mem:2140},
-              {name:"Freebuff",kind:"app",procs:11,cpu:6.1,mem:868},
+       procs:[{name:"Google Chrome",bid:"com.google.Chrome",kind:"app",procs:14,cpu:64.2,mem:3180},
+              {name:"Safari",bid:"com.apple.Safari",kind:"app",procs:6,cpu:11.4,mem:2140},
+              {name:"Figma",bid:"com.figma.Desktop",kind:"app",procs:15,cpu:6.1,mem:9410},
               {name:"WindowServer",kind:"other",procs:1,cpu:3.2,mem:410},
-              {name:"Figma",kind:"app",procs:15,cpu:1.9,mem:9410}]},
+              {name:"Spotify",bid:"com.spotify.client",kind:"app",procs:4,cpu:1.9,mem:640}]},
   /* Memoria al límite: el intercambio se come casi todo y el disco va detrás.
      Es el estado normal de un Mac de 8 GB cuando se le pide demasiado. */
   mem:{cpu:{pct:34,load:4.1},
        mem:{pct:93,used:7.99,app:2.1,wired:2.2,compressed:3.7,cached:0.6,
             pressure:"warning",swapUsed:8.6,swapTotal:9.66},
-       procs:[{name:"Figma",kind:"app",procs:15,cpu:2.4,mem:12552},
-              {name:"Google Chrome",kind:"app",procs:14,cpu:1.8,mem:4180},
-              {name:"Freebuff",kind:"app",procs:11,cpu:1.1,mem:1240},
-              {name:"Contenido web de Safari",kind:"app",procs:6,cpu:0.9,mem:3436},
-              {name:"Xcode",kind:"app",procs:4,cpu:0.4,mem:2260}]},
+       procs:[{name:"Figma",bid:"com.figma.Desktop",kind:"app",procs:15,cpu:2.4,mem:12552},
+              {name:"Google Chrome",bid:"com.google.Chrome",kind:"app",procs:14,cpu:1.8,mem:4180},
+              {name:"Spotify",bid:"com.spotify.client",kind:"app",procs:4,cpu:1.1,mem:1240},
+              {name:"Safari",bid:"com.apple.Safari",kind:"app",procs:6,cpu:0.9,mem:3436},
+              {name:"Xcode",bid:"com.apple.dt.Xcode",kind:"app",procs:4,cpu:0.4,mem:2260}]},
   /* Poco disco: aquí aparece el bloque de acciones, que lleva a las tres
      herramientas de Brisa que sirven para esto. */
   disk:{cpu:{pct:12,load:1.8},
@@ -8468,11 +8557,11 @@ const SYS_DEMO={
   /* Calor: el sistema ha bajado el rendimiento para protegerse. */
   hot:{cpu:{pct:58,load:5.8},
        thermal:{state:"serious",lowPower:false},
-       procs:[{name:"HandBrake",kind:"app",procs:2,cpu:38.4,mem:1620},
-              {name:"Google Chrome",kind:"app",procs:14,cpu:9.2,mem:3180},
-              {name:"Freebuff",kind:"app",procs:11,cpu:4.1,mem:868},
+       procs:[{name:"Blender",bid:"org.blenderfoundation.blender",kind:"app",procs:2,cpu:38.4,mem:1620},
+              {name:"Google Chrome",bid:"com.google.Chrome",kind:"app",procs:14,cpu:9.2,mem:3180},
+              {name:"Spotify",bid:"com.spotify.client",kind:"app",procs:4,cpu:4.1,mem:868},
               {name:"mds_stores",kind:"other",procs:1,cpu:2.2,mem:310},
-              {name:"Figma",kind:"app",procs:15,cpu:1.4,mem:9410}]}
+              {name:"Figma",bid:"com.figma.Desktop",kind:"app",procs:15,cpu:1.4,mem:9410}]}
 };
 function sysDemoSample(phase){
   const s=JSON.parse(JSON.stringify(SYS_BASE));

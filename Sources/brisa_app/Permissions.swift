@@ -13,10 +13,6 @@ import AppKit
 
 final class PermissionService {
 
-    enum Status: String {
-        case granted, denied
-    }
-
     /// La comodidad, en una frase: **un solo permiso**, pedido solo cuando el
     /// usuario quiere medirlo todo, y nunca un aviso por carpeta.
     ///

@@ -506,6 +506,19 @@ final class SystemMonitor {
         var mem = 0.0
         var kind = "other"
         var pid: pid_t = 0
+        /// Ruta del bundle de la app a la que pertenece el grupo. Vacía para lo
+        /// que no es una aplicación (un demonio del sistema): eso no tiene
+        /// icono que enseñar y la fila se queda con el símbolo genérico.
+        var path = ""
+    }
+
+    /// Una aplicación en marcha, tal como la ve el sistema. El `path` es lo que
+    /// permite sacar su ICONO real: sin él, la fila de consumidores solo podía
+    /// enseñar un símbolo genérico, que no dice cuál de las cinco filas es cuál.
+    private struct RunningApp {
+        let name: String
+        let bundle: String
+        let path: String
     }
 
     /// Procesos con su consumo, agrupados por aplicación responsable.
@@ -554,15 +567,18 @@ final class SystemMonitor {
             var name: String
             var kind = "other"
             var groupPID = pid
+            var groupPath = ""
             if let owner = Self.ancestorApp(of: pid, map: map, apps: apps), let app = apps[owner] {
                 key = Self.serviceKey(of: owner, app: app)
                 name = app.name
                 kind = "app"
                 groupPID = owner
+                groupPath = app.path
             } else if let app = apps[pid] {
                 key = Self.serviceKey(of: pid, app: app)
                 name = app.name
                 kind = "app"
+                groupPath = app.path
             } else {
                 key = "pid:\(pid)"
                 name = info.name
@@ -572,6 +588,7 @@ final class SystemMonitor {
             g.cpu += cpu
             g.mem += usage.memMB
             g.kind = kind
+            if g.path.isEmpty { g.path = groupPath.isEmpty ? Self.bundlePath(of: pid) : groupPath }
             groups[key] = g
         }
         prevProcCPU = cpuNow
@@ -587,17 +604,37 @@ final class SystemMonitor {
                         "kind": entry.value.kind,
                         "procs": entry.value.procs,
                         "cpu": entry.value.cpu,
-                        "mem": entry.value.mem])
+                        "mem": entry.value.mem,
+                        "icon": iconDataURL(path: entry.value.path)])
         }
         return out
     }
 
-    private static func runningApps() -> [pid_t: (name: String, bundle: String)] {
-        var out: [pid_t: (name: String, bundle: String)] = [:]
+    /// El bundle al que pertenece un proceso, sacado de la RUTA DE SU EJECUTABLE
+    /// y no de la lista de aplicaciones del sistema.
+    ///
+    /// Hace falta para los procesos que no son aplicaciones para el sistema pero
+    /// sí lo son para el ojo: el contenido web de Safari y los ayudantes de
+    /// WebKit no aparecen en `runningApplications` y se quedaban sin icono, justo
+    /// las dos filas que más se repiten en la lista. Su ejecutable vive dentro del
+    /// `.app` que los lanza, así que basta con subir hasta él.
+    private static func bundlePath(of pid: pid_t) -> String {
+        var buf = [CChar](repeating: 0, count: Int(MAXPATHLEN))
+        let n = proc_pidpath(pid, &buf, UInt32(buf.count))
+        guard n > 0 else { return "" }
+        let exec = String(cString: buf)
+        guard let range = exec.range(of: ".app/") else { return "" }
+        return String(exec[exec.startIndex..<range.lowerBound]) + ".app"
+    }
+
+    private static func runningApps() -> [pid_t: RunningApp] {
+        var out: [pid_t: RunningApp] = [:]
         for app in NSWorkspace.shared.runningApplications where app.processIdentifier > 0 {
             let name = app.localizedName ?? app.bundleURL?.deletingPathExtension().lastPathComponent ?? ""
             guard !name.isEmpty else { continue }
-            out[app.processIdentifier] = (name, app.bundleIdentifier ?? "")
+            out[app.processIdentifier] = RunningApp(name: name,
+                                                    bundle: app.bundleIdentifier ?? "",
+                                                    path: app.bundleURL?.path ?? "")
         }
         return out
     }
@@ -606,7 +643,7 @@ final class SystemMonitor {
     /// sus ayudantes es lo que evita que la app salga dos veces: sus ayudantes
     /// entraban por la clave de su padre y ella por la suya, así que Figma
     /// aparecía una vez con sus 14 procesos y otra vez sola.
-    private static func serviceKey(of pid: pid_t, app: (name: String, bundle: String)) -> String {
+    private static func serviceKey(of pid: pid_t, app: RunningApp) -> String {
         app.bundle.isEmpty ? "app:\(pid)" : "svc:\(app.bundle)#\(app.name)"
     }
 
@@ -616,7 +653,7 @@ final class SystemMonitor {
     /// fuera su propio grupo —una fila por pestaña de Safari— y el agrupado por
     /// servicio, que es el que los junta, no se alcanzaría nunca.
     private static func ancestorApp(of pid: pid_t, map: [pid_t: ProcInfo],
-                                    apps: [pid_t: (name: String, bundle: String)]) -> pid_t? {
+                                    apps: [pid_t: RunningApp]) -> pid_t? {
         var current = pid
         for _ in 0..<8 {
             guard let info = map[current] else { return nil }
@@ -625,6 +662,22 @@ final class SystemMonitor {
             current = info.ppid
         }
         return nil
+    }
+
+    /// El icono real de la aplicación a la que pertenece un grupo de procesos,
+    /// en PNG dentro de un data URL. Se dibuja UNA vez por ruta y se guarda:
+    /// esta lista se rehace cada dos segundos y volver a rasterizar el mismo
+    /// icono en cada muestra sería gastar CPU justo en la pantalla que mide la
+    /// CPU. Reutiliza el mismo dibujado que la lista de Aplicaciones, para que
+    /// un icono y el otro sean la misma imagen.
+    private var iconCache: [String: String] = [:]
+
+    private func iconDataURL(path: String) -> String {
+        guard !path.isEmpty else { return "" }
+        if let hit = iconCache[path] { return hit }
+        let url = AppInventory.iconDataURL(path: path, side: 28) ?? ""
+        iconCache[path] = url
+        return url
     }
 
     /// CPU acumulada (ns) y huella de memoria (MB) de un proceso.
