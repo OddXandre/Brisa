@@ -9,12 +9,10 @@ brisa-mac/
 ├── Package.swift              Proyecto SwiftPM (macOS 14+, sin dependencias)
 ├── Sources/brisa_app/         Swift (una responsabilidad por archivo)
 │   └── Resources/index.html   La interfaz: fuente única de app y prototipo
-│       ├── DockLogo.svg       Marca del Dock, el instalador y los permisos
-│       ├── AppLogo.svg        Símbolo de la sidebar plegada
-│       ├── TextLogo.svg       Wordmark de la sidebar abierta
+│       ├── DockLogo.svg       Marca del Dock y del instalador (fuente del .icns)
 │       └── favicon.svg        Icono de pestaña
 ├── Tests/                     Verificadores standalone por fase (swiftc)
-├── Scripts/                   Publicador de la interfaz, verificador, icono, DMG y medición
+├── Scripts/                   Publicador de la interfaz, verificador, icono y DMG
 ├── Docs/                      El mensaje de beta y la guía del primer arranque
 ├── prototipo-brisa.html       Prototipo navegable publicado (generado)
 └── build-app.sh               Brisa.app firmada ad-hoc
@@ -23,7 +21,7 @@ brisa-mac/
 La interfaz se edita **solo** en `Sources/brisa_app/Resources/index.html`. De ahí
 salen, en cada compilación y por `Scripts/publicar.py`, las dos copias que se
 publican —`prototipo-brisa.html` en la raíz y la que carga la app—: el publicador
-**recorta los comentarios** (−27 % del peso) y comprueba que no se pierde nada
+**recorta los comentarios** (−29 % del peso) y comprueba que no se pierde nada
 —claves de idioma, iconos, selectores, ids y `data-i18n` han de coincidir con la
 fuente, y cada `<script>` ha de compilar—. La fuente sigue documentada; el
 artefacto que descarga el usuario, no. Nadie edita una copia a mano, así que las

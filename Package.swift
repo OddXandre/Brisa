@@ -8,15 +8,13 @@ let package = Package(
         .executableTarget(
             name: "brisa_app",
             path: "Sources/brisa_app",
-            // Los tres logos de marca viven en el árbol —son la fuente del
-            // símbolo, del wordmark y del .icns— pero NO viajan dentro del
-            // .app: el símbolo y el wordmark van dibujados en línea en el
-            // index.html, y el icono se genera en la compilación desde
-            // DockLogo.svg. Declararlos como recurso los empaquetaba en el
-            // bundle para que nadie los leyera nunca.
+            // DockLogo.svg es la fuente del .icns: vive en el árbol pero NO
+            // viaja dentro del .app —el icono se genera en la compilación
+            // desde él y se copia ya hecho al bundle—. Declararlo como
+            // recurso lo empaquetaba para que nadie lo leyera nunca. El
+            // símbolo y el wordmark de la sidebar no están aquí: van
+            // dibujados en línea en el index.html, que es su única fuente.
             exclude: [
-                "Resources/AppLogo.svg",
-                "Resources/TextLogo.svg",
                 "Resources/DockLogo.svg",
             ],
             resources: [.process("Resources")]
