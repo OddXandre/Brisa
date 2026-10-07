@@ -1,0 +1,34 @@
+<nav class="nav" data-open="false">
+  <div class="nav-in">
+    <a class="brand" href="{{v:urlInicio}}" aria-label="{{t:marca.aria}}">
+      <svg class="logo" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
+      <b>{{t:marca.nombre}}</b>
+    </a>
+
+    <ul class="nav-links" id="menu">
+      <li><a href="{{v:urlHerramientas}}" {{v:curHerramientas}}>{{t:nav.herramientas}}</a></li>
+      <li><a href="{{v:urlSeguridad}}" {{v:curSeguridad}}>{{t:nav.seguridad}}</a></li>
+      <li><a href="{{v:urlDescarga}}" {{v:curDescarga}}>{{t:nav.descarga}}</a></li>
+      <li><a href="{{v:urlPreguntas}}" {{v:curPreguntas}}>{{t:nav.preguntas}}</a></li>
+      <li><a href="{{v:urlPrivacidad}}" {{v:curPrivacidad}}>{{t:nav.privacidad}}</a></li>
+    </ul>
+
+    <div class="nav-acts">
+      <button class="icon-btn" type="button" data-tema-boton
+              data-etiqueta="{{t:nav.tema}}"
+              data-claro="{{t:nav.temaClaro}}" data-oscuro="{{t:nav.temaOscuro}}"
+              aria-label="{{t:nav.temaClaro}}" title="{{t:nav.temaClaro}}">
+        <svg data-tema-icono="light" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:sol}}</svg>
+        <svg data-tema-icono="dark" aria-hidden="true" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:luna}}</svg>
+      </button>
+
+      <a class="icon-btn wide" href="{{v:urlIdioma}}" hreflang="{{v:langOtra}}"
+         title="{{t:nav.idioma}}" aria-label="{{t:nav.idioma}}"><span lang="{{v:langOtra}}">{{t:nav.idiomaTexto}}</span></a>
+
+      <a class="btn primary sm" href="{{v:urlDescarga}}">{{ico:descarga}}<span class="lbl">{{t:nav.descargar}}</span></a>
+
+      <button class="icon-btn nav-toggle" type="button" data-menu-boton aria-expanded="false"
+              aria-controls="menu" aria-label="{{t:nav.menu}}">{{ico:menu}}</button>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,862 @@
+/* ============================================================================
+   Brisa · web · sistema de diseño
+   ----------------------------------------------------------------------------
+   Una sola hoja, sin dependencias y sin fuentes externas: usa la misma pila
+   tipográfica que la app (Inter y, en cualquier Mac sin Inter instalada, SF
+   Pro), así que el sitio y el producto se leen igual.
+
+   La paleta NO se inventa aquí: son los tokens de la interfaz de la app
+   (Sources/brisa_app/Resources/index.html). Si un color cambia, cambia en los
+   dos sitios o el sitio deja de ser el producto.
+
+   Tres reglas que vienen del propio sistema de la app y que esta hoja respeta:
+     · El acento es una brasa y solo una. En cada pantalla hay UN elemento
+       naranja. Si aparece un segundo, deja de ser información y pasa a ser
+       decoración.
+     · Nada proyecta sombra salvo lo que de verdad flota (la ventana del
+       producto, las hojas). Las tarjetas se definen con un filete.
+     · Una sola elevación por pieza: filete **o** sombra, nunca los dos. Un
+       borde bajo una sombra ancha son dos piezas superpuestas, no una.
+
+   Todo el espaciado sale de la escala `--s-*` y todo el texto de la escala
+   `--t-*`. No hay un solo tamaño ni un solo hueco escrito a mano: es lo único
+   que hace que seis páginas distintas tengan el mismo ritmo, y lo que permite
+   medirlo con el verificador.
+
+   Los dos temas van declarados enteros, uno por selector: sin atributo manda
+   el sistema (`prefers-color-scheme`) y con atributo manda quien pulsa el
+   conmutador. Se repiten los tokens oscuros a cambio de que el tema no dependa
+   del orden de las reglas ni de ninguna función nueva del navegador.
+   ========================================================================= */
+
+/* ── 1 · Tokens ──────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light dark;
+
+  /* Superficies y tinta. Los nombres son los de la app. */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f3f3f7;
+  --line: #dcdde5;
+  --line-2: #b9bbc6;
+  --ink: #000000;
+  --ink-2: #60646c;
+  --ink-3: #6f737b;
+  --ink-4: #8b8d98;
+  --sel: rgba(120, 120, 128, .12);
+  --rail: rgba(120, 120, 128, .08);
+  --glass: rgba(255, 255, 255, .78);
+  --float: rgba(255, 255, 255, .86);
+  --rim: inset 0 .5px 0 rgba(255, 255, 255, .7);
+  /* El filete de lo que flota va DENTRO de su sombra, no como `border`: ver la
+     nota de elevación de la cabecera. Un solo recurso por pieza. */
+  --ring: rgba(0, 0, 0, .09);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .04), 0 24px 64px -18px rgba(0, 0, 0, .22);
+  --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .6);
+
+  /* Acento: una brasa, en el tono que la app usa para texto y para la acción.
+     `--acc` es el de la app tal cual, y por eso el botón principal lleva tinta
+     blanca sobre él igual que el suyo; `--acc-text` es la brasa oscurecida
+     hasta pasar 4,5:1 sobre el blanco, que es para lo que la app la tiene
+     también. `--veil` es el velo de fondo del héroe, el mismo que la app se
+     pone detrás de la interfaz. */
+  --acc: #ff5900;
+  --acc-text: #c93f04;
+  --acc-ink: #ffffff;
+  --acc-soft: rgba(255, 89, 0, .1);
+  --veil: rgba(255, 89, 0, .055);
+  --mark: #ff4404;
+
+  /* Formas: los radios de la app, sin inventar una rampa nueva. */
+  --r-ctl: 8px;
+  --r-panel: 12px;
+  --r-btn: 12px;
+  --r-window: 14px;
+
+  /* Curvas: las de la app, más la de llegada del sistema. */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease-io: cubic-bezier(.4, 0, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --t-reveal: .68s;                /* lo que tarda en llegar lo que sube */
+  --paso: 60ms;                    /* el retardo entre hermanos de una lista, puesto por el guion */
+
+  /* Escala tipográfica. Seis pasos y ningún tamaño fuera de ellos, con el
+     cuerpo y el interlineado tomados de apple.com: 17 px de lectura —su cuerpo
+     exacto— y 1,47 de interlineado, que es lo que hace que un párrafo largo se
+     lea de un tirón. */
+  --t-2xs: 11.5px;   /* versalitas de etiqueta */
+  --t-xs: 12.5px;    /* notas, separadores, pies de tabla */
+  --t-sm: 13.5px;    /* controles pequeños y etiquetas de celda */
+  --t-md: 15px;      /* cuerpo de un bloque denso: celdas, avisos, filas */
+  --t-lg: 17px;      /* cuerpo de lectura — 17 px es el cuerpo de Apple */
+  --t-2xl: 25px;     /* titular de un bloque partido */
+
+  /* Escala de aire. De 4 en 4 hasta 16, y de ahí en saltos que se notan. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* Medidas de esta web. */
+  --max: 1080px;
+  --gutter: 24px;
+  --sec: 112px;      /* aire de una sección de escritorio */
+  --nav-h: 60px;
+
+  /* Pila tipográfica. Inter si está instalada; si no, SF Pro, que es la que
+     usa la app y la que macOS trae. Nunca una fuente de fuera. */
+  --font: Inter, "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+  --font-display: Inter, "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0a0a;
+    --surface: rgba(255, 255, 255, .053);
+    --surface-2: rgba(255, 255, 255, .075);
+    --line: rgba(255, 255, 255, .11);
+    --line-2: rgba(255, 255, 255, .20);
+    --ink: rgba(255, 255, 255, .96);
+    --ink-2: rgba(236, 236, 236, .70);
+    --ink-3: rgba(236, 236, 236, .58);
+    --ink-4: rgba(236, 236, 236, .46);
+    --sel: rgba(255, 255, 255, .06);
+    --rail: rgba(255, 255, 255, .045);
+    --glass: rgba(15, 15, 15, .72);
+    --float: rgba(18, 18, 18, .80);
+    --rim: inset 0 .5px 0 rgba(255, 255, 255, .09);
+    --ring: rgba(255, 255, 255, .13);
+    --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
+    --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .9);
+    --acc-text: #ff7b3d;
+    --acc-soft: rgba(255, 89, 0, .16);
+    --veil: rgba(255, 89, 0, .1);
+  }
+}
+
+/* El conmutador del sitio: los dos temas declarados enteros otra vez, uno por
+   atributo, para poder forzar cualquiera de ellos por encima del sistema —que
+   es lo que hace la app en su apartado Apariencia—.
+
+   El bloque del tema claro tiene que repetir sus valores aunque ya estén en
+   `:root`: cuando el sistema está en oscuro, la media query de arriba los pisa,
+   y sin la repetición no hay nada que le gane. Faltaba, y el resultado era
+   visible: al forzar el tema claro con el Mac en oscuro, la página seguía
+   negra mientras las capturas ya se habían cambiado a las claras. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f3f3f7;
+  --line: #dcdde5;
+  --line-2: #b9bbc6;
+  --ink: #000000;
+  --ink-2: #60646c;
+  --ink-3: #6f737b;
+  --ink-4: #8b8d98;
+  --sel: rgba(120, 120, 128, .12);
+  --rail: rgba(120, 120, 128, .08);
+  --glass: rgba(255, 255, 255, .78);
+  --float: rgba(255, 255, 255, .86);
+  --rim: inset 0 .5px 0 rgba(255, 255, 255, .7);
+  --ring: rgba(0, 0, 0, .09);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .04), 0 24px 64px -18px rgba(0, 0, 0, .22);
+  --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .6);
+  --acc-text: #c93f04;
+  --acc-soft: rgba(255, 89, 0, .1);
+  --veil: rgba(255, 89, 0, .055);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface: rgba(255, 255, 255, .053);
+  --surface-2: rgba(255, 255, 255, .075);
+  --line: rgba(255, 255, 255, .11);
+  --line-2: rgba(255, 255, 255, .20);
+  --ink: rgba(255, 255, 255, .96);
+  --ink-2: rgba(236, 236, 236, .70);
+  --ink-3: rgba(236, 236, 236, .58);
+  --ink-4: rgba(236, 236, 236, .46);
+  --sel: rgba(255, 255, 255, .06);
+  --rail: rgba(255, 255, 255, .045);
+  --glass: rgba(15, 15, 15, .72);
+  --float: rgba(18, 18, 18, .80);
+  --rim: inset 0 .5px 0 rgba(255, 255, 255, .09);
+  --ring: rgba(255, 255, 255, .13);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
+  --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .9);
+  --acc-text: #ff7b3d;
+  --acc-soft: rgba(255, 89, 0, .16);
+  --veil: rgba(255, 89, 0, .1);
+}
+
+/* ── 2 · Base ────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + var(--s-5)); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 var(--t-lg)/1.47 var(--font);
+  /* El mismo interletraje que Apple aplica a su cuerpo (−0,374 px a 17 px, que
+     es −0,022 em): su texto se lee apretado porque el trazo ya va ajustado, y
+     sin esto el nuestro se lee suelto a cualquier tamaño. Hereda a todo lo que
+     no fije el suyo, que es exactamente lo que se busca. */
+  letter-spacing: -.022em;
+  /* La app ajusta el trazo de Inter al tamaño y el juego de caracteres alterno
+     que usa. El sitio hace lo mismo para que el texto se vea igual de asentado,
+     no para «parecerse»: son los mismos ajustes del mismo tipo. */
+  font-optical-sizing: auto;
+  font-feature-settings: "cv11";
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: .06em; }
+img { max-width: 100%; }
+/* Explícito y para cualquier elemento: el conmutador de tema esconde un icono
+   con este atributo, y en un SVG el navegador no lo aplica solo. */
+[hidden] { display: none !important; }
+::selection { background: var(--acc-soft); }
+/* Superficies del navegador: el cursor y el filete de enlace también son del
+   sistema de diseño, o la página se lee como un montaje. */
+body { caret-color: var(--acc); }
+
+/* El foco se ve siempre y se ve en la brasa: es el único sitio donde el naranja
+   aparece sin querer decir «esta es la acción principal». */
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+.skip {
+  position: absolute; left: -9999px; top: var(--s-2); z-index: 100;
+  background: var(--float); border: 1px solid var(--line);
+  padding: var(--s-2) var(--s-3); border-radius: var(--r-ctl); text-decoration: none;
+}
+.skip:focus { left: var(--s-4); }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ── 3 · Navegación ──────────────────────────────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--glass);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid var(--line);
+}
+.nav-in {
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter);
+  height: var(--nav-h); display: flex; align-items: center; gap: var(--s-5);
+}
+.brand {
+  display: flex; align-items: center; gap: var(--s-2);
+  font: 600 var(--t-lg)/1 var(--font-display); letter-spacing: -.03em;
+  text-decoration: none; margin-right: var(--s-1);
+}
+/* El símbolo del sitio es el favicon de la app, copiado tal cual al construir
+   (build.py): una sola imagen, no un dibujo paralelo que se separa del original. */
+/* La marca es el pétalo, no el icono de la aplicación: el icono lleva la placa
+   oscura con la que el sistema lo pone en el Dock, y sobre una página clara esa
+   placa es un cuadrado negro pegado al nombre. El pétalo sale del mismo archivo
+   (build.py lo extrae del favicon), así que el símbolo sigue siendo uno solo. */
+.brand .logo { width: 22px; height: 22px; display: block; flex: none; color: var(--mark); }
+.brand b { font-weight: 600; }
+
+.nav-links { display: flex; gap: var(--s-1); list-style: none; margin: 0; padding: 0; }
+.nav-links a {
+  display: block; padding: 7px var(--s-3); border-radius: var(--r-ctl);
+  font-size: var(--t-sm); color: var(--ink-2); text-decoration: none;
+  transition: color .15s, background-color .15s;
+}
+.nav-links a:hover { color: var(--ink); background: var(--sel); }
+.nav-links a[aria-current="page"] { color: var(--ink); background: var(--sel); }
+.nav-acts { margin-left: auto; display: flex; align-items: center; gap: var(--s-2); }
+
+/* Botón de icono: tema, idioma y menú. 34px de lado, 46px de área táctil
+   ampliada con un pseudo-elemento, para no engordar la barra. */
+.icon-btn {
+  position: relative; width: 34px; height: 34px; display: grid; place-items: center;
+  border: 1px solid transparent; border-radius: var(--r-ctl);
+  background: transparent; color: var(--ink-2); cursor: pointer;
+  font: 500 var(--t-2xs)/1 var(--font-mono); letter-spacing: .02em; text-decoration: none;
+  transition: color .15s, background-color .15s, border-color .15s;
+}
+.icon-btn:hover { color: var(--ink); background: var(--sel); }
+.icon-btn::after { content: ""; position: absolute; inset: -6px; }
+.icon-btn.wide { width: auto; padding: 0 var(--s-2); gap: var(--s-1); grid-auto-flow: column; }
+.icon-btn svg { width: 17px; height: 17px; }
+
+.nav-toggle { display: none; }
+
+@media (max-width: 900px) {
+  /* El menú de móvil es opaco, y no por gusto. Con la superficie flotante
+     translúcida (`--float`, al 86 %) el titular de la página se leía a través
+     del menú abierto: el desenfoque no llega a aplicarse ahí —medido en el
+     navegador, con la superficie puesta a transparente el texto de debajo sale
+     nítido, así que lo que se veía era la transparencia y nada más—. Un
+     desplegable tapa lo que hay debajo; si se puede leer la página a través de
+     él, no es un cristal: es un defecto. La barra de arriba sí va en cristal,
+     porque no tapa nada: el contenido pasa por debajo al hacer scroll. */
+  .nav-links {
+    display: none;
+    position: absolute; left: 0; right: 0; top: var(--nav-h);
+    flex-direction: column; gap: var(--s-1); padding: var(--s-3) var(--gutter) var(--s-4);
+    background: var(--bg); border-bottom: 1px solid var(--line);
+  }
+  .nav-links a { padding: var(--s-3); font-size: var(--t-lg); }
+  .nav[data-open="true"] .nav-links { display: flex; }
+  .nav-toggle { display: grid; }
+  /* El botón de descarga de la barra mide 34px de alto, que con el pulgar es
+     poco. El control se queda igual de pequeño y el área que recibe el toque se
+     amplía a 46px con un pseudo-elemento, como en los botones de icono. */
+  .nav-acts .btn { position: relative; }
+  .nav-acts .btn::after { content: ""; position: absolute; inset: -6px; }
+}
+
+/* ── 4 · Botones ─────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  height: 42px; padding: 0 var(--s-5); border-radius: var(--r-btn);
+  font: 500 14.5px/1 var(--font); letter-spacing: -.01em;
+  text-decoration: none; white-space: nowrap; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
+  transition: background-color .15s var(--ease-io), border-color .15s, transform .16s var(--ease), color .15s, filter .15s;
+}
+.btn:hover { border-color: var(--line-2); }
+.btn:active { transform: scale(.97); }
+.btn svg { width: 17px; height: 17px; flex: none; }
+.btn small { font: 400 var(--t-xs) var(--font-mono); color: var(--ink-3); }
+/* El único naranja de la pantalla suele ser este botón. Mismo relleno y misma
+   tinta que el botón principal de la app (`#ff5900` sobre blanco): el sitio no
+   se inventa un tono propio para la acción. El realce al pasar por encima
+   también es el suyo, un 8 % de brillo —antes se mezclaba con `--ink`, que en
+   tema oscuro es casi blanco, así que ahí el botón se aclaraba en vez de
+   encenderse y el mismo gesto hacía dos cosas distintas según el tema—. */
+.btn.primary { background: var(--acc); border-color: transparent; color: var(--acc-ink); box-shadow: var(--rim); }
+.btn.primary:hover { border-color: transparent; filter: brightness(1.08); }
+.btn.primary small { color: rgba(255, 255, 255, .78); }
+.btn.quiet { background: transparent; border-color: transparent; color: var(--ink-2); }
+.btn.quiet:hover { background: var(--sel); color: var(--ink); border-color: transparent; }
+.btn.lg { height: 48px; padding: 0 var(--s-5); font-size: 15.5px; }
+.btn.sm { height: 34px; padding: 0 var(--s-3); font-size: var(--t-sm); border-radius: var(--r-ctl); }
+.btn[aria-disabled="true"], .btn:disabled { opacity: .55; pointer-events: none; }
+
+/* Dos botones juntos no son un botón: 14px los separa para que se lean como dos
+   acciones y no como una sola pieza partida. */
+.ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ── 5 · Héroe ───────────────────────────────────────────────────────────── */
+.hero { position: relative; padding: 104px 0 var(--s-8); text-align: center; isolation: isolate; }
+/* El velo de brasa: el mismo fondo que la app se pone detrás de su interfaz
+   (un radial de brasa al 4 %). Es lo único decorativo del héroe, sale del
+   producto y no dibuja ninguna retícula. Aquí había una cuadrícula de 48px
+   enmascarada: una retícula que no medía nada, y por eso se ha ido. */
+.hero::before {
+  content: ""; position: absolute; inset: -12% 0 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(52% 44% at 50% 8%, var(--veil), transparent 72%);
+}
+.hero .mark { width: 108px; height: 108px; margin: 0 auto var(--s-6); display: block; color: var(--mark); }
+/* El titular de portada. Apple lleva su mayor titular de escritorio a 56 px con
+   1,07 de interlineado y el interletraje casi neutro —a tamaños grandes su tipo
+   ya viene apretado de fábrica, así que no se aprieta a mano—: esto son esos
+   mismos números, no un 68 px que solo cabía en una pantalla ancha. */
+h1 {
+  font: 600 clamp(32px, 5.4vw, 56px)/1.07 var(--font-display); letter-spacing: -.008em;
+  margin: 0 auto var(--s-5); max-width: 15ch; text-wrap: balance;
+}
+.lede {
+  font-size: clamp(var(--t-lg), 1.6vw, 21px); line-height: 1.4; letter-spacing: -.012em;
+  color: var(--ink-2); max-width: 30em; margin: 0 auto var(--s-6); text-wrap: pretty;
+}
+.ctas.center { justify-content: center; }
+.meta {
+  margin: var(--s-5) 0 0; font-size: var(--t-xs); color: var(--ink-3);
+  display: flex; justify-content: center; flex-wrap: wrap;
+}
+.meta span + span::before { content: "·"; margin: 0 var(--s-3); color: var(--ink-4); }
+/* El estado de la versión —«Beta 0.1.0 · firma ad-hoc»— va con el resto de la
+   línea, en el mismo gris. El acento de este sitio marca puertas: enlaces y el
+   botón principal. Una etiqueta que no lleva a ningún sitio no se viste como
+   una, porque un rótulo coloreado se lee como algo que se puede pulsar. */
+
+/* ── 6 · Ventana del producto ────────────────────────────────────────────── */
+/* El marco de una captura: proporción fija y nada más. La ventana no dibuja sus
+   semáforos —los dibujaba, y se han quitado; el porqué está más abajo, donde
+   estaba la regla—.
+
+   Tres decisiones que se notan cuando fallan:
+     · la proporción está en el propio `figure`, así que el sitio reserva el
+       hueco exacto antes de que la imagen llegue y nada salta al cargar;
+     · la superficie de debajo es la de un panel, así que una captura que aún
+       no ha llegado (van con carga diferida) se lee como un panel vacío y no
+       como una imagen rota;
+     · la elevación es la sombra, que ya lleva dentro su filete de medio píxel.
+       Antes había además un `border`, y un borde bajo una sombra ancha se lee
+       como dos piezas superpuestas. */
+.window {
+  position: relative; margin: 0; display: block;
+  border-radius: var(--r-window); overflow: hidden;
+  background: var(--surface-2);
+  box-shadow: var(--shadow-window);
+  aspect-ratio: 1180 / 760;
+}
+.window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+/* Los tres semáforos de macOS estaban dibujados aquí con CSS, para que la
+   captura se leyera como una ventana y no como un recorte. Ya no están, y el
+   motivo es la única razón por la que esto se quita: una ventana de verdad los
+   lleva de tamaño fijo —12 px, ni escalan con el ancho ni con el alto— y
+   dibujarlos aquí obligaba a inventarles una proporción que cambiaba en cada
+   pieza del sitio. Se veía al medir: en las nueve ventanas de «Qué hace» el
+   amarillo salía un 40 % más grande que sus vecinos (8,00 px frente a 5,73),
+   porque el radio salía del lado más cercano a cada centro y la caja dejaba de
+   ser proporcional en cuanto entraba su tope de 8 px. Igualados los tres, salían
+   más grandes de lo que la imagen reserva para ellos, así que la decisión es no
+   fingirlos: la captura se enseña tal cual, con su barra de título y su hueco,
+   sin añadidos encima. Menos piezas y ninguna mentira.
+
+   Si algún día vuelven, que sea con un tamaño fijo en píxeles —el que tienen en
+   macOS— y no con porcentajes de la ventana. */
+/* La captura de portada: el aire de debajo es el mismo que el de una sección,
+   porque para el lector es exactamente eso, el final del bloque de arriba. */
+.showcase { padding: 0 0 var(--s-9); }
+.showcase .window { max-width: var(--max); margin: 0 auto; }
+/* Arriba, en cambio, el bloque no se separa solo: en la portada el aire lo pone
+   el propio héroe (`padding-bottom`), pero una cabecera interior no lleva aire
+   abajo, así que su botón quedaba pegado a la ventana. Mismo hueco que el de una
+   cabecera seguida de una sección. */
+section.head + .showcase { padding-top: var(--s-8); }
+
+/* ── 7 · Secciones ───────────────────────────────────────────────────────── */
+section { padding: var(--sec) 0; border-top: 1px solid var(--line); }
+section.plain { border-top: 0; }
+/* La etiqueta que nombra un bloque. En la escala pequeña, en versalitas y en la
+   sans del sitio: la mono se queda para el código y las cifras, que es donde
+   dice algo. */
+.eyebrow {
+  font: 600 var(--t-2xs)/1 var(--font); text-transform: uppercase; letter-spacing: .09em;
+  color: var(--ink-3); margin: 0 0 var(--s-3); max-width: none;
+}
+h2 {
+  font: 600 clamp(24px, 3.6vw, 36px)/1.1 var(--font-display); letter-spacing: -.008em;
+  margin: 0 0 var(--s-4); max-width: 20ch; text-wrap: balance;
+}
+h3 { font: 600 18px/1.24 var(--font-display); letter-spacing: -.008em; margin: 0 0 var(--s-2); }
+.sub { color: var(--ink-2); font-size: var(--t-lg); line-height: 1.47; max-width: 34em; margin: 0; text-wrap: pretty; }
+.sub + .sub { margin-top: var(--s-3); }
+
+/* Cabecera de una página interior: el mismo orden que el héroe, pero alineada a
+   la izquierda, porque aquí no hay nada que centrar. Sin etiqueta encima: un
+   rótulo que repite la palabra del titular no ordena nada, solo retrasa la
+   lectura. El aire de arriba se lo queda la cabecera. */
+section.head { padding: var(--s-9) 0 0; border-top: 0; }
+section.head h1 { font-size: clamp(28px, 4.4vw, 48px); line-height: 1.08; margin: 0 0 var(--s-5); max-width: 24ch; }
+section.head .lede { margin: 0; }
+section.head .ctas { margin-top: var(--s-6); }
+section.head + section { border-top: 0; padding-top: var(--s-8); }
+
+/* ── 8 · Rejilla de celdas (filete de 1px) ───────────────────────────────── */
+.grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-panel);
+  overflow: hidden; background: var(--surface);
+}
+.cell { padding: var(--s-6); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.cell:nth-child(2n) { border-right: 0; }
+.cell:nth-last-child(-n+2) { border-bottom: 0; }
+.cell .ic {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border-radius: var(--r-ctl); background: var(--surface-2);
+  border: 1px solid var(--line); margin-bottom: var(--s-5); color: var(--ink);
+}
+.cell .ic svg { width: 18px; height: 18px; }
+.cell p { margin: 0 0 var(--s-4); color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.cell .detail {
+  font-size: var(--t-sm); color: var(--ink-3);
+  display: flex; align-items: center; gap: var(--s-2);
+}
+.cell .detail .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--acc); flex: none; }
+.cell a.cell-link { text-decoration: none; display: block; }
+.cell a.cell-link:hover :is(h2, h3) { color: var(--acc-text); }
+/* En la rejilla de la privacidad el título de cada tarjeta es un `h2` y no un
+   `h3`: esa rejilla va justo debajo del titular de la página, sin un titular de
+   sección por encima —igual que las nueve vistas de «Qué hace», que también son
+   `h2`—, y un `h3` sin `h2` encima deja un hueco en el índice del documento que
+   recorre quien usa un lector de pantalla. El nivel es el que le toca; el
+   tamaño, el de la tarjeta. */
+.grid .cell h2 { font: 600 18px/1.24 var(--font-display); letter-spacing: -.008em; margin: 0 0 var(--s-2); }
+
+/* La misma rejilla, para tres bloques en vez de cuatro: sin cuarta celda, el
+   filete que sobraba era el de la derecha del último. */
+.grid.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid.tres .cell { border-right: 1px solid var(--line); border-bottom: 0; }
+.grid.tres .cell:nth-child(2n) { border-right: 1px solid var(--line); }
+.grid.tres .cell:last-child { border-right: 0; }
+
+/* ── 9 · Filas partidas: texto a un lado, captura al otro ────────────────── */
+/* El aire entre dos bloques partidos es el de una sección corta: tienen que
+   leerse como dos cosas distintas y no como una lista corrida. */
+.split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: center; }
+.split + .split { margin-top: var(--s-9); }
+.split.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.split.flip .text { order: 2; }
+.split > * { min-width: 0; }
+.split h2 { font-size: clamp(25px, 3vw, 32px); }
+
+.points { list-style: none; padding: 0; margin: var(--s-5) 0 0; display: grid; gap: var(--s-3); }
+.points li { display: flex; gap: var(--s-3); align-items: flex-start; font-size: var(--t-md); color: var(--ink-2); }
+.points svg { width: 17px; height: 17px; margin-top: 3px; flex: none; color: var(--acc); }
+.points b { color: var(--ink); font-weight: 500; }
+
+/* La lista de las nueve vistas: cada fila es una vista entera, así que el aire
+   entre filas es el de dos secciones seguidas, y el de dentro el de una fila
+   partida. */
+.tools { display: grid; gap: var(--s-9); margin-top: var(--s-7); }
+.tool { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: center; }
+.tool.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.tool.flip .text { order: 2; }
+.tool > * { min-width: 0; }
+/* El nombre de cada vista, a la escala de su propia fila: en la columna de texto
+   de una lista de nueve, el titular de sección (40 px) pesaba demasiado. */
+.tool h2 { font-size: var(--t-2xl); letter-spacing: -.008em; margin: 0 0 var(--s-3); }
+/* La numeración de las nueve vistas sí dice algo: el titular de la página
+   promete «nueve vistas, una por una», y este es el orden. */
+.tool .num {
+  font: 600 var(--t-2xs)/1 var(--font); color: var(--ink-4); letter-spacing: .1em;
+  display: block; margin-bottom: var(--s-3);
+}
+
+/* ── 10 · Tabla de reglas ────────────────────────────────────────────────── */
+.table {
+  margin-top: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-panel);
+  overflow: hidden; background: var(--surface);
+}
+.row {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: var(--s-4);
+  align-items: center; padding: var(--s-5) var(--s-6); border-bottom: 1px solid var(--line);
+}
+.row:last-child { border-bottom: 0; }
+.row svg { width: 19px; height: 19px; color: var(--ink); }
+.row b { font-weight: 500; }
+.row span { color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.row .tag { font-size: var(--t-xs); color: var(--ink-3); white-space: nowrap; }
+
+/* ── 11 · Cajas de aviso ─────────────────────────────────────────────────── */
+.note {
+  margin-top: var(--s-5); padding: var(--s-5); border-radius: var(--r-panel);
+  border: 1px solid var(--line); background: var(--surface-2);
+  display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: var(--s-4);
+  font-size: var(--t-md); color: var(--ink-2); line-height: 1.5;
+}
+.note svg { width: 19px; height: 19px; margin-top: 1px; color: var(--ink); }
+.note b { color: var(--ink); font-weight: 500; }
+.note h3 { margin-bottom: var(--s-2); }
+/* Un enlace dentro del contenido no es texto: es una puerta, y a 15px el
+   subrayado solo no basta para que se vea. Va en el tono de acento que sí pasa
+   contraste sobre el papel (`--acc-text`, 5:1), no en la brasa cruda.
+
+   Medido en apple.com/es/mac: el acento de texto aparece en 95 elementos y en
+   todos es un enlace —«Comprar», «Más información»—; ni un titular, ni una
+   etiqueta, ni un icono. Aquí se hace lo mismo, y por eso la regla es una sola
+   y cubre todo lo que hay dentro del contenido: antes era una lista de cuatro
+   selectores que se dejaba fuera, por ejemplo, el enlace a la licencia que va
+   junto al botón de descarga, y ese enlace salía sin acento mientras todos los
+   demás salían con él. Quedan fuera, a propósito, los botones y las celdas
+   enteras de la rejilla: ya llevan su propio realce al pasar por encima. */
+main a:not(.btn):not(.cell-link) { color: var(--acc-text); text-decoration: underline; }
+main a:not(.btn):not(.cell-link):hover { color: var(--ink); }
+.note p { margin: 0; }
+.note p + p { margin-top: var(--s-2); }
+.note + .note { margin-top: var(--s-3); }
+.note.accent { border-color: color-mix(in srgb, var(--acc) 34%, var(--line)); background: var(--acc-soft); }
+.note.accent svg { color: var(--acc-text); }
+
+/* ── 12 · Pasos numerados ────────────────────────────────────────────────── */
+.steps { list-style: none; padding: 0; margin: var(--s-7) 0 0; display: grid; gap: 0; counter-reset: paso; }
+.step {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--s-5);
+  padding: var(--s-6) 0; border-top: 1px solid var(--line);
+}
+.step:last-child { border-bottom: 1px solid var(--line); }
+.step .n {
+  counter-increment: paso; width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; font: 500 var(--t-sm)/1 var(--font-mono);
+  border: 1px solid var(--line); color: var(--ink-2); background: var(--surface);
+}
+.step .n::before { content: counter(paso); }
+.step h3 { margin-bottom: var(--s-3); }
+.step p { margin: 0; color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.step p + p { margin-top: var(--s-3); }
+.step code, p code, li code, .body code {
+  font: 13px var(--font-mono); background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px;
+}
+/* La lista de dentro de un paso: los cuatro gestos de macOS, que van en orden y
+   por eso llevan número, separados del cuerpo del paso para que se lean como un
+   procedimiento y no como un párrafo más. */
+.sublist { margin: var(--s-3) 0; padding-left: var(--s-6); color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.sublist li { margin-bottom: var(--s-2); }
+.sublist li:last-child { margin-bottom: 0; }
+.sublist li::marker { color: var(--ink-4); }
+
+/* El comando, en su propio bloque: se lee entero y se copia de una vez. */
+.code {
+  margin: var(--s-5) 0 0; padding: var(--s-4) var(--s-5); border-radius: var(--r-panel);
+  border: 1px solid var(--line); background: var(--surface-2);
+  font: 13px/1.5 var(--font-mono); color: var(--ink);
+  overflow-x: auto; white-space: pre;
+}
+
+/* ── 13 · Preguntas ──────────────────────────────────────────────────────── */
+.faq { max-width: 46em; margin-top: var(--s-5); }
+/* Grupos de preguntas: el mismo bloque repetido, separado por aire. */
+.grupo + .grupo { margin-top: var(--s-8); }
+.grupo > .eyebrow { margin-bottom: var(--s-4); }
+details { border-bottom: 1px solid var(--line); }
+details:first-of-type { border-top: 1px solid var(--line); }
+summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; gap: var(--s-5); padding: var(--s-5) 0;
+  font-weight: 500; font-size: var(--t-lg);
+}
+summary::-webkit-details-marker { display: none; }
+summary svg { width: 18px; height: 18px; color: var(--ink-3); flex: none; transition: transform .2s var(--ease); }
+details[open] summary svg { transform: rotate(90deg); }
+details .body { padding: 0 0 var(--s-5); color: var(--ink-2); max-width: 40em; }
+details .body p { margin: 0 0 var(--s-3); }
+details .body p:last-child { margin-bottom: 0; }
+details .body ul { margin: var(--s-3) 0 0; padding-left: var(--s-5); }
+details .body li { margin-bottom: var(--s-2); }
+
+/* ── 14 · Cierre y pie ───────────────────────────────────────────────────── */
+.final { text-align: center; }
+.final .mark { width: 64px; height: 64px; margin: 0 auto var(--s-6); display: block; color: var(--mark); }
+.final h2 { margin-inline: auto; }
+.final .sub { margin: 0 auto var(--s-6); }
+.final .ctas { justify-content: center; }
+.final .meta { margin-top: var(--s-5); }
+
+footer { border-top: 1px solid var(--line); padding: var(--s-8) 0; font-size: var(--t-sm); color: var(--ink-2); }
+/* Tres columnas: la marca, la navegación del producto y lo que es esta web. */
+.foot-in { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--s-5) var(--s-8); align-items: start; }
+footer .brand { margin-bottom: var(--s-3); }
+footer p { margin: 0; max-width: 34em; }
+footer p + p { margin-top: var(--s-2); }
+footer .eyebrow { margin-bottom: var(--s-4); }
+/* En el pie los enlaces van en columna: son listas, no filas que se parten. */
+.foot-links { display: flex; flex-direction: column; gap: var(--s-3); list-style: none; margin: 0; padding: 0; }
+.foot-links a { text-decoration: none; color: var(--ink-2); }
+.foot-links a:hover { color: var(--ink); }
+.foot-legal {
+  grid-column: 1 / -1; margin-top: var(--s-4); padding-top: var(--s-5); border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); justify-content: space-between;
+  font-size: var(--t-xs); color: var(--ink-3);
+}
+
+/* ── 15 · Movimiento ─────────────────────────────────────────────────────── */
+/* Un solo material, porque es el único que se mueve: el TEXTO SUBE.
+
+   El texto entra subiendo —el mismo gesto con el que la app descubre lo que
+   analiza—, y las capturas NO se animan: el revelado por barrido de las
+   ventanas (marco que subía mientras la imagen se descubría de arriba abajo)
+   se retiró a petición, y las imágenes se muestran tal cual, sin estado de
+   partida y sin llegada.
+
+   Tres cosas que se respetan en todo el bloque:
+     · el estado de partida cuelga de `subir`, una clase que pone el guion y
+       solo él. Sin guion no existe, así que la página se ve entera y quieta
+       en vez de quedarse en blanco;
+     · el estado de partida y el de llegada viven DENTRO de la misma consulta y
+       no fuera. Una regla que esconde contenido fuera de una consulta esconde
+       contenido para todo el mundo, y el verificador lo comprueba;
+     · sin movimiento reducido se entra desplazándose; con él, fundiéndose. En
+       los dos casos hay entrada, así que en los dos casos hay estado de
+       partida: la diferencia es que uno mueve y el otro no. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Estado de partida. Solo existe con el guion vivo. */
+  .subir { opacity: 0; transform: translateY(16px); }
+
+  /* La llegada. */
+  .subir.visto {
+    opacity: 1; transform: none;
+    transition: opacity var(--t-reveal) var(--ease-out) var(--d, 0ms),
+                transform var(--t-reveal) var(--ease-out) var(--d, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Con «Reducir movimiento» activado no se deja la pantalla quieta: se le quita
+     el movimiento a la entrada y se queda el fundido. Es lo que hace el propio
+     sistema cuando ese ajuste está puesto —macOS e iOS cambian sus transiciones
+     por un fundido cruzado en vez de no hacer ninguna—, y conserva el mismo
+     mensaje («esto acaba de llegar») sin mover un píxel: ni `translate`, ni
+     `scale`. Nada de este bloque desplaza nada.
+
+     Lo que sí se conserva es el escalonado (`--d`): un retardo no es movimiento,
+     es orden, y es lo que hace que la lista se lea en vez de aparecer en bloque. */
+  .subir { opacity: 0; }
+  .subir.visto {
+    opacity: 1;
+    transition: opacity .32s var(--ease-out) var(--d, 0ms);
+  }
+}
+
+/* ── 16 · Navegar entre páginas ──────────────────────────────────────────── */
+/* Las cinco pestañas de arriba no son vistas de una aplicación: son cinco
+   documentos. Cambiar de una a otra es una carga de página, y sin nada más lo
+   que se ve es el corte —la pantalla se vacía y vuelve a llenarse—. La
+   transición de documentos es la forma de coserlo: el navegador fotografía la
+   página que se va y la que llega y las funde en una capa que va por encima,
+   fuera del documento. Es CSS y solo CSS: no hay guion que la active, no hay
+   nada que descargar, y donde no exista —Firefox, Safari— no pasa nada, el
+   enlace hace lo de siempre.
+
+   `navigation: auto` la enciende para toda navegación dentro del sitio. Aquí se
+   afina el tiempo —salida corta, llegada algo más larga, porque lo que se queda
+   es lo que llega— y un detalle que se nota: la barra de arriba lleva nombre
+   propio, así que se queda fuera del fundido y no parpadea mientras cambia lo de
+   dentro. Es lo que hace una pestaña de verdad.
+
+   Las ventanas del producto llevan su nombre por vista (`v-resumen`, `v-atlas`…)
+   y por eso ir de la portada a las nueve vistas no es un fundido entre dos fotos
+   distintas: la ventana que ya estabas mirando viaja hasta su sitio nuevo. Cada
+   vista aparece una sola vez por página, así que el nombre nunca se repite.
+
+   Las dos ramas de siempre: sin reducción, lo que llega sube 6 px; con reducción
+   solo se funde. Aquí no hay `.subir` que esconder —estas capas no
+   son del documento, las pinta el navegador—, así que la regla del verificador
+   sobre contenido escondido no entra; lo que sí se exige es que ninguna de las
+   dos ramas se quede sin declarar. */
+@view-transition { navigation: auto; }
+.nav { view-transition-name: barra; }
+/* La barra no se funde consigo misma: es la misma barra en las dos páginas. El
+   navegador, por defecto, cruza su fotograma viejo con el nuevo y los mezcla
+   sumando luz; con un fondo translúcido como el suyo —cristal sobre la página—
+   las dos capas se suman y a media transición la barra se ve más apagada que
+   antes y que después. Se apaga la vieja y se deja la nueva, quieta. */
+::view-transition-old(barra) { animation: none; opacity: 0; }
+::view-transition-new(barra) { animation: none; opacity: 1; }
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) { animation: irse .2s var(--ease-io) both; }
+  ::view-transition-new(root) { animation: llegar .3s var(--ease-out) both; }
+  @keyframes irse { to { opacity: 0; transform: scale(.994); } }
+  @keyframes llegar { from { opacity: 0; transform: translateY(6px); } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root) { animation: fundir .2s linear both; }
+  ::view-transition-new(root) { animation: aparecer .3s linear both; }
+  @keyframes fundir { to { opacity: 0; } }
+  @keyframes aparecer { from { opacity: 0; } }
+}
+
+/* ── 17 · Respuesta ──────────────────────────────────────────────────────── */
+/* Lo que contesta a un gesto, que no es lo mismo que lo que entra en pantalla:
+   son cambios de color y de filete, de 150 a 350ms, sin mover nada de sitio. */
+
+/* La barra se asienta al bajar: el filete se marca y aparece una sombra corta.
+   Es lo que dice «ya no estás arriba» sin desplazar ni un píxel. */
+.nav { transition: border-color .3s var(--ease-io), box-shadow .3s var(--ease-io); }
+.nav[data-scrolled="true"] { border-bottom-color: var(--line-2); box-shadow: var(--shadow-nav); }
+
+/* Una celda con enlace se enciende al pasar por encima. Una sin enlace, no:
+   iluminarla prometería una acción que no existe. */
+.cell { transition: background-color .35s var(--ease-io); }
+.cell:has(a.cell-link):hover { background: var(--rail); }
+
+/* La pregunta abierta se despliega con la altura de su propio contenido, en vez
+   de aparecer de golpe. Necesita `::details-content`, que no está en todos los
+   navegadores; sin él, se abre igual y sin transición. */
+@supports selector(::details-content) {
+  @media (prefers-reduced-motion: no-preference) {
+    details { interpolate-size: allow-keywords; }
+    details::details-content {
+      block-size: 0; overflow: hidden; opacity: 0;
+      transition: block-size .42s var(--ease-out), opacity .28s var(--ease-io),
+                  content-visibility .42s allow-discrete;
+    }
+    details[open]::details-content { block-size: auto; opacity: 1; }
+  }
+  /* Con el movimiento reducido, la respuesta se despliega igual pero sin
+     desplegarse: la altura no viaja —eso es el movimiento— y el cuerpo aparece
+     fundiéndose. Lo que se anuncia sigue siendo lo mismo. */
+  @media (prefers-reduced-motion: reduce) {
+    details::details-content { opacity: 0; transition: opacity .28s var(--ease-io); }
+    details[open]::details-content { opacity: 1; }
+  }
+}
+summary:hover svg { color: var(--ink); }
+
+/* El cambio de tema se asienta en color, no en contenido: lo único que cambia de
+   archivo es la captura. Los dos temas traen los mismos tokens, así que basta
+   con dejar que el color viaje de uno a otro en el mismo tiempo que la app usa
+   en su propio `theme-anim` (430 ms), y con la clase puesta solo durante ese
+   cambio: las transiciones propias de cada control siguen mandando el resto del
+   tiempo. El `*` no lleva `!important`; `html.tema-anim *` ya gana a cualquier
+   regla de un solo selector.
+
+   La transición de vista del navegador haría lo mismo y peor: la captura del
+   tema nuevo todavía no está en la caché la primera vez que se pulsa, así que el
+   fundido enseñaría medio segundo de panel vacío. */
+@media (prefers-reduced-motion: no-preference) {
+  html.tema-anim *, html.tema-anim *::before, html.tema-anim *::after {
+    transition: background-color .43s var(--ease-io), color .43s var(--ease-io),
+                border-color .43s var(--ease-io), box-shadow .43s var(--ease-io),
+                fill .43s var(--ease-io), stroke .43s var(--ease-io);
+  }
+}
+
+/* ── 18 · Documentos ─────────────────────────────────────────────────────── */
+/* El aviso legal y la licencia no son páginas de producto: son prosa con
+   apartados, y cada titular abre uno con su párrafo debajo. Sin aire de abajo,
+   el titular siguiente se lee como continuación del párrafo anterior —es el
+   mismo fallo que dejó un botón pegado a la captura, pero en texto— y en un
+   documento eso no es cuestión de gusto: es lo que hace ver qué apartado
+   responde a qué pregunta. */
+.prosa :is(h2, h3) + .sub { margin-bottom: var(--s-7); }
+/* La letra pequeña: la licencia junto al botón que la acepta, y la fecha de
+   revisión de cada documento. Se lee sin ir a buscarla y no compite con el
+   titular, que es justo lo que se le pide. */
+.letra-pequena { margin: var(--s-5) 0 0; font-size: var(--t-sm); color: var(--ink-3); max-width: 44em; text-wrap: pretty; }
+
+/* ── 19 · Adaptación ─────────────────────────────────────────────────────── */
+/* Los dos cortes: a 900px la barra no cabe y el menú se pliega; a 820px
+   ninguna fila partida se sostiene y todo pasa a una columna. */
+@media (max-width: 900px) {
+  :root { --sec: 88px; }
+}
+@media (max-width: 820px) {
+  :root { --sec: 72px; --gutter: 20px; --s-9: 64px; --s-8: 48px; }
+  .hero { padding: 64px 0 40px; }
+  .hero .mark { width: 84px; height: 84px; margin-bottom: var(--s-5); }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .cell { border-right: 0; border-bottom: 1px solid var(--line); }
+  .cell:last-child { border-bottom: 0; }
+  .split, .split.flip, .tool, .tool.flip { grid-template-columns: minmax(0, 1fr); gap: var(--s-6); }
+  .grid.tres { grid-template-columns: minmax(0, 1fr); }
+  .grid.tres .cell { border-right: 0; border-bottom: 1px solid var(--line); }
+  .grid.tres .cell:last-child { border-bottom: 0; }
+  .split.flip .text, .tool.flip .text { order: 0; }
+  .showcase { padding-bottom: var(--s-8); }
+  .tools { gap: var(--s-8); }
+  .row { grid-template-columns: 20px minmax(0, 1fr); gap: var(--s-3) var(--s-4); padding: var(--s-5); }
+  .row .tag { display: none; }
+  .prosa :is(h2, h3) + .sub { margin-bottom: var(--s-6); }
+  .foot-in { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .ctas .btn { flex: 1 1 auto; }
+  /* En un teléfono, el botón del menú se queda con el dibujo: la palabra
+     ocupaba justo lo que ocupa el propio menú desplegado. */
+  .nav-acts .btn .lbl { display: none; }
+  .nav-acts .btn { padding: 0 11px; }
+}

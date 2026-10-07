@@ -1,0 +1,155 @@
+{{include:cabecera}}
+{{include:nav}}
+
+<main id="contenido">
+
+  <section class="hero plain">
+    <div class="wrap">
+      <svg class="mark" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
+      <h1 style="--d:70ms">{{t:inicio.h1}}</h1>
+      <p class="lede" style="--d:140ms">{{t:inicio.lede}}</p>
+      <div class="ctas center" style="--d:210ms">
+        <a class="btn primary lg" href="{{v:urlDescarga}}">{{ico:descarga}}{{t:inicio.cta1}}</a>
+        <a class="btn lg" href="{{v:urlHerramientas}}">{{t:inicio.cta2}}</a>
+      </div>
+      <p class="meta" style="--d:280ms">
+        <span>{{t:inicio.meta1}}</span><span>{{t:inicio.meta2}}</span><span>{{t:inicio.meta3}}</span>
+      </p>
+    </div>
+  </section>
+
+  <div class="showcase">
+    <div class="wrap">
+      {{windowFirst:resumen}}
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">{{t:herr.eyebrow}}</p>
+      <h2>{{t:herr.h2}}</h2>
+      <p class="sub">{{t:herr.sub}}</p>
+
+      <div class="grid">
+        <div class="cell">
+          <a class="cell-link" href="{{v:urlHerramientas}}">
+            <span class="ic">{{ico:barras}}</span>
+            <h3>{{t:herr.c1.t}}</h3>
+            <p>{{t:herr.c1.p}}</p>
+            <span class="detail"><span class="dot"></span>{{t:herr.c1.d}}</span>
+          </a>
+        </div>
+        <div class="cell">
+          <a class="cell-link" href="{{v:urlHerramientas}}">
+            <span class="ic">{{ico:caja}}</span>
+            <h3>{{t:herr.c2.t}}</h3>
+            <p>{{t:herr.c2.p}}</p>
+            <span class="detail"><span class="dot"></span>{{t:herr.c2.d}}</span>
+          </a>
+        </div>
+        <div class="cell">
+          <a class="cell-link" href="{{v:urlHerramientas}}">
+            <span class="ic">{{ico:lupa}}</span>
+            <h3>{{t:herr.c3.t}}</h3>
+            <p>{{t:herr.c3.p}}</p>
+            <span class="detail"><span class="dot"></span>{{t:herr.c3.d}}</span>
+          </a>
+        </div>
+        <div class="cell">
+          <a class="cell-link" href="{{v:urlHerramientas}}">
+            <span class="ic">{{ico:ritmo}}</span>
+            <h3>{{t:herr.c4.t}}</h3>
+            <p>{{t:herr.c4.p}}</p>
+            <span class="detail"><span class="dot"></span>{{t:herr.c4.d}}</span>
+          </a>
+        </div>
+      </div>
+
+      <p><a class="btn quiet" href="{{v:urlHerramientas}}">{{t:herr.mas}} {{ico:chevron}}</a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="split flip">
+        <div class="text">
+          <p class="eyebrow">{{t:esp.eyebrow}}</p>
+          <h2>{{t:esp.h2}}</h2>
+          <p class="sub">{{t:esp.sub}}</p>
+          <ul class="points">
+            <li>{{ico:check}}<span>{{t:esp.p1}}</span></li>
+            <li>{{ico:check}}<span>{{t:esp.p2}}</span></li>
+            <li>{{ico:check}}<span>{{t:esp.p3}}</span></li>
+          </ul>
+        </div>
+        {{window:atlas}}
+      </div>
+
+      <div class="split">
+        <div class="text">
+          <p class="eyebrow">{{t:apps.eyebrow}}</p>
+          <h2>{{t:apps.h2}}</h2>
+          <p class="sub">{{t:apps.sub}}</p>
+          <ul class="points">
+            <li>{{ico:check}}<span>{{t:apps.p1}}</span></li>
+            <li>{{ico:check}}<span>{{t:apps.p2}}</span></li>
+            <li>{{ico:check}}<span>{{t:apps.p3}}</span></li>
+          </ul>
+          <div class="note accent">{{ico:brillo}}<div><p>{{t:apps.nota}}</p></div></div>
+        </div>
+        {{window:apps}}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">{{t:seg.eyebrow}}</p>
+      <h2>{{t:seg.h2}}</h2>
+      <p class="sub">{{t:seg.sub}}</p>
+
+      <div class="table">
+        <div class="row">{{ico:papelera}}<span><b>{{t:seg.r1.b}}</b> {{t:seg.r1.s}}</span><span class="tag">{{t:seg.r1.tag}}</span></div>
+        <div class="row">{{ico:check}}<span><b>{{t:seg.r2.b}}</b> {{t:seg.r2.s}}</span><span class="tag">{{t:seg.r2.tag}}</span></div>
+        <div class="row">{{ico:rayo}}<span><b>{{t:seg.r3.b}}</b> {{t:seg.r3.s}}</span><span class="tag">{{t:seg.r3.tag}}</span></div>
+        <div class="row">{{ico:candado}}<span><b>{{t:seg.r4.b}}</b> {{t:seg.r4.s}}</span><span class="tag">{{t:seg.r4.tag}}</span></div>
+        <div class="row">{{ico:escudo}}<span><b>{{t:seg.r5.b}}</b> {{t:seg.r5.s}}</span><span class="tag">{{t:seg.r5.tag}}</span></div>
+        <div class="row">{{ico:brillo}}<span><b>{{t:seg.r6.b}}</b> {{t:seg.r6.s}}</span><span class="tag">{{t:seg.r6.tag}}</span></div>
+      </div>
+
+      <p><a class="btn quiet" href="{{v:urlSeguridad}}">{{t:herr.verSeguridad}} {{ico:chevron}}</a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">{{t:faq.eyebrow}}</p>
+      <h2>{{t:faq.h2}}</h2>
+      <div class="faq">
+        <details><summary>{{t:faq.q1}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a1}}</p></div></details>
+        <details><summary>{{t:faq.q2}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a2}}</p></div></details>
+        <details><summary>{{t:faq.q3}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a3}}</p></div></details>
+        <details><summary>{{t:faq.q4}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a4}}</p></div></details>
+        <details><summary>{{t:faq.q5}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a5}}</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <svg class="mark" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
+      <h2>{{t:fin.h2}}</h2>
+      <p class="sub">{{t:fin.sub}}</p>
+      <div class="ctas">
+        <a class="btn primary lg" href="{{v:urlDescarga}}">{{ico:descarga}}{{t:fin.cta}}</a>
+        <a class="btn lg" href="{{v:urlGuia}}">{{t:fin.guia}}</a>
+      </div>
+      <p class="meta">
+        <span>{{t:inicio.meta1}}</span><span>{{t:inicio.meta2}}</span><span>{{t:inicio.meta3}}</span>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+{{include:pie}}

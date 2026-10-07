@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{v:lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{v:titulo}}</title>
+<meta name="description" content="{{v:desc}}">
+<!-- Lo que se le pide al buscador: indexar, y que pueda enseñar la imagen grande
+     y el fragmento entero en el resultado —si no se autoriza, recorta por defecto
+     mucho más—. La página de error lo pide al revés: no indexarse, porque lo
+     único que dice es que lo que buscabas no está. -->
+<meta name="robots" content="{{v:robots}}">
+<meta name="application-name" content="{{v:aplicacion}}">
+<!-- Cómo se ve esta página cuando alguien la comparte: sin esto, un enlace a
+     Brisa aparece como una línea de texto sin cara. Lo que necesita una URL
+     completa —la canónica, los idiomas y la tarjeta— lo rellena build.py, y
+     mientras no haya dominio se queda vacío en vez de inventarse una dirección. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{v:marcaNombre}}">
+<meta property="og:title" content="{{v:titulo}}">
+<meta property="og:description" content="{{v:desc}}">
+<meta property="og:locale" content="{{v:locale}}">
+<meta property="og:locale:alternate" content="{{v:localeOtra}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{v:titulo}}">
+<meta name="twitter:description" content="{{v:desc}}">
+{{v:compartir}}
+{{v:canonical}}
+{{v:alternates}}
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" data-tema-color>
+<link rel="icon" type="image/svg+xml" href="{{v:base}}assets/img/icono.svg">
+<!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
+     tienen una: una precarga de una imagen que no entra en pantalla ocupa el
+     ancho de banda que necesita la que sí. -->
+{{v:precarga}}
+<link rel="stylesheet" href="{{v:base}}assets/css/sitio.css">
+<script>
+/* El tema se decide antes de pintar el primer píxel. Si se esperase al script del
+   pie, la página aparecería en claro y daría un salto al oscuro delante de quien
+   la abre. Es lo único que se lee del navegador, y solo lo que guardó el
+   conmutador de tema. */
+try {
+  var tema = localStorage.getItem("brisa.tema");
+  if (tema === "light" || tema === "dark") document.documentElement.dataset.theme = tema;
+} catch (e) {}
+</script>
+<!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
+     página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
+     nada y va al final para no retrasar lo que sí se ve. -->
+{{v:estructurado}}
+</head>
+
+<body>
+<a class="skip" href="#contenido">{{t:nav.saltar}}</a>

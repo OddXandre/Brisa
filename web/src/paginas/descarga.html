@@ -1,0 +1,95 @@
+{{include:cabecera}}
+{{include:nav}}
+
+<main id="contenido">
+
+  <section class="head">
+    <div class="wrap">
+      <h1>{{t:dl.h1}}</h1>
+      <p class="lede">{{t:dl.lede}}</p>
+      <div class="ctas">
+        <a class="btn primary lg" href="{{v:instalador}}">{{ico:descarga}}{{t:dl.cta}} <small>{{v:version}} {{v:canal}}</small></a>
+      </div>
+      <p class="letra-pequena">{{t:dl.licencia}} <a href="{{v:urlLicencia}}">{{t:nav.licencia}}</a>.</p>
+    </div>
+  </section>
+
+  <div class="showcase">
+    <div class="wrap">
+      {{windowFirst:resumen}}
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>{{t:dl.proto.h}}</h2>
+      <p class="sub">{{t:dl.proto.p}}</p>
+      <p><a class="btn" href="{{v:prototipo}}" target="_blank" rel="noopener">{{ico:lupa}}{{t:dl.proto.b}}</a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <ol class="steps" id="pasos">
+        <li class="step">
+          <span class="n"></span>
+          <div>
+            <h3>{{t:dl.s1.b}}</h3>
+            <p>{{t:dl.s1.p}}</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="n"></span>
+          <div>
+            <h3>{{t:dl.s2.b}}</h3>
+            <p>{{t:dl.s2.p1}}</p>
+            <p>{{t:dl.s2.p2}}</p>
+            <ol class="sublist">
+              <li>{{t:dl.s2.li1}}</li>
+              <li>{{t:dl.s2.li2}}</li>
+              <li>{{t:dl.s2.li3}}</li>
+              <li>{{t:dl.s2.li4}}</li>
+            </ol>
+            <p>{{t:dl.s2.p3}}</p>
+            <p>{{t:dl.s2.antiguo}}</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="n"></span>
+          <div>
+            <h3>{{t:dl.s3.b}}</h3>
+            <p>{{t:dl.s3.p1}}</p>
+            <p>{{t:dl.s3.p2}}</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="note">{{ico:escudo}}<div>
+        <p>{{t:dl.aviso}}</p>
+        <p><a href="{{v:urlGuia}}">{{t:dl.guiaEnlace}}</a></p>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">{{t:dl.quitar.eyebrow}}</p>
+      <h2>{{t:dl.quitar.h2}}</h2>
+      <p class="sub">{{t:dl.quitar.p}}</p>
+      <pre class="code">/Applications/Brisa.app/Contents/MacOS/Brisa --reset</pre>
+      <div class="note">{{ico:terminal}}<div><p>{{t:dl.quitar.nota}}</p></div></div>
+    </div>
+  </section>
+
+  <section id="beta">
+    <div class="wrap">
+      <p class="eyebrow">{{t:dl.beta.eyebrow}}</p>
+      <h2>{{t:dl.beta.h2}}</h2>
+      <p class="sub">{{t:dl.beta.p}}</p>
+      <div class="note">{{ico:brillo}}<div><p>{{t:dl.beta.ayuda}}</p></div></div>
+    </div>
+  </section>
+
+</main>
+
+{{include:pie}}

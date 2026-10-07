@@ -1,0 +1,6 @@
+# El sitio de Brisa es una carpeta de archivos estáticos: no hay nada
+# escondido, y lo que se puede rastrear es exactamente lo que se puede
+# visitar. Este archivo solo dice dónde está el mapa del sitio.
+User-agent: *
+Allow: /
+Sitemap: https://brisamac.pages.dev/sitemap.xml

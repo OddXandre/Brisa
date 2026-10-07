@@ -1,0 +1,98 @@
+{{include:cabecera}}
+{{include:nav}}
+
+<main id="contenido">
+
+  <section class="head">
+    <div class="wrap">
+      <h1>{{t:priv.h1}}</h1>
+      <p class="lede">{{t:priv.lede}}</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="grid tres">
+        <div class="cell">
+          <span class="ic">{{ico:candado}}</span>
+          <h2>{{t:priv.c1.h}}</h2>
+          <p>{{t:priv.c1.p}}</p>
+        </div>
+        <div class="cell">
+          <span class="ic">{{ico:caja}}</span>
+          <h2>{{t:priv.c2.h}}</h2>
+          <p>{{t:priv.c2.p}}</p>
+        </div>
+        <div class="cell">
+          <span class="ic">{{ico:papelera}}</span>
+          <h2>{{t:priv.c3.h}}</h2>
+          <p>{{t:priv.c3.p}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="split flip">
+        <div class="text">
+          <h2>{{t:priv.perm.h}}</h2>
+          <p class="sub">{{t:priv.perm.p}}</p>
+        </div>
+        {{window:estado}}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="note">{{ico:escudo}}<div>
+        <h3>{{t:priv.web.h}}</h3>
+        <p>{{t:priv.web.p}}</p>
+      </div></div>
+      <div class="note">{{ico:lupa}}<div>
+        <h3>{{t:priv.avisos.h}}</h3>
+        <p>{{t:priv.avisos.p}}</p>
+      </div></div>
+      <div class="note">{{ico:brillo}}<div>
+        <h3>{{t:priv.beta.h}}</h3>
+        <p>{{t:priv.beta.p}}</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="prosa">
+    <div class="wrap">
+      <h2>{{t:priv.leg.h}}</h2>
+
+      <h3>{{t:priv.leg.resp.h}}</h3>
+      <p class="sub">{{t:priv.leg.resp.p}} <a href="mailto:{{v:contacto}}">{{v:contacto}}</a>.</p>
+
+      <h3>{{t:priv.leg.datos.h}}</h3>
+      <p class="sub">{{t:priv.leg.datos.p}}</p>
+
+      <h3>{{t:priv.leg.guarda.h}}</h3>
+      <p class="sub">{{t:priv.leg.guarda.p}}</p>
+
+      <h3>{{t:priv.leg.derechos.h}}</h3>
+      <p class="sub">{{t:priv.leg.derechos.p}} <a href="mailto:{{v:contacto}}">{{v:contacto}}</a>.</p>
+
+      <p class="letra-pequena">{{t:legal.fecha}}</p>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <svg class="mark" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
+      <h2>{{t:fin.h2}}</h2>
+      <p class="sub">{{t:fin.sub}}</p>
+      <div class="ctas">
+        <a class="btn primary lg" href="{{v:urlDescarga}}">{{ico:descarga}}{{t:fin.cta}}</a>
+        <a class="btn lg" href="{{v:urlGuia}}">{{t:priv.guia}}</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+{{include:pie}}

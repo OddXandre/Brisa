@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://brisamac.pages.dev/index.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/index.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/index.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/index.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/index.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/index.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/index.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/index.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/herramientas.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/herramientas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/tools.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/herramientas.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/tools.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/herramientas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/tools.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/herramientas.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/seguridad.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/seguridad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/safety.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/seguridad.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/safety.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/seguridad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/safety.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/seguridad.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/descarga.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/descarga.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/download.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/descarga.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/download.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/descarga.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/download.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/descarga.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/guia.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/guia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/guide.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/guia.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/guide.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/guia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/guide.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/guia.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/preguntas.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/preguntas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/questions.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/preguntas.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/questions.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/preguntas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/questions.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/preguntas.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/privacidad.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/privacidad.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/privacidad.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/privacidad.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/aviso-legal.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/aviso-legal.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/legal-notice.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/aviso-legal.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/legal-notice.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/aviso-legal.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/legal-notice.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/aviso-legal.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/licencia.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/licencia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/license.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/licencia.html"/>
+  </url>
+  <url>
+    <loc>https://brisamac.pages.dev/en/license.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/licencia.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/license.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/licencia.html"/>
+  </url>
+</urlset>
