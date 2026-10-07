@@ -18,3 +18,7 @@ prototipo-brisa.html
 # sesión, enlaces a skills globales). No son fuente de Brisa y cambian solas.
 .freebuff/
 .agents/
+
+# Caché de los despliegues de Cloudflare Pages (identificador de proyecto y
+# cuenta). La regenera `wrangler pages deploy`; no es fuente de Brisa.
+.wrangler/
