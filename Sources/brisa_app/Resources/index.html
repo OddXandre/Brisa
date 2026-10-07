@@ -1839,8 +1839,8 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 .sched-pills{display:flex;gap:8px;flex-wrap:wrap;padding:0;align-content:center;min-width:0;max-width:100%}
 
 /* ---------- Ritmo · relleno de la vista ---------- */
-#view-ritmo #ritmo-rules{flex:0 0 auto;min-height:180px}
-#view-ritmo #last-run{flex:1 0 auto;display:flex;flex-direction:column}
+#view-ritmo #ritmo-rules{flex:0 0 auto;min-height:0}
+#view-ritmo #last-run{flex:0 0 auto;display:flex;flex-direction:column}
 #view-ritmo #last-run .rounds{flex:0 0 auto;display:flex;flex-direction:column}
 #view-ritmo #last-run .round{flex:0 0 auto;align-items:center}
 
@@ -2786,7 +2786,7 @@ html.theme-anim .sb-item{
             </div>
             <div class="hero-foot" id="hero-foot">
               <span class="hf-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="wind" aria-hidden="true"></svg></span>
-              <span class="hf-t"><b id="avail-val">—</b> <span id="avail-lbl" data-i18n="res.recoverable">GB recuperables</span><small id="avail-sub" data-i18n="res.keepTrashShort">Se conservan 30 días en la Papelera</small></span>
+              <span class="hf-t"><b id="avail-val">—</b> <span id="avail-lbl" data-i18n="res.recoverable">GB recuperables</span><small id="avail-sub" data-i18n="res.keepTrashShort">Se conservan los días que elijas</small></span>
               <span class="hf-acts" data-i18n-aria="res.spaceActions" aria-label="Acciones del espacio">
                 <button class="btn btn-s" id="btn-scan" data-i18n="sb.analyze">Analizar</button>
                 <button class="btn btn-p" id="btn-clean" data-i18n="sb.optimize">Optimizar</button>
@@ -3073,16 +3073,16 @@ html.theme-anim .sb-item{
                 <button class="chip" data-sched="weekends" data-i18n="ritmo.weekends">Fines de semana</button>
                 <button class="chip" data-sched="monthly" data-i18n="ritmo.monthly">Una vez al mes</button>
               </div>
-              <span class="rh-reposo" data-i18n="ritmo.restNote">Solo se ejecuta con tu Mac en reposo.</span>
+              <span class="rh-reposo" data-i18n="ritmo.restNote">Se ejecuta en segundo plano, sin abrir la ventana.</span>
             </div>
             <div class="rh-steps">
-              <div class="rh-s"><span class="rh-n">1</span><div><b data-i18n="ritmo.step1">Elimina</b><small data-i18n="ritmo.step1d">Solo lo seguro: cachés, descargas antiguas y copias.</small></div></div>
-              <div class="rh-s"><span class="rh-n">2</span><div><b data-i18n="ritmo.step2">Protege</b><small data-i18n="ritmo.step2d">Lo guarda 30 días en tu Papelera.</small></div></div>
-              <div class="rh-s"><span class="rh-n">3</span><div><b data-i18n="ritmo.step3">Informa</b><small data-i18n="ritmo.step3d">Cada mañana sabrás qué hizo y cuánto recuperó.</small></div></div>
+              <div class="rh-s"><span class="rh-n">1</span><div><b data-i18n="ritmo.step1">Guarda</b><small data-i18n="ritmo.step1d">Lo retirado espera en tu Papelera los días que elijas.</small></div></div>
+              <div class="rh-s"><span class="rh-n">2</span><div><b data-i18n="ritmo.step2">Vacía</b><small data-i18n="ritmo.step2d">Cuando cumple el plazo, lo borra para siempre.</small></div></div>
+              <div class="rh-s"><span class="rh-n">3</span><div><b data-i18n="ritmo.step3">Informa</b><small data-i18n="ritmo.step3d">Te dice cuánto se ha liberado.</small></div></div>
             </div>
           </div>
           <div class="panel" id="last-run" style="margin-top:12px"></div>
-          <div class="v-section"><h2 data-i18n="ritmo.whatCleans">Qué limpia</h2><span class="hint" data-i18n="ritmo.rulesHint">activa cada regla</span></div>
+          <div class="v-section"><h2 data-i18n="ritmo.whatCleans">Qué hace</h2></div>
           <div class="rowlist" id="ritmo-rules"></div>
           <p class="ritmo-note" style="margin-top:10px;padding:0 2px" data-i18n="ritmo.note">Nunca toca fotos, documentos ni música.</p>
         </div>
@@ -3093,7 +3093,7 @@ html.theme-anim .sb-item{
         <div class="v-body">
           <div class="panel pap-hint">
             <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" data-ic="shield" aria-hidden="true"></svg>
-            <span><b data-i18n="pap.safetyTitle">Tu red de seguridad.</b>            <span data-i18n="pap.safetyBody">Lo que eliminas se guarda aquí.</span></span>
+            <span><b data-i18n="pap.safetyTitle">Tu red de seguridad.</b>            <span data-i18n="pap.safetyBody">Lo que eliminas se guarda aquí, los días que elijas.</span></span>
             <span class="pap-days" id="pap-days"></span>
           </div>
           <div class="rowlist" id="pap-list" style="margin-top:12px"></div>
@@ -3444,7 +3444,7 @@ const I18N = {
     "res.freeSpace":"Espacio libre", "res.ofDisk":"del disco", "res.ofGb":"de {n} GB",
     "res.diskHealth":"Salud del disco", "res.healthPending":"Aparece tras tu primer análisis.",
     "res.recoverable":"GB recuperables", "res.nothingToRecover":"Nada que recuperar",
-    "res.keepTrashShort":"Se conservan {d} días en la Papelera",
+    "res.keepTrashShort":"Se conservan {d} días · lo eliges tú",
     "res.rowAria":"{name}, {gb} GB. Ver en el mapa de espacio.",
     "res.cleanedBanner":"Liberaste {gb} GB — {eq}. Está todo en tu Papelera.",
     "u.recoverableShort":"recuperables", "t.undo":"Deshacer", "pap.view":"Ver la Papelera",
@@ -3486,23 +3486,20 @@ const I18N = {
     "hist.pendingH2":"Aún sin análisis", "hist.pendingP":"Tu historial de limpiezas aparecerá aquí, con datos reales.",
     "hist.compare":"Comparar", "hist.compareHint":"toca dos limpiezas del gráfico o de la lista", "hist.tapCleanup":"Toca una limpieza", "hist.ofTwo":"de 2", "hist.selected":"seleccionadas", "hist.tie":"Empate", "hist.sameSpace":"mismo espacio", "hist.moreThan":"más que la del",
     "ritmo.on":"Mantenimiento activado", "ritmo.off":"Mantenimiento desactivado",
-    "ritmo.onDesc":"Brisa revisará tu disco esta noche, en silencio.", "ritmo.offDesc":"Actívalo y Brisa se encarga.",
+    "ritmo.onDesc":"Brisa vaciará su Papelera, en silencio.", "ritmo.offDesc":"Actívalo y Brisa se encarga.",
     "ritmo.toggle":"Activar o desactivar el mantenimiento automático",
     "ritmo.frequency":"Frecuencia", "ritmo.nightly":"Cada noche", "ritmo.weekends":"Fines de semana", "ritmo.monthly":"Una vez al mes",
-    "ritmo.restNote":"Solo se ejecuta con tu Mac en reposo.",
-    "ritmo.step1":"Elimina", "ritmo.step1d":"Solo lo seguro: cachés, descargas antiguas y copias.",
-    "ritmo.step2":"Protege", "ritmo.step2d":"Lo guarda 30 días en tu Papelera.",
-    "ritmo.step3":"Informa", "ritmo.step3d":"Cada mañana sabrás qué hizo y cuánto recuperó.",
+    "ritmo.restNote":"Se ejecuta en segundo plano, sin abrir la ventana.",
+    "ritmo.step1":"Guarda", "ritmo.step1d":"Lo retirado espera en tu Papelera los días que elijas.",
+    "ritmo.step2":"Vacía", "ritmo.step2d":"Cuando cumple el plazo, lo borra para siempre.",
+    "ritmo.step3":"Informa", "ritmo.step3d":"Te dice cuánto se ha liberado.",
     "ritmo.recent":"Actividad reciente", "ritmo.nextTonight":"próxima revisión: esta noche", "ritmo.nextWeekends":"próxima revisión: este fin de semana", "ritmo.nextMonthly":"próxima revisión: este mes", "ritmo.disabled":"Mantenimiento desactivado",
-    "ritmo.emptyH2":"Aún sin actividad", "ritmo.emptyP":"Cuando el mantenimiento se ejecute, verás aquí cada ronda y cuánto ha recuperado.",
+    "ritmo.emptyH2":"Aún sin actividad", "ritmo.emptyP":"Cuando Brisa limpie algo, verás aquí cada ronda y cuánto ha liberado.",
     "ritmo.inTrash":"en tu Papelera",
-    "ritmo.whatCleans":"Qué limpia", "ritmo.rulesHint":"activa cada regla",
+    "ritmo.whatCleans":"Qué hace",
     "ritmo.note":"Nunca toca fotos, documentos ni música.",
-    "ritmo.rule1":"Vaciar la Papelera del sistema", "ritmo.rule1d":"Solo si lleva ahí más de 30 días.",
-    "ritmo.rule2":"Descargas olvidadas", "ritmo.rule2d":"Los archivos sin abrir hace más de 90 días van a tu Papelera.",
-    "ritmo.rule3":"Cachés y archivos temporales", "ritmo.rule3d":"Las apps los vuelven a crear. Tu Mac no los echará de menos.",
-    "ritmo.rule4":"Duplicados y casi duplicados", "ritmo.rule4d":"Una vez al mes, Brisa revisa los duplicados nuevos y conserva la mejor copia.",
-    "pap.empty":"Vacía", "pap.items":"elementos", "pap.safetyTitle":"Tu red de seguridad.", "pap.safetyBody":"Lo que eliminas se guarda aquí.",
+    "ritmo.rule1":"Vacía la Papelera de Brisa", "ritmo.rule1d":"Borra para siempre lo retirado que ya cumplió el plazo que elegiste —7, 30 o 60 días—.",
+    "pap.empty":"Vacía", "pap.items":"elementos", "pap.safetyTitle":"Tu red de seguridad.", "pap.safetyBody":"Lo que eliminas se guarda aquí, los días que elijas.",
     "pap.emptyBtn":"Vaciar",
     "title.pending":"análisis pendiente",
     "intro.preparing":"Preparando…", "intro.counting":"{n} archivos · {gb} GB", "intro.done":"Listo",
@@ -3517,7 +3514,7 @@ const I18N = {
     "sk.safari":"Safari", "sk.calendars":"Calendario", "sk.contacts":"Contactos", "sk.iphone":"Copias de iPhone",
     "t.scanFail":"No se pudo analizar", "t.scanFailSub":"Vuelve a intentarlo en un momento.",
     "t.scanDone":"Análisis completado", "t.scanDoneSub":"Brisa terminó de revisar tu Mac.",
-    "t.deleted":"Eliminado", "t.deletedSub":"{gb} GB movidos a la Papelera de Brisa. Se conservan 30 días.",
+    "t.deleted":"Eliminado", "t.deletedSub":"{gb} GB movidos a la Papelera de Brisa. Se conservan los días que hayas elegido.",
     "t.histCleared":"Historial vaciado", "t.histClearedSub":"Empezarás de cero. Tu Papelera de Brisa sigue igual.",
     "t.inTrash":"En tu Papelera", "t.inTrashSub":"{gb} GB eliminados. Puedes restaurarlos durante {d} días.",
     "t.restored":"Restaurado", "t.langEs":"Idioma: Español", "t.langEn":"Language: English",
@@ -3571,7 +3568,7 @@ const I18N = {
     "avail.duplicados":"Copias y casi gemelas", "avail.duplicadosD":"El mismo archivo guardado dos veces. Brisa conserva la mejor copia.",
     "avail.papeleraSys":"Papelera del sistema", "avail.papeleraSysD":"Lo que ya eliminaste… y sigue ocupando espacio.",
     "avail.instaladores":"Instaladores y adjuntos antiguos", "avail.instaladoresD":"Archivos de instalación que ya cumplieron su función.",
-    "clean.safety":"Todo irá a tu Papelera de Brisa durante 30 días. Nada se eliminará sin tu confirmación.",
+    "clean.safety":"Todo irá a tu Papelera de Brisa, los días que hayas elegido. Nada se eliminará sin tu confirmación.",
     "run.cleaning":"Brisa está aliviando tu disco",
     "clean.review":"Revisa el plan", "avail.remove":"Quitar {name}",
     "clean.done":"Listo.", "clean.freed":"Liberaste <b>{gb} GB</b> — {eq}.<br>Está todo en tu Papelera.",
@@ -3754,7 +3751,7 @@ const I18N = {
     "res.freeSpace":"Free space", "res.ofDisk":"of your disk", "res.ofGb":"of {n} GB",
     "res.diskHealth":"Disk health", "res.healthPending":"Appears after your first scan.",
     "res.recoverable":"GB recoverable", "res.nothingToRecover":"Nothing to recover",
-    "res.keepTrashShort":"Kept {d} days in the Trash",
+    "res.keepTrashShort":"Kept {d} days · your call",
     "res.rowAria":"{name}, {gb} GB. See it on the space map.",
     "res.cleanedBanner":"You freed {gb} GB — {eq}. It's all in your Trash.",
     "u.recoverableShort":"recoverable", "t.undo":"Undo", "pap.view":"See the Trash",
@@ -3802,24 +3799,21 @@ const I18N = {
     "hist.compare":"Compare", "hist.compareHint":"tap two cleanups in the chart or list", "hist.tapCleanup":"Tap a cleanup", "hist.ofTwo":"of 2", "hist.selected":"selected", "hist.tie":"Tie", "hist.sameSpace":"same space", "hist.moreThan":"more than",
     /* Mantenimiento */
     "ritmo.on":"Maintenance on", "ritmo.off":"Maintenance off",
-    "ritmo.onDesc":"Brisa will review your disk tonight, quietly.", "ritmo.offDesc":"Turn it on and Brisa handles it for you.",
+    "ritmo.onDesc":"Brisa will empty its Trash, quietly.", "ritmo.offDesc":"Turn it on and Brisa handles it for you.",
     "ritmo.toggle":"Turn automatic maintenance on or off",
     "ritmo.frequency":"Frequency", "ritmo.nightly":"Every night", "ritmo.weekends":"Weekends", "ritmo.monthly":"Once a month",
-    "ritmo.restNote":"Only runs while your Mac is at rest.",
-    "ritmo.step1":"Removes", "ritmo.step1d":"Only the safe stuff: caches, old downloads and copies.",
-    "ritmo.step2":"Protects", "ritmo.step2d":"Keeps it 30 days in your Trash.",
-    "ritmo.step3":"Reports", "ritmo.step3d":"Every morning you know what it did and how much it recovered.",
+    "ritmo.restNote":"Runs in the background, without opening the window.",
+    "ritmo.step1":"Keeps", "ritmo.step1d":"What you remove waits in your Trash for the window you pick.",
+    "ritmo.step2":"Empties", "ritmo.step2d":"Once it reaches that window, it's deleted for good.",
+    "ritmo.step3":"Reports", "ritmo.step3d":"It tells you how much was freed.",
     "ritmo.recent":"Recent activity", "ritmo.nextTonight":"next review: tonight", "ritmo.nextWeekends":"next review: this weekend", "ritmo.nextMonthly":"next review: this month", "ritmo.disabled":"Maintenance disabled",
-    "ritmo.emptyH2":"No activity yet", "ritmo.emptyP":"When maintenance runs, you'll see every round here and how much it recovered.",
+    "ritmo.emptyH2":"No activity yet", "ritmo.emptyP":"When Brisa cleans something, you'll see every round here and how much it freed.",
     "ritmo.inTrash":"in your Trash",
-    "ritmo.whatCleans":"What it cleans", "ritmo.rulesHint":"toggle each rule",
+    "ritmo.whatCleans":"What it does",
     "ritmo.note":"Never touches photos, documents or music.",
-    "ritmo.rule1":"Empty the system Trash", "ritmo.rule1d":"Only if it has been there over 30 days.",
-    "ritmo.rule2":"Forgotten downloads", "ritmo.rule2d":"Files unopened for over 90 days move to your Trash.",
-    "ritmo.rule3":"Caches and temporary files", "ritmo.rule3d":"Apps recreate them. Your Mac won't miss them.",
-    "ritmo.rule4":"Duplicates and near-duplicates", "ritmo.rule4d":"Once a month, Brisa reviews new duplicates and keeps the best copy.",
+    "ritmo.rule1":"Empties Brisa Trash", "ritmo.rule1d":"Deletes for good whatever was removed and has already reached the window you chose —7, 30 or 60 days—.",
     /* Papelera */
-    "pap.empty":"Empty", "pap.items":"items", "pap.safetyTitle":"Your safety net.", "pap.safetyBody":"What you remove is kept here.",
+    "pap.empty":"Empty", "pap.items":"items", "pap.safetyTitle":"Your safety net.", "pap.safetyBody":"What you remove is kept here, for as long as you choose.",
     "pap.emptyBtn":"Empty",
     /* Topbar title pendiente */
     "title.pending":"pending scan",
@@ -3837,7 +3831,7 @@ const I18N = {
     "t.scanFail":"Couldn't analyze", "t.scanFailSub":"Please try again in a moment.",
     /* Toasts y hojas */
     "t.scanDone":"Scan complete", "t.scanDoneSub":"Brisa finished reviewing your Mac.",
-    "t.deleted":"Deleted", "t.deletedSub":"{gb} GB moved to Brisa Trash. Kept for 30 days.",
+    "t.deleted":"Deleted", "t.deletedSub":"{gb} GB moved to Brisa Trash. Kept for as long as you chose.",
     "t.histCleared":"History cleared", "t.histClearedSub":"You're starting fresh. Your Brisa Trash is untouched.",
     "t.inTrash":"In your Trash", "t.inTrashSub":"{gb} GB removed. You can restore them for {d} days.",
     "t.restored":"Restored", "t.langEs":"Language: Español", "t.langEn":"Language: English",
@@ -3889,7 +3883,7 @@ const I18N = {
     "avail.duplicados":"Copies and near-twins", "avail.duplicadosD":"The same file saved twice. Brisa keeps the best copy.",
     "avail.papeleraSys":"System Trash", "avail.papeleraSysD":"What you already deleted… and still takes up space.",
     "avail.instaladores":"Old installers and attachments", "avail.instaladoresD":"Installer files that already did their job.",
-    "clean.safety":"Everything goes to your Brisa Trash for 30 days. Nothing is removed without your confirmation.",
+    "clean.safety":"Everything goes to your Brisa Trash, for as long as you chose. Nothing is removed without your confirmation.",
     "run.cleaning":"Brisa is clearing space",
     "clean.review":"Review the plan", "avail.remove":"Remove {name}",
     "clean.done":"Done.", "clean.freed":"You freed <b>{gb} GB</b> — {eq}.<br>It's all in your Trash.",
@@ -7689,20 +7683,18 @@ function renderAtlasPanel(cat,enter){
 
 /* ---------- ritmo ---------- */
 function renderRules(){
-  const rules=[
-    {ic:"bin",name:t("ritmo.rule1"),desc:t("ritmo.rule1d"),on:true},
-    {ic:"tray",name:t("ritmo.rule2"),desc:t("ritmo.rule2d"),on:true},
-    {ic:"wind",name:t("ritmo.rule3"),desc:t("ritmo.rule3d"),on:true},
-    {ic:"copy",name:t("ritmo.rule4"),desc:t("ritmo.rule4d"),on:false}
-  ];
+  /* Una sola regla, y es la que existe: el mantenimiento vacía la Papelera de
+     Brisa cuando lo retirado cumple el plazo que el usuario eligió. Antes esta
+     lista anunciaba cuatro —Papelera del sistema, descargas olvidadas, cachés y
+     duplicados— que el mantenimiento no ejecuta; una pantalla que promete lo
+     que la app no hace deja de ser un resumen y pasa a ser un anuncio. */
+  const rules=[{name:t("ritmo.rule1"),desc:t("ritmo.rule1d")}];
   const rulesEl=$("#ritmo-rules");
   const rEnter=rulesEl.classList.contains("stagger")?$("#view-ritmo").classList.contains("boot-in"):false;
   if(!rEnter)rulesEl.classList.remove("stagger");
   if(rEnter)rulesEl.classList.add("stagger");
   rulesEl.innerHTML=rules.map((r,i)=>`
-    <div class="rule" style="--i:${i}"><div class="rt"><b>${r.name}</b><small>${r.desc}</small></div>
-    <button class="mini-switch rule-sw" data-i="${i}" role="switch" aria-checked="${r.on}" aria-label="${r.name}"></button></div>`).join("");
-  $$(".rule-sw").forEach(b=>b.addEventListener("click",()=>{const on=b.getAttribute("aria-checked")==="true";b.setAttribute("aria-checked",String(!on));}));
+    <div class="rule" style="--i:${i}"><div class="rt"><b>${r.name}</b><small>${r.desc}</small></div></div>`).join("");
 }
 let lastRoundStagger=false; /* las rondas solo entran con la vista, no con cada toggle */
 function renderRitmo(){
@@ -8725,6 +8717,11 @@ function hydrateStatic(){
    inglés traducía pero volver a español dejaba títulos en inglés. */
 function applyStaticI18n(){
   $$("[data-i18n]").forEach(el=>{ el.textContent=t(el.dataset.i18n); });
+  /* La tarjeta del resumen lleva el plazo de la Papelera DENTRO de su texto
+     (`{d}`) y el repaso de arriba no le pasa ningún valor: la dejaba enseñando
+     las llaves. La escribe quien conoce el ajuste, y así se ve el número de
+     verdad —el que el usuario haya elegido— desde el primer pintado. */
+  const subResumen=$("#avail-sub"); if(subResumen)subResumen.textContent=t("res.keepTrashShort",{d:STATE.settings.retention});
   $$("[data-i18n-title]").forEach(el=>{ el.title=t(el.dataset.i18nTitle); });
   $$("[data-i18n-aria]").forEach(el=>{ el.setAttribute("aria-label",t(el.dataset.i18nAria)); });
   $$("[data-i18n-ph]").forEach(el=>{ el.placeholder=t(el.dataset.i18nPh); });
