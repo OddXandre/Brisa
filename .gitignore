@@ -22,3 +22,8 @@ prototipo-brisa.html
 # Caché de los despliegues de Cloudflare Pages (identificador de proyecto y
 # cuenta). La regenera `wrangler pages deploy`; no es fuente de Brisa.
 .wrangler/
+
+# El sitio montado para publicar: lo regenera `web/tools/preparar-publicacion.py`
+# desde `web/`, quitando las fuentes que no se sirven. 13 MB que se rehacen
+# enteros en cada publicación.
+sitio-publicado/

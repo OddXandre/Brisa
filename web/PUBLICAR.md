@@ -1,8 +1,15 @@
 # Publicar el sitio
 
 `web/` es el sitio entero: una carpeta de archivos estáticos. Sin dependencias,
-sin peticiones a terceros, sin base de datos y sin servidor que mantener. Se
-sube tal cual.
+sin base de datos y sin servidor que mantener. Se publica tal cual, salvo las
+piezas que lo construyen: `tools/preparar-publicacion.py` monta en
+`sitio-publicado/` lo que se sirve —el HTML, los recursos, el instalador,
+`_headers`— y deja fuera el generador, las plantillas y las herramientas.
+
+El único contenido que no sale de aquí es el botón de apoyo de Ko-fi: su guion,
+su tipografía y sus imágenes las sirve Ko-fi. Es la única petición a un tercero
+que hace el sitio, y por eso está declarada en la política de contenido
+(`_headers`) y contada en la página de privacidad, en lugar de esconderse.
 
 ## Construirlo
 
@@ -25,9 +32,121 @@ sube tal cual.
    sitio, la de la captura, la del instalador, la de la licencia y las migas de
    pan. Sin dominio no se escriben, a propósito: una dirección inventada es peor
    que ninguna.
-2. **Subir el contenido de `web/`** a la raíz del dominio. Las rutas son
-   relativas —también valen abriendo los `.html` desde el disco—, así que si se
-   publica en un subdirectorio, `canonical` y las tarjetas apuntarían mal.
+2. **Montar lo que se publica**, y subirlo a la raíz del dominio:
+
+   ```
+   /usr/bin/python3 web/tools/preparar-publicacion.py   # 103 ficheros · 13,6 MB · sin fuentes
+   ```
+
+   `web/` son dos cosas a la vez: el sitio y las piezas que lo construyen.
+   Publicándolo entero viajaban juntas, y `build.py`, `src/` y `tools/` quedaban
+   **servidos** en el dominio. El sitio sigue abierto —el código está en el
+   repositorio, a la vista de quien lo quiera leer—, pero servido es otra cosa:
+   una copia servida envejece a los ojos de quien la lee y ata cada publicación a
+   la versión del generador que la hizo.
+
+   El paso copia lo servido y después lo **comprueba**: si en lo copiado aparece
+   un `.py`, un `.md` o un `.json`, borra lo montado y sale 1. Borrarlo importa
+   —si se quedara en disco, el siguiente en publicar subiría justo lo que se
+   acaba de rechazar—, así que un fallo deja el árbol como estaba y no hay nada
+   que desplegar por error.
+
+   Las rutas de los
+   recursos son relativas, así que el sitio vale igual servido desde una carpeta
+   que desde la raíz de un dominio; lo que sí se calcula para el dominio son el
+   `canonical`, las tarjetas y el mapa, y por eso publicar en un subdirectorio
+   los dejaría apuntando mal.
+
+   Los enlaces entre páginas van a la dirección **servida**, sin el `.html`
+   (`/descarga`, `/en/tools`): el hosting responde a la forma larga con un 308,
+   así que enlazarla es pagar una ida y vuelta en cada clic. Eso tiene una
+   consecuencia, y va escrita aquí para que no sorprenda: **abriendo los `.html`
+   desde el disco, las páginas se ven enteras pero no se navega de una a otra**
+   —el navegador busca `descarga` y no existe como archivo—. Para verlo en local
+   como se sirve de verdad, con sus direcciones y sus cabeceras:
+
+   ```
+   npx wrangler pages dev sitio-publicado --port 8877
+   ```
+
+   El sitio vive en Cloudflare Pages, en el proyecto `brisamac-app`, y se
+   publica con Wrangler desde la raíz del repositorio —sin instalar nada
+   global, `npx` lo trae—:
+
+   ```
+   npx wrangler pages deploy sitio-publicado --project-name=brisamac-app --branch=main
+   ```
+
+   `--branch=main` es lo que decide que sea la publicación de producción: con
+   cualquier otra rama, Cloudflare crea una dirección aparte y
+   `brisamac-app.pages.dev` se queda como estaba.
+
+   **Publicar no es subir: es subir y comprobarlo desde fuera.** El despliegue
+   da por bueno el envío antes de que el sitio esté servido, y un despliegue
+   viejo contesta 200 igual de contento que el bueno. Después de publicar, la
+   única mirada que cuenta es la del sitio publicado, no la del disco:
+
+   ```
+   /usr/bin/python3 web/tools/vigilar-sitio.py
+   ```
+
+   Comprueba las tres cosas que fallaron el 10 de octubre y que ni el
+   verificador ni una publicación correcta detectan solas. Primera, **la ruta**:
+   que el par de direcciones del dominio no caiga en un rango sin ruta —un rango
+   bloqueado no da error, da una rueda girando para siempre, y desde dentro de
+   Cloudflare se ve perfecto—. Segunda, **las respuestas**: las 23 direcciones
+   del sitio contestan 200. Tercera, **los bytes**: lo que sirve el hosting es,
+   byte a byte, lo que hay en disco, que es lo único que distingue «está
+   desplegado» de «está desplegado lo último». Y de paso, que `_headers` está
+   llegando. Sale 1 si algo de eso no se cumple.
+
+   Sin red no falla: avisa de que no ha podido mirar, que es distinto de estar
+   roto.
+
+   Un detalle que costó una comprobación en rojo: el borde de Cloudflare se
+   queda con una copia de los recursos y la sigue sirviendo un rato después de
+   publicar —medido, 281 segundos de edad con `cf-cache-status: HIT`—, así que
+   recién quitadas las fuentes `build.py` seguía contestando 200. Por eso el
+   vigilante pide las fuentes con un testigo en la dirección
+   (`?comprobacion=1`), que esquiva esa copia sin cambiar el recurso: lo que
+   existe contesta 200 igual. Y cuando encuentra la copia, avisa en lugar de
+   fallar, porque se va sola.
+
+   **El nombre del proyecto no es un detalle cosmético.** Cloudflare asigna a
+   cada proyecto un par de direcciones para su `*.pages.dev`, y esa asignación
+   depende del nombre y es estable: el mismo nombre cae siempre en el mismo
+   par. Si le toca el rango `188.114.96.0/22`, las operadoras españolas no le
+   dan ruta —lo bloquean las órdenes judiciales contra la piratería— y la web
+   queda inalcanzable desde España aunque esté perfecta para el resto del
+   mundo. Le pasó a `brisamac` y a `brisa-app`: ni reconstruir el sitio, ni
+   borrar y recrear el proyecto, ni cambiar el dominio personalizado movían el
+   rango; recreado con el mismo nombre volvía al mismo par.
+
+   Así que antes de dar por bueno un nombre, dos comprobaciones. La primera,
+   que el subdominio sea el que pediste y no lleve sufijo: si al crear el
+   proyecto el dominio sale como `nombre-abc.pages.dev` en lugar de
+   `nombre.pages.dev`, es que ese subdominio ya estaba cogido por otra cuenta
+   —le pasa a `brisa`, que es de un tercero y obliga a sufijo—. La segunda, que
+   el par de direcciones rute:
+
+   ```
+   npx wrangler pages project list                   # el dominio real, con sufijo o sin él
+   dig +short @1.1.1.1 brisamac-app.pages.dev A      # el par que le tocó
+   ```
+
+   Un par en `188.114.96.x` o `188.114.97.x` significa que en España no se
+   verá.
+
+   Por eso hay **dos** proyectos, y no es un descuido: `brisamac-app` sirve el
+   sitio —es el que apunta `DOMINIO`— y `brisamac` existe solo para **reservar el
+   nombre**. El de la reserva no lleva el sitio dentro: su despliegue es un
+   `_redirects` de una línea que manda a `brisamac-app.pages.dev`, y nada más. Se
+   hizo así porque a `brisamac` le tocó el rango bloqueado y no hay manera de
+   moverlo, así que el nombre se guarda y quien llegue desde fuera de España
+   acaba en el sitio bueno. Si algún día se renombra o se quiere el sitio ahí,
+   basta con desplegar lo montado en ese proyecto y cambiar `DOMINIO`.
+   Pages redirige `/pagina.html` a `/pagina` y aplica `_headers` a la dirección
+   servida, no al salto.
 3. **`_headers`**: lo leen Netlify y Cloudflare Pages y añade la política de
    contenido, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`
    y HSTS. Sirve el HTML revalidando siempre —una copia guardada en el navegador
@@ -65,28 +184,41 @@ sube tal cual.
   cookie: lo único que guarda es el tema que elijas, y solo si lo cambias. La
   AEPD tiene esa categoría —personalización de la interfaz— entre las exentas,
   así que un banner pediría permiso para algo que no existe.
-- **No hay analítica, ni fuentes externas, ni píxeles.** Todo se sirve desde el
-  propio dominio, y el visitante no se mide.
+- **No hay analítica, ni píxeles.** Todo el sitio se sirve desde el propio
+  dominio y el visitante no se mide. La excepción es el botón de Ko-fi, que
+  carga tres archivos suyos —y su tipografía—; el navegador no manda nada hasta
+  que alguien lo pulsa, y no deja cookies ni nada en el almacén del navegador
+  (comprobado en el navegador: cuatro peticiones a `storage.ko-fi.com` y
+  `fonts.googleapis.com`, y ninguna cookie).
 - **No hay formularios ni cuentas.** El contacto es un correo.
 
 ## Antes de darle a publicar
 
 1. `DOMINIO` puesto, y `build.py` y `verificar-sitio.py` en 0.
-2. El correo del aviso legal es el que quieres que se vea: es una línea en
+2. `tools/preparar-publicacion.py` en 0: lo que se publica no lleva fuentes.
+3. Publicar (paso 2) y, después, `tools/vigilar-sitio.py` en 0: es el único de
+   los tres que mira el sitio de verdad, desde la red.
+4. El correo del aviso legal es el que quieres que se vea: es una línea en
    `build.py` (`CONTACTO`) y aparece en el aviso legal, en la privacidad y en el
    pie de las 20 páginas.
-3. El instalador: si `dist/Brisa-0.1.0-beta.dmg` no está construido, el botón de
+5. El instalador: si `dist/Brisa-0.1.0-beta.dmg` no está construido, el botón de
    descarga lleva a la sección que explica cómo se reparte, y el verificador lo
    avisa. Para que descargue de verdad, empaquétalo antes de construir el sitio.
-4. Las fechas de revisión de los documentos (`legal.fecha` en `src/i18n.json`),
+6. Las fechas de revisión de los documentos (`legal.fecha` en `src/i18n.json`),
    si has cambiado algún texto legal.
 
 ## Un detalle sobre las rutas y el 404
 
 Todos los enlaces del sitio son relativos, a propósito: así el sitio funciona
 igual servido desde una carpeta o desde la raíz de un dominio, y el verificador
-puede comprobar que cada enlace existe. La excepción a tener en cuenta es el
-404: si alguien pide una dirección profunda (`/a/b/c`), los enlaces del pie se
-resuelven contra esa ruta y no contra la raíz. Se arregla sirviendo el sitio
-desde la raíz del dominio —lo normal— o con rutas absolutas, que romperían la
-vista desde el disco y la comprobación de enlaces.
+puede comprobar que cada enlace lleva a algo que se sirve —la dirección corta de
+una página o un archivo del árbol—. Dos cosas que conviene tener a mano:
+
+- **En local hace falta un servidor que sirva direcciones cortas.**
+  `python3 -m http.server` no las conoce: sirve `/descarga.html` y da 404 en
+  `/descarga`, así que con él los enlaces internos no llevan a ninguna parte. Es
+  el precio de que el sitio enlace lo que el hosting sirve de verdad.
+- **El 404**: si alguien pide una dirección profunda (`/a/b/c`), los enlaces del
+  pie se resuelven contra esa ruta y no contra la raíz. Se arregla sirviendo el
+  sitio desde la raíz del dominio —lo normal— o con rutas absolutas, que
+  romperían la vista desde una carpeta y la comprobación de enlaces.

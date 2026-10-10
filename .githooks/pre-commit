@@ -1,0 +1,29 @@
+#!/bin/sh
+# Comprobación antes de cada commit.
+#
+# No hay remoto en este repositorio, así que no hay CI. Este es su sustituto
+# local: cada commit comprueba que el sitio construido coincide con su fuente
+# —y todo lo demás que miran las 18 comprobaciones— antes de dejarse escribir.
+# Tarda una décima de segundo, así que no hay excusa para saltárselo; si alguna
+# vez estorba de verdad, `git commit --no-verify`.
+#
+# El error más común que pilla: cambiar una plantilla, un texto o el CSS y
+# commitear sin volver a construir. El HTML que entra en el commit enseña lo
+# viejo, y quien lo lea en el sitio dentro de un mes no sabrá por qué.
+#
+# Se activa una vez por clon:
+#   git config core.hooksPath .githooks
+#
+# Lo que NO hace: salir a la red. El sitio publicado se comprueba con
+# `web/tools/vigilar-sitio.py`, y eso es cosa de publicar, no de commitear.
+
+raiz=$(git rev-parse --show-toplevel) || exit 1
+cd "$raiz" || exit 1
+
+if ! /usr/bin/python3 web/verificar-sitio.py; then
+  echo
+  echo "Commit parado: el sitio no cuadra con su fuente."
+  echo "Casi siempre es que falta volver a construir: /usr/bin/python3 web/build.py"
+  echo "Para saltarse esta comprobación: git commit --no-verify"
+  exit 1
+fi
