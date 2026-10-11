@@ -123,7 +123,8 @@ CAP_ANCHO, CAP_ALTO = 2360, 1520
 # sitio vive ahora en el proyecto `heybrisa`, elegido con las dos comprobaciones
 # de PUBLICAR.md —subdominio sin sufijo y par de direcciones que rutea, este
 # último comprobado tras el primer despliegue, que es cuando el dominio ya
-# resuelve—. `brisamac-app` y `brisamac` quedan como reservas de nombre.
+# resuelve—. Los otros proyectos de reserva —`brisamac-app`, que sirvió el
+# sitio, y `brisamac`— ya no existen: solo queda `heybrisa`.
 DOMINIO = "https://heybrisa.pages.dev"
 
 

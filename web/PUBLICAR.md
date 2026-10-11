@@ -137,14 +137,13 @@ que hace el sitio, y por eso está declarada en la política de contenido
    Un par en `188.114.96.x` o `188.114.97.x` significa que en España no se
    verá.
 
-   Por eso hay **tres** proyectos, y no es un descuido: `heybrisa` sirve el
-   sitio —es el que apunta `DOMINIO`—, y `brisamac-app` y `brisamac` existen solo
-   para **reservar los nombres**. Los de reserva no llevan el sitio dentro: su
-   despliegue es un `_redirects` de una línea, y nada más. Se hizo así porque a
-   `brisamac` le tocó el rango bloqueado y no hay manera de moverlo, así que el
-   nombre se guarda y quien llegue desde esa dirección acaba en el sitio bueno.
-   Si algún día se renombra o se quiere el sitio en uno de ellos, basta con
-   desplegar lo montado en ese proyecto y cambiar `DOMINIO`.
+   Hoy solo hay **un** proyecto, `heybrisa`, y es el que apunta `DOMINIO`. Hubo
+   dos más —`brisamac-app`, que sirvió el sitio, y `brisamac`, una reserva de
+   nombre cuyo despliegue era un `_redirects` de una línea—; se borraron el 11
+   de octubre de 2026, cuando el sitio ya vivía en `heybrisa`. La lección se
+   queda escrita arriba: si algún día hay que cambiar el nombre otra vez,
+   crear el proyecto y comprobar las dos cosas —subdominio sin sufijo y par de
+   direcciones que rutea— antes de mover `DOMINIO`.
    Pages redirige `/pagina.html` a `/pagina` y aplica `_headers` a la dirección
    servida, no al salto.
 3. **`_headers`**: lo leen Netlify y Cloudflare Pages y añade la política de
