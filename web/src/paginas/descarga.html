@@ -10,6 +10,7 @@
       <div class="ctas">
         <a class="btn primary lg" href="{{v:instalador}}">{{ico:descarga}}{{t:dl.cta}} <small>{{v:version}} {{v:canal}}</small></a>
       </div>
+      <p class="meta"><span>{{t:dl.req}}</span></p>
       <p class="letra-pequena">{{t:dl.licencia}} <a href="{{v:urlLicencia}}">{{t:nav.licencia}}</a>.</p>
     </div>
   </section>
@@ -25,6 +26,21 @@
       <h2>{{t:dl.proto.h}}</h2>
       <p class="sub">{{t:dl.proto.p}}</p>
       <p><a class="btn" href="{{v:prototipo}}" target="_blank" rel="noopener">{{ico:lupa}}{{t:dl.proto.b}}</a></p>
+    </div>
+  </section>
+
+  <!-- Cómo quitarla del todo va ANTES de los tres pasos, y no después: el
+       bloque que cierra la página es el que se recuerda, y cerrarla con un
+       comando de Terminal deja la sensación de que se venía a desinstalar algo.
+       Los tres pasos son lo que se viene a hacer, así que van al final, y la
+       salida limpia se cuenta antes, donde suma: como tranquilidad. -->
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">{{t:dl.quitar.eyebrow}}</p>
+      <h2>{{t:dl.quitar.h2}}</h2>
+      <p class="sub">{{t:dl.quitar.p}}</p>
+      <pre class="code">/Applications/Brisa.app/Contents/MacOS/Brisa --reset</pre>
+      <div class="note">{{ico:terminal}}<div><p>{{t:dl.quitar.nota}}</p></div></div>
     </div>
   </section>
 
@@ -68,25 +84,6 @@
         <p>{{t:dl.aviso}}</p>
         <p><a href="{{v:urlGuia}}">{{t:dl.guiaEnlace}}</a></p>
       </div></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <p class="eyebrow">{{t:dl.quitar.eyebrow}}</p>
-      <h2>{{t:dl.quitar.h2}}</h2>
-      <p class="sub">{{t:dl.quitar.p}}</p>
-      <pre class="code">/Applications/Brisa.app/Contents/MacOS/Brisa --reset</pre>
-      <div class="note">{{ico:terminal}}<div><p>{{t:dl.quitar.nota}}</p></div></div>
-    </div>
-  </section>
-
-  <section id="beta">
-    <div class="wrap">
-      <p class="eyebrow">{{t:dl.beta.eyebrow}}</p>
-      <h2>{{t:dl.beta.h2}}</h2>
-      <p class="sub">{{t:dl.beta.p}}</p>
-      <div class="note">{{ico:brillo}}<div><p>{{t:dl.beta.ayuda}}</p></div></div>
     </div>
   </section>
 

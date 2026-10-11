@@ -143,15 +143,70 @@ final class MaintenanceScheduler {
 
     // MARK: - Ejecución desatendida (modo --maintenance)
 
-    /// Corre el mantenimiento: purga según retención y notifica lo liberado.
+    /// Una ronda del mantenimiento: purga lo que ya cumplió su plazo y pasa las
+    /// cuatro reglas que estén encendidas, en un solo lote, y avisa de lo que
+    /// hizo.
+    ///
+    /// Devuelve lo que se ha liberado **de verdad**, que es lo purgado. Lo que
+    /// entra en la Papelera de Brisa no se suma ahí a propósito: acaba de
+    /// ocupar sitio, no de dejarlo libre —se liberará cuando a él le llegue su
+    /// plazo—, y contarlo como espacio recuperado sería mentir en el único
+    /// número que el usuario puede comprobar en el Finder.
+    ///
+    /// El ejecutor y el reloj entran por parámetro para que la prueba pueda
+    /// correrlo contra una carpeta temporal: con los de verdad, comprobar esta
+    /// función miraría —y movería— las Descargas y los cachés de la máquina que
+    /// la ejecuta.
     @discardableResult
-    func runMaintenanceNow(retentionDays: Int) -> Double {
-        let freed = BrisaTrashService.shared.purge(olderThan: retentionDays)
-        if freed > 0 {
-            notify(title: AppLanguage.t("Mantenimiento de Brisa completado", "Brisa maintenance complete"),
-                   text: AppLanguage.t("Se han liberado %.1f GB de la Papelera de Brisa.", "%.1f GB freed from Brisa Trash.").replacingOccurrences(of: "%.1f", with: String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), freed)))
+    func runMaintenanceNow(retentionDays: Int,
+                           ejecutor: MaintenanceRules = MaintenanceRules(),
+                           ahora: Date = Date()) -> Double {
+        let purgado = BrisaTrashService.shared.purge(olderThan: retentionDays)
+        let ajustes = BrisaSettings.shared
+        var reglas = ajustes.maintenanceRulesState
+        // Los duplicados son la única de las cuatro que no corre en cada ronda:
+        // «una vez al mes, Brisa revisa los duplicados nuevos». El cuándo se
+        // decide aquí y no dentro del ejecutor, para que el ejecutor pueda
+        // probarse sin depender del reloj ni de lo que ya se hizo antes.
+        var tocaDuplicados = false
+        if reglas["duplicates"] == true {
+            if ahora.timeIntervalSince1970 - ajustes.lastDuplicatesRound >= MaintenanceRules.duplicatesEvery {
+                tocaDuplicados = true
+            } else {
+                reglas["duplicates"] = false
+            }
         }
-        return freed
+        let movidos = ejecutor.run(rules: reglas, now: ahora)
+        if tocaDuplicados { ajustes.lastDuplicatesRound = ahora.timeIntervalSince1970 }
+
+        if purgado > 0 || !movidos.isEmpty {
+            let plantilla: String
+            if purgado > 0 && !movidos.isEmpty {
+                plantilla = AppLanguage.t("Se han liberado %g GB y %n elementos esperan en la Papelera de Brisa.",
+                                          "%g GB freed, and %n items wait in Brisa Trash.")
+            } else if purgado > 0 {
+                plantilla = AppLanguage.t("Se han liberado %g GB de la Papelera de Brisa.",
+                                          "%g GB freed from Brisa Trash.")
+            } else {
+                plantilla = AppLanguage.t("%n elementos esperan en la Papelera de Brisa.",
+                                          "%n items wait in Brisa Trash.")
+            }
+            notify(title: AppLanguage.t("Mantenimiento de Brisa completado", "Brisa maintenance complete"),
+                   text: Self.aviso(plantilla, gb: purgado, n: movidos.count))
+        }
+        return purgado
+    }
+
+    /// El aviso con sus dos cifras dentro. `String(format:)` con dos marcadores
+    /// de tipos distintos en una frase es una trampa en Swift —el orden y el
+    /// tipo de los argumentos tienen que cuadrar con los marcadores de cada
+    /// idioma, y las dos frases no tienen por qué traerlos en el mismo orden—,
+    /// así que cada cifra se escribe por su nombre. El formato va en `en_US_POSIX`
+    /// porque el número que se enseña no depende del idioma de quien lo lee.
+    private static func aviso(_ plantilla: String, gb: Double, n: Int) -> String {
+        plantilla
+            .replacingOccurrences(of: "%g", with: String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), gb))
+            .replacingOccurrences(of: "%n", with: String(n))
     }
 
     // MARK: - Notificaciones

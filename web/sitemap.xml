@@ -2,111 +2,111 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://brisamac.pages.dev/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/index.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/index.html"/>
+    <loc>https://heybrisa.pages.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/index.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/index.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/index.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/index.html"/>
+    <loc>https://heybrisa.pages.dev/en/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/herramientas.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/herramientas.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/tools.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/herramientas.html"/>
+    <loc>https://heybrisa.pages.dev/herramientas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/herramientas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/tools"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/herramientas"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/tools.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/herramientas.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/tools.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/herramientas.html"/>
+    <loc>https://heybrisa.pages.dev/en/tools</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/herramientas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/tools"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/herramientas"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/seguridad.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/seguridad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/safety.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/seguridad.html"/>
+    <loc>https://heybrisa.pages.dev/seguridad</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/seguridad"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/safety"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/seguridad"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/safety.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/seguridad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/safety.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/seguridad.html"/>
+    <loc>https://heybrisa.pages.dev/en/safety</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/seguridad"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/safety"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/seguridad"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/descarga.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/descarga.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/download.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/descarga.html"/>
+    <loc>https://heybrisa.pages.dev/descarga</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/descarga"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/download"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/descarga"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/download.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/descarga.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/download.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/descarga.html"/>
+    <loc>https://heybrisa.pages.dev/en/download</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/descarga"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/download"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/descarga"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/guia.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/guia.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/guide.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/guia.html"/>
+    <loc>https://heybrisa.pages.dev/guia</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/guia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/guide"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/guia"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/guide.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/guia.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/guide.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/guia.html"/>
+    <loc>https://heybrisa.pages.dev/en/guide</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/guia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/guide"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/guia"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/preguntas.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/preguntas.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/questions.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/preguntas.html"/>
+    <loc>https://heybrisa.pages.dev/preguntas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/preguntas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/questions"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/preguntas"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/questions.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/preguntas.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/questions.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/preguntas.html"/>
+    <loc>https://heybrisa.pages.dev/en/questions</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/preguntas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/questions"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/preguntas"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/privacidad.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/privacidad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/privacy.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/privacidad.html"/>
+    <loc>https://heybrisa.pages.dev/privacidad</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/privacidad"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/privacidad"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/privacy.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/privacidad.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/privacy.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/privacidad.html"/>
+    <loc>https://heybrisa.pages.dev/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/privacidad"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/privacidad"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/aviso-legal.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/aviso-legal.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/legal-notice.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/aviso-legal.html"/>
+    <loc>https://heybrisa.pages.dev/aviso-legal</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/aviso-legal"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/legal-notice"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/aviso-legal"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/legal-notice.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/aviso-legal.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/legal-notice.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/aviso-legal.html"/>
+    <loc>https://heybrisa.pages.dev/en/legal-notice</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/aviso-legal"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/legal-notice"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/aviso-legal"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/licencia.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/licencia.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/license.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/licencia.html"/>
+    <loc>https://heybrisa.pages.dev/licencia</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/licencia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/license"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/licencia"/>
   </url>
   <url>
-    <loc>https://brisamac.pages.dev/en/license.html</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/licencia.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/license.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/licencia.html"/>
+    <loc>https://heybrisa.pages.dev/en/license</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/licencia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/license"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/licencia"/>
   </url>
 </urlset>

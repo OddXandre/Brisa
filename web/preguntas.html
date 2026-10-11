@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Preguntas · Brisa, limpiador de disco para Mac</title>
-<meta name="description" content="Requisitos, permisos, privacidad, qué se borra y qué no, mantenimiento y cómo desinstalarla sin dejar rastro.">
+<meta name="description" content="Requisitos, permisos, privacidad, qué se borra y qué no, y cómo deshacerlo. Lo que se pregunta antes de instalar Brisa.">
 <!-- Lo que se le pide al buscador: indexar, y que pueda enseñar la imagen grande
      y el fragmento entero en el resultado —si no se autoriza, recorta por defecto
      mucho más—. La página de error lo pide al revés: no indexarse, porque lo
@@ -18,23 +18,23 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Brisa">
 <meta property="og:title" content="Preguntas · Brisa, limpiador de disco para Mac">
-<meta property="og:description" content="Requisitos, permisos, privacidad, qué se borra y qué no, mantenimiento y cómo desinstalarla sin dejar rastro.">
+<meta property="og:description" content="Requisitos, permisos, privacidad, qué se borra y qué no, y cómo deshacerlo. Lo que se pregunta antes de instalar Brisa.">
 <meta property="og:locale" content="es_ES">
 <meta property="og:locale:alternate" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Preguntas · Brisa, limpiador de disco para Mac">
-<meta name="twitter:description" content="Requisitos, permisos, privacidad, qué se borra y qué no, mantenimiento y cómo desinstalarla sin dejar rastro.">
-<meta property="og:url" content="https://brisamac.pages.dev/preguntas.html">
-<meta property="og:image" content="https://brisamac.pages.dev/assets/img/tarjeta-es.jpg">
+<meta name="twitter:description" content="Requisitos, permisos, privacidad, qué se borra y qué no, y cómo deshacerlo. Lo que se pregunta antes de instalar Brisa.">
+<meta property="og:url" content="https://heybrisa.pages.dev/preguntas">
+<meta property="og:image" content="https://heybrisa.pages.dev/assets/img/tarjeta-es.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Preguntas · Brisa, limpiador de disco para Mac">
-<meta name="twitter:image" content="https://brisamac.pages.dev/assets/img/tarjeta-es.jpg">
+<meta name="twitter:image" content="https://heybrisa.pages.dev/assets/img/tarjeta-es.jpg">
 <meta name="twitter:image:alt" content="Preguntas · Brisa, limpiador de disco para Mac">
-<link rel="canonical" href="https://brisamac.pages.dev/preguntas.html">
-<link rel="alternate" hreflang="es" href="https://brisamac.pages.dev/preguntas.html">
-<link rel="alternate" hreflang="en" href="https://brisamac.pages.dev/en/questions.html">
-<link rel="alternate" hreflang="x-default" href="https://brisamac.pages.dev/preguntas.html">
+<link rel="canonical" href="https://heybrisa.pages.dev/preguntas">
+<link rel="alternate" hreflang="es" href="https://heybrisa.pages.dev/preguntas">
+<link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/questions">
+<link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/preguntas">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="assets/img/icono.svg">
@@ -53,43 +53,93 @@ try {
   if (tema === "light" || tema === "dark") document.documentElement.dataset.theme = tema;
 } catch (e) {}
 </script>
+<!-- Sin guion no hay desplegable, y en un teléfono la barra solo cabe en una
+     fila: las cinco puertas de la página viven dentro del menú, así que sin
+     JavaScript no se podría salir de la que se está leyendo —el pie las tiene
+     todas, pero hay que llegar hasta él—. Este bloque devuelve la lista al
+     flujo: la hoja es la misma y solo se deshace lo que la esconde, así que el
+     menú queda abierto bajo la barra y el sitio se recorre igual. Solo entra
+     cuando el navegador no ejecuta guiones; no es una segunda versión del
+     sitio, es su suelo.
+
+     La barra crece lo que crece la lista y empuja el contenido ella sola, así
+     que no hay que compensar nada. Lo que sí hay que quitar es el `sticky`: con
+     las cinco puertas dentro, la barra pasa de 60 a más de 300 px, y pegada
+     arriba taparía media pantalla en cuanto se hiciera scroll. Aquí la
+     navegación se queda arriba del documento y se va con él. -->
+<noscript><style>
+  @media (max-width: 900px) {
+    .nav { position: static; }
+    .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
+    .nav-links {
+      order: 1; position: static; flex-basis: 100%;
+      opacity: 1; visibility: visible; transform: none;
+      padding: 0; background: none; border-bottom: 0;
+    }
+    .nav-acts { order: 0; }
+    .nav-toggle { display: none; }
+  }
+</style></noscript>
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "es", "description": "Brisa mide qué ocupa tu disco y te enseña el plan con nombres y cifras. Nada se mueve sin tu permiso: todo pasa por su Papelera. 440 KB, sin cuenta.", "url": "https://brisamac.pages.dev/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 o posterior", "softwareVersion": "0.1.0", "description": "Brisa mide qué ocupa tu disco y te enseña el plan con nombres y cifras. Nada se mueve sin tu permiso: todo pasa por su Papelera. 440 KB, sin cuenta.", "inLanguage": "es", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Resumen", "Estado del Mac", "Espacio en disco", "Archivos grandes", "Duplicados", "Aplicaciones", "Historial", "Mantenimiento", "Papelera de Brisa"], "url": "https://brisamac.pages.dev/index.html", "screenshot": "https://brisamac.pages.dev/assets/img/vista-resumen-es-claro.jpg", "license": "https://brisamac.pages.dev/licencia.html", "downloadUrl": "https://brisamac.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://brisamac.pages.dev/index.html"}, {"@type": "ListItem", "position": 2, "name": "Preguntas", "item": "https://brisamac.pages.dev/preguntas.html"}]}, {"@type": "FAQPage", "inLanguage": "es", "mainEntity": [{"@type": "Question", "name": "¿Qué Mac necesita Brisa?", "acceptedAnswer": {"@type": "Answer", "text": "macOS 14 (Sonoma) o posterior. No necesita nada instalado antes."}}, {"@type": "Question", "name": "¿Ocupa mucho?", "acceptedAnswer": {"@type": "Answer", "text": "Poco: el instalador pesa 440 KB y la app, ya en el disco, 1,1 MB."}}, {"@type": "Question", "name": "¿Por qué no está en la App Store?", "acceptedAnswer": {"@type": "Answer", "text": "Se reparte a mano. Llegar a la App Store exige un certificado de desarrollador y pasar una revisión; hasta entonces, macOS pide confirmar la primera apertura."}}, {"@type": "Question", "name": "¿Qué manda Brisa a internet?", "acceptedAnswer": {"@type": "Answer", "text": "Nada, salvo que se lo pidas. No hay cuenta, ni analítica, ni comprobación de versión. La única excepción es «Ayudar a mejorar Brisa»."}}, {"@type": "Question", "name": "¿Por qué me pide Acceso total al disco?", "acceptedAnswer": {"@type": "Answer", "text": "Para medir las carpetas que macOS protege: Documentos, Escritorio, Descargas, Fotos, iCloud, Correo y Mensajes. Sin él funciona y te dice qué falta."}}, {"@type": "Question", "name": "¿Dónde guarda lo que mide?", "acceptedAnswer": {"@type": "Answer", "text": "En «~/Library/Application Support/Brisa/»: la papelera, el historial, tus exclusiones y una muestra del estado del Mac. Se vacía desde la app."}}, {"@type": "Question", "name": "¿Qué borra exactamente una limpieza?", "acceptedAnswer": {"@type": "Answer", "text": "Cachés que las apps regeneran, descargas que nadie abrió, copias repetidas, instaladores antiguos y lo que ya estaba en la papelera del sistema. Nada de fotos, documentos ni música."}}, {"@type": "Question", "name": "¿Puedo deshacer una limpieza?", "acceptedAnswer": {"@type": "Answer", "text": "Sí: lo retirado pasa por la Papelera de Brisa con su fecha. Se restaura elemento a elemento, y el plazo lo eliges en Ajustes."}}, {"@type": "Question", "name": "¿Y desinstalar una aplicación?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, y Brisa lo avisa antes. Solo se quita lo que marques; lo que comparten otras aplicaciones se queda."}}, {"@type": "Question", "name": "¿Cómo elige qué copia de un duplicado conserva?", "acceptedAnswer": {"@type": "Answer", "text": "Prefiere la de mejor calidad, la que está en una carpeta más accesible y la usada más recientemente. Puedes cambiarla antes de aplicar nada."}}, {"@type": "Question", "name": "¿Qué hace el mantenimiento automático?", "acceptedAnswer": {"@type": "Answer", "text": "Se ejecuta en segundo plano y hace una cosa: vacía su Papelera cuando lo retirado cumple el plazo. Te dice cuánto liberó."}}, {"@type": "Question", "name": "¿Puedo desinstalar Brisa del todo?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, en dos pasos: el comando «--reset» retira el mantenimiento y los datos locales, y después borras la app de «Aplicaciones»."}}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "es", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 460 KB, sin cuenta.", "url": "https://heybrisa.pages.dev/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 o posterior", "softwareVersion": "0.1.0", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 460 KB, sin cuenta.", "inLanguage": "es", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Resumen", "Estado del Mac", "Espacio en disco", "Archivos grandes", "Duplicados", "Aplicaciones", "Historial", "Mantenimiento", "Papelera de Brisa"], "url": "https://heybrisa.pages.dev/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-es-claro.jpg", "license": "https://heybrisa.pages.dev/licencia", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://heybrisa.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Preguntas", "item": "https://heybrisa.pages.dev/preguntas"}]}, {"@type": "FAQPage", "inLanguage": "es", "mainEntity": [{"@type": "Question", "name": "¿Qué Mac necesita Brisa?", "acceptedAnswer": {"@type": "Answer", "text": "macOS 14 (Sonoma) o posterior. Y nada más: ni cuenta, ni conexión, ni nada que instalar antes."}}, {"@type": "Question", "name": "¿Ocupa mucho?", "acceptedAnswer": {"@type": "Answer", "text": "Menos que una foto: el instalador pesa 460 KB y la app, ya instalada, 1,1 MB."}}, {"@type": "Question", "name": "¿Por qué no está en la App Store?", "acceptedAnswer": {"@type": "Answer", "text": "Se reparte a mano. Entrar en la App Store exige un certificado de desarrollador y pasar una revisión; hasta entonces, macOS pide confirmar la primera apertura."}}, {"@type": "Question", "name": "¿Qué manda Brisa a internet?", "acceptedAnswer": {"@type": "Answer", "text": "Nada, salvo que se lo pidas. No hay cuenta, ni analítica, ni comprobación de versión. La única excepción es «Ayudar a mejorar Brisa», y solo manda lo que decidas."}}, {"@type": "Question", "name": "¿Por qué me pide Acceso total al disco?", "acceptedAnswer": {"@type": "Answer", "text": "Para medir las carpetas que macOS protege: Documentos, Escritorio, Descargas, Fotos, iCloud, Correo y Mensajes. Sin él funciona igual y te dice qué falta."}}, {"@type": "Question", "name": "¿Dónde guarda lo que mide?", "acceptedAnswer": {"@type": "Answer", "text": "En «~/Library/Application Support/Brisa/»: la Papelera de Brisa, el historial, tus exclusiones y una muestra del estado del Mac. Se vacía desde la app."}}, {"@type": "Question", "name": "¿Qué borra exactamente una limpieza?", "acceptedAnswer": {"@type": "Answer", "text": "Cachés que las apps regeneran, descargas que nadie abrió, copias repetidas, instaladores antiguos y lo que ya estaba en la papelera del sistema. Nunca fotos, documentos ni música."}}, {"@type": "Question", "name": "¿Puedo deshacer una limpieza?", "acceptedAnswer": {"@type": "Answer", "text": "Sí: lo retirado espera en la Papelera de Brisa con su fecha. Se restaura elemento a elemento, y el plazo lo eliges en Ajustes."}}, {"@type": "Question", "name": "¿Y desinstalar una aplicación?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, y Brisa te avisa antes. Solo se quita lo que marques; lo que comparten otras aplicaciones se queda."}}, {"@type": "Question", "name": "¿Cómo elige qué copia de un duplicado conserva?", "acceptedAnswer": {"@type": "Answer", "text": "Prefiere la de mejor calidad, la que está en la carpeta más a mano y la usada más recientemente. Puedes cambiarla antes de aplicar nada."}}, {"@type": "Question", "name": "¿Qué hace el mantenimiento automático?", "acceptedAnswer": {"@type": "Answer", "text": "Se ejecuta en segundo plano, con la cadencia que elijas —cada noche, los fines de semana o una vez al mes—, y vacía la Papelera de Brisa cuando vence el plazo de retención. Al terminar te avisa con lo que liberó."}}, {"@type": "Question", "name": "¿Puedo desinstalar Brisa del todo?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, en dos pasos: el comando «--reset» retira el mantenimiento y los datos locales, y después borras la app de «Aplicaciones»."}}, {"@type": "Question", "name": "¿Cuánto cuesta Brisa?", "acceptedAnswer": {"@type": "Answer", "text": "Nada. Se reparte gratis y completo: sin cuenta, sin suscripción, sin versión de pago y sin funciones reservadas. Si te sirve, se puede apoyar el proyecto desde la barra."}}]}]}</script>
 </head>
 
 <body>
 <a class="skip" href="#contenido">Ir al contenido</a>
 
-<nav class="nav" data-open="false">
+<nav class="nav" data-open="false" aria-label="Navegación principal">
   <div class="nav-in">
-    <a class="brand" href="index.html" aria-label="Brisa, inicio">
+    <a class="brand" href="./" aria-label="Brisa, inicio">
       <svg class="logo" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false"><path fill="currentColor" d="M447.339 278.449C476.406 276.83 502.324 294.691 509.692 323.15C510.746 327.152 511.412 331.25 511.666 335.379C512.495 348.814 511.485 366.722 511.751 380.665C511.43 394.663 512.623 408.855 511.23 422.786C508.276 452.422 481.291 463.029 459.659 476.13L402.471 511.385L328.886 556.629C316.547 564.252 299.661 575.362 287.165 582.191C282.667 584.606 277.866 586.404 272.896 587.542C259.806 590.539 246.141 589.759 233.481 585.285C223.372 581.646 197.793 564.488 187.027 557.907L80.3926 492.356C68.4928 484.752 55.9589 477.353 43.958 470.124C28.4154 460.758 15.2153 455.782 6.44142 438.818C-1.27539 423.9 0.25906 410.568 0.292982 394.319L0.295912 358.144C14.7688 399.519 49.6555 425.71 90.877 436.608C163.327 455.751 217.035 417.083 275.142 381.193C306.449 361.861 337.283 342.815 367.906 321.745L395.235 302.71C412.969 290.261 425.168 280.744 447.339 278.449ZM250.646 0.552131C278.435 -3.48367 302.089 15.4675 324.405 29.3295L387.401 68.2562L455.627 110.067C465.29 115.926 489.519 129.762 496.809 136.615C513.724 152.529 511.915 174.634 511.86 195.646L511.732 233.655C482.49 148.69 384.434 131.452 310.959 167.965C288.364 179.193 262.161 194.624 240.965 208.608C230.007 214.746 217.313 223.064 206.542 229.823C184.275 243.659 162.285 257.935 140.584 272.642C127.29 281.653 105.629 297.825 92.4902 304.739C85.523 308.468 77.9047 310.817 70.0498 311.67C52.9984 313.759 35.827 308.855 22.4512 298.078C-5.73352 275.463 0.821508 247.494 0.335951 215.524C0.244533 209.537 0.238846 203.454 0.306654 197.453C0.589379 187.026 -0.60433 176.402 1.15626 166.078C5.92721 138.103 31.3205 129.031 52.7461 116.196C76.8242 101.696 100.813 87.0494 124.711 72.2562L190.028 31.0101C208.909 18.887 227.966 2.80442 250.646 0.552131Z"/></svg>
       <b>Brisa</b>
     </a>
 
     <ul class="nav-links" id="menu">
-      <li><a href="herramientas.html" >Qué hace</a></li>
-      <li><a href="seguridad.html" >Seguridad</a></li>
-      <li><a href="descarga.html" >Instalación</a></li>
-      <li><a href="preguntas.html" aria-current="page">Preguntas</a></li>
-      <li><a href="privacidad.html" >Privacidad</a></li>
+      <li><a href="herramientas" >La app</a></li>
+      <li><a href="seguridad" >Seguridad</a></li>
+      <li><a href="descarga" >Instalación</a></li>
+      <li><a href="preguntas" aria-current="page">Preguntas</a></li>
+      <li><a href="privacidad" >Privacidad</a></li>
     </ul>
 
     <div class="nav-acts">
       <button class="icon-btn" type="button" data-tema-boton
               data-etiqueta="Tema %s. Púlsalo para cambiarlo."
               data-claro="claro" data-oscuro="oscuro"
-              aria-label="claro" title="claro">
+              aria-label="Cambiar el tema" title="Cambiar el tema">
         <svg data-tema-icono="light" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.25"/><path d="M12 2.75v2.5M12 18.75v2.5M2.75 12h2.5M18.75 12h2.5M5.4 5.4l1.8 1.8M16.8 16.8l1.8 1.8M18.6 5.4l-1.8 1.8M7.2 16.8l-1.8 1.8"/></svg>
         <svg data-tema-icono="dark" aria-hidden="true" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.25 8.25 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
       </button>
 
-      <a class="icon-btn wide" href="en/questions.html" hreflang="en"
+      <a class="icon-btn wide" href="en/questions" hreflang="en"
          title="Ver esta página en inglés" aria-label="Ver esta página en inglés"><span lang="en">EN</span></a>
 
-      <a class="btn primary sm" href="descarga.html"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75v11.5m0 0 4.25-4.25M12 15.25 7.75 11M4.75 19.25h14.5"/></svg><span class="lbl">Descargar</span></a>
+      <!-- Ko-fi: el widget oficial del apoyo. Va dentro de .nav-acts porque el
+           widget escribe con document.writeln y el botón aparece justo donde
+           está este guion; su estilo propio —el azul inclusive— se viste
+           después con los colores de la casa, en sitio.css.
+
+           El texto va por el diccionario porque el sitio tiene dos lenguas y el
+           widget lo escribe dentro del guion: cada idioma tiene el suyo, y por
+           eso la huella que lo autoriza se calcula sobre las páginas servidas y
+           no sobre este parcial —lo que se hashea tiene que ser el texto que el
+           navegador ejecuta, y el navegador ejecuta el marcador ya resuelto—.
+           La dirección del CDN va en la política de contenido (_headers). -->
+      <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+      <!-- Envuelto, y no por prudencia: el guion del widget llega de un tercero y
+           puede no llegar —bloqueado, caído, sin red—. Sin el `try`, esa carga
+           fallida deja un `ReferenceError` en la consola por un botón que
+           simplemente no sale, y el aviso asusta más que el hecho. -->
+      <script type='text/javascript'>try{kofiwidget2.init('Apóyame en Ko-fi', '#72a4f2', 'F1F6C97RL');kofiwidget2.draw();}catch(e){}</script>
+
+      <!-- El nombre va escrito aunque el texto se vea en el botón: en una pantalla
+           estrecha el rótulo se esconde con `display: none` (sitio.css) y de un
+           enlace no queda más que el dibujo, que va `aria-hidden`. Sin este
+           atributo, en un teléfono el botón de descarga —la acción principal de
+           la barra— no se puede anunciar ni invocar por voz. -->
+      <a class="btn primary sm" href="descarga" aria-label="Descargar"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75v11.5m0 0 4.25-4.25M12 15.25 7.75 11M4.75 19.25h14.5"/></svg><span class="lbl">Descargar</span></a>
 
       <button class="icon-btn nav-toggle" type="button" data-menu-boton aria-expanded="false"
               aria-controls="menu" aria-label="Abrir o cerrar el menú"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.25h16M4 12h16M4 16.75h16"/></svg></button>
@@ -102,8 +152,8 @@ try {
 
   <section class="head">
     <div class="wrap">
-      <h1>Preguntas frecuentes.</h1>
-      <p class="lede">Si algo no está aquí, escríbeme respondiendo al mensaje donde recibiste el instalador.</p>
+      <h1>Preguntas, resueltas.</h1>
+      <p class="lede">Si algo no está aquí, escríbeme a la dirección que está en el pie de esta página: contesto yo mismo.</p>
     </div>
   </section>
 
@@ -113,35 +163,41 @@ try {
       <div class="grupo">
         <h2 class="eyebrow">Antes de instalarla</h2>
         <div class="faq">
-          <details><summary>¿Qué Mac necesita Brisa?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>macOS 14 (Sonoma) o posterior. No necesita nada instalado antes.</p></div></details>
-          <details><summary>¿Ocupa mucho?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Poco: el instalador pesa 440 KB y la app, ya en el disco, 1,1 MB.</p></div></details>
-          <details><summary>¿Por qué no está en la App Store?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Se reparte a mano. Llegar a la App Store exige un certificado de desarrollador y pasar una revisión; hasta entonces, macOS pide confirmar la primera apertura.</p></div></details>
+          <details><summary>¿Qué Mac necesita Brisa?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>macOS 14 (Sonoma) o posterior. Y nada más: ni cuenta, ni conexión, ni nada que instalar antes.</p></div></details>
+          <details><summary>¿Ocupa mucho?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Menos que una foto: el instalador pesa 460 KB y la app, ya instalada, 1,1 MB.</p></div></details>
+          <details><summary>¿Por qué no está en la App Store?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Se reparte a mano. Entrar en la App Store exige un certificado de desarrollador y pasar una revisión; hasta entonces, macOS pide confirmar la primera apertura.</p></div></details>
+          <!-- El precio va el último de su grupo, después de lo que se necesita y
+               cuánto ocupa: es la pregunta que decide la instalación y en el grupo
+               de «antes de instalarla» es donde se busca. Su número va detrás del
+               de las doce de siempre para que la ficha de datos estructurados
+               pueda listarlas todas en orden y sin huecos. -->
+          <details><summary>¿Cuánto cuesta Brisa?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nada. Se reparte gratis y completo: sin cuenta, sin suscripción, sin versión de pago y sin funciones reservadas. Si te sirve, se puede apoyar el proyecto desde la barra.</p></div></details>
         </div>
       </div>
 
       <div class="grupo">
         <h2 class="eyebrow">Permisos y privacidad</h2>
         <div class="faq">
-          <details><summary>¿Qué manda Brisa a internet?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nada, salvo que se lo pidas. No hay cuenta, ni analítica, ni comprobación de versión. La única excepción es «Ayudar a mejorar Brisa».</p></div></details>
-          <details><summary>¿Por qué me pide Acceso total al disco?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Para medir las carpetas que macOS protege: Documentos, Escritorio, Descargas, Fotos, iCloud, Correo y Mensajes. Sin él funciona y te dice qué falta.</p></div></details>
-          <details><summary>¿Dónde guarda lo que mide?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>En «~/Library/Application Support/Brisa/»: la papelera, el historial, tus exclusiones y una muestra del estado del Mac. Se vacía desde la app.</p></div></details>
+          <details><summary>¿Qué manda Brisa a internet?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nada, salvo que se lo pidas. No hay cuenta, ni analítica, ni comprobación de versión. La única excepción es «Ayudar a mejorar Brisa», y solo manda lo que decidas.</p></div></details>
+          <details><summary>¿Por qué me pide Acceso total al disco?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Para medir las carpetas que macOS protege: Documentos, Escritorio, Descargas, Fotos, iCloud, Correo y Mensajes. Sin él funciona igual y te dice qué falta.</p></div></details>
+          <details><summary>¿Dónde guarda lo que mide?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>En «~/Library/Application Support/Brisa/»: la Papelera de Brisa, el historial, tus exclusiones y una muestra del estado del Mac. Se vacía desde la app.</p></div></details>
         </div>
       </div>
 
       <div class="grupo">
         <h2 class="eyebrow">Qué hace con tu disco</h2>
         <div class="faq">
-          <details><summary>¿Qué borra exactamente una limpieza?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Cachés que las apps regeneran, descargas que nadie abrió, copias repetidas, instaladores antiguos y lo que ya estaba en la papelera del sistema. Nada de fotos, documentos ni música.</p></div></details>
-          <details><summary>¿Puedo deshacer una limpieza?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Sí: lo retirado pasa por la Papelera de Brisa con su fecha. Se restaura elemento a elemento, y el plazo lo eliges en Ajustes.</p></div></details>
-          <details><summary>¿Y desinstalar una aplicación?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Sí, y Brisa lo avisa antes. Solo se quita lo que marques; lo que comparten otras aplicaciones se queda.</p></div></details>
-          <details><summary>¿Cómo elige qué copia de un duplicado conserva?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Prefiere la de mejor calidad, la que está en una carpeta más accesible y la usada más recientemente. Puedes cambiarla antes de aplicar nada.</p></div></details>
+          <details><summary>¿Qué borra exactamente una limpieza?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Cachés que las apps regeneran, descargas que nadie abrió, copias repetidas, instaladores antiguos y lo que ya estaba en la papelera del sistema. Nunca fotos, documentos ni música.</p></div></details>
+          <details><summary>¿Puedo deshacer una limpieza?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Sí: lo retirado espera en la Papelera de Brisa con su fecha. Se restaura elemento a elemento, y el plazo lo eliges en Ajustes.</p></div></details>
+          <details><summary>¿Y desinstalar una aplicación?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Sí, y Brisa te avisa antes. Solo se quita lo que marques; lo que comparten otras aplicaciones se queda.</p></div></details>
+          <details><summary>¿Cómo elige qué copia de un duplicado conserva?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Prefiere la de mejor calidad, la que está en la carpeta más a mano y la usada más recientemente. Puedes cambiarla antes de aplicar nada.</p></div></details>
         </div>
       </div>
 
       <div class="grupo">
         <h2 class="eyebrow">El día a día</h2>
         <div class="faq">
-          <details><summary>¿Qué hace el mantenimiento automático?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Se ejecuta en segundo plano y hace una cosa: vacía su Papelera cuando lo retirado cumple el plazo. Te dice cuánto liberó.</p></div></details>
+          <details><summary>¿Qué hace el mantenimiento automático?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Se ejecuta en segundo plano, con la cadencia que elijas —cada noche, los fines de semana o una vez al mes—, y vacía la Papelera de Brisa cuando vence el plazo de retención. Al terminar te avisa con lo que liberó.</p></div></details>
           <details><summary>¿Puedo desinstalar Brisa del todo?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Sí, en dos pasos: el comando «--reset» retira el mantenimiento y los datos locales, y después borras la app de «Aplicaciones».</p></div></details>
         </div>
       </div>
@@ -152,11 +208,11 @@ try {
   <section class="final">
     <div class="wrap">
       <svg class="mark" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false"><path fill="currentColor" d="M447.339 278.449C476.406 276.83 502.324 294.691 509.692 323.15C510.746 327.152 511.412 331.25 511.666 335.379C512.495 348.814 511.485 366.722 511.751 380.665C511.43 394.663 512.623 408.855 511.23 422.786C508.276 452.422 481.291 463.029 459.659 476.13L402.471 511.385L328.886 556.629C316.547 564.252 299.661 575.362 287.165 582.191C282.667 584.606 277.866 586.404 272.896 587.542C259.806 590.539 246.141 589.759 233.481 585.285C223.372 581.646 197.793 564.488 187.027 557.907L80.3926 492.356C68.4928 484.752 55.9589 477.353 43.958 470.124C28.4154 460.758 15.2153 455.782 6.44142 438.818C-1.27539 423.9 0.25906 410.568 0.292982 394.319L0.295912 358.144C14.7688 399.519 49.6555 425.71 90.877 436.608C163.327 455.751 217.035 417.083 275.142 381.193C306.449 361.861 337.283 342.815 367.906 321.745L395.235 302.71C412.969 290.261 425.168 280.744 447.339 278.449ZM250.646 0.552131C278.435 -3.48367 302.089 15.4675 324.405 29.3295L387.401 68.2562L455.627 110.067C465.29 115.926 489.519 129.762 496.809 136.615C513.724 152.529 511.915 174.634 511.86 195.646L511.732 233.655C482.49 148.69 384.434 131.452 310.959 167.965C288.364 179.193 262.161 194.624 240.965 208.608C230.007 214.746 217.313 223.064 206.542 229.823C184.275 243.659 162.285 257.935 140.584 272.642C127.29 281.653 105.629 297.825 92.4902 304.739C85.523 308.468 77.9047 310.817 70.0498 311.67C52.9984 313.759 35.827 308.855 22.4512 298.078C-5.73352 275.463 0.821508 247.494 0.335951 215.524C0.244533 209.537 0.238846 203.454 0.306654 197.453C0.589379 187.026 -0.60433 176.402 1.15626 166.078C5.92721 138.103 31.3205 129.031 52.7461 116.196C76.8242 101.696 100.813 87.0494 124.711 72.2562L190.028 31.0101C208.909 18.887 227.966 2.80442 250.646 0.552131Z"/></svg>
-      <h2>Dale aire a tu Mac.</h2>
-      <p class="sub">Descárgala y mira cuánto espacio vuelve.</p>
+      <h2>Limpia tu Mac. Y si te arrepientes, deshazlo.</h2>
+      <p class="sub">En un minuto verás cuánto espacio tienes escondido, y dentro del plazo que elijas todo puede volver a su sitio.</p>
       <div class="ctas">
-        <a class="btn primary lg" href="descarga.html"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75v11.5m0 0 4.25-4.25M12 15.25 7.75 11M4.75 19.25h14.5"/></svg>Descargar para Mac</a>
-        <a class="btn lg" href="guia.html">Ver cómo instalarla</a>
+        <a class="btn primary lg" href="descarga"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75v11.5m0 0 4.25-4.25M12 15.25 7.75 11M4.75 19.25h14.5"/></svg>Descargar para Mac</a>
+        <a class="btn lg" href="guia">Ver cómo instalarla</a>
       </div>
     </div>
   </section>
@@ -166,34 +222,39 @@ try {
 <footer>
   <div class="wrap foot-in">
     <div>
-      <a class="brand" href="index.html" aria-label="Brisa, inicio">
+      <a class="brand" href="./" aria-label="Brisa, inicio">
         <svg class="logo" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false"><path fill="currentColor" d="M447.339 278.449C476.406 276.83 502.324 294.691 509.692 323.15C510.746 327.152 511.412 331.25 511.666 335.379C512.495 348.814 511.485 366.722 511.751 380.665C511.43 394.663 512.623 408.855 511.23 422.786C508.276 452.422 481.291 463.029 459.659 476.13L402.471 511.385L328.886 556.629C316.547 564.252 299.661 575.362 287.165 582.191C282.667 584.606 277.866 586.404 272.896 587.542C259.806 590.539 246.141 589.759 233.481 585.285C223.372 581.646 197.793 564.488 187.027 557.907L80.3926 492.356C68.4928 484.752 55.9589 477.353 43.958 470.124C28.4154 460.758 15.2153 455.782 6.44142 438.818C-1.27539 423.9 0.25906 410.568 0.292982 394.319L0.295912 358.144C14.7688 399.519 49.6555 425.71 90.877 436.608C163.327 455.751 217.035 417.083 275.142 381.193C306.449 361.861 337.283 342.815 367.906 321.745L395.235 302.71C412.969 290.261 425.168 280.744 447.339 278.449ZM250.646 0.552131C278.435 -3.48367 302.089 15.4675 324.405 29.3295L387.401 68.2562L455.627 110.067C465.29 115.926 489.519 129.762 496.809 136.615C513.724 152.529 511.915 174.634 511.86 195.646L511.732 233.655C482.49 148.69 384.434 131.452 310.959 167.965C288.364 179.193 262.161 194.624 240.965 208.608C230.007 214.746 217.313 223.064 206.542 229.823C184.275 243.659 162.285 257.935 140.584 272.642C127.29 281.653 105.629 297.825 92.4902 304.739C85.523 308.468 77.9047 310.817 70.0498 311.67C52.9984 313.759 35.827 308.855 22.4512 298.078C-5.73352 275.463 0.821508 247.494 0.335951 215.524C0.244533 209.537 0.238846 203.454 0.306654 197.453C0.589379 187.026 -0.60433 176.402 1.15626 166.078C5.92721 138.103 31.3205 129.031 52.7461 116.196C76.8242 101.696 100.813 87.0494 124.711 72.2562L190.028 31.0101C208.909 18.887 227.966 2.80442 250.646 0.552131Z"/></svg>
         <b>Brisa</b>
       </a>
-      <p>Nada se elimina sin poder recuperarlo.</p>
+      <p>Nada se va sin avisar.</p>
       <p>Beta: firmada ad-hoc y repartida a mano, sin App Store.</p>
     </div>
 
-    <div>
+    <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
+         un `<nav>` con su nombre, quien navega por hitos encuentra la navegación
+         del pie y la distingue de la barra de arriba. La etiqueta visible se
+         queda donde estaba; el nombre va en el atributo, que es lo que lee quien
+         no ve la columna. -->
+    <nav aria-label="Navegación">
       <p class="eyebrow">Navegación</p>
       <ul class="foot-links">
-        <li><a href="herramientas.html">Qué hace</a></li>
-        <li><a href="seguridad.html">Seguridad</a></li>
-        <li><a href="descarga.html">Instalación</a></li>
-        <li><a href="guia.html">Guía</a></li>
-        <li><a href="preguntas.html">Preguntas</a></li>
+        <li><a href="herramientas">La app</a></li>
+        <li><a href="seguridad">Seguridad</a></li>
+        <li><a href="descarga">Instalación</a></li>
+        <li><a href="guia">Guía</a></li>
+        <li><a href="preguntas">Preguntas</a></li>
       </ul>
-    </div>
+    </nav>
 
-    <div>
+    <nav aria-label="Legal">
       <p class="eyebrow">Legal</p>
       <ul class="foot-links">
-        <li><a href="aviso-legal.html">Aviso legal</a></li>
-        <li><a href="licencia.html">Licencia</a></li>
-        <li><a href="privacidad.html">Privacidad</a></li>
+        <li><a href="aviso-legal">Aviso legal</a></li>
+        <li><a href="licencia">Licencia</a></li>
+        <li><a href="privacidad">Privacidad</a></li>
         <li><a href="mailto:we.beyond.studio@gmail.com">we.beyond.studio@gmail.com</a></li>
       </ul>
-    </div>
+    </nav>
 
     <div class="foot-legal">
       <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 o posterior</span>

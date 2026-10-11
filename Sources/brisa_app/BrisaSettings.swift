@@ -19,6 +19,51 @@ final class BrisaSettings {
         static let frequency = "brisa.frequency"
         static let language = "brisa.language"
         static let configured = "brisa.settingsConfigured"
+        static let duplicatesRound = "brisa.duplicatesRound"
+        static func rule(_ id: String) -> String { "brisa.rule.\(id)" }
+    }
+
+    // MARK: - Las cuatro reglas del mantenimiento automático
+
+    /// Los identificadores de las reglas, en el orden en que las enseña la
+    /// pantalla de Mantenimiento. Son los mismos que viajan en los ajustes y
+    /// los que lee el proceso del LaunchAgent.
+    static let maintenanceRules = ["systemTrash", "oldDownloads", "caches", "duplicates"]
+
+    /// Las que vienen encendidas de fábrica. La cuarta —los duplicados— arranca
+    /// apagada: es la única que decide sobre archivos que el usuario no había
+    /// señalado, y encenderla sola sería decidir por él.
+    static let maintenanceRulesOn = ["systemTrash", "oldDownloads", "caches"]
+
+    /// El interruptor de una regla. Vive aquí —y no solo en la pantalla— porque
+    /// quien las ejecuta es el LaunchAgent, que corre sin ventana: lo que
+    /// recuerde la interfaz no llega hasta ahí. Antes el interruptor solo
+    /// cambiaba su propia casilla en el DOM y no se guardaba en ningún sitio.
+    func maintenanceRule(_ id: String) -> Bool {
+        guard Self.maintenanceRules.contains(id) else { return false }
+        guard let saved = defaults.object(forKey: Key.rule(id)) as? Bool else {
+            return Self.maintenanceRulesOn.contains(id)
+        }
+        return saved
+    }
+
+    func setMaintenanceRule(_ id: String, _ on: Bool) {
+        guard Self.maintenanceRules.contains(id) else { return }
+        defaults.set(on, forKey: Key.rule(id))
+    }
+
+    /// Las cuatro, para el estado que recibe la interfaz y para el ejecutor.
+    var maintenanceRulesState: [String: Bool] {
+        Dictionary(uniqueKeysWithValues: Self.maintenanceRules.map { ($0, maintenanceRule($0)) })
+    }
+
+    /// Cuándo se revisaron los duplicados por última vez. La regla es la única
+    /// que corre de mes en mes —"una vez al mes, Brisa revisa los duplicados
+    /// nuevos"—, así que necesita acordarse de cuándo lo hizo; las otras tres
+    /// corren en cada ronda.
+    var lastDuplicatesRound: TimeInterval {
+        get { defaults.double(forKey: Key.duplicatesRound) }
+        set { defaults.set(newValue, forKey: Key.duplicatesRound) }
     }
 
     /// ¿Ya hay una elección del usuario guardada? Sirve para que el primer
@@ -91,6 +136,7 @@ final class BrisaSettings {
         DiskState.Settings(retention: retentionDays,
                            autoMaintenance: autoMaintenance,
                            frequency: frequency,
-                           language: language)
+                           language: language,
+                           rules: maintenanceRulesState)
     }
 }

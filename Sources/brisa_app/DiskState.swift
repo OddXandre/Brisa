@@ -67,6 +67,11 @@ struct DiskState: Codable {
         var autoMaintenance: Bool
         var frequency: String         // daily | weekly
         var language: String          // es | en (idioma de la app y del chrome nativo)
+        /// El interruptor de cada una de las cuatro reglas del mantenimiento
+        /// (`systemTrash`, `oldDownloads`, `caches`, `duplicates`). Es opcional
+        /// a propósito: un análisis guardado por una versión anterior no lo
+        /// trae, y la caché tiene que seguir leyéndose.
+        var rules: [String: Bool]? = nil
     }
 }
 

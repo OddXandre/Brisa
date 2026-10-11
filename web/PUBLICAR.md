@@ -69,17 +69,17 @@ que hace el sitio, y por eso está declarada en la política de contenido
    npx wrangler pages dev sitio-publicado --port 8877
    ```
 
-   El sitio vive en Cloudflare Pages, en el proyecto `brisamac-app`, y se
+   El sitio vive en Cloudflare Pages, en el proyecto `heybrisa`, y se
    publica con Wrangler desde la raíz del repositorio —sin instalar nada
    global, `npx` lo trae—:
 
    ```
-   npx wrangler pages deploy sitio-publicado --project-name=brisamac-app --branch=main
+   npx wrangler pages deploy sitio-publicado --project-name=heybrisa --branch=main
    ```
 
    `--branch=main` es lo que decide que sea la publicación de producción: con
    cualquier otra rama, Cloudflare crea una dirección aparte y
-   `brisamac-app.pages.dev` se queda como estaba.
+   `heybrisa.pages.dev` se queda como estaba.
 
    **Publicar no es subir: es subir y comprobarlo desde fuera.** El despliegue
    da por bueno el envío antes de que el sitio esté servido, y un despliegue
@@ -131,20 +131,20 @@ que hace el sitio, y por eso está declarada en la política de contenido
 
    ```
    npx wrangler pages project list                   # el dominio real, con sufijo o sin él
-   dig +short @1.1.1.1 brisamac-app.pages.dev A      # el par que le tocó
+   dig +short @1.1.1.1 heybrisa.pages.dev A          # el par que le tocó
    ```
 
    Un par en `188.114.96.x` o `188.114.97.x` significa que en España no se
    verá.
 
-   Por eso hay **dos** proyectos, y no es un descuido: `brisamac-app` sirve el
-   sitio —es el que apunta `DOMINIO`— y `brisamac` existe solo para **reservar el
-   nombre**. El de la reserva no lleva el sitio dentro: su despliegue es un
-   `_redirects` de una línea que manda a `brisamac-app.pages.dev`, y nada más. Se
-   hizo así porque a `brisamac` le tocó el rango bloqueado y no hay manera de
-   moverlo, así que el nombre se guarda y quien llegue desde fuera de España
-   acaba en el sitio bueno. Si algún día se renombra o se quiere el sitio ahí,
-   basta con desplegar lo montado en ese proyecto y cambiar `DOMINIO`.
+   Por eso hay **tres** proyectos, y no es un descuido: `heybrisa` sirve el
+   sitio —es el que apunta `DOMINIO`—, y `brisamac-app` y `brisamac` existen solo
+   para **reservar los nombres**. Los de reserva no llevan el sitio dentro: su
+   despliegue es un `_redirects` de una línea, y nada más. Se hizo así porque a
+   `brisamac` le tocó el rango bloqueado y no hay manera de moverlo, así que el
+   nombre se guarda y quien llegue desde esa dirección acaba en el sitio bueno.
+   Si algún día se renombra o se quiere el sitio en uno de ellos, basta con
+   desplegar lo montado en ese proyecto y cambiar `DOMINIO`.
    Pages redirige `/pagina.html` a `/pagina` y aplica `_headers` a la dirección
    servida, no al salto.
 3. **`_headers`**: lo leen Netlify y Cloudflare Pages y añade la política de

@@ -1839,8 +1839,8 @@ html[data-theme="light"] .mini-switch[aria-checked="true"]{background:var(--acc)
 .sched-pills{display:flex;gap:8px;flex-wrap:wrap;padding:0;align-content:center;min-width:0;max-width:100%}
 
 /* ---------- Ritmo · relleno de la vista ---------- */
-#view-ritmo #ritmo-rules{flex:0 0 auto;min-height:0}
-#view-ritmo #last-run{flex:0 0 auto;display:flex;flex-direction:column}
+#view-ritmo #ritmo-rules{flex:0 0 auto;min-height:180px}
+#view-ritmo #last-run{flex:1 0 auto;display:flex;flex-direction:column}
 #view-ritmo #last-run .rounds{flex:0 0 auto;display:flex;flex-direction:column}
 #view-ritmo #last-run .round{flex:0 0 auto;align-items:center}
 
@@ -3073,16 +3073,16 @@ html.theme-anim .sb-item{
                 <button class="chip" data-sched="weekends" data-i18n="ritmo.weekends">Fines de semana</button>
                 <button class="chip" data-sched="monthly" data-i18n="ritmo.monthly">Una vez al mes</button>
               </div>
-              <span class="rh-reposo" data-i18n="ritmo.restNote">Se ejecuta en segundo plano, sin abrir la ventana.</span>
+              <span class="rh-reposo" data-i18n="ritmo.restNote">Solo se ejecuta con tu Mac en reposo.</span>
             </div>
             <div class="rh-steps">
-              <div class="rh-s"><span class="rh-n">1</span><div><b data-i18n="ritmo.step1">Guarda</b><small data-i18n="ritmo.step1d">Lo retirado espera en tu Papelera los días que elijas.</small></div></div>
-              <div class="rh-s"><span class="rh-n">2</span><div><b data-i18n="ritmo.step2">Vacía</b><small data-i18n="ritmo.step2d">Cuando cumple el plazo, lo borra para siempre.</small></div></div>
-              <div class="rh-s"><span class="rh-n">3</span><div><b data-i18n="ritmo.step3">Informa</b><small data-i18n="ritmo.step3d">Te dice cuánto se ha liberado.</small></div></div>
+              <div class="rh-s"><span class="rh-n">1</span><div><b data-i18n="ritmo.step1">Elimina</b><small data-i18n="ritmo.step1d">Solo lo seguro: cachés, descargas antiguas y copias.</small></div></div>
+              <div class="rh-s"><span class="rh-n">2</span><div><b data-i18n="ritmo.step2">Protege</b><small data-i18n="ritmo.step2d">Lo guarda 30 días en tu Papelera.</small></div></div>
+              <div class="rh-s"><span class="rh-n">3</span><div><b data-i18n="ritmo.step3">Informa</b><small data-i18n="ritmo.step3d">Cada mañana sabrás qué hizo y cuánto recuperó.</small></div></div>
             </div>
           </div>
           <div class="panel" id="last-run" style="margin-top:12px"></div>
-          <div class="v-section"><h2 data-i18n="ritmo.whatCleans">Qué hace</h2></div>
+          <div class="v-section"><h2 data-i18n="ritmo.whatCleans">Qué limpia</h2><span class="hint" data-i18n="ritmo.rulesHint">activa cada regla</span></div>
           <div class="rowlist" id="ritmo-rules"></div>
           <p class="ritmo-note" style="margin-top:10px;padding:0 2px" data-i18n="ritmo.note">Nunca toca fotos, documentos ni música.</p>
         </div>
@@ -3486,19 +3486,22 @@ const I18N = {
     "hist.pendingH2":"Aún sin análisis", "hist.pendingP":"Tu historial de limpiezas aparecerá aquí, con datos reales.",
     "hist.compare":"Comparar", "hist.compareHint":"toca dos limpiezas del gráfico o de la lista", "hist.tapCleanup":"Toca una limpieza", "hist.ofTwo":"de 2", "hist.selected":"seleccionadas", "hist.tie":"Empate", "hist.sameSpace":"mismo espacio", "hist.moreThan":"más que la del",
     "ritmo.on":"Mantenimiento activado", "ritmo.off":"Mantenimiento desactivado",
-    "ritmo.onDesc":"Brisa vaciará su Papelera, en silencio.", "ritmo.offDesc":"Actívalo y Brisa se encarga.",
+    "ritmo.onDesc":"Brisa revisará tu disco esta noche, en silencio.", "ritmo.offDesc":"Actívalo y Brisa se encarga.",
     "ritmo.toggle":"Activar o desactivar el mantenimiento automático",
     "ritmo.frequency":"Frecuencia", "ritmo.nightly":"Cada noche", "ritmo.weekends":"Fines de semana", "ritmo.monthly":"Una vez al mes",
-    "ritmo.restNote":"Se ejecuta en segundo plano, sin abrir la ventana.",
-    "ritmo.step1":"Guarda", "ritmo.step1d":"Lo retirado espera en tu Papelera los días que elijas.",
-    "ritmo.step2":"Vacía", "ritmo.step2d":"Cuando cumple el plazo, lo borra para siempre.",
-    "ritmo.step3":"Informa", "ritmo.step3d":"Te dice cuánto se ha liberado.",
+    "ritmo.restNote":"Solo se ejecuta con tu Mac en reposo.",
+    "ritmo.step1":"Elimina", "ritmo.step1d":"Solo lo seguro: cachés, descargas antiguas y copias.",
+    "ritmo.step2":"Protege", "ritmo.step2d":"Lo guarda 30 días en tu Papelera.",
+    "ritmo.step3":"Informa", "ritmo.step3d":"Cada mañana sabrás qué hizo y cuánto recuperó.",
     "ritmo.recent":"Actividad reciente", "ritmo.nextTonight":"próxima revisión: esta noche", "ritmo.nextWeekends":"próxima revisión: este fin de semana", "ritmo.nextMonthly":"próxima revisión: este mes", "ritmo.disabled":"Mantenimiento desactivado",
-    "ritmo.emptyH2":"Aún sin actividad", "ritmo.emptyP":"Cuando Brisa limpie algo, verás aquí cada ronda y cuánto ha liberado.",
+    "ritmo.emptyH2":"Aún sin actividad", "ritmo.emptyP":"Cuando el mantenimiento se ejecute, verás aquí cada ronda y cuánto ha recuperado.",
     "ritmo.inTrash":"en tu Papelera",
-    "ritmo.whatCleans":"Qué hace",
+    "ritmo.whatCleans":"Qué limpia", "ritmo.rulesHint":"activa cada regla",
     "ritmo.note":"Nunca toca fotos, documentos ni música.",
-    "ritmo.rule1":"Vacía la Papelera de Brisa", "ritmo.rule1d":"Borra para siempre lo retirado que ya cumplió el plazo que elegiste —7, 30 o 60 días—.",
+    "ritmo.rule1":"Vaciar la Papelera del sistema", "ritmo.rule1d":"Solo si lleva ahí más de 30 días.",
+    "ritmo.rule2":"Descargas olvidadas", "ritmo.rule2d":"Los archivos sin abrir desde hace más de un año van a tu Papelera.",
+    "ritmo.rule3":"Cachés y archivos temporales", "ritmo.rule3d":"Las apps los vuelven a crear. Tu Mac no los echará de menos.",
+    "ritmo.rule4":"Duplicados y casi duplicados", "ritmo.rule4d":"Una vez al mes, Brisa revisa los duplicados nuevos y conserva la mejor copia.",
     "pap.empty":"Vacía", "pap.items":"elementos", "pap.safetyTitle":"Tu red de seguridad.", "pap.safetyBody":"Lo que eliminas se guarda aquí, los días que elijas.",
     "pap.emptyBtn":"Vaciar",
     "title.pending":"análisis pendiente",
@@ -3799,19 +3802,22 @@ const I18N = {
     "hist.compare":"Compare", "hist.compareHint":"tap two cleanups in the chart or list", "hist.tapCleanup":"Tap a cleanup", "hist.ofTwo":"of 2", "hist.selected":"selected", "hist.tie":"Tie", "hist.sameSpace":"same space", "hist.moreThan":"more than",
     /* Mantenimiento */
     "ritmo.on":"Maintenance on", "ritmo.off":"Maintenance off",
-    "ritmo.onDesc":"Brisa will empty its Trash, quietly.", "ritmo.offDesc":"Turn it on and Brisa handles it for you.",
+    "ritmo.onDesc":"Brisa will review your disk tonight, quietly.", "ritmo.offDesc":"Turn it on and Brisa handles it for you.",
     "ritmo.toggle":"Turn automatic maintenance on or off",
     "ritmo.frequency":"Frequency", "ritmo.nightly":"Every night", "ritmo.weekends":"Weekends", "ritmo.monthly":"Once a month",
-    "ritmo.restNote":"Runs in the background, without opening the window.",
-    "ritmo.step1":"Keeps", "ritmo.step1d":"What you remove waits in your Trash for the window you pick.",
-    "ritmo.step2":"Empties", "ritmo.step2d":"Once it reaches that window, it's deleted for good.",
-    "ritmo.step3":"Reports", "ritmo.step3d":"It tells you how much was freed.",
+    "ritmo.restNote":"Only runs while your Mac is at rest.",
+    "ritmo.step1":"Removes", "ritmo.step1d":"Only the safe stuff: caches, old downloads and copies.",
+    "ritmo.step2":"Protects", "ritmo.step2d":"Keeps it 30 days in your Trash.",
+    "ritmo.step3":"Reports", "ritmo.step3d":"Every morning you know what it did and how much it recovered.",
     "ritmo.recent":"Recent activity", "ritmo.nextTonight":"next review: tonight", "ritmo.nextWeekends":"next review: this weekend", "ritmo.nextMonthly":"next review: this month", "ritmo.disabled":"Maintenance disabled",
-    "ritmo.emptyH2":"No activity yet", "ritmo.emptyP":"When Brisa cleans something, you'll see every round here and how much it freed.",
+    "ritmo.emptyH2":"No activity yet", "ritmo.emptyP":"When maintenance runs, you'll see every round here and how much it recovered.",
     "ritmo.inTrash":"in your Trash",
-    "ritmo.whatCleans":"What it does",
+    "ritmo.whatCleans":"What it cleans", "ritmo.rulesHint":"toggle each rule",
     "ritmo.note":"Never touches photos, documents or music.",
-    "ritmo.rule1":"Empties Brisa Trash", "ritmo.rule1d":"Deletes for good whatever was removed and has already reached the window you chose —7, 30 or 60 days—.",
+    "ritmo.rule1":"Empty the system Trash", "ritmo.rule1d":"Only if it has been there over 30 days.",
+    "ritmo.rule2":"Forgotten downloads", "ritmo.rule2d":"Files unopened for over a year move to your Trash.",
+    "ritmo.rule3":"Caches and temporary files", "ritmo.rule3d":"Apps recreate them. Your Mac won't miss them.",
+    "ritmo.rule4":"Duplicates and near-duplicates", "ritmo.rule4d":"Once a month, Brisa reviews new duplicates and keeps the best copy.",
     /* Papelera */
     "pap.empty":"Empty", "pap.items":"items", "pap.safetyTitle":"Your safety net.", "pap.safetyBody":"What you remove is kept here, for as long as you choose.",
     "pap.emptyBtn":"Empty",
@@ -4050,7 +4056,12 @@ const STATE = {
   ritmo: false,
   sched: "daily",
   settings: {
-    sec: "general", retention: 30, launch: true, menubar: true, weekly: true, full: true, anon: false, language: "es", autoClean: true
+    sec: "general", retention: 30, launch: true, menubar: true, weekly: true, full: true, anon: false, language: "es", autoClean: true,
+    /* Las cuatro reglas del mantenimiento automático, con su interruptor. Aquí
+       vive una copia para poder pintarlas antes de que llegue el primer estado;
+       en cuanto la app manda el suyo, manda el de la app: es ella quien las
+       guarda, porque quien las ejecuta corre sin ventana. */
+    rules: {systemTrash:true, oldDownloads:true, caches:true, duplicates:false}
   },
   /* Solo el prototipo puede rellenar datos de demostración. La app nativa
      mantiene este indicador a false y nunca usa estos valores. */
@@ -4747,7 +4758,8 @@ function syncMaintenance(boot){
     enabled:!!STATE.ritmo,
     language:STATE.settings.language,
     frequency:STATE.sched,
-    retention:STATE.settings.retention
+    retention:STATE.settings.retention,
+    rules:STATE.settings.rules
   }});
 }
 /* Estado ocupado de un botón: anillo real delante de la etiqueta y bloqueo de
@@ -7683,18 +7695,38 @@ function renderAtlasPanel(cat,enter){
 
 /* ---------- ritmo ---------- */
 function renderRules(){
-  /* Una sola regla, y es la que existe: el mantenimiento vacía la Papelera de
-     Brisa cuando lo retirado cumple el plazo que el usuario eligió. Antes esta
-     lista anunciaba cuatro —Papelera del sistema, descargas olvidadas, cachés y
-     duplicados— que el mantenimiento no ejecuta; una pantalla que promete lo
-     que la app no hace deja de ser un resumen y pasa a ser un anuncio. */
-  const rules=[{name:t("ritmo.rule1"),desc:t("ritmo.rule1d")}];
+  /* Las cuatro reglas del mantenimiento, con su interruptor cada una: la
+     Papelera del sistema, las descargas olvidadas, los cachés y los duplicados.
+     Quién está encendida no se decide aquí: lo guarda la app y lo manda con cada
+     estado, porque quien las ejecuta es el proceso del mantenimiento, que corre
+     sin ventana. La pantalla enseña lo que de verdad se va a hacer. La cuarta
+     arranca apagada, como en la app recién instalada. */
+  const rules=[
+    {id:"systemTrash",ic:"bin",name:t("ritmo.rule1"),desc:t("ritmo.rule1d")},
+    {id:"oldDownloads",ic:"tray",name:t("ritmo.rule2"),desc:t("ritmo.rule2d")},
+    {id:"caches",ic:"wind",name:t("ritmo.rule3"),desc:t("ritmo.rule3d")},
+    {id:"duplicates",ic:"copy",name:t("ritmo.rule4"),desc:t("ritmo.rule4d")}
+  ];
+  const encendida = (id) => STATE.settings.rules[id] !== false;
   const rulesEl=$("#ritmo-rules");
   const rEnter=rulesEl.classList.contains("stagger")?$("#view-ritmo").classList.contains("boot-in"):false;
   if(!rEnter)rulesEl.classList.remove("stagger");
   if(rEnter)rulesEl.classList.add("stagger");
   rulesEl.innerHTML=rules.map((r,i)=>`
-    <div class="rule" style="--i:${i}"><div class="rt"><b>${r.name}</b><small>${r.desc}</small></div></div>`).join("");
+    <div class="rule" style="--i:${i}"><div class="rt"><b>${r.name}</b><small>${r.desc}</small></div>
+    <button class="mini-switch rule-sw" data-i="${i}" data-rule="${r.id}" role="switch" aria-checked="${encendida(r.id)}" aria-label="${r.name}"></button></div>`).join("");
+  /* El interruptor guarda de verdad: cambia el estado, lo apunta para el próximo
+     arranque y se lo cuenta a la app en el siguiente envío de ajustes —que es el
+     que de verdad decide qué se ejecuta—. Antes solo cambiaba su propia casilla
+     en el DOM y el mantenimiento no se enteraba de nada. */
+  $$(".rule-sw").forEach(b=>b.addEventListener("click",()=>{
+    const id=b.dataset.rule;
+    const on=b.getAttribute("aria-checked")!=="true";
+    b.setAttribute("aria-checked",String(on));
+    STATE.settings.rules[id]=on;
+    saveSettings();
+    syncMaintenance(false);
+  }));
 }
 let lastRoundStagger=false; /* las rondas solo entran con la vista, no con cada toggle */
 function renderRitmo(){
@@ -7711,7 +7743,12 @@ function renderRitmo(){
      cualquiera. Antes el ejemplo solo aparecía DESPUÉS de pulsar «Analizar»:
      quien abría Mantenimiento antes se encontraba «Actividad reciente» con el
      titular y nada debajo. La app nativa (inApp) jamás inventa: o historial
-     real, o un estado vacío que explica que todavía no ha corrido nada. */
+     real, o un estado vacío que explica que todavía no ha corrido nada.
+
+     Las rondas de ejemplo llevan lo que el mantenimiento limpia de verdad —la
+     Papelera del sistema, descargas olvidadas y cachés—, para que la sección se
+     lea como la de la app con historial y no como una lista de cosas que Brisa
+     nunca hace. */
   const src=STATE.history.length?STATE.history:(inApp()?[]:[
     {ts:Date.now()-2*864e5,gb:4.8,items:[{name:"Descargas antiguas",gb:4.8}]},
     {ts:Date.now()-9*864e5,gb:2.1,items:[{name:"Caché de navegadores",gb:2.1}]},
@@ -9080,6 +9117,14 @@ window.BRISA_APPLY = function(s){
     /* La sección de Mantenimiento se repinta con CADA estado nuevo, no solo
        cuando el estado trae ajustes: sus rondas salen del historial, que
        acaba de llegar. Antes dependía de que el análisis mandara ajustes. */
+    /* Los interruptores de las reglas son de la app, no de la pantalla: viajan
+       con cada estado y se aplican antes de repintar la sección, para que lo que
+       se ve encendido sea lo que se va a ejecutar. */
+    if(st.rules){
+      Object.assign(STATE.settings.rules, st.rules);
+      saveSettings();
+      if(typeof renderRules==="function"&&$("#ritmo-rules")) renderRules();
+    }
     if(typeof renderRitmo==="function"&&$("#view-ritmo")) renderRitmo();
     /* Carpetas que este análisis no pudo medir (macOS las protege y falta el
        permiso de disco). Viajan dentro del estado, no como aviso suelto, para

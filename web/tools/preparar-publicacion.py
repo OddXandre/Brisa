@@ -20,7 +20,7 @@ Uso:
     /usr/bin/python3 web/tools/preparar-publicacion.py
 
 Y después, como siempre:
-    npx wrangler pages deploy sitio-publicado --project-name=brisamac-app --branch=main
+    npx wrangler pages deploy sitio-publicado --project-name=heybrisa --branch=main
 """
 import shutil
 import sys
@@ -109,7 +109,7 @@ def main():
     print(f"  {copiados} ficheros · {tamano(SALIDA)}")
     print(f"  comprobado: nada de {', '.join(sorted(SUFIJOS_PROHIBIDOS))} en lo copiado\n")
     print("Ahora:")
-    print("  npx wrangler pages deploy sitio-publicado --project-name=brisamac-app --branch=main")
+    print("  npx wrangler pages deploy sitio-publicado --project-name=heybrisa --branch=main")
     print("  /usr/bin/python3 web/tools/vigilar-sitio.py")
     return 0
 

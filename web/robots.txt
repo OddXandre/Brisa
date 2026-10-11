@@ -3,4 +3,4 @@
 # visitar. Este archivo solo dice dónde está el mapa del sitio.
 User-agent: *
 Allow: /
-Sitemap: https://brisamac.pages.dev/sitemap.xml
+Sitemap: https://heybrisa.pages.dev/sitemap.xml

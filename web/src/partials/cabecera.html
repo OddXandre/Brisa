@@ -45,6 +45,33 @@ try {
   if (tema === "light" || tema === "dark") document.documentElement.dataset.theme = tema;
 } catch (e) {}
 </script>
+<!-- Sin guion no hay desplegable, y en un teléfono la barra solo cabe en una
+     fila: las cinco puertas de la página viven dentro del menú, así que sin
+     JavaScript no se podría salir de la que se está leyendo —el pie las tiene
+     todas, pero hay que llegar hasta él—. Este bloque devuelve la lista al
+     flujo: la hoja es la misma y solo se deshace lo que la esconde, así que el
+     menú queda abierto bajo la barra y el sitio se recorre igual. Solo entra
+     cuando el navegador no ejecuta guiones; no es una segunda versión del
+     sitio, es su suelo.
+
+     La barra crece lo que crece la lista y empuja el contenido ella sola, así
+     que no hay que compensar nada. Lo que sí hay que quitar es el `sticky`: con
+     las cinco puertas dentro, la barra pasa de 60 a más de 300 px, y pegada
+     arriba taparía media pantalla en cuanto se hiciera scroll. Aquí la
+     navegación se queda arriba del documento y se va con él. -->
+<noscript><style>
+  @media (max-width: 900px) {
+    .nav { position: static; }
+    .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
+    .nav-links {
+      order: 1; position: static; flex-basis: 100%;
+      opacity: 1; visibility: visible; transform: none;
+      padding: 0; background: none; border-bottom: 0;
+    }
+    .nav-acts { order: 0; }
+    .nav-toggle { display: none; }
+  }
+</style></noscript>
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->

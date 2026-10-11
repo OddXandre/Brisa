@@ -11,7 +11,10 @@ ve a simple vista.
                   si se edita la fuente y no se reconstruye, aquí sale.
   3. Marcadores   no queda ningún {{marcador}} sin resolver en la salida.
   4. Copias       ningún texto del diccionario se queda sin usar en su idioma.
-  5. Enlaces      cada enlace y cada recurso (hoja, script, imagen) existe.
+  5. Enlaces      cada enlace y cada recurso (hoja, script, imagen) existe. Las
+                  páginas se enlazan por su dirección servida —`/descarga`, sin
+                  el `.html`—, así que se comprueba esa forma: la que el hosting
+                  sirve, no la que redirige.
   6. Idiomas      las dos versiones de una página tienen la misma estructura.
   7. Capturas     las 36 existen, miden lo que declara el HTML y son las nueve
                   vistas en los dos temas y los dos idiomas.
@@ -22,9 +25,10 @@ ve a simple vista.
  11. Aire         el espaciado de la hoja no baja del suelo que se decidió —también
                   el de arriba de una captura de portada, que no es de nadie—: es
                   lo primero que se degrada y lo que ninguna captura delata.
- 12. Movimiento   el estado de partida de la entrada vive dentro de su consulta
-                  —fuera escondería contenido sin guion— y con el movimiento
-                  reducido no queda ni un desplazamiento ni un barrido.
+ 12. Movimiento   el revelado progresivo usa IntersectionObserver solo con
+                  movimiento permitido, con fallback visible, y los estilos no
+                  ocultan contenido antes de inicializarse. Las transiciones de
+                  documento y los gestos reducidos están declarados completos.
  13. Legales      los tres documentos que hacen falta para repartir software
                   —aviso legal, licencia y privacidad— están en los dos idiomas,
                   se llega a ellos desde el pie de cualquier página y cada uno
@@ -32,10 +36,13 @@ ve a simple vista.
                   falta: este sitio no tiene ni una cookie, así que no hay
                   banner ni página de cookies que enseñar.
  14. Compartir    cada página se presenta bien al compartirla —título, texto,
-                  idioma y tarjeta—, y las dos tarjetas miden lo que dicen medir.
+                  idioma y tarjeta—, las dos tarjetas miden lo que dicen medir, y
+                  la canónica y los enlaces de idioma son las direcciones que el
+                  hosting SIRVE —la forma larga está redirigida con un 308—, no
+                  las del archivo en disco.
  15. Rastreo      el robots.txt deja rastrear el sitio y, cuando hay dominio, el
-                  mapa lo lee un buscador: direcciones completas, los dos idiomas
-                  y ni una página de error ofrecida a nadie.
+                  mapa lo lee un buscador: direcciones completas y servidas, los
+                  dos idiomas y ni una página de error ofrecida a nadie.
  16. Cabeceras    la política de contenido autoriza por su huella cada guion en
                   línea que el sitio sirve —el del tema y los dos del prototipo—,
                   con la política que le toca a su ruta. Una huella vieja no da
@@ -76,7 +83,7 @@ IDIOMAS = ["es", "en"]
 # Lo que tiene que repetirse igual en las dos versiones de una página. El texto
 # cambia de idioma; la estructura, no.
 ESTRUCTURA = ["<h1", "<h2", "<h3", "<img", "<figure", "<section", "<details",
-              "<svg", "<ul", "<li", "<a ", "<button"]
+              "<svg", "<ul", "<li", "<a ", "<button", 'type="image/avif"']
 
 # Lo que el sitio enlaza pero no produce él mismo: se construye aparte y puede no
 # estar todavía. No es un enlace roto, es un artefacto pendiente, y se dice con
@@ -108,17 +115,22 @@ SUELOS = [
     ("section.head + .showcase", "padding-top", 48, "entre el botón de una cabecera interior y su captura"),
 ]
 
-# Pares de color que sostienen la lectura, con el mínimo que exige WCAG AA. El del
-# botón es una excepción declarada: es el naranja de la app con tinta blanca, el
-# mismo que usan sus propias capturas, y cambiarlo rompería el parecido con el
-# producto. Se mide igual y se dice en voz alta.
+# Pares de color que sostienen la lectura, con el mínimo que exige WCAG AA. El
+# del botón es el único con el listón en 3,0 —el mínimo de un componente de
+# interfaz—, y está así a sabiendas y escrito: su relleno y su tinta son los de la
+# app, #ff5900 y blanco, que es lo que identifica al producto, y juntos dan
+# 3,14:1. Eso pasa el 3:1 y no llega al 4,5:1 que AA pide para texto menudo, que
+# es lo que es ese botón —14,5 y 15,5 px—. Se probó la salida de hundir la brasa
+# hasta 4,78:1 y se descartó: el naranja del botón tiene que ser el de la app. Lo
+# que no se hace es bajar el número sin decirlo: el mínimo que se exige aquí es
+# el que de verdad se cumple.
 CONTRASTES = [
     ("--ink", "--bg", 4.5, "texto principal"),
     ("--ink-2", "--bg", 4.5, "texto secundario"),
     ("--ink-3", "--bg", 4.5, "texto terciario"),
     ("--ink-4", "--bg", 3.0, "cuarto nivel, solo detalles"),
     ("--acc-text", "--bg", 4.5, "acento cuando es texto"),
-    ("--acc-ink", "--acc", 3.0, "tinta del botón de acción"),
+    ("--acc-ink", "--acc", 3.0, "tinta del botón de acción (la de la app)"),
 ]
 
 fallos = []
@@ -165,7 +177,7 @@ def leer(ruta):
 
 
 # ── 1 · Diccionario ──────────────────────────────────────────────────────────
-def diccionario():
+def diccionario(build):
     # `json.loads` se queda con la última clave repetida y no dice nada: dos
     # textos con la misma clave se pisan en silencio, y el que desaparece sigue
     # escrito en el archivo, así que nadie lo echa de menos. Se mira aquí.
@@ -192,8 +204,18 @@ def diccionario():
     vacias = [c for idioma in IDIOMAS for c, t in datos[idioma].items() if not str(t).strip()]
     if vacias:
         fallo(f"textos vacíos en i18n.json: {vacias}")
+    # El peso del instalador es el único dato del sitio que envejece solo —el
+    # archivo que se reparte cambia con cada empaquetado—, así que no se escribe
+    # en ningún texto: se mide con build.peso_instalador(). Aquí se comprueba que
+    # nadie lo haya vuelto a poner a mano, que es como se quedó viejo la primera
+    # vez. Un «442 KB» escrito en un texto es exactamente el fallo que se busca.
+    a_mano = sorted(c for idioma in IDIOMAS for c, t in datos[idioma].items()
+                    if build.PESO not in t and re.search(r"\d+\s*KB", t))
+    if a_mano:
+        fallo(f"estos textos escriben un peso a mano en vez de usar {build.PESO}: {a_mano}")
     print(f"  {len(datos['es'])} textos por idioma, {len(datos['es']) * 2} en total")
-    return datos
+    print(f"  el instalador pesa {build.peso_instalador()} en los cinco textos que lo citan")
+    return build.escribir_peso(datos)
 
 
 # ── 2 · Al día y 3 · Marcadores ──────────────────────────────────────────────
@@ -210,6 +232,11 @@ def al_dia(build, dicc):
         if re.search(r"\{\{", html):
             sobran = sorted(set(re.findall(r"\{\{[^}]*\}\}", html)))
             fallo(f"{donde} conserva marcadores sin resolver: {sobran}")
+        # El peso del instalador no es un marcador de página, sino una sustitución
+        # sobre el diccionario: si alguna vez no se hace, la cifra no falta, sale
+        # escrita tal cual, y eso se ve en la página publicada.
+        if build.PESO in html:
+            fallo(f"{donde} enseña {build.PESO} sin sustituir")
     nombres = {("en/" if c else "") + n for c, n, _ in paginas}
     en_disco = {r.name for r in WEB.glob("*.html")} | {f"en/{r.name}" for r in (WEB / "en").glob("*.html")}
     for suelta in sorted(en_disco - nombres):
@@ -240,6 +267,26 @@ def copias(paginas, dicc):
 
 
 # ── 5 · Enlaces y recursos ───────────────────────────────────────────────────
+def resuelve(destino: str, carpeta: str) -> bool:
+    """Si un enlace lleva a algo que el sitio sirve de verdad.
+
+    Hay dos maneras de servir: un archivo que está en el árbol —una imagen, la
+    hoja, el instalador— y la dirección CORTA de una página. El hosting lee
+    `descarga.html` cuando alguien pide `/descarga`, y a la forma larga la
+    responde con un 308; por eso el sitio enlaza la corta. Comprobar que el
+    archivo exista no basta: lo que hay que comprobar es la corta, que es la que
+    el navegador va a pedir. Un enlace a `descarga`, por tanto, resuelve si al
+    lado está `descarga.html` —y el prototipo, que no es una página del sitio
+    pero se sirve igual, resuelve por la misma regla—.
+    """
+    if (WEB / carpeta / destino).resolve().exists():
+        return True
+    limpio = destino.rstrip("/")
+    if not limpio or "." in limpio.rsplit("/", 1)[-1]:
+        return False
+    return (WEB / carpeta / (limpio + ".html")).resolve().exists()
+
+
 def enlaces(paginas, build):
     revisados = 0
     for carpeta, nombre, html in paginas:
@@ -251,7 +298,15 @@ def enlaces(paginas, build):
             if not destino:
                 continue
             revisados += 1
-            if (WEB / carpeta / destino).resolve().exists():
+            # Lo que enlaza una PÁGINA va por su dirección servida, sin extensión:
+            # la larga existe como archivo —por eso resuelve— y aun así es un
+            # fallo, porque el hosting la responde con un 308 y cada clic interno
+            # paga una ida y vuelta antes del HTML. Es la comprobación que impide
+            # que esto vuelva por la puerta de atrás.
+            if destino.endswith(".html"):
+                fallo(f"{donde} enlaza {destino}: la dirección servida no lleva el .html")
+                continue
+            if resuelve(destino, carpeta):
                 continue
             # Ya no hay excepciones: el sitio copia dentro de su propio árbol
             # todo lo que enlaza, así que un enlace que no resuelve es un fallo y
@@ -291,7 +346,7 @@ def idiomas(build):
             # Se quitan las diferencias que son de idioma y no de estructura: el
             # nivel de la ruta (una página en /en sube un directorio) y el idioma
             # del nombre de la captura.
-            encontrados = re.findall(r'(?:href|src)="([^"]+\.(?:jpg|svg|css|js))"', t)
+            encontrados = re.findall(r'(?:href|src|srcset)="([^"]+\.(?:jpg|avif|svg|css|js))"', t)
             return sorted(re.sub(r"^(?:\.\./)+", "", re.sub(r"-(?:es|en)-", "-xx-", a))
                           for a in encontrados)
         if activos(es) != activos(en):
@@ -348,9 +403,52 @@ def capturas(paginas, build):
     usadas = set(re.findall(r"data-clara=\"[^\"]*vista-([a-z]+)-", html))
     if usadas != set(VISTAS):
         fallo(f"capturas sin usar: {sorted(set(VISTAS) - usadas)}")
+    # La ventana no lleva nombre para la transición de vista. Lo llevó, y era el
+    # motivo de que al cambiar de pestaña las capturas cruzaran la pantalla solas
+    # (el porqué, entero, en el comentario de `movimiento`).
+    otros = [n for n in nombres_de_vista(html) if n != "barra"]
+    if otros:
+        fallo(f"una ventana vuelve a llevar nombre de transición de vista («{otros[0]}»): "
+              "al navegar, su captura viajaría de una página a otra")
     if not re.search(r"data-clara=", html) or not re.search(r"data-oscura=", html):
         fallo("las capturas no llevan los dos temas")
-    print(f"  {esperadas} capturas, {len(usadas)} vistas, en 2360×1520 y con sus dos temas")
+    # La copia ligera de cada captura. No es un adorno: el JPEG que entra en
+    # pantalla al abrir la portada pesa 312 KB y el AVIF de la misma imagen, 57,
+    # y las capturas son prácticamente todo lo que descarga el sitio. Se mide el
+    # ahorro real en vez de darlo por hecho: si una copia pesara más que su
+    # original, estaría ahí para nada.
+    ahorro = 0
+    for vista in VISTAS:
+        for idioma in IDIOMAS:
+            for tema in TEMAS:
+                jpg = WEB / f"assets/img/vista-{vista}-{idioma}-{tema}.jpg"
+                avif = jpg.with_suffix(".avif")
+                if not avif.exists():
+                    fallo(f"falta {avif.name}: la captura no tiene copia ligera")
+                elif avif.stat().st_size >= jpg.stat().st_size:
+                    fallo(f"{avif.name} pesa más que su propio JPEG: no aporta nada")
+                else:
+                    ahorro += jpg.stat().st_size - avif.stat().st_size
+    sin_archivo = sorted({s for s in re.findall(r'<source type="image/avif" srcset="([^"]+)"', html)
+                          if not (WEB / s.replace("../", "")).exists()})
+    if sin_archivo:
+        fallo(f"hay capturas ofrecidas en AVIF que no existen: {sin_archivo}")
+    # Y la precarga pide el formato que se va a servir: pedir el JPEG mientras el
+    # `<picture>` va a enseñar el AVIF trae la misma imagen dos veces.
+    precargas = re.findall(r'<link rel="preload"[^>]*>', html)
+    if not precargas:
+        fallo("ninguna página pide por adelantado su primera captura")
+    for etiqueta in precargas:
+        destino = re.search(r'href="([^"]+)"', etiqueta).group(1)
+        archivo = WEB / destino.replace("../", "")
+        if not archivo.exists():
+            fallo(f"una precarga apunta a un archivo que no existe: {destino}")
+        elif archivo.suffix == ".jpg" and archivo.with_suffix(".avif").exists():
+            fallo(f"una precarga pide el JPEG teniendo su AVIF: {destino}")
+        elif archivo.suffix == ".avif" and 'type="image/avif"' not in etiqueta:
+            fallo(f"una precarga de AVIF sin declarar su tipo: {destino}")
+    print(f"  {esperadas} capturas, {len(usadas)} vistas, en 2360×1520, con sus dos temas")
+    print(f"  y su copia en AVIF, que ahorra {ahorro / 1024 / 1024:.1f} MB en el sitio entero")
 
 
 # ── 8 · Símbolo ──────────────────────────────────────────────────────────────
@@ -444,10 +542,10 @@ def contrastes():
                 fallo(f"tema {nombre}: {tinta} sobre {papel} da {valor:.2f}:1, por debajo del "
                       f"mínimo {minimo} de {descripcion}")
         print(f"  {nombre:<20} " + "  ".join(medidas))
-    aviso("la tinta del botón sobre el naranja de la app da 3,14:1: pasa el mínimo de 3:1 de los componentes "
-          "de interfaz y se queda por debajo del 4,5:1 que pide AA para texto menudo. Es el color del propio "
-          "producto —así se ve en sus capturas—; con tinta oscura subiría a 5,7:1 pero el botón dejaría de "
-          "parecerse a la app")
+    # La tinta del botón iba declarada como excepción —blanca sobre la brasa,
+    # como en la app— y ahora se mide como cualquier otra pareja: el relleno del
+    # botón es el que se apartó para que el blanco pasara, así que no hay nada
+    # que exceptuar.
 
 
 # ── 10 · Piezas copiadas ─────────────────────────────────────────────────────
@@ -554,116 +652,61 @@ def tramo(css, desde):
     return i, len(css) - 1
 
 
-def movimiento():
-    """La entrada se esconde desde dentro de su consulta, y solo desde dentro.
+def nombres_de_vista(texto):
+    """Los nombres de transición de vista que declara un texto, sean atributo o regla.
 
-    Las dos ramas —desplazarse sin reducción, fundirse con ella— esconden
-    contenido un momento, así que las dos viven en su `@media`. Fuera de ellas no
-    puede quedar ni un `.subir`, ni un `.barrido`, ni un `.visto`: una regla así
-    escondería contenido también en un navegador sin guion —o con él a medias—, y
-    la página se vería recortada sin que ninguna captura lo delate.
-
-    Y cada rama tiene que hacer lo suyo. La reducida no puede conservar un
-    desplazamiento ni un barrido: reducir el movimiento no es moverlo menos, es
-    moverlo nada y dejar el color.
-
-    Aquí entra también la navegación entre páginas —las cinco pestañas son cinco
-    documentos, y sin transición el cambio es un corte seco—, con la misma
-    exigencia en las dos ramas: una transición declarada a medias no se ve rota,
-    simplemente no anima, y eso nadie lo nota.
+    El único legítimo es «barra». La barra de navegación es la misma en las dos
+    páginas y, con nombre, el navegador la deja fuera del relevo —no parpadea
+    mientras cambia lo de dentro, que es lo que hace una pestaña de verdad—. Todo
+    lo demás entra con su página: un elemento con nombre no cambia de opacidad,
+    VIAJA de un documento al otro.
     """
-    css = re.sub(r"/\*.*?\*/", "", leer(CSS), flags=re.S)   # reglas, no prosa
-    aguja = "@media (prefers-reduced-motion"
-    ramas = {"normal": [], "reduce": []}
-    resto, i = [], 0
-    while True:
-        j = css.find(aguja, i)
-        if j < 0:
-            resto.append(css[i:])
-            break
-        resto.append(css[i:j])
-        ini, fin = tramo(css, j)
-        condicion = css[j:ini]
-        # La condición se lee entera y no por descarte: cualquier otra cosa que
-        # traiga un `@media` de movimiento —una condición rota, un valor que no es
-        # ninguno de los dos— dejaría su bloque sin aplicar y sin que nadie lo
-        # notara, porque el bloque seguiría ahí.
-        if re.search(r":\s*no-preference\s*\)", condicion):
-            rama = "normal"
-        elif re.search(r":\s*reduce\s*\)", condicion):
-            rama = "reduce"
-        else:
-            rama = None
-            fallo(f"un @media de movimiento tiene una condición que no es «no-preference» "
-                  f"ni «reduce», así que su bloque no se aplicaría nunca: {condicion.strip()}")
-        if rama:
-            ramas[rama].append(css[ini + 1:fin])
-        i = fin + 1
+    return [n.strip() for n in re.findall(r"view-transition-name\s*:\s*([^;{}\"]+)", texto)]
 
-    for clave in ("normal", "reduce"):
-        if not ramas[clave]:
-            fallo(f"falta la rama «{clave}» del movimiento: no hay ningún {aguja}: {clave})")
 
-    fuera = "".join(resto)
-    sobran = [a for a in (".subir", ".barrido", ".visto") if a in fuera]
-    if sobran:
-        fallo(f"{' y '.join(sobran)} aparecen fuera de las consultas de movimiento: "
-              "esconderían contenido también sin guion")
+def movimiento():
+    """El disparo de entrada es progresivo: nunca se oculta sin un observador listo.
 
-    normal, reducida = "\n".join(ramas["normal"]), "\n".join(ramas["reduce"])
-
-    # La rama de verdad: el material sube al entrar. El revelado por barrido de
-    # las capturas se retiró a petición —las imágenes ya no se animan—, así que
-    # lo que se pide es el gesto del texto entero: de dónde sale y a dónde llega.
-    # Se pide entero, y no solo la propiedad, porque con la propiedad sola el
-    # movimiento podría ser `none` en la llegada y la comprobación no lo notaría.
-    for propiedad, partida, llegada, que in (
-            ("translateY", r"translateY\(1[0-9]px\)", r"transform:\s*none", "el texto sube"),):
-        if not re.search(partida, normal):
-            fallo(f"sin movimiento reducido {que}, y no arranca desde su estado de partida ({partida})")
-        if not re.search(llegada, normal):
-            fallo(f"sin movimiento reducido {que} y no llega a su estado final ({llegada})")
-    if "opacity" not in normal or "transition:" not in normal:
-        fallo("sin movimiento reducido la entrada no transiciona")
-
-    # La rama reducida: color, y nada que mueva. Se prohíben las cuatro formas de
-    # mover algo de sitio —la propiedad corta y las tres sueltas—, porque reducir
-    # el movimiento no es moverlo menos: es no moverlo.
-    for prohibido in ("transform", "translate", "scale", "clip-path"):
-        if prohibido in reducida:
-            fallo(f"con movimiento reducido sigue habiendo «{prohibido}»: no se reduce, se sigue moviendo")
-    # Las dos reglas de la entrada, cada una por su cuenta: la de partida y la de
-    # llegada. Se miran dentro de SU regla y no en toda la rama, porque la rama
-    # lleva más cosas —el desplegable también se funde— y una transición de
-    # opacidad de otra regla haría pasar por buena una entrada sin fundido.
-    reglas = re.findall(r"([^{}]+)\{([^{}]*)\}", reducida)
-    partida = [c for s, c in reglas if re.search(r"\.(?:subir|barrido)\b", s) and ".visto" not in s]
-    llegada = [c for s, c in reglas if ".visto" in s]
-    if not partida or not any(re.search(r"opacity:\s*0", c) for c in partida):
-        fallo("con movimiento reducido no hay estado de partida: la entrada no empezaría oculta")
-    if not llegada:
-        fallo("con movimiento reducido no hay regla de llegada para `.visto`")
-    else:
-        for cuerpo in llegada:
-            if not re.search(r"opacity:\s*1", cuerpo):
-                fallo("con movimiento reducido la llegada no devuelve la opacidad a 1")
-            if not re.search(r"transition:\s*opacity", cuerpo):
-                fallo("con movimiento reducido la llegada no se funde: a `.visto` le falta la transición de opacidad")
-    # La navegación entre páginas. Se exige el interruptor y las cuatro capas
-    # —irse y llegar, en las dos ramas—, y no una cualquiera: una transición a la
-    # que le falte la salida o la llegada no anima, y como no hay nada roto que
-    # mirar, se queda así sin que nadie se entere.
+    CSS activa el estado inicial invisible solo después de que el guion confirme
+    que hay movimiento permitido y que IntersectionObserver existe. Sin guion,
+    con movimiento reducido o en un navegador antiguo, todo permanece visible.
+    """
+    css = re.sub(r"/\*.*?\*/", "", leer(CSS), flags=re.S)
+    js = re.sub(r"/\*.*?\*/", "", leer(WEB / "assets/js/sitio.js"), flags=re.S)
+    if "IntersectionObserver" not in js:
+        fallo("el revelado por scroll no usa IntersectionObserver")
+    if not re.search(r"querySelectorAll\([^)]*data-reveal", js):
+        fallo("el observador no recoge nodos `data-reveal`")
+    if not re.search(r"\.revelado\s*[^{}]*\{[^}]*opacity:\s*1", css):
+        fallo("no hay estado visible `.revelado` que restaure opacidad")
+    if "@media (prefers-reduced-motion: no-preference)" not in css:
+        fallo("falta limitar el revelado a movimiento permitido")
+    bloques_reducidos = re.findall(r"@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{(.*?)\n\}", css, re.S)
+    reglas_reducidas = "\n".join(bloques_reducidos)
+    if "[data-reveal]" not in reglas_reducidas or not re.search(r"opacity:\s*1", reglas_reducidas):
+        fallo("con movimiento reducido no se neutralizan los estados de revelado")
+    reglas_revelado = re.findall(r"([^{}]+)\{([^{}]*)\}", css)
+    ocultaciones = [selector.strip() for selector, regla in reglas_revelado
+                    if "data-reveal" in selector and re.search(r"opacity:\s*0", regla)]
+    if any(".revelado-activo" not in selector for selector in ocultaciones):
+        fallo("CSS oculta nodos data-reveal antes de que el observador esté listo")
+    if ocultaciones and not any("prefers-reduced-motion: no-preference" in css[:css.find(selector)]
+                                for selector in ocultaciones):
+        fallo("el estado inicial oculto no está limitado a movimiento permitido")
     if "@view-transition" not in css:
-        fallo("no hay transición entre páginas: cambiar de pestaña es un corte seco, "
-              "la pantalla se vacía y vuelve a llenarse")
+        fallo("no hay transición entre documentos")
     else:
-        for rama, etiqueta in ((normal, "sin movimiento reducido"), (reducida, "con movimiento reducido")):
-            for capa, que in (("old", "la página que se va"), ("new", "la página que llega")):
-                if not re.search(r"::view-transition-%s\(root\)\s*\{[^}]*animation" % capa, rama):
-                    fallo(f"{etiqueta} no se anima {que} al navegar: falta "
-                          f"`::view-transition-{capa}(root)` con su animación")
-
-    print("  sin reducción, desplazamiento · con reducción, solo color · entre páginas, fundido")
+        for capa in ("old", "new"):
+            if not re.search(r"::view-transition-%s\(root\)\s*\{[^}]*animation" % capa, css):
+                fallo(f"la capa {capa} del cambio de página no tiene transición declarada")
+        if not re.search(r"@media\s*\(prefers-reduced-motion:\s*reduce\)[^{]*\{[^}]*::view-transition-old\(root\)", css):
+            fallo("no hay transición entre páginas para movimiento reducido")
+    for declaracion in re.findall(r"(?:transition|animation)\s*:[^;{}]*", css):
+        if re.search(r"\d+(?:\.\d+)?(?:ms|s)\b", declaracion) and "var(--t-" not in declaracion:
+            fallo("hay un tiempo escrito a mano fuera de la escala de movimiento: "
+                  f"«{' '.join(declaracion.split())}»")
+    print("  revelado progresivo con IntersectionObserver, visible sin guion/reducido · "
+          "transiciones de documento · tiempos bajo tokens")
 
 
 # ── 13 · Legales ─────────────────────────────────────────────────────────
@@ -719,9 +762,15 @@ def legales(paginas, dicc, build):
         pie = html[html.index("<footer"):]
         idioma = "en" if carpeta else "es"
         for src in LEGALES:
-            enlace = next(p[idioma] for p in build.PAGINAS if p["src"] == src)
-            if f'href="{enlace}"' not in pie:
-                fallo(f"el pie de {donde} no lleva a {enlace}")
+            # La dirección SERVIDA del documento, que es la que va en el pie: sin
+            # la extensión, porque la forma larga responde con un 308 y un pie que
+            # enlaza la larga enlaza una ida y vuelta. Desde una página de /en el
+            # enlace a su vecina es el nombre corto a secas —están en la misma
+            # carpeta—, así que lo que se busca es eso y no una ruta con prefijo.
+            nombre = next(p[idioma] for p in build.PAGINAS if p["src"] == src)
+            corto = nombre[: -len(".html")]
+            if f'href="{corto}"' not in pie:
+                fallo(f"el pie de {donde} no lleva a {corto}")
         if f"mailto:{build.CONTACTO}" not in pie:
             fallo(f"el pie de {donde} no tiene la dirección de contacto")
     print(f"  {len(LEGALES)} documentos en los dos idiomas, con contacto y enlazados desde los"
@@ -729,6 +778,21 @@ def legales(paginas, dicc, build):
 
 
 # ── 14 · Compartir ──────────────────────────────────────────────────────────
+def url_servida(nombre: str, carpeta: str, build) -> str:
+    """La dirección con la que el hosting sirve un archivo del sitio, escrita AQUÍ.
+
+    A mano y no con `build.url_de()`, y ese es todo el punto: comprobar la
+    canónica contra la misma función que la escribe deja pasar cualquier error de
+    esa función —probado: se hizo que `url_de` devolviera la forma larga y la
+    comprobación contra sí misma seguía en verde—. La forma servida se calcula
+    desde el nombre del archivo, que es el dato de entrada, no desde quien lo
+    convierte en dirección: `index.html` es la raíz de su carpeta y todo lo demás
+    pierde la extensión.
+    """
+    raiz = f"{build.DOMINIO}/" + ("en/" if carpeta else "")
+    return raiz if nombre == "index.html" else raiz + nombre[: -len(".html")]
+
+
 def compartir(paginas, build):
     """Cada página, presentable al compartirla, y las tarjetas midiendo lo que dicen.
 
@@ -761,6 +825,28 @@ def compartir(paginas, build):
             if (etiqueta in html) != bool(build.DOMINIO):
                 fallo(f"{donde}: {etiqueta} " + ("está puesta sin dominio" if not build.DOMINIO
                                                   else "falta con el dominio puesto"))
+        # La canónica y los enlaces de idioma, contra la dirección que el hosting
+        # SIRVE de verdad. La forma larga (`…/descarga.html`) responde 308 hacia la
+        # corta, así que declararla canónica es declarar buena una dirección que el
+        # servidor manda a otra parte; y como el mapa y las dos lenguas se escriben
+        # desde el mismo dato, una equivocación aquí se repite en tres sitios sin
+        # que ninguno avise. Es la comprobación que faltaba: el archivo decía
+        # `/descarga.html` y el buscador acababa viendo «página con redirección».
+        if build.DOMINIO:
+            idioma = "en" if carpeta else "es"
+            par = next(p for p in build.PAGINAS if p[idioma] == nombre)
+            if par["src"] == "no-encontrada":
+                if 'rel="canonical"' in html or 'rel="alternate"' in html:
+                    fallo(f"{donde}: la página de error declara canónica o idiomas, y pide no indexarse")
+            else:
+                servida = url_servida(nombre, carpeta, build)
+                if atributo(html, r'rel="canonical" href="([^"]*)"') != servida:
+                    fallo(f"{donde}: la canónica no es la dirección servida ({servida})")
+                for hreflang, url in (("es", url_servida(par["es"], "", build)),
+                                      ("en", url_servida(par["en"], "en", build)),
+                                      ("x-default", url_servida(par["es"], "", build))):
+                    if f'hreflang="{hreflang}" href="{url}"' not in html:
+                        fallo(f"{donde}: el enlace de idioma «{hreflang}» no apunta a {url}")
     for idioma in IDIOMAS:
         ruta = WEB / f"assets/img/tarjeta-{idioma}.jpg"
         if not ruta.exists():
@@ -770,8 +856,8 @@ def compartir(paginas, build):
         if medida != (build.TARJETA_ANCHO, build.TARJETA_ALTO):
             fallo(f"{ruta.name} mide {medida[0]}×{medida[1]} y se comparte a "
                   f"{build.TARJETA_ANCHO}×{build.TARJETA_ALTO}")
-    print(f"  las {len(paginas)} páginas con tarjeta, y las dos de compartir a "
-          f"{build.TARJETA_ANCHO}×{build.TARJETA_ALTO}")
+    print(f"  las {len(paginas)} páginas con tarjeta —a {build.TARJETA_ANCHO}×{build.TARJETA_ALTO}—,"
+          f" con la canónica y los idiomas en su dirección servida")
 
 
 # ── 15 · Rastreo ────────────────────────────────────────────────────────────
@@ -806,11 +892,14 @@ def rastreo(build):
         fallo("falta sitemap.xml con el dominio puesto: vuelve a ejecutar build.py")
         return
     xml = leer(mapa)
+    # Las direcciones del mapa son las que el hosting sirve, las mismas que la
+    # canónica de cada página: un mapa lleno de redirecciones es un mapa que
+    # manda al buscador a dar un salto en cada dirección que le ofrece.
     esperadas = set()
     for p in build.PAGINAS:
         if p["src"] == "no-encontrada":
             continue
-        esperadas |= {f"{build.DOMINIO}/{p['es']}", f"{build.DOMINIO}/en/{p['en']}"}
+        esperadas |= {url_servida(p["es"], "", build), url_servida(p["en"], "en", build)}
     listadas = set(re.findall(r"<loc>([^<]+)</loc>", xml))
     if listadas != esperadas:
         fallo(f"el mapa no lista lo mismo que el sitio · sobran {sorted(listadas - esperadas)} ·"
@@ -873,6 +962,27 @@ def casa_regla(patron, ruta):
     return ruta == patron
 
 
+def ruta_servida(donde: str) -> str:
+    """La dirección con la que el hosting sirve un archivo del sitio.
+
+    El hosting recorta el `.html` de las direcciones —y redirige la larga a la
+    corta con un 308—, así que la política que de verdad se aplica a un archivo
+    no es la que casa con su nombre en disco: es la que casa con la dirección
+    que el navegador pide. Aquí se colaba el prototipo: su regla estaba escrita
+    para la ruta del archivo, el navegador pedía la corta, no casaba ninguna
+    regla más concreta que `/*` y el prototipo salía con la política del sitio
+    —sus dos guiones bloqueados, la página entera a la vista y ningún control
+    respondiendo, sin un solo error en pantalla—. Comprobar la ruta del archivo
+    daba verde con el prototipo mudo.
+    """
+    ruta = "/" + donde
+    if ruta.endswith("/index.html"):
+        return ruta[: -len("index.html")]
+    if ruta.endswith(".html"):
+        return ruta[: -len(".html")]
+    return ruta
+
+
 def cabeceras(build):
     """La política de contenido, y cada guion en línea contra la que le toca.
 
@@ -882,8 +992,9 @@ def cabeceras(build):
     entera —la interfaz viene escrita en el HTML— y no responde a nada, sin un
     solo error que lo explique en pantalla. Por eso no se compara una huella
     suelta: se recorre todo lo que el sitio sirve, se busca la política que le
-    tocaría según su ruta y se comprueba que cada guion en línea esté autorizado
-    por ella.
+    tocaría según su dirección —la servida, no la del archivo: ver
+    `ruta_servida`— y se comprueba que cada guion en línea esté autorizado por
+    ella.
     """
     archivo = WEB / "_headers"
     if not archivo.exists():
@@ -908,21 +1019,29 @@ def cabeceras(build):
                 + [(f"en/{p.name}", p) for p in sorted((WEB / "en").glob("*.html"))])
     revisados = 0
     for donde, ruta in servidos:
-        politica = ""
-        for patron, valor in reglas:
-            if casa_regla(patron, "/" + donde):
-                politica = valor
-        if not politica:
-            fallo(f"ninguna regla de _headers casa con {donde}: se serviría sin política")
+        direccion = ruta_servida(donde)
+        # El hosting SUMA las cabeceras de todas las reglas que casan, no se queda
+        # con la última ni con la más concreta —medido en Cloudflare Pages: una
+        # dirección con dos reglas recibe dos políticas—. Con más de una política
+        # el navegador exige cumplirlas todas, así que la estrecha manda: aquí es
+        # donde se comprueba, contra cada una, y no contra la que parezca más
+        # específica. Así fue como el prototipo se quedó mudo con el sitio en
+        # verde: su regla propia autorizaba sus guiones, la del sitio no, y el
+        # navegador hacía caso a las dos.
+        politicas = [valor for patron, valor in reglas if casa_regla(patron, direccion)]
+        if not politicas:
+            fallo(f"ninguna regla de _headers casa con {direccion}: se serviría sin política")
             continue
-        autorizadas = set(re.findall(r"'sha256-([A-Za-z0-9+/=]+)'", politica))
+        autorizadas = [set(re.findall(r"'sha256-([A-Za-z0-9+/=]+)'", p)) for p in politicas]
         for guion in guiones_que_corren(leer(ruta)):
             revisados += 1
-            if huella(guion) in autorizadas:
-                continue
-            fallo(f"{donde} lleva un guion en línea que su política no autoriza "
-                  f"(sha256-{huella(guion)[:8]}…): el navegador lo bloqueará y la página"
-                  " se quedará sin responder")
+            for numero, suyas in enumerate(autorizadas, 1):
+                if huella(guion) in suyas:
+                    continue
+                fallo(f"{direccion} lleva un guion en línea que la política {numero} de"
+                      f" _headers no autoriza (sha256-{huella(guion)[:8]}…): el navegador"
+                      " lo bloqueará y la página se quedará sin responder")
+                break
     tema = guiones_que_corren(leer(WEB / "index.html"))[0]
     print(f"  {revisados} guiones en línea, cada uno con la política de su ruta"
           f" (el del tema: sha256-{huella(tema)[:8]}…)")
@@ -1019,15 +1138,15 @@ def estructurado(paginas, dicc, build):
         elif es_faq:
             faq = next(n for n in grafo if n.get("@type") == "FAQPage")
             cuantas = len(faq.get("mainEntity", []))
-            if cuantas != 12:
-                fallo(f"{donde}: la ficha lleva {cuantas} preguntas y la página tiene 12")
+            if cuantas != 13:
+                fallo(f"{donde}: la ficha lleva {cuantas} preguntas y la página tiene 13")
     print(f"  las {len(paginas)} páginas con su ficha · la de error, sin ficha ni indexación")
 
 
 def main():
     build = cargar_build()
     print("Diccionario")
-    dicc = diccionario()
+    dicc = diccionario(build)
     if dicc is None:
         return 1
     print("\nSalida")
@@ -1067,7 +1186,7 @@ def main():
     for a in sorted(avisos):
         print("AVISO:", a)
     if fallos:
-        print(f"\n{len(fallos)} cosas que arreglar:")
+        print(f"\n{len(fallos)} {'cosa' if len(fallos) == 1 else 'cosas'} que arreglar:")
         for f in fallos:
             print("  ·", f)
         return 1

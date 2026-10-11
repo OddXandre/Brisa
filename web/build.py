@@ -39,6 +39,7 @@ import hashlib
 import json
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -59,6 +60,27 @@ ICONO = WEB / "assets/img/icono.svg"
 
 VERSION = "0.1.0"
 CANAL = "beta"
+
+# El peso del instalador es el único dato duro del sitio que envejece solo: la
+# cifra aparece en diez textos —cinco por idioma— y el archivo que se reparte
+# cambia con cada empaquetado. Así que no se escribe en el diccionario: allí va
+# la marca `%peso%` y aquí se sustituye por lo que mide el instalador de verdad.
+# Sin instalador construido se usa la última cifra publicada, que sigue siendo
+# cierta para la versión que hay colgada.
+PESO = "%peso%"
+# Sin instalador a mano se mide el que el sitio ya reparte —la copia de
+# descargas/— y esta cifra queda de último recurso: es la que estaba publicada
+# cuando se escribió, y envejece sola. Se queda escrita para que el sitio pueda
+# construirse sin nada, no para acertar.
+PESO_PUBLICADO = "460 KB"
+
+# Las capturas son el 96 % de lo que descarga la portada: 312 KB la que entra en
+# pantalla, contra 8 KB de HTML y 19 de estilo. Así que el único cambio de
+# rendimiento que de verdad mueve la aguja está en su formato. El JPEG se queda
+# —es el que entiende cualquiera— y al lado se escribe la misma captura en AVIF,
+# que ocupa la quinta parte, con el sistema, sin añadir una dependencia al sitio.
+CALIDAD_AVIF = "62"
+SIPS = Path("/usr/bin/sips")
 
 # Las dos piezas que el sitio enlaza y NO fabrica él: el prototipo navegable
 # (lo produce Scripts/publicar.py) y el instalador (build-app.sh +
@@ -89,7 +111,65 @@ CAP_ANCHO, CAP_ALTO = 2360, 1520
 # con rutas relativas no lo lee ningún buscador. Cuando exista, se pone aquí y
 # sale todo solo —canonical, los tres enlaces de idioma, las etiquetas para
 # compartir y el mapa— sin tocar ninguna plantilla.
-DOMINIO = "https://brisamac.pages.dev"
+# El nombre del proyecto decide el par de direcciones que Cloudflare asigna a
+# su subdominio `*.pages.dev`, y es una asignación estable: el mismo nombre cae
+# siempre en el mismo par. Se comprobó a conciencia —borrado y recreado el
+# proyecto con el nombre viejo, volvió a las mismas direcciones—. El motivo de
+# que importe: el rango `188.114.96.0/22` está sin ruta en España por las
+# órdenes judiciales contra la piratería, así que a un nombre que caiga ahí no
+# lo ve nadie desde aquí por mucho que esté perfecto en el resto del mundo. Le
+# pasó a `brisamac` (y a `brisa-app`, `brisa-mac`). `brisamac-app` nace en
+# `172.66.x`, que sí ruta: por eso se eligió ese nombre. No es un gusto. El
+# sitio vive ahora en el proyecto `heybrisa`, elegido con las dos comprobaciones
+# de PUBLICAR.md —subdominio sin sufijo y par de direcciones que rutea, este
+# último comprobado tras el primer despliegue, que es cuando el dominio ya
+# resuelve—. `brisamac-app` y `brisamac` quedan como reservas de nombre.
+DOMINIO = "https://heybrisa.pages.dev"
+
+
+def enlace(destino: str, idioma: str, carpeta: str) -> str:
+    """Cómo se enlaza una página desde otra: la forma servida, y relativa.
+
+    El hosting sirve las páginas sin la extensión —`/descarga`, `/en/tools`— y
+    responde a la forma larga con un 308; enlazar el archivo es, por tanto,
+    enlazar una redirección, y cada clic interno pagaba una ida y vuelta antes de
+    que llegara el HTML. Aquí se compone la dirección que de verdad se sirve.
+
+    Relativa, como todo el sitio: desde `/en` se sube un nivel para volver a la
+    raíz, y la casa de cada idioma es `.` —`/` en castellano, `/en/` en inglés—,
+    que es lo que el navegador resuelve contra la carpeta de la página.
+
+    Lo que se pierde va escrito en PUBLICAR.md: abriendo los `.html` desde el
+    disco, un enlace interno ya no resuelve. Las páginas se siguen viendo enteras;
+    lo que no se puede es navegar de una a otra sin un servidor que sirva las
+    direcciones cortas, que es como las sirve el hosting.
+    """
+    nombre = destino[:-5] if destino.endswith(".html") else destino
+    mio = "en" if carpeta else "es"
+    if idioma == mio:
+        return "./" if nombre == "index" else nombre
+    return ("../" if carpeta else "en/") + ("" if nombre == "index" else nombre)
+
+
+def url_de(archivo: str, idioma: str) -> str:
+    """La dirección con la que el hosting SIRVE una página: sin la extensión.
+
+    El hosting estático recorta el `.html` y redirige la forma larga con un 308
+    —está medido y escrito más abajo, en las cabeceras—, así que la forma larga
+    es siempre una redirección. Escribirla en la canónica, en los enlaces de
+    idioma, en `og:url`, en la ficha de datos o en el mapa es declarar buena una
+    dirección que el servidor manda a otra parte: el buscador acaba enseñando
+    «página con redirección» en las dieciocho que reparte el mapa, y una canónica
+    que redirige deja de significar nada. La dirección de verdad es la corta, y
+    aquí se compone como la sirve el hosting: `index` es la raíz de su carpeta y
+    todo lo demás pierde la extensión.
+
+    Sin dominio devuelve la forma relativa, y no se usa: quien llama comprueba
+    antes que haya dominio.
+    """
+    carpeta = "" if idioma == "es" else "en/"
+    nombre = archivo[:-5] if archivo.endswith(".html") else archivo
+    return f"{DOMINIO}/{carpeta}" if nombre == "index" else f"{DOMINIO}/{carpeta}{nombre}"
 
 # El correo que firma el aviso legal, responde en la política de privacidad y
 # cierra el pie. Es la única dirección pública del proyecto, y vive aquí para que
@@ -218,7 +298,7 @@ def datos_estructurados(pagina: dict, idioma: str, carpeta: str, textos: dict, p
         return ""
 
     marca = textos["marca.nombre"]
-    aqui = f"{DOMINIO}/{carpeta + '/' if carpeta else ''}{pagina[idioma]}"
+    aqui = url_de(pagina[idioma], idioma)
 
     sitio = {"@type": "WebSite", "name": marca, "inLanguage": idioma,
              "description": textos["px.inicio.desc"]}
@@ -240,14 +320,19 @@ def datos_estructurados(pagina: dict, idioma: str, carpeta: str, textos: dict, p
 
     if DOMINIO:
         casa = next(p for p in PAGINAS if p["src"] == "inicio")[idioma]
-        casa_url = f"{DOMINIO}/" + (f"en/{casa}" if idioma == "en" else casa)
-        sitio["url"] = f"{DOMINIO}/"
+        casa_url = url_de(casa, idioma)
+        # La portada de ESTE idioma, no siempre la raíz: la ficha de una página
+        # inglesa se declara en inglés, y apuntar su `WebSite` a la portada
+        # castellana deja el dato diciendo dos cosas a la vez —el sitio es `/`,
+        # y su idioma es `en`—. Cada idioma apunta a su casa; en castellano es la
+        # raíz, en inglés `/en/`, que es adonde lleva la portada inglesa.
+        sitio["url"] = casa_url
         programa["url"] = casa_url
         programa["screenshot"] = f"{DOMINIO}/assets/img/vista-resumen-{idioma}-claro.jpg"
         # La licencia, en el idioma de la página: es la dirección que la propia web
         # enlaza desde la descarga, y la ficha apunta ahí y no a un texto aparte.
         lic = next(p for p in PAGINAS if p["src"] == "licencia")
-        programa["license"] = f"{DOMINIO}/" + ("en/" + lic["en"] if idioma == "en" else lic["es"])
+        programa["license"] = url_de(lic[idioma], idioma)
         if piezas["instalador"]:
             programa["downloadUrl"] = f"{DOMINIO}/descargas/{DMG_ORIGEN.name}"
         if pagina["src"] != "inicio":
@@ -263,7 +348,7 @@ def datos_estructurados(pagina: dict, idioma: str, carpeta: str, textos: dict, p
             "mainEntity": [
                 {"@type": "Question", "name": textos[f"preg.q{n}"],
                  "acceptedAnswer": {"@type": "Answer", "text": textos[f"preg.a{n}"]}}
-                for n in range(1, 13)],
+                for n in range(1, 14)],
         })
 
     datos = json.dumps({"@context": "https://schema.org", "@graph": grafo}, ensure_ascii=False)
@@ -275,10 +360,18 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
     """Lo que cada página necesita saber de sí misma: idioma, rutas y vecinos."""
     otra = "en" if idioma == "es" else "es"
     en_otro = pagina[otra]
-    # Desde una página en /en, el otro idioma está un nivel arriba; desde la
-    # raíz, dentro de /en.
-    url_otro = f"../{en_otro}" if carpeta else f"en/{en_otro}"
+    # La versión de esta misma página en el otro idioma. `enlace` decide si eso
+    # está un nivel arriba o en la carpeta de al lado: aquí se pasaba el nombre
+    # del archivo tal cual, y por eso los enlaces internos llevaban la extensión
+    # que el hosting redirige.
+    url_otro = enlace(en_otro, otra, carpeta)
     base = "../" if carpeta else ""
+    # La página que cuenta cómo se reparte, para el caso de que el instalador
+    # todavía no exista: su botón lleva ahí, que es donde están los tres pasos.
+    # Antes apuntaba a la página que se estuviera mirando, así que desde la guía
+    # el botón saltaba a un ancla que allí no existe y no pasaba nada al
+    # pulsarlo.
+    en_descarga = next(p[idioma] for p in PAGINAS if p["src"] == "descarga")
 
     v = {
         "lang": idioma,
@@ -293,8 +386,8 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
         # roto, que es lo que importa: el sitio no puede depender de que alguien
         # haya ejecutado antes el empaquetado.
         "instalador": (f"{base}descargas/{DMG_ORIGEN.name}" if piezas["instalador"]
-                       else f"{base}{pagina[idioma]}#beta"),
-        "prototipo": f"{base}descargas/prototipo.html",
+                       else enlace(en_descarga, idioma, carpeta)),
+        "prototipo": f"{base}descargas/prototipo",
         "marca": dibujo_marca(),
         "nav": pagina["nav"],
         "contacto": CONTACTO,
@@ -308,9 +401,10 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
     # a la castellana de la raíz. Aquí había un `base` de más, y los enlaces
     # legales de las seis páginas inglesas llevaban a las castellanas.
     for src in ("aviso", "licencia", "guia"):
-        v["url" + src.capitalize()] = next(p[idioma] for p in PAGINAS if p["src"] == src)
+        v["url" + src.capitalize()] = enlace(next(p[idioma] for p in PAGINAS if p["src"] == src),
+                                             idioma, carpeta)
     for p in PAGINAS:
-        v["url" + p["nav"].capitalize()] = p[idioma]
+        v["url" + p["nav"].capitalize()] = enlace(p[idioma], idioma, carpeta)
         v["cur" + p["nav"].capitalize()] = 'aria-current="page"' if p["nav"] == pagina["nav"] else ""
     v["urlIdioma"] = url_otro
     v["langOtra"] = "en" if idioma == "es" else "es"
@@ -332,10 +426,22 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
     # tema que tenga puesto quien lo abre, así que precargar solo la clara sería
     # traer una imagen que la mitad de la gente no va a ver. El `media` hace que
     # el navegador se quede con la que le toca y descarte la otra antes de pedirla.
-    v["precarga"] = "\n".join(
-        f'<link rel="preload" as="image" fetchpriority="high" media="(prefers-color-scheme: {esquema})"'
-        f' href="{base}assets/img/vista-{primera}-{idioma}-{archivo}.jpg">'
-        for esquema, archivo in (("light", "claro"), ("dark", "oscuro"))) if primera else ""
+    # Y en el formato que el navegador va a pedir de verdad: ofrecerle el JPEG
+    # mientras el `<picture>` le va a servir el AVIF es traerse la imagen dos
+    # veces, que cuesta más que no haber precargado nada. El `type` no es un
+    # adorno: un navegador sin AVIF descarta esa precarga en vez de descargar un
+    # archivo que no puede pintar.
+    v["precarga"] = ""
+    if primera:
+        enlaces = []
+        for esquema, archivo in (("light", "claro"), ("dark", "oscuro")):
+            jpg = f"{base}assets/img/vista-{primera}-{idioma}-{archivo}.jpg"
+            avif = f"{jpg[:-4]}.avif"
+            copia = f' type="image/avif"' if esta(avif) else ""
+            enlaces.append(f'<link rel="preload" as="image"{copia} fetchpriority="high"'
+                           f' media="(prefers-color-scheme: {esquema})"'
+                           f' href="{avif if copia else jpg}">')
+        v["precarga"] = "\n".join(enlaces)
 
     # La ficha que lee un buscador. Se compone aquí, como la canónica, porque
     # necesita saber si hay dominio.
@@ -346,14 +452,20 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
     # no lo hay, y una etiqueta vacía no se escribe a medias.
     v["canonical"] = v["alternates"] = v["compartir"] = ""
     if DOMINIO:
-        aqui = f"{DOMINIO}/{carpeta + '/' if carpeta else ''}{pagina[idioma]}"
-        url_es, url_en = f"{DOMINIO}/{pagina['es']}", f"{DOMINIO}/en/{pagina['en']}"
+        aqui = url_de(pagina[idioma], idioma)
+        url_es, url_en = url_de(pagina["es"], "es"), url_de(pagina["en"], "en")
         titulo = textos[f"px.{pagina['src']}.title"]
         tarjeta = f"{DOMINIO}/assets/img/tarjeta-{idioma}.jpg"
-        v["canonical"] = f'<link rel="canonical" href="{aqui}">'
-        v["alternates"] = "\n".join(
-            f'<link rel="alternate" hreflang="{hreflang}" href="{url}">'
-            for hreflang, url in (("es", url_es), ("en", url_en), ("x-default", url_es)))
+        # La página de error no declara canónica ni enlaces de idioma: pide no
+        # indexarse, así que decir «esta es la dirección buena» es contradecirse,
+        # y sus tres `alternate` la metían en el grafo de idiomas del sitio —un
+        # callejón ofrecido en las dos lenguas—. Su `og:url` sí se queda: es lo
+        # que se enseña al compartirla, y no se indexa de todos modos.
+        if pagina["src"] != "no-encontrada":
+            v["canonical"] = f'<link rel="canonical" href="{aqui}">'
+            v["alternates"] = "\n".join(
+                f'<link rel="alternate" hreflang="{hreflang}" href="{url}">'
+                for hreflang, url in (("es", url_es), ("en", url_en), ("x-default", url_es)))
         v["compartir"] = "\n".join((
             f'<meta property="og:url" content="{aqui}">',
             f'<meta property="og:image" content="{tarjeta}">',
@@ -372,6 +484,83 @@ def disponibles() -> dict:
     """Qué piezas de las que el sitio enlaza están ya construidas en la raíz."""
     return {"prototipo": PROTOTIPO_ORIGEN.exists(),
             "instalador": DMG_ORIGEN.exists()}
+
+
+def peso_instalador() -> str:
+    """«460 KB»: lo que pesa el instalador que este sitio reparte.
+
+    Se mide del archivo, no se recuerda. Va a la decena porque es la precisión
+    con la que se lee un tamaño dentro de una frase: los 462 KB reales de hoy se
+    cuentan como 460, y el día que la beta engorde a 700 el sitio lo dirá solo.
+
+    Se mira primero el que se acaba de empaquetar (dist/) y después el que el
+    sitio YA reparte (su copia en descargas/): si alguien construye el sitio en
+    otra máquina, sin dist/, la cifra que sale sigue siendo la del archivo que
+    está colgado, que es la que de verdad lee quien lo descarga. La constante es
+    el último recurso, para poder construir sin ninguna de las dos.
+    """
+    for ruta in (DMG_ORIGEN, DESCARGAS / DMG_ORIGEN.name):
+        try:
+            kb = ruta.stat().st_size / 1024
+        except OSError:
+            continue
+        return f"{round(kb / 10) * 10:.0f} KB"
+    return PESO_PUBLICADO
+
+
+def esta(ruta: str) -> bool:
+    """¿Existe el archivo al que apunta una ruta escrita dentro de una página?
+
+    Una página de /en escribe «../assets/…» y la de la raíz, «assets/…», y las
+    dos señalan al mismo archivo. Desde aquí hay que mirarlo como lo mira el
+    navegador —relativo a la carpeta de la página— y no como lo miraría el disco
+    desde web/: el sitio entero cabe dentro de web/, que es lo que se sirve, así
+    que el «../» del principio es la forma que tiene la página de decir «la
+    raíz», no un directorio de verdad.
+    """
+    return (WEB / ruta.lstrip("./")).exists()
+
+
+def copias_avif() -> list:
+    """Una copia en AVIF de cada captura, al lado de su JPEG.
+
+    Las dos son la misma imagen y miden lo mismo: el JPEG es el respaldo de
+    siempre y el AVIF lo que pide por delante un navegador de hoy —todos lo
+    entienden, y el `<picture>` está para el que no—. El peso no es un detalle:
+    312 KB se quedan en 57, y eso se nota en la imagen que entra en pantalla al
+    abrir el sitio.
+
+    Se escribe solo si falta o si el JPEG es más nuevo, así que recapturar una
+    vista rehace su copia y volver a construir el sitio no recompone 36
+    imágenes. Y donde el sistema no sepa escribir AVIF no pasa nada: no hay
+    copia, el `<picture>` no la ofrece y se sirve el JPEG, que es como estaba.
+    """
+    if not SIPS.exists():
+        return []
+    hechas = []
+    for jpg in sorted((WEB / "assets/img").glob("vista-*.jpg")):
+        avif = jpg.with_suffix(".avif")
+        if avif.exists() and avif.stat().st_mtime >= jpg.stat().st_mtime:
+            continue
+        if subprocess.run([str(SIPS), "-s", "format", "avif", "-s", "formatOptions",
+                           CALIDAD_AVIF, str(jpg), "--out", str(avif)],
+                          capture_output=True).returncode == 0:
+            hechas.append(avif)
+    return hechas
+
+
+def escribir_peso(dicc: dict) -> dict:
+    """El diccionario con el peso del instalador ya escrito en cada texto.
+
+    Se hace aquí, sobre el diccionario, y no con un marcador de página: `resolver`
+    no vuelve a mirar lo que acaba de sustituir, así que un `{{v:…}}` escrito
+    dentro de un texto del diccionario se quedaría tal cual. Lo usan el
+    constructor y el verificador, que si no compararía textos distintos de los
+    que se publican.
+    """
+    peso = peso_instalador()
+    return {idioma: {c: t.replace(PESO, peso) for c, t in textos.items()}
+            for idioma, textos in dicc.items()}
 
 
 def dibujo_marca() -> str:
@@ -462,7 +651,7 @@ def rastreo() -> bool:
     for p in PAGINAS:
         if p["src"] == "no-encontrada":
             continue
-        es, en = f"{DOMINIO}/{p['es']}", f"{DOMINIO}/en/{p['en']}"
+        es, en = url_de(p["es"], "es"), url_de(p["en"], "en")
         alternativas = "\n".join((
             f'    <xhtml:link rel="alternate" hreflang="es" href="{es}"/>',
             f'    <xhtml:link rel="alternate" hreflang="en" href="{en}"/>',
@@ -477,17 +666,40 @@ def rastreo() -> bool:
     return True
 
 
-def guion_en_linea() -> str:
-    """El guion que decide el tema antes del primer píxel, tal cual se sirve.
+def guiones_en_linea() -> list:
+    """Los guiones en línea que hay que autorizar, ya resueltos, y en su orden.
 
-    Se saca de la cabecera y no de una página montada porque es el mismo en las
-    catorce: lo que se hashea tiene que ser exactamente el texto que ejecuta el
-    navegador, y ese texto no lleva ningún marcador que resolver.
+    El sitio lleva dos: el del tema, que decide claro u oscuro antes del primer
+    píxel, y el que dibuja el botón de Ko-fi en la navegación. Se leen de lo que
+    se sirve —como los del prototipo, y no de los parciales— porque el del botón
+    no dice lo mismo en las dos lenguas: su texto va escrito dentro del guion, y
+    lo pone el diccionario. Lo que se hashea tiene que ser exactamente el texto
+    que ejecuta el navegador, y el navegador ejecuta el marcador ya resuelto;
+    hashear el parcial daría la huella de un texto que no es el que corre, y una
+    huella que no casa no da error: deja el botón sin dibujar y la consola con
+    un aviso que nadie lee.
+
+    Se miran las dos portadas, que son las dos lenguas; el resto de páginas
+    repite estos guiones, y si alguna llevara otro el verificador lo caza
+    —comprueba todas, no una—. Se devuelven sin repetir: el del tema es el mismo
+    en castellano y en inglés, y no hace falta autorizarlo dos veces.
     """
-    guion = re.search(r"<script>(.*?)</script>", leer(PARCIALES / "cabecera.html"), re.S)
-    if not guion:
-        raise Fallo("la cabecera no lleva el guion del tema en línea")
-    return guion.group(1)
+    guiones = []
+    for ruta in (WEB / "index.html", WEB / "en" / "index.html"):
+        for atributos, g in re.findall(r"<script([^>]*)>(.*?)</script>", leer(ruta), re.S):
+            if re.search(r"\ssrc\s*=", atributos):
+                continue
+            # Una ficha de datos (`application/ld+json`) no es un guion: el
+            # navegador no la ejecuta y la política no la mira. Se salta aquí
+            # igual que en el verificador, que es quien reparte las huellas.
+            tipo = re.search(r"\stype\s*=\s*['\"]([^'\"]*)['\"]", atributos)
+            if tipo and not re.search(r"javascript|ecmascript|module", tipo.group(1), re.I):
+                continue
+            if g not in guiones:
+                guiones.append(g)
+    if len(guiones) < 2:
+        raise Fallo("faltan guiones en línea: ¿el del tema o el del botón?")
+    return guiones
 
 
 def guiones_del_prototipo() -> list:
@@ -512,37 +724,60 @@ def guiones_del_prototipo() -> list:
 def cabeceras() -> list:
     """Escribe las cabeceras del hosting y devuelve las huellas de los guiones.
 
-    La política de contenido no puede ser `'unsafe-inline'`: el sitio lleva un
-    solo guion en línea —el del tema— y se autoriza él solo, por su huella. La
-    huella se calcula aquí a partir del guion real, así que si alguien lo edita
-    la cabecera se actualiza sola; y el verificador comprueba que la del archivo
-    y la del guion de la página servida coinciden, porque una huella vieja no da
-    error: deja la página en blanco.
+    La política de contenido no puede ser `'unsafe-inline'`: el sitio lleva dos
+    guiones en línea —el del tema y el del botón de Ko-fi— y se autorizan ellos
+    solos, por su huella. Las huellas se calculan aquí a partir de los guiones
+    reales, así que si alguien los edita la cabecera se actualiza sola; y el
+    verificador comprueba que las del archivo y las de los guiones de la página
+    servida coinciden, porque una huella vieja no da error: deja la página en
+    blanco.
 
-    El prototipo lleva su propia política, más abajo, porque lleva dos guiones en
-    línea y no es un guion lo que hay que autorizar, sino los suyos. Sin esa
-    regla, la política del sitio lo dejaría mudo.
+    La política es una sola, y lleva también las huellas del prototipo. Es la
+    lección de una tarde: al prototipo se le dio una regla propia, y no sirve.
+    El hosting suma las cabeceras de todas las reglas que casan con una
+    dirección —no se queda con la más concreta, que es lo que yo suponía—, y con
+    dos políticas de contenido el navegador exige cumplirlas todas: la del sitio
+    mandaba igual y el prototipo seguía mudo. Además, su dirección no lleva el
+    `.html` (el hosting recorta la extensión y redirige la larga con un 308), así
+    que ni siquiera casaba la regla. Autorizar aquí dos huellas de más no abre
+    nada: una huella solo deja ejecutar ese texto exacto, y no hay otra página
+    que lo lleve.
 
-    Los estilos sí llevan `'unsafe-inline'`: el héroe escribe su escalonado en el
-    propio atributo (`style="--d:70ms"`), y eso no se puede autorizar por hash
-    sin meter un nonce en cada etiqueta. Lo que se autoriza ahí son valores de
-    variables, no código.
+    Los estilos llevan `'unsafe-inline'` por dos sitios, y ninguno es el atributo
+    del marcado: el `<noscript><style>` de la cabecera —el que enseña el sitio
+    cuando no hay guion— y el prototipo, que es la aplicación entera en un archivo
+    con su CSS y sus estilos en línea dentro, y comparte esta política porque el
+    hosting suma las cabeceras en vez de quedarse con la más concreta. El marcado
+    del sitio, por su parte, ya no escribe ni un valor en un atributo `style`: los
+    nombres de transición de vista se fueron con el movimiento nuevo, porque eran
+    los que hacían volar la captura de una pestaña a otra.
 
     Este archivo lo leen Netlify y Cloudflare Pages; donde no se lea, se ignora
     y el sitio funciona igual.
     """
-    huella = base64.b64encode(hashlib.sha256(guion_en_linea().encode("utf-8")).digest()).decode("ascii")
-    huellas = guiones_del_prototipo()
+    huellas = [base64.b64encode(hashlib.sha256(g.encode("utf-8")).digest()).decode("ascii")
+               for g in guiones_en_linea()]
+    prototipo = guiones_del_prototipo()
 
     def csp(guiones: list) -> str:
-        """La misma política para las dos rutas: solo cambia qué guiones autoriza."""
+        """La misma política para las dos rutas: solo cambia qué guiones autoriza.
+
+        Los terceros son los del botón de Ko-fi, y son suyos: el guion del widget
+        y la taza de la imagen salen de storage.ko-fi.com. El widget, además, se
+        pide su tipografía al escribirse —la hoja, de fonts.googleapis.com, y el
+        archivo, de fonts.gstatic.com—; el botón se pinta con la del sitio (la
+        Quicksand no se usa, y el archivo no llega a pedirse), pero la hoja se
+        deja pasar: bloquearla no dibujaría nada distinto y sí dejaría un aviso
+        en la consola del navegador por un recurso que el propio widget pide.
+        """
         return "; ".join((
             "default-src 'self'",
-            "script-src " + " ".join(["'self'"] + [f"'sha256-{h}'" for h in guiones]),
-            "style-src 'self' 'unsafe-inline'",
-            "img-src 'self' data:",
+            "script-src " + " ".join(["'self'", "https://storage.ko-fi.com"]
+                                     + [f"'sha256-{h}'" for h in guiones]),
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "img-src 'self' data: https://storage.ko-fi.com",
             "connect-src 'none'",
-            "font-src 'none'",
+            "font-src https://fonts.gstatic.com",
             "object-src 'none'",
             "base-uri 'none'",
             "form-action 'none'",
@@ -555,10 +790,9 @@ def cabeceras() -> list:
         "#",
         "# El HTML se sirve revalidando siempre: es lo que cambia en cada publicación, y",
         "# una copia guardada en el navegador sigue enseñando el texto viejo —«en la web",
-        "# todavía pone 30 días»— aunque el archivo ya esté corregido. Las reglas van de",
-        "# menos a más concretas, así que el instalador (abajo) conserva la suya.",
+        "# todavía pone 30 días»— aunque el archivo ya esté corregido.",
         "/*",
-        f"  Content-Security-Policy: {csp([huella])}",
+        f"  Content-Security-Policy: {csp(huellas + prototipo)}",
         "  X-Content-Type-Options: nosniff",
         "  Referrer-Policy: strict-origin-when-cross-origin",
         "  Permissions-Policy: geolocation=(), camera=(), microphone=(), usb=()",
@@ -566,21 +800,29 @@ def cabeceras() -> list:
         "  Strict-Transport-Security: max-age=31536000",
         "  Cache-Control: public, max-age=0, must-revalidate",
         "",
-        "# El prototipo es la app entera en un solo archivo y vive de sus dos guiones en",
-        "# línea, que no son el del sitio: con la política de arriba el navegador los",
-        "# bloquea y la página se queda muerta —se ve, y ningún control responde—. La",
-        "# suya es la misma política con esas dos huellas autorizadas, y las dos se",
-        "# calculan al construir sobre el archivo que se sirve.",
-        "/descargas/prototipo.html",
-        f"  Content-Security-Policy: {csp(huellas)}",
-        "",
-        "# El instalador lleva la versión en el nombre, así que su dirección no",
-        "# cambia nunca: se puede cachear para siempre.",
+        "# El instalador lleva la versión en el nombre, así que su dirección no cambia",
+        "# nunca y pide guardarse para siempre. Aviso para quien lo toque: el hosting",
+        "# suma las cabeceras de las reglas que casan, así que al precio le llega",
+        "# también el `must-revalidate` de arriba y el navegador usa ese —se sirve",
+        "# bien, pero se revalida—; para que se guardara de verdad habría que sacar el",
+        "# `Cache-Control` de arriba, y el HTML lo necesita.",
         "/descargas/*.dmg",
         "  Cache-Control: public, max-age=31536000, immutable",
         "  Content-Type: application/x-apple-diskimage",
+        "",
+        "# Las fuentes del sitio y el prototipo también se sirven —aquí no se esconde",
+        "# nada, y lo que se puede leer es lo que se puede visitar—, pero no son",
+        "# páginas que nadie busque: las fuentes llevan los marcadores sin resolver y",
+        "# el prototipo es la app entera dentro del navegador, con su propio título.",
+        "# Que se puedan visitar no es que deban salir en un buscador, así que se les",
+        "# dice que no se indexen; el resto del sitio sigue igual de rastreable.",
+        "/src/*",
+        "  X-Robots-Tag: noindex",
+        "",
+        "/descargas/prototipo*",
+        "  X-Robots-Tag: noindex",
     ]) + "\n", encoding="utf-8")
-    return [huella] + huellas
+    return huellas, prototipo
 
 
 def captura(vista: str, idioma: str, base: str, primera: bool, textos: dict) -> str:
@@ -599,22 +841,52 @@ def captura(vista: str, idioma: str, base: str, primera: bool, textos: dict) -> 
     alt = textos[f"captura.{vista}"]
     claro = f"{base}assets/img/vista-{vista}-{idioma}-claro.jpg"
     oscuro = f"{base}assets/img/vista-{vista}-{idioma}-oscuro.jpg"
+    claro_avif, oscuro_avif = f"{claro[:-4]}.avif", f"{oscuro[:-4]}.avif"
+    # El AVIF va primero, y solo si está: un `<source>` que apunta a un archivo
+    # que no existe le cuesta al navegador una petición fallida antes de caer al
+    # JPEG, que es justo lo contrario de lo que se busca.
+    # Son dos `source`, y el orden importa: el primero es el que casa con un
+    # sistema en oscuro y por eso va delante. Así el tema del sistema se resuelve
+    # en el navegador, sin guion —alguien que navegue sin él ve la captura que le
+    # toca en vez de una en claro sobre una página oscura— y, de paso, no se
+    # descarga la clara para tirarla: la precarga y la imagen que se pinta son la
+    # misma. Los `data-*` van también aquí porque el conmutador mueve los dos
+    # `srcset` y el `src` del `img`: el `source` manda, y dejarlo quieto cambiaría
+    # el `src` sin que se viera nada.
+    fuente = ""
+    if esta(claro_avif) and esta(oscuro_avif):
+        fuente = (f'<source media="(prefers-color-scheme: dark)" type="image/avif"'
+                  f' srcset="{oscuro_avif}" data-clara="{claro_avif}" data-oscura="{oscuro_avif}">'
+                  f'<source type="image/avif" srcset="{claro_avif}"'
+                  f' data-clara="{claro_avif}" data-oscura="{oscuro_avif}">')
     carga = '' if primera else ' loading="lazy"'
     # La primera captura se marca como prioritaria: es la candidata a ser el
     # elemento más grande que se pinta al abrir, y decirle al navegador que la
     # traiga antes que el resto es la mitad de lo que se gana con la precarga;
     # el atributo solo, o el `link` solo, dejan la mejora a medias.
     prioridad = ' fetchpriority="high"' if primera else ''
-    # La ventana lleva el nombre de su vista para la transición entre páginas:
-    # así, ir de la portada a «nueve vistas» no es un fundido entre dos fotos
-    # distintas, sino el viaje de la ventana que ya estabas mirando hasta su
-    # sitio nuevo. Cada vista aparece una sola vez por página —y un nombre
-    # repetido en el mismo documento el navegador lo ignora—, así que el nombre
-    # se escribe sin miedo y sin contarlo antes.
+    # La ventana NO lleva nombre para la transición entre páginas, y el motivo
+    # está medido: con nombre (`view-transition-name: v-resumen`), el navegador
+    # coge la captura de la ventana en la página que dejas y la hace VOLAR hasta
+    # su sitio en la que llega. Ir de la portada a «nueve vistas» era eso: tres
+    # pestañas y tres ventanas cruzando la pantalla por su cuenta. Con el nombre
+    # fuera, la ventana es parte de su página y entra con ella, donde está.
+    # La ventana es un enlace a su propio archivo. En un teléfono es la única
+    # forma de leerla: la interfaz son 1180 px lógicos y ahí caben 350, así que
+    # el texto de dentro baja a un tercio. Y el recorte no sirve de arreglo
+    # —probado: el trozo que hace legibles las cifras deja fuera sus etiquetas—,
+    # así que se ofrece entera, a su tamaño, en otra pestaña. El aviso que lo
+    # dice va dentro del enlace y solo se pinta en pantalla estrecha (sitio.css),
+    # para que el nombre accesible lo anuncie donde hace falta.
     return (
-        f'<figure class="window" style="view-transition-name: v-{vista}">'
+        f'<figure class="window">'
+        f'<a class="ampliar" href="{claro}" target="_blank" rel="noopener">'
+        f'<picture>{fuente}'
         f'<img src="{claro}" data-clara="{claro}" data-oscura="{oscuro}"'
         f' width="{CAP_ANCHO}" height="{CAP_ALTO}" alt="{alt}"{carga}{prioridad} decoding="async">'
+        f'</picture>'
+        f'<span class="ampliar-aviso">{textos["cap.ampliar"]}</span>'
+        "</a>"
         "</figure>"
     )
 
@@ -658,10 +930,22 @@ def main() -> int:
 
     escritas = []
     try:
+        # El texto del apoyo va dentro del guion del widget, entre comillas
+        # simples: un apóstrofo en el diccionario lo partiría en dos y el
+        # navegador se quedaría con un error de sintaxis en vez de un botón. No
+        # hay ninguno hoy; esto es para que el día que lo haya se vea al
+        # construir y no en la barra de una web publicada.
+        for idioma in ("es", "en"):
+            if "'" in dicc[idioma]["nav.apoyo"]:
+                raise Fallo(f"nav.apoyo ({idioma}) lleva una comilla simple: partiría"
+                            " el guion del botón")
+        # El peso del instalador, escrito en cada texto que lo menciona.
+        dicc = escribir_peso(dicc)
         if not MARCA.exists():
             raise Fallo(f"falta el símbolo de la app: {MARCA.relative_to(RAIZ)}")
         ICONO.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(MARCA, ICONO)
+        avif = copias_avif()
         piezas = artefactos()
 
         for p in PAGINAS:
@@ -677,7 +961,7 @@ def main() -> int:
                 destino.write_text(cuerpo, encoding="utf-8")
                 escritas.append(destino.relative_to(WEB))
         mapa = rastreo()
-        huellas = cabeceras()
+        guiones, prototipo = cabeceras()
     except Fallo as e:
         print("No se puede generar:", e, file=sys.stderr)
         return 1
@@ -695,8 +979,11 @@ def main() -> int:
     print(" ", "robots.txt")
     print(" ", "sitemap.xml" if mapa else "(sin dominio no se escribe sitemap.xml: el mapa necesita"
           " direcciones completas, y se escribe solo con DOMINIO puesto en build.py)")
-    print(" ", "_headers", f"(el guion del tema, autorizado por su huella: sha256-{huellas[0][:8]}…)")
-    print(" ", "_headers", f"(y el prototipo, por las suyas: {len(huellas) - 1} guiones en línea)")
+    print(f"  {len(list((WEB / 'assets/img').glob('vista-*.avif')))} capturas con copia en AVIF"
+          + (f", {len(avif)} escritas ahora" if avif else ""))
+    print(" ", "_headers", f"(una sola política, con el guion del tema y el del botón en"
+          f" cada lengua y los {len(prototipo)} del prototipo —{len(guiones) + len(prototipo)}"
+          " huellas en total—, y el CDN de Ko-fi autorizado)")
     print(f"\n{len(escritas)} páginas · {len(dicc['es'])} textos por idioma")
     return 0
 

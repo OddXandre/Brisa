@@ -52,14 +52,27 @@
      nota de elevación de la cabecera. Un solo recurso por pieza. */
   --ring: rgba(0, 0, 0, .09);
   --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .04), 0 24px 64px -18px rgba(0, 0, 0, .22);
+  /* La misma ventana, apuntada: la pieza no cambia de elevación —sigue teniendo
+     sombra y ni un borde—, solo flota dos píxeles más y su sombra se abre con
+     ella. Una elevación por pieza, la misma en los dos estados. */
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .05), 0 34px 80px -16px rgba(0, 0, 0, .26);
   --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .6);
 
   /* Acento: una brasa, en el tono que la app usa para texto y para la acción.
-     `--acc` es el de la app tal cual, y por eso el botón principal lleva tinta
-     blanca sobre él igual que el suyo; `--acc-text` es la brasa oscurecida
-     hasta pasar 4,5:1 sobre el blanco, que es para lo que la app la tiene
-     también. `--veil` es el velo de fondo del héroe, el mismo que la app se
-     pone detrás de la interfaz. */
+     `--acc` es el de la app tal cual —el mismo relleno del botón, el pétalo y
+     su icono—; `--acc-text` es la brasa oscurecida hasta pasar 4,5:1 sobre el
+     blanco, que es para lo que la app la tiene también. `--veil` es el velo de
+     fondo del héroe, el mismo que la app se pone detrás de la interfaz.
+
+     El botón de acción va con el naranja de la app y con su tinta blanca, las
+     dos cosas tal cual: es lo que identifica al producto, y el relleno y la
+     tinta de un botón son lo que se reconoce al mirarlo. Con ese blanco la razón
+     es 3,14:1 —pasa el 3:1 que se le pide a un componente de interfaz y se queda
+     por debajo del 4,5:1 que AA pide para texto menudo, que este lo es: 14,5 y
+     15,5 px—. Se probó a hundir la brasa hasta 4,78:1 y se descartó a sabiendas:
+     el naranja del botón tiene que ser el del producto. La cifra se queda
+     escrita —aquí y en el verificador, con el mínimo que de verdad se exige— en
+     vez de disfrazarse con un tono propio. */
   --acc: #ff5900;
   --acc-text: #c93f04;
   --acc-ink: #ffffff;
@@ -73,12 +86,31 @@
   --r-btn: 12px;
   --r-window: 14px;
 
-  /* Curvas: las de la app, más la de llegada del sistema. */
-  --ease: cubic-bezier(.22, 1, .36, 1);
+  /* Movimiento: tres curvas y tres tiempos, y nada fuera de aquí.
+
+     `--ease` es la curva de la casa: arranca viva y frena largo —el gesto con
+     el que el sistema abre una hoja—, y es la que usan los controles al
+     apretarse. `--ease-io` es la simétrica, para lo que va y vuelve. `--ease-out`
+     es la que se posa: frenada corta y final largo, sin llegar al extremo de la
+     exponencial, que deja el último tramo casi parado y se lee como un retardo.
+     Ninguna rebota: aquí nada hace muelle.
+
+     Los tiempos son tres y son cortos, que es lo que hace que un sitio se sienta
+     nativo: un control contesta en `--t-rapido` —ciento sesenta milisegundos, el
+     gesto se contesta a sí mismo—, lo que cambia de sitio lo hace en `--t-medio`,
+     y lo que se despliega —la pregunta de la lista de preguntas— tarda
+     `--t-lento`. Nada de aquí pasa de medio segundo; el revelado vive en
+     `--t-reveal`, también por debajo de ese límite. Antes cada regla traía su
+     propia cifra —0,15, 0,16, 0,2, 0,35 s— y por eso el mismo
+     gesto duraba distinto según dónde se diera. */
+  --ease: cubic-bezier(.32, .72, 0, 1);
   --ease-io: cubic-bezier(.4, 0, .2, 1);
-  --ease-out: cubic-bezier(.16, 1, .3, 1);
-  --t-reveal: .68s;                /* lo que tarda en llegar lo que sube */
-  --paso: 60ms;                    /* el retardo entre hermanos de una lista, puesto por el guion */
+  --ease-out: cubic-bezier(.22, .61, .36, 1);
+  --t-rapido: .16s;                /* la respuesta a un gesto: color, filete, fondo */
+  --t-reveal: .48s;                /* el asentamiento de bloques al entrar */
+  --t-medio: .3s;                  /* lo que cambia de sitio: la barra, el aviso */
+  --t-lento: .34s;                 /* lo que se despliega: la altura de una pregunta */
+  --t-tema: .43s;                  /* el asentamiento del tema: el mismo tiempo que usa la app */
 
   /* Escala tipográfica. Seis pasos y ningún tamaño fuera de ellos, con el
      cuerpo y el interlineado tomados de apple.com: 17 px de lectura —su cuerpo
@@ -115,6 +147,45 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
+/* ── 1b · Los tokens de color, declarados ──────────────────────────────────
+   `@property` es lo que hace que el cambio de tema pueda FUNDIRSE en vez de
+   saltar, y es también lo que arregla un fallo que se veía a simple vista.
+
+   Sin declarar, un token de color no es un color: es una cadena, y una cadena
+   no interpola. La forma anterior de animar el tema era ponerle una transición
+   de `color` a TODOS los elementos (`html.tema-anim *`). Eso no funde nada: el
+   color de un elemento que solo lo hereda no avanza —se quedaba clavado en el
+   valor viejo y lo soltaba de golpe al quitar la clase medio segundo después—,
+   así que el texto esperaba quieto y luego cambiaba de un salto. Y de paso
+   creaba ciento setenta transiciones simultáneas, con su pintado, para no
+   animar casi ninguna.
+
+   Declarados, la transición vive en un solo sitio —`html`, que es donde cambia
+   el valor— y todo lo que los consume la sigue, heredados incluidos: cuando
+   `--ink` vale a medias entre el blanco y el negro, `color: var(--ink)` vale
+   esa misma mitad en cada fotograma. Dieciséis propiedades, dieciséis
+   animaciones, y ni una más.
+
+   Si el navegador no los conoce, no pasa nada: se ignoran estas reglas, los
+   tokens siguen funcionando como siempre y el tema cambia de golpe, que es
+   justo lo que hacía antes. */
+@property --bg        { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --surface   { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+@property --surface-2 { syntax: "<color>"; inherits: true; initial-value: #f3f3f7; }
+@property --line      { syntax: "<color>"; inherits: true; initial-value: #dcdde5; }
+@property --line-2    { syntax: "<color>"; inherits: true; initial-value: #b9bbc6; }
+@property --ink       { syntax: "<color>"; inherits: true; initial-value: #000000; }
+@property --ink-2     { syntax: "<color>"; inherits: true; initial-value: #60646c; }
+@property --ink-3     { syntax: "<color>"; inherits: true; initial-value: #6f737b; }
+@property --ink-4     { syntax: "<color>"; inherits: true; initial-value: #8b8d98; }
+@property --sel       { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .12); }
+@property --rail      { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .08); }
+@property --glass     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .78); }
+@property --float     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .86); }
+@property --acc-text  { syntax: "<color>"; inherits: true; initial-value: #c93f04; }
+@property --acc-soft  { syntax: "<color>"; inherits: true; initial-value: rgba(255, 89, 0, .1); }
+@property --veil      { syntax: "<color>"; inherits: true; initial-value: rgba(255, 89, 0, .055); }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0a0a0a;
@@ -133,6 +204,7 @@
     --rim: inset 0 .5px 0 rgba(255, 255, 255, .09);
     --ring: rgba(255, 255, 255, .13);
     --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
+    --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .55), 0 34px 80px -16px rgba(0, 0, 0, .78);
     --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .9);
     --acc-text: #ff7b3d;
     --acc-soft: rgba(255, 89, 0, .16);
@@ -167,6 +239,10 @@
   --rim: inset 0 .5px 0 rgba(255, 255, 255, .7);
   --ring: rgba(0, 0, 0, .09);
   --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .04), 0 24px 64px -18px rgba(0, 0, 0, .22);
+  /* La misma ventana, apuntada: la pieza no cambia de elevación —sigue teniendo
+     sombra y ni un borde—, solo flota dos píxeles más y su sombra se abre con
+     ella. Una elevación por pieza, la misma en los dos estados. */
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .05), 0 34px 80px -16px rgba(0, 0, 0, .26);
   --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .6);
   --acc-text: #c93f04;
   --acc-soft: rgba(255, 89, 0, .1);
@@ -190,6 +266,7 @@
   --rim: inset 0 .5px 0 rgba(255, 255, 255, .09);
   --ring: rgba(255, 255, 255, .13);
   --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .55), 0 34px 80px -16px rgba(0, 0, 0, .78);
   --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .9);
   --acc-text: #ff7b3d;
   --acc-soft: rgba(255, 89, 0, .16);
@@ -275,7 +352,7 @@ body { caret-color: var(--acc); }
 .nav-links a {
   display: block; padding: 7px var(--s-3); border-radius: var(--r-ctl);
   font-size: var(--t-sm); color: var(--ink-2); text-decoration: none;
-  transition: color .15s, background-color .15s;
+  transition: color var(--t-rapido) var(--ease-io), background-color var(--t-rapido) var(--ease-io);
 }
 .nav-links a:hover { color: var(--ink); background: var(--sel); }
 .nav-links a[aria-current="page"] { color: var(--ink); background: var(--sel); }
@@ -288,14 +365,113 @@ body { caret-color: var(--acc); }
   border: 1px solid transparent; border-radius: var(--r-ctl);
   background: transparent; color: var(--ink-2); cursor: pointer;
   font: 500 var(--t-2xs)/1 var(--font-mono); letter-spacing: .02em; text-decoration: none;
-  transition: color .15s, background-color .15s, border-color .15s;
+  transition: color var(--t-rapido) var(--ease-io), background-color var(--t-rapido) var(--ease-io),
+              border-color var(--t-rapido) var(--ease-io), transform .26s var(--ease);
 }
 .icon-btn:hover { color: var(--ink); background: var(--sel); }
+/* El mismo apretado que un botón de la casa: un control se hunde cuando lo
+   pulsas, aunque solo mida 34px. Es la única respuesta que tiene un botón de
+   icono, y sin ella el toque no se siente. */
+.icon-btn:active { transform: scale(.96); }
 .icon-btn::after { content: ""; position: absolute; inset: -6px; }
 .icon-btn.wide { width: auto; padding: 0 var(--s-2); gap: var(--s-1); grid-auto-flow: column; }
 .icon-btn svg { width: 17px; height: 17px; }
 
 .nav-toggle { display: none; }
+
+/* ── El botón de apoyo (Ko-fi) ─────────────────────────────────────────────
+   El widget oficial no escribe un enlace y ya: se escribe su propio <style>
+   con `document.writeln`, justo donde está el guion de la navegación. Casi todo
+   lo suyo va con `!important` —la tinta, el relleno, el alto de línea, la
+   medida de la taza—, así que estas reglas no lo sustituyen: lo encajan. Los
+   `!important` de aquí existen por los suyos y ganan por peso (`.nav-acts
+   a.kofi-button` es más concreto que `a.kofi-button`), no por llegar después;
+   de ahí que el `:visited` vaya escrito aparte: el widget le da su propio
+   blanco con el mismo peso que la regla de arriba.
+
+   El botón se viste como cualquier control secundario de la casa: la misma
+   superficie, el mismo borde, la misma tinta y el mismo gris al pasar por
+   encima que un `.btn`, y la medida del que tiene al lado —34px de alto y el
+   radio de los controles, los tokens de `.btn.sm`—. El azul que el widget pone
+   en línea no se usa: al lado ya hay un naranja —la descarga, que es la
+   acción— y dos gritos en la misma barra no son dos acciones. Lo que queda de
+   Ko-fi es lo que lo identifica: la taza con su corazón, que ya es el naranja
+   de Brisa (#ff5a16 contra el #ff5900 de la app). El widget se pide su propia
+   tipografía —Quicksand, en su <link> a Google Fonts—; el botón habla con la
+   del sitio, y en el idioma de la página: el texto lo pone el diccionario, no
+   la llamada al widget. */
+.nav-acts .btn-container {
+  flex: none;              /* doblado por la barra, el texto se saldría del botón */
+  min-width: 0;            /* los 160px del widget recortarían el texto */
+  margin: 0;
+  line-height: 0;          /* sin el renglón fantasma, el botón mide sus 34px */
+}
+.nav-acts a.kofi-button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  min-width: 0;
+  padding: 0 var(--s-3) !important;
+  background: var(--surface-2) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--r-ctl);
+  box-shadow: none;
+  color: var(--ink);
+  font-family: var(--font) !important;
+  font-size: var(--t-sm) !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  transition: border-color var(--t-rapido) var(--ease-io), color var(--t-rapido) var(--ease-io),
+              transform .26s var(--ease), opacity var(--t-rapido) var(--ease-io);
+}
+/* El mismo gesto que un botón de la casa: el borde se aclara al pasar por
+   encima y el control se aprieta al pulsarlo. El widget, por su cuenta, se
+   apaga al pasar por encima (baja la opacidad) y se pone blanco al visitarlo o
+   pulsarlo —blanco sobre un botón blanco, o sea, texto invisible—; por eso las
+   tres fases van nombradas aquí. */
+.nav-acts a.kofi-button:hover { opacity: 1; border-color: var(--line-2) !important; }
+.nav-acts a.kofi-button:visited, .nav-acts a.kofi-button:active { opacity: 1; color: var(--ink) !important; }
+.nav-acts a.kofi-button:active { transform: scale(.97); }
+.nav-acts .kofitext {
+  display: inline-flex; align-items: center; gap: var(--s-1);
+  color: var(--ink) !important;
+  line-height: 1 !important;
+  text-shadow: none;
+}
+/* La taza, sin deformar: su archivo mide 285×229 —1,24 de proporción— y el
+   widget la estira a 22×15, que son 1,47. A 22px de ancho le tocan 17,7 de
+   alto; se queda en 22×18, que es la proporción de la imagen. */
+.nav-acts .kofitext img.kofiimg {
+  display: block !important;
+  width: 22px !important; height: 18px !important;
+  margin: 0 !important; padding: 0 !important;
+  vertical-align: baseline !important;
+}
+/* La taza se mece sola, cada tres segundos, en el widget. Con «Reducir
+   movimiento» puesto, no: el sitio cambia el movimiento por fundido, y esto es
+   movimiento en bucle, encima pegado a la barra. */
+@media (prefers-reduced-motion: reduce) {
+  .nav-acts .kofitext img.kofiimg { animation: none; }
+}
+
+/* Hasta 1024 el apoyo se queda con la taza: el texto no cabe. La cuenta está
+   medida en el navegador: el botón ancho mide 163px en castellano y 178 en
+   inglés, y la barra —48 de márgenes, 68 de marca, los enlaces, los 24 de cada
+   hueco y las acciones— necesita 970px en el peor caso, que es el castellano,
+   porque sus enlaces son más largos que los ingleses (438 contra 414). Por
+   debajo de eso el botón no se encoge —doblado, el texto se saldría de su
+   caja—: se queda sin palabra y pasa a medir 34px, los mismos que un botón de
+   icono, y la barra baja a 841. Así respira de sobra hasta el menú de móvil,
+   que está en 900.
+
+   El texto del widget es un nodo suelto dentro del span —no una etiqueta con
+   clase—, así que la única forma de esconderlo sin tocar el widget es dejar su
+   tipografía a cero: la taza lleva su medida propia y no la hereda. */
+@media (max-width: 1024px) {
+  .nav-acts .kofitext { font-size: 0 !important; gap: 0; }
+  .nav-acts a.kofi-button { width: 34px; padding: 0 !important; }
+}
 
 @media (max-width: 900px) {
   /* El menú de móvil es opaco, y no por gusto. Con la superficie flotante
@@ -306,14 +482,39 @@ body { caret-color: var(--acc); }
      desplegable tapa lo que hay debajo; si se puede leer la página a través de
      él, no es un cristal: es un defecto. La barra de arriba sí va en cristal,
      porque no tapa nada: el contenido pasa por debajo al hacer scroll. */
+  /* El menú se despliega en vez de aparecer de golpe: baja ocho píxeles y se
+     funde, que es lo que hace un desplegable del sistema.
+
+     Va siempre dibujado —está fuera del flujo, así que no ocupa sitio— y se
+     esconde por opacidad y visibilidad, no por `display`. Es la única forma de
+     que la apertura se pueda fundir: `display` no viaja desde `none` sin
+     `@starting-style`, y con él el menú seguiría apareciendo de golpe (medido:
+     con la versión de `allow-discrete` entraba con opacidad 1 y sin transición
+     ninguna). `visibility: hidden` lo saca además del árbol de accesibilidad, así
+     que cerrado no se puede tabular hasta él y no recibe toques. */
   .nav-links {
-    display: none;
+    display: flex;
     position: absolute; left: 0; right: 0; top: var(--nav-h);
     flex-direction: column; gap: var(--s-1); padding: var(--s-3) var(--gutter) var(--s-4);
     background: var(--bg); border-bottom: 1px solid var(--line);
+    opacity: 0; visibility: hidden;
   }
   .nav-links a { padding: var(--s-3); font-size: var(--t-lg); }
-  .nav[data-open="true"] .nav-links { display: flex; }
+  .nav[data-open="true"] .nav-links { opacity: 1; visibility: visible; }
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-links {
+      transform: translateY(-8px);
+      transition: opacity var(--t-rapido) var(--ease-io), transform var(--t-medio) var(--ease-out),
+                  visibility var(--t-medio) linear;
+    }
+    .nav[data-open="true"] .nav-links { transform: none; }
+  }
+  /* Con el movimiento reducido la altura no viaja y solo se funde, como el resto
+     del sitio: la visibilidad sigue llendo con el fundido para que el cierre no
+     corte la salida a la mitad. */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-links { transition: opacity var(--t-rapido) linear, visibility var(--t-rapido) linear; }
+  }
   .nav-toggle { display: grid; }
   /* El botón de descarga de la barra mide 34px de alto, que con el pulgar es
      poco. El control se queda igual de pequeño y el área que recibe el toque se
@@ -329,21 +530,26 @@ body { caret-color: var(--acc); }
   font: 500 14.5px/1 var(--font); letter-spacing: -.01em;
   text-decoration: none; white-space: nowrap; cursor: pointer;
   border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
-  transition: background-color .15s var(--ease-io), border-color .15s, transform .16s var(--ease), color .15s, filter .15s;
+  transition: background-color var(--t-rapido) var(--ease-io), border-color var(--t-rapido) var(--ease-io),
+              transform var(--t-rapido) var(--ease), color var(--t-rapido) var(--ease-io),
+              filter var(--t-rapido) var(--ease-io);
 }
 .btn:hover { border-color: var(--line-2); }
 .btn:active { transform: scale(.97); }
 .btn svg { width: 17px; height: 17px; flex: none; }
 .btn small { font: 400 var(--t-xs) var(--font-mono); color: var(--ink-3); }
-/* El único naranja de la pantalla suele ser este botón. Mismo relleno y misma
-   tinta que el botón principal de la app (`#ff5900` sobre blanco): el sitio no
-   se inventa un tono propio para la acción. El realce al pasar por encima
-   también es el suyo, un 8 % de brillo —antes se mezclaba con `--ink`, que en
-   tema oscuro es casi blanco, así que ahí el botón se aclaraba en vez de
-   encenderse y el mismo gesto hacía dos cosas distintas según el tema—. */
+/* El único naranja de la pantalla suele ser este botón, y es EL naranja: el
+   relleno es `--acc` —el #ff5900 de la app, el mismo de su botón, su pétalo y
+   su icono— y la tinta es la blanca de la app. Las dos salen del producto
+   porque las dos lo identifican, y el porqué de la cifra que dan juntas (3,14:1)
+   está en el token. El realce al pasar por encima es el suyo, un 8 % de brillo:
+   es el gesto que la app hace en su propio botón. */
 .btn.primary { background: var(--acc); border-color: transparent; color: var(--acc-ink); box-shadow: var(--rim); }
 .btn.primary:hover { border-color: transparent; filter: brightness(1.08); }
-.btn.primary small { color: rgba(255, 255, 255, .78); }
+/* «0.1.0 beta», dentro del botón, va en la misma tinta y a plena opacidad: la
+   jerarquía la pone el tipo —mono, 12,5 px—, y con el relleno de la app apagar
+   la tinta solo empeora lo único que este botón ya tiene justo. */
+.btn.primary small { color: inherit; }
 .btn.quiet { background: transparent; border-color: transparent; color: var(--ink-2); }
 .btn.quiet:hover { background: var(--sel); color: var(--ink); border-color: transparent; }
 .btn.lg { height: 48px; padding: 0 var(--s-5); font-size: 15.5px; }
@@ -383,6 +589,11 @@ h1 {
   display: flex; justify-content: center; flex-wrap: wrap;
 }
 .meta span + span::before { content: "·"; margin: 0 var(--s-3); color: var(--ink-4); }
+/* La puerta al prototipo, bajo los datos de la app. Es una acción pequeña, no
+   una nota al pie: va con el cuerpo corto de la casa y se centra como caja —su
+   medida tope es de 44em y en un héroe centrado empezaba en el borde del
+   contenedor, que dejaba el enlace a la izquierda de todo lo demás. */
+.hero .letra-pequena { margin-inline: auto; }
 /* El estado de la versión —«Beta 0.1.0 · firma ad-hoc»— va con el resto de la
    línea, en el mismo gris. El acento de este sitio marca puertas: enlaces y el
    botón principal. Una etiqueta que no lleva a ningún sitio no se viste como
@@ -410,6 +621,27 @@ h1 {
   aspect-ratio: 1180 / 760;
 }
 .window img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+/* La captura va dentro de un `<picture>`, que elige entre el AVIF y el JPEG: es
+   una caja que no pinta nada y que, sin esta línea, sería una caja en línea con
+   un bloque dentro. En bloque, la imagen mide lo que medía. */
+.window picture { display: block; }
+/* La captura se puede abrir a su tamaño. En un teléfono no hay forma de leerla
+   dentro de la página: la interfaz de la app son 1180 px lógicos y ahí caben
+   350, así que su texto baja a un tercio y desaparece. Se probó a recortar la
+   ventana —enseñar solo un trozo, más grande— y sale peor: el recorte que hace
+   legibles las cifras deja fuera las etiquetas que las explican, y la lista
+   queda en «34,9 % · 148,2 GB» sin que se sepa de qué. Lo que sí funciona es no
+   meterla: la imagen entera, a su tamaño, en otra pestaña. El enlace está
+   siempre —también en el escritorio, donde es un «ver más grande» de toda la
+   vida— y el aviso que lo anuncia solo se pinta donde se necesita. */
+.window .ampliar { display: block; cursor: zoom-in; }
+.window .ampliar-aviso {
+  display: none; position: absolute; right: var(--s-3); bottom: var(--s-3);
+  padding: 4px 9px; border-radius: 999px; pointer-events: none;
+  font: 500 var(--t-2xs)/1 var(--font); letter-spacing: .02em;
+  color: var(--ink-2); background: var(--float); border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
 /* Los tres semáforos de macOS estaban dibujados aquí con CSS, para que la
    captura se leyera como una ventana y no como un recorte. Ya no están, y el
    motivo es la única razón por la que esto se quita: una ventana de verdad los
@@ -461,6 +693,10 @@ section.head { padding: var(--s-9) 0 0; border-top: 0; }
 section.head h1 { font-size: clamp(28px, 4.4vw, 48px); line-height: 1.08; margin: 0 0 var(--s-5); max-width: 24ch; }
 section.head .lede { margin: 0; }
 section.head .ctas { margin-top: var(--s-6); }
+/* Los datos que deciden una descarga —sistema, tamaño, versión— van pegados al
+   botón que la ofrece. En una cabecera alineada a la izquierda, la línea se
+   alinea con lo de arriba en vez de quedar centrada bajo el botón. */
+section.head .meta { justify-content: flex-start; }
 section.head + section { border-top: 0; padding-top: var(--s-8); }
 
 /* ── 8 · Rejilla de celdas (filete de 1px) ───────────────────────────────── */
@@ -571,7 +807,7 @@ section.head + section { border-top: 0; padding-top: var(--s-8); }
    junto al botón de descarga, y ese enlace salía sin acento mientras todos los
    demás salían con él. Quedan fuera, a propósito, los botones y las celdas
    enteras de la rejilla: ya llevan su propio realce al pasar por encima. */
-main a:not(.btn):not(.cell-link) { color: var(--acc-text); text-decoration: underline; }
+main a:not(.btn):not(.cell-link) { color: var(--acc-text); text-decoration: underline; transition: color var(--t-rapido) var(--ease-io); }
 main a:not(.btn):not(.cell-link):hover { color: var(--ink); }
 .note p { margin: 0; }
 .note p + p { margin-top: var(--s-2); }
@@ -628,7 +864,7 @@ summary {
   font-weight: 500; font-size: var(--t-lg);
 }
 summary::-webkit-details-marker { display: none; }
-summary svg { width: 18px; height: 18px; color: var(--ink-3); flex: none; transition: transform .2s var(--ease); }
+summary svg { width: 18px; height: 18px; color: var(--ink-3); flex: none; transition: transform var(--t-medio) var(--ease), color var(--t-rapido) var(--ease-io); }
 details[open] summary svg { transform: rotate(90deg); }
 details .body { padding: 0 0 var(--s-5); color: var(--ink-2); max-width: 40em; }
 details .body p { margin: 0 0 var(--s-3); }
@@ -653,7 +889,7 @@ footer p + p { margin-top: var(--s-2); }
 footer .eyebrow { margin-bottom: var(--s-4); }
 /* En el pie los enlaces van en columna: son listas, no filas que se parten. */
 .foot-links { display: flex; flex-direction: column; gap: var(--s-3); list-style: none; margin: 0; padding: 0; }
-.foot-links a { text-decoration: none; color: var(--ink-2); }
+.foot-links a { text-decoration: none; color: var(--ink-2); transition: color var(--t-rapido) var(--ease-io); }
 .foot-links a:hover { color: var(--ink); }
 .foot-legal {
   grid-column: 1 / -1; margin-top: var(--s-4); padding-top: var(--s-5); border-top: 1px solid var(--line);
@@ -661,51 +897,51 @@ footer .eyebrow { margin-bottom: var(--s-4); }
   font-size: var(--t-xs); color: var(--ink-3);
 }
 
-/* ── 15 · Movimiento ─────────────────────────────────────────────────────── */
-/* Un solo material, porque es el único que se mueve: el TEXTO SUBE.
-
-   El texto entra subiendo —el mismo gesto con el que la app descubre lo que
-   analiza—, y las capturas NO se animan: el revelado por barrido de las
-   ventanas (marco que subía mientras la imagen se descubría de arriba abajo)
-   se retiró a petición, y las imágenes se muestran tal cual, sin estado de
-   partida y sin llegada.
-
-   Tres cosas que se respetan en todo el bloque:
-     · el estado de partida cuelga de `subir`, una clase que pone el guion y
-       solo él. Sin guion no existe, así que la página se ve entera y quieta
-       en vez de quedarse en blanco;
-     · el estado de partida y el de llegada viven DENTRO de la misma consulta y
-       no fuera. Una regla que esconde contenido fuera de una consulta esconde
-       contenido para todo el mundo, y el verificador lo comprueba;
-     · sin movimiento reducido se entra desplazándose; con él, fundiéndose. En
-       los dos casos hay entrada, así que en los dos casos hay estado de
-       partida: la diferencia es que uno mueve y el otro no. */
+/* ── 15 · Profundidad del símbolo ───────────────────────────────────────── */
+/* Solo se desplaza la marca decorativa, nunca el texto ni la captura principal.
+   Donde hay línea de tiempo de scroll acompaña los primeros 320 px; en el resto
+   de navegadores y con movimiento reducido queda quieta desde el primer cuadro. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Estado de partida. Solo existe con el guion vivo. */
-  .subir { opacity: 0; transform: translateY(16px); }
-
-  /* La llegada. */
-  .subir.visto {
-    opacity: 1; transform: none;
-    transition: opacity var(--t-reveal) var(--ease-out) var(--d, 0ms),
-                transform var(--t-reveal) var(--ease-out) var(--d, 0ms);
+  @supports (animation-timeline: scroll()) {
+    @keyframes retirarse {
+      from { opacity: 1; transform: none; }
+      to   { opacity: .55; transform: translateY(-28px); }
+    }
+    .hero .mark {
+      animation: retirarse linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 320px;
+    }
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  /* Con «Reducir movimiento» activado no se deja la pantalla quieta: se le quita
-     el movimiento a la entrada y se queda el fundido. Es lo que hace el propio
-     sistema cuando ese ajuste está puesto —macOS e iOS cambian sus transiciones
-     por un fundido cruzado en vez de no hacer ninguna—, y conserva el mismo
-     mensaje («esto acaba de llegar») sin mover un píxel: ni `translate`, ni
-     `scale`. Nada de este bloque desplaza nada.
-
-     Lo que sí se conserva es el escalonado (`--d`): un retardo no es movimiento,
-     es orden, y es lo que hace que la lista se lea en vez de aparecer en bloque. */
-  .subir { opacity: 0; }
-  .subir.visto {
+/* ── 15b · Revelado al entrar en pantalla ──────────────────────────────────
+   La animación se activa solo cuando el guion confirma que hay observador y
+   movimiento permitido. Sin guion, sin soporte o con «Reducir movimiento»,
+   ningún contenido se oculta. Se anima el bloque de lectura como una pieza, no
+   cada línea: entrada corta, opacidad y desplazamiento pequeño, sin desenfoques
+   ni zoom que hagan esperar para leer.
+   ────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .revelado-activo [data-reveal]:not(.revelado) {
+    opacity: 0;
+    transform: translateY(14px) scale(.99);
+  }
+  .revelado-activo [data-reveal] {
+    transition: opacity var(--t-reveal) var(--ease-out), transform var(--t-reveal) var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .revelado-activo [data-reveal]:focus-within { opacity: 1; transform: none; }
+  .revelado-activo [data-reveal].revelado {
     opacity: 1;
-    transition: opacity .32s var(--ease-out) var(--d, 0ms);
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
 
@@ -719,22 +955,21 @@ footer .eyebrow { margin-bottom: var(--s-4); }
    nada que descargar, y donde no exista —Firefox, Safari— no pasa nada, el
    enlace hace lo de siempre.
 
-   `navigation: auto` la enciende para toda navegación dentro del sitio. Aquí se
-   afina el tiempo —salida corta, llegada algo más larga, porque lo que se queda
-   es lo que llega— y un detalle que se nota: la barra de arriba lleva nombre
-   propio, así que se queda fuera del fundido y no parpadea mientras cambia lo de
-   dentro. Es lo que hace una pestaña de verdad.
+   `navigation: auto` la enciende para toda navegación dentro del sitio. Un
+   detalle que se nota: la barra de arriba lleva nombre propio, así que se queda
+   fuera del relevo y no parpadea mientras cambia lo de dentro. Es lo que hace
+   una pestaña de verdad.
 
-   Las ventanas del producto llevan su nombre por vista (`v-resumen`, `v-atlas`…)
-   y por eso ir de la portada a las nueve vistas no es un fundido entre dos fotos
-   distintas: la ventana que ya estabas mirando viaja hasta su sitio nuevo. Cada
-   vista aparece una sola vez por página, así que el nombre nunca se repite.
+   Y la captura NO lleva nombre propio, aunque lo llevó. Con nombre, el navegador
+   coge la ventana que estabas mirando y la hace VIAJAR hasta su sitio nuevo en
+   la página que llega. Es un efecto llamativo de enseñar y malo de usar: al cambiar
+   de pestaña lo que tienes delante se pone en movimiento por su cuenta, y un
+   documento no se desplaza a otro documento —esa es la diferencia entre una web
+   y una presentación—. Sin nombre, la ventana es parte de su página y entra con
+   ella, quieta en su sitio.
 
-   Las dos ramas de siempre: sin reducción, lo que llega sube 6 px; con reducción
-   solo se funde. Aquí no hay `.subir` que esconder —estas capas no
-   son del documento, las pinta el navegador—, así que la regla del verificador
-   sobre contenido escondido no entra; lo que sí se exige es que ninguna de las
-   dos ramas se quede sin declarar. */
+   Las dos ramas de siempre: sin reducción, el relevo; con reducción, el mismo
+   relevo. Ninguna de las dos puede quedarse sin declarar. */
 @view-transition { navigation: auto; }
 .nav { view-transition-name: barra; }
 /* La barra no se funde consigo misma: es la misma barra en las dos páginas. El
@@ -746,17 +981,39 @@ footer .eyebrow { margin-bottom: var(--s-4); }
 ::view-transition-new(barra) { animation: none; opacity: 1; }
 
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root) { animation: irse .2s var(--ease-io) both; }
-  ::view-transition-new(root) { animation: llegar .3s var(--ease-out) both; }
-  @keyframes irse { to { opacity: 0; transform: scale(.994); } }
-  @keyframes llegar { from { opacity: 0; transform: translateY(6px); } }
+  /* El relevo. Lo que se va no se aparta ni se encoge —deja de estar debajo,
+     entero, mientras lo que llega se posa encima suyo— y lo que llega no viene
+     de ningún sitio: se enciende donde está. Nada de la pantalla viaja.
+
+     La página vieja se sostiene hasta el 55 % a propósito. Si las dos bajan de
+     opacidad a la vez, en la mitad del relevo se cuela el fondo, y ese escalón de
+     luminosidad —claro en tema claro, oscuro en oscuro— es lo que hace que un
+     cruce parezca barato: se ve el mecanismo. Sostenida, lo que se ve es una
+     página que se disuelve en la siguiente.
+
+     Y el tiempo es el del sistema para lo que cambia de sitio (`--t-medio`), que
+     aquí no cambia de sitio nada: así el relevo entre pestañas tiene la misma
+     velocidad que la barra al asentarse, y el sitio habla con una sola voz. Las
+     dos curvas son las de la casa, una para lo que se apaga y otra para lo que se
+     enciende. */
+  ::view-transition-old(root) { animation: irse var(--t-reveal) var(--ease-io) both; }
+  ::view-transition-new(root) { animation: llegar var(--t-reveal) var(--ease-out) both; }
+  @keyframes irse { 0%, 55% { opacity: 1; } to { opacity: 0; } }
+  @keyframes llegar { from { opacity: 0; } to { opacity: 1; } }
+  /* El papel debajo de las dos capas: en el tramo en que ninguna de las dos está
+     entera, lo que asoma es el fondo de la página y no el del navegador, que es
+     el que da el parpadeo blanco al navegar en tema oscuro. */
+  ::view-transition-group(root) { background-color: var(--bg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root) { animation: fundir .2s linear both; }
-  ::view-transition-new(root) { animation: aparecer .3s linear both; }
-  @keyframes fundir { to { opacity: 0; } }
-  @keyframes aparecer { from { opacity: 0; } }
+  /* El mismo relevo, con los mismos tiempos y sin curva: con el movimiento
+     reducido no hay nada que mover, solo dos capas que se cruzan. */
+  ::view-transition-old(root) { animation: fundir var(--t-rapido) linear both; }
+  ::view-transition-new(root) { animation: aparecer var(--t-rapido) linear both; }
+  @keyframes fundir { 0%, 55% { opacity: 1; } to { opacity: 0; } }
+  @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+  ::view-transition-group(root) { background-color: var(--bg); }
 }
 
 /* ── 17 · Respuesta ──────────────────────────────────────────────────────── */
@@ -765,13 +1022,71 @@ footer .eyebrow { margin-bottom: var(--s-4); }
 
 /* La barra se asienta al bajar: el filete se marca y aparece una sombra corta.
    Es lo que dice «ya no estás arriba» sin desplazar ni un píxel. */
-.nav { transition: border-color .3s var(--ease-io), box-shadow .3s var(--ease-io); }
+.nav { transition: border-color var(--t-rapido) var(--ease-io), box-shadow var(--t-rapido) var(--ease-io); }
 .nav[data-scrolled="true"] { border-bottom-color: var(--line-2); box-shadow: var(--shadow-nav); }
 
 /* Una celda con enlace se enciende al pasar por encima. Una sin enlace, no:
-   iluminarla prometería una acción que no existe. */
-.cell { transition: background-color .35s var(--ease-io); }
-.cell:has(a.cell-link):hover { background: var(--rail); }
+   iluminarla prometería una acción que no existe. Lo mismo vale para la fila de
+   una pregunta, que también es un control —se pulsa y se abre—.
+
+   Y las dos respuestas al puntero se quedan en los ratones (`hover: hover`). En
+   una pantalla táctil no hay nada que apuntar, así que el realce se quedaría
+   encendido después del toque, señalando una celda que ya nadie está mirando. Es
+   un cambio de color —nada se mueve—, así que vale también con el movimiento
+   reducido: aquí no hay nada que reducir. */
+.cell { transition: background-color var(--t-rapido) var(--ease-io); }
+summary { transition: background-color var(--t-rapido) var(--ease-io); }
+@media (hover: hover) {
+  .cell:has(a.cell-link):hover { background: var(--rail); }
+  summary:hover { background: var(--rail); }
+}
+
+/* Lo que sí se mueve al apuntar, y por eso vive bajo dos guardas: hay puntero
+   (`hover: hover`) y no hay movimiento reducido. Nada de esto se esconde: son
+   desplazamientos de dos píxeles sobre lo que ya está pintado. */
+@media (hover: hover) and (min-width: 821px) {
+  /* El aviso de la captura —«Ver más grande»— solo se anuncia cuando hay un
+     puntero encima, y también al llegar con el tabulador: es una acción, y una
+     acción se anuncia cuando se está en ella. En un teléfono no hay nada que
+     apuntar, así que ahí está siempre (ver la adaptación). */
+  .window .ampliar-aviso { display: block; opacity: 0; }
+  .window:hover .ampliar-aviso,
+  .window .ampliar:focus-visible .ampliar-aviso { opacity: 1; }
+}
+@media (hover: hover) and (min-width: 821px) and (prefers-reduced-motion: no-preference) {
+  .window .ampliar-aviso {
+    transform: translateY(4px);
+    transition: opacity var(--t-rapido) var(--ease-io), transform var(--t-medio) var(--ease-out);
+  }
+  .window:hover .ampliar-aviso,
+  .window .ampliar:focus-visible .ampliar-aviso { transform: none; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  /* La ventana flota —es lo único que proyecta sombra— y al apuntarla flota dos
+     píxeles más: sube y su sombra se abre con ella. La pieza no cambia de
+     elevación —sigue siendo una sombra y ni un borde—, solo está más alta, que
+     es lo que hace un panel al que se le acerca el puntero. */
+  .window { transition: transform var(--t-medio) var(--ease-out), box-shadow var(--t-medio) var(--ease-io); }
+  .window:hover { transform: translateY(-2px); box-shadow: var(--shadow-window-alto); }
+  /* El icono de una celda con enlace sube un píxel con su celda: es la única
+     pieza de la ficha que puede moverse sin llevarse texto por delante. */
+  .cell .ic { transition: transform var(--t-medio) var(--ease-out), border-color var(--t-rapido) var(--ease-io); }
+  .cell:has(a.cell-link):hover .ic { transform: translateY(-1px); border-color: var(--line-2); }
+  /* La flecha de la pregunta se aparta dos píxeles hacia donde va a llevar: al
+     abrirse ya gira (ver arriba), así que el apuntado solo empuja. */
+  summary:hover svg { transform: translateX(2px); }
+}
+
+/* La captura se funde con el tema. De todo lo que cambia al pulsar el
+   conmutador, la imagen es lo único que cambia de ARCHIVO: el color viaja solo
+   porque los tokens están declarados, y sin esto la ventana daba un salto dentro
+   de un cambio que se asienta. Es un fundido —no un desplazamiento—, así que
+   vale igual con el movimiento reducido, como el del propio tema.
+
+   Aquí solo vive el fundido; quien pone y quita la clase es el guion, que además
+   le pone plazo: la pieza no puede quedarse apagada esperando a nada. */
+.window picture { transition: opacity var(--t-rapido) var(--ease-io); }
+.window picture.tema-fundido { opacity: 0; }
 
 /* La pregunta abierta se despliega con la altura de su propio contenido, en vez
    de aparecer de golpe. Necesita `::details-content`, que no está en todos los
@@ -781,8 +1096,8 @@ footer .eyebrow { margin-bottom: var(--s-4); }
     details { interpolate-size: allow-keywords; }
     details::details-content {
       block-size: 0; overflow: hidden; opacity: 0;
-      transition: block-size .42s var(--ease-out), opacity .28s var(--ease-io),
-                  content-visibility .42s allow-discrete;
+      transition: block-size var(--t-lento) var(--ease-out), opacity var(--t-rapido) var(--ease-io) .02s,
+                  content-visibility var(--t-lento) allow-discrete;
     }
     details[open]::details-content { block-size: auto; opacity: 1; }
   }
@@ -790,7 +1105,7 @@ footer .eyebrow { margin-bottom: var(--s-4); }
      desplegarse: la altura no viaja —eso es el movimiento— y el cuerpo aparece
      fundiéndose. Lo que se anuncia sigue siendo lo mismo. */
   @media (prefers-reduced-motion: reduce) {
-    details::details-content { opacity: 0; transition: opacity .28s var(--ease-io); }
+    details::details-content { opacity: 0; transition: opacity var(--t-rapido) var(--ease-io); }
     details[open]::details-content { opacity: 1; }
   }
 }
@@ -798,21 +1113,37 @@ summary:hover svg { color: var(--ink); }
 
 /* El cambio de tema se asienta en color, no en contenido: lo único que cambia de
    archivo es la captura. Los dos temas traen los mismos tokens, así que basta
-   con dejar que el color viaje de uno a otro en el mismo tiempo que la app usa
-   en su propio `theme-anim` (430 ms), y con la clase puesta solo durante ese
+   con dejar que los tokens viajen de uno a otro en el mismo tiempo que la app
+   usa en su propio `theme-anim` (430 ms), y con la clase puesta solo durante ese
    cambio: las transiciones propias de cada control siguen mandando el resto del
-   tiempo. El `*` no lleva `!important`; `html.tema-anim *` ya gana a cualquier
-   regla de un solo selector.
+   tiempo.
 
-   La transición de vista del navegador haría lo mismo y peor: la captura del
-   tema nuevo todavía no está en la caché la primera vez que se pulsa, así que el
-   fundido enseñaría medio segundo de panel vacío. */
+   Quién transiciona es `html`, y solo él. Ahí es donde el valor cambia de
+   verdad, y de ahí lo hereda todo lo demás —incluido el texto, que es lo que
+   antes se quedaba esperando—. Los tokens están declarados en la sección 1b:
+   sin declarar no son colores y no hay nada que interpolar.
+
+   Las sombras se quedan fuera de la lista porque una sombra no es un color y no
+   se puede declarar: son las dos únicas piezas que flotan —la ventana del
+   producto y la barra—, y van por su cuenta, con el mismo tiempo y la misma
+   curva, para que se asienten a la vez que lo demás. La transición de vista del
+   navegador haría esto mismo y peor: la captura del tema nuevo todavía no está
+   en la caché la primera vez que se pulsa, así que el fundido enseñaría medio
+   segundo de panel vacío. */
 @media (prefers-reduced-motion: no-preference) {
-  html.tema-anim *, html.tema-anim *::before, html.tema-anim *::after {
-    transition: background-color .43s var(--ease-io), color .43s var(--ease-io),
-                border-color .43s var(--ease-io), box-shadow .43s var(--ease-io),
-                fill .43s var(--ease-io), stroke .43s var(--ease-io);
+  html.tema-anim {
+    transition-property: --bg, --surface, --surface-2, --line, --line-2, --ink, --ink-2,
+                         --ink-3, --ink-4, --sel, --rail, --glass, --float,
+                         --acc-text, --acc-soft, --veil;
+    transition-duration: var(--t-tema);
+    /* La curva NO es la simétrica (`--ease-io`): esa arranca despacio y en medio
+       segundo de cambio eso se lee como si el primer cuarto no hiciera nada, que
+       es exactamente el «delay» que se notaba. La de la casa arranca viva y
+       frena largo, así que el cambio se ve desde el primer fotograma y termina
+       posándose. */
+    transition-timing-function: var(--ease);
   }
+  html.tema-anim :is(.window, .nav) { transition: box-shadow var(--t-tema) var(--ease-io); }
 }
 
 /* ── 18 · Documentos ─────────────────────────────────────────────────────── */
@@ -847,11 +1178,17 @@ summary:hover svg { color: var(--ink); }
   .grid.tres .cell:last-child { border-bottom: 0; }
   .split.flip .text, .tool.flip .text { order: 0; }
   .showcase { padding-bottom: var(--s-8); }
+  .window .ampliar-aviso { display: block; }
   .tools { gap: var(--s-8); }
   .row { grid-template-columns: 20px minmax(0, 1fr); gap: var(--s-3) var(--s-4); padding: var(--s-5); }
   .row .tag { display: none; }
   .prosa :is(h2, h3) + .sub { margin-bottom: var(--s-6); }
   .foot-in { grid-template-columns: minmax(0, 1fr); }
+  /* Los datos de la app, uno por renglón. En fila se partían en dos, y el
+     separador del tercero caía al principio del segundo —«· Beta 0.1.0…»—:
+     un punto suelto que se lee como un defecto de montaje. */
+  .meta { flex-direction: column; gap: 2px; }
+  .meta span + span::before { content: none; }
 }
 @media (max-width: 560px) {
   .ctas .btn { flex: 1 1 auto; }

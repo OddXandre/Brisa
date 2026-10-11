@@ -28,7 +28,16 @@ final class CleaningRules {
     }
 
     private let fm = FileManager.default
-    private var home: String { fm.homeDirectoryForCurrentUser.path }
+    /// La carpeta del usuario. Entra por el inicializador —y no se lee de
+    /// `FileManager`— para que se pueda probar el catálogo contra una carpeta
+    /// temporal en vez de contra tu Mac: sin esto, el único disco que se puede
+    /// probar es el de verdad, y una regla de limpieza que solo se puede probar
+    /// en el disco real es una regla que nadie prueba.
+    let home: String
+
+    init(home: String? = nil) {
+        self.home = home ?? FileManager.default.homeDirectoryForCurrentUser.path
+    }
 
     // MARK: - Catálogo
 

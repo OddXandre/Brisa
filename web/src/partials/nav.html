@@ -1,4 +1,4 @@
-<nav class="nav" data-open="false">
+<nav class="nav" data-open="false" aria-label="{{t:nav.principal}}">
   <div class="nav-in">
     <a class="brand" href="{{v:urlInicio}}" aria-label="{{t:marca.aria}}">
       <svg class="logo" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
@@ -17,7 +17,7 @@
       <button class="icon-btn" type="button" data-tema-boton
               data-etiqueta="{{t:nav.tema}}"
               data-claro="{{t:nav.temaClaro}}" data-oscuro="{{t:nav.temaOscuro}}"
-              aria-label="{{t:nav.temaClaro}}" title="{{t:nav.temaClaro}}">
+              aria-label="{{t:nav.temaAccion}}" title="{{t:nav.temaAccion}}">
         <svg data-tema-icono="light" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:sol}}</svg>
         <svg data-tema-icono="dark" aria-hidden="true" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:luna}}</svg>
       </button>
@@ -25,7 +25,30 @@
       <a class="icon-btn wide" href="{{v:urlIdioma}}" hreflang="{{v:langOtra}}"
          title="{{t:nav.idioma}}" aria-label="{{t:nav.idioma}}"><span lang="{{v:langOtra}}">{{t:nav.idiomaTexto}}</span></a>
 
-      <a class="btn primary sm" href="{{v:urlDescarga}}">{{ico:descarga}}<span class="lbl">{{t:nav.descargar}}</span></a>
+      <!-- Ko-fi: el widget oficial del apoyo. Va dentro de .nav-acts porque el
+           widget escribe con document.writeln y el botón aparece justo donde
+           está este guion; su estilo propio —el azul inclusive— se viste
+           después con los colores de la casa, en sitio.css.
+
+           El texto va por el diccionario porque el sitio tiene dos lenguas y el
+           widget lo escribe dentro del guion: cada idioma tiene el suyo, y por
+           eso la huella que lo autoriza se calcula sobre las páginas servidas y
+           no sobre este parcial —lo que se hashea tiene que ser el texto que el
+           navegador ejecuta, y el navegador ejecuta el marcador ya resuelto—.
+           La dirección del CDN va en la política de contenido (_headers). -->
+      <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+      <!-- Envuelto, y no por prudencia: el guion del widget llega de un tercero y
+           puede no llegar —bloqueado, caído, sin red—. Sin el `try`, esa carga
+           fallida deja un `ReferenceError` en la consola por un botón que
+           simplemente no sale, y el aviso asusta más que el hecho. -->
+      <script type='text/javascript'>try{kofiwidget2.init('{{t:nav.apoyo}}', '#72a4f2', 'F1F6C97RL');kofiwidget2.draw();}catch(e){}</script>
+
+      <!-- El nombre va escrito aunque el texto se vea en el botón: en una pantalla
+           estrecha el rótulo se esconde con `display: none` (sitio.css) y de un
+           enlace no queda más que el dibujo, que va `aria-hidden`. Sin este
+           atributo, en un teléfono el botón de descarga —la acción principal de
+           la barra— no se puede anunciar ni invocar por voz. -->
+      <a class="btn primary sm" href="{{v:urlDescarga}}" aria-label="{{t:nav.descargar}}">{{ico:descarga}}<span class="lbl">{{t:nav.descargar}}</span></a>
 
       <button class="icon-btn nav-toggle" type="button" data-menu-boton aria-expanded="false"
               aria-controls="menu" aria-label="{{t:nav.menu}}">{{ico:menu}}</button>

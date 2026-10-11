@@ -683,6 +683,16 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         if let retention = Self.intValue(obj["retention"]) { store.retentionDays = retention }
         if let freq = Self.stringValue(obj["frequency"]) { store.frequency = freq }
         if let enabled = Self.boolValue(obj["enabled"]) { store.autoMaintenance = enabled }
+        // Los cuatro interruptores de las reglas viajan en el mismo mensaje que
+        // el resto de los ajustes, y se guardan aquí por el mismo motivo que la
+        // retención: quien las ejecuta es el LaunchAgent, que corre sin ventana,
+        // así que lo que recuerde la pantalla no le llega. Antes no se enviaban
+        // y el interruptor solo cambiaba una casilla en el DOM.
+        if let reglas = obj["rules"] as? [String: Any] {
+            for (id, valor) in reglas {
+                if let on = Self.boolValue(valor) { store.setMaintenanceRule(id, on) }
+            }
+        }
         if let lang = Self.stringValue(obj["language"]) {
             store.language = lang
             AppLanguage.shared.set(lang)

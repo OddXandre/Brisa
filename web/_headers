@@ -3,10 +3,9 @@
 #
 # El HTML se sirve revalidando siempre: es lo que cambia en cada publicación, y
 # una copia guardada en el navegador sigue enseñando el texto viejo —«en la web
-# todavía pone 30 días»— aunque el archivo ya esté corregido. Las reglas van de
-# menos a más concretas, así que el instalador (abajo) conserva la suya.
+# todavía pone 30 días»— aunque el archivo ya esté corregido.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-oHjdlOteflhf3PJUvyWlAsrdq2yTmVL6LvP+icGF7zE='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://storage.ko-fi.com 'sha256-oHjdlOteflhf3PJUvyWlAsrdq2yTmVL6LvP+icGF7zE=' 'sha256-ktB2XmEHuI5S8tx7iZi+BUmVl8K2JiJhZq5a4UoEo/Y=' 'sha256-oWUS4zWnRAIRFZ5UbTXR/Zhg2qT/1vfV1Hcagha/wec=' 'sha256-MSRfUARbl6r0s/K90R8AzuP4F0jl79c07PO+JrJsLHI=' 'sha256-NA63cxUccrZTjMb5iycVYtVH8RgLp0O+TRRB7Og7ycE='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'none'; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), camera=(), microphone=(), usb=()
@@ -14,16 +13,24 @@
   Strict-Transport-Security: max-age=31536000
   Cache-Control: public, max-age=0, must-revalidate
 
-# El prototipo es la app entera en un solo archivo y vive de sus dos guiones en
-# línea, que no son el del sitio: con la política de arriba el navegador los
-# bloquea y la página se queda muerta —se ve, y ningún control responde—. La
-# suya es la misma política con esas dos huellas autorizadas, y las dos se
-# calculan al construir sobre el archivo que se sirve.
-/descargas/prototipo.html
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-MSRfUARbl6r0s/K90R8AzuP4F0jl79c07PO+JrJsLHI=' 'sha256-w1UkwAUausZ1YIQMO06QgHihVt6ObkO+slAPklTOuo4='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
-
-# El instalador lleva la versión en el nombre, así que su dirección no
-# cambia nunca: se puede cachear para siempre.
+# El instalador lleva la versión en el nombre, así que su dirección no cambia
+# nunca y pide guardarse para siempre. Aviso para quien lo toque: el hosting
+# suma las cabeceras de las reglas que casan, así que al precio le llega
+# también el `must-revalidate` de arriba y el navegador usa ese —se sirve
+# bien, pero se revalida—; para que se guardara de verdad habría que sacar el
+# `Cache-Control` de arriba, y el HTML lo necesita.
 /descargas/*.dmg
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/x-apple-diskimage
+
+# Las fuentes del sitio y el prototipo también se sirven —aquí no se esconde
+# nada, y lo que se puede leer es lo que se puede visitar—, pero no son
+# páginas que nadie busque: las fuentes llevan los marcadores sin resolver y
+# el prototipo es la app entera dentro del navegador, con su propio título.
+# Que se puedan visitar no es que deban salir en un buscador, así que se les
+# dice que no se indexen; el resto del sitio sigue igual de rastreable.
+/src/*
+  X-Robots-Tag: noindex
+
+/descargas/prototipo*
+  X-Robots-Tag: noindex
