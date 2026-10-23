@@ -6,16 +6,16 @@
 
 <p align="center">
   <strong>Limpia tu Mac sin miedo a borrar.</strong><br>
-  Analiza el disco, enseña qué va a quitar y lo aparta en una papelera propia.<br>
-  Todo lo que quita vuelve a su sitio durante 7, 30 o 60 días.
+  Analiza el disco y enseña qué va a quitar antes de tocarlo.<br>
+  Lo que aparta vuelve a su sitio en 7, 30 o 60 días.
 </p>
 
 <p align="center">
-  <a href="https://heybrisa.pages.dev/descarga"><img alt="Descargar" src="https://img.shields.io/badge/descargar-0.2.0_beta-FF4404?style=flat-square&labelColor=0C1016"></a>
-  <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-0C1016?style=flat-square&labelColor=4A5260">
-  <img alt="Swift 5.9" src="https://img.shields.io/badge/Swift-5.9-0C1016?style=flat-square&labelColor=4A5260">
-  <img alt="Sin dependencias" src="https://img.shields.io/badge/dependencias-ninguna-0C1016?style=flat-square&labelColor=4A5260">
-  <img alt="Sin red" src="https://img.shields.io/badge/red-ninguna-0C1016?style=flat-square&labelColor=4A5260">
+  <a href="https://heybrisa.pages.dev/descarga"><img alt="Descargar" src="https://img.shields.io/badge/descargar-0.2.0_beta-FF4404?style=flat-square&logo=apple&logoColor=white"></a>
+  <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-4A5260?style=flat-square">
+  <img alt="Swift 5.9" src="https://img.shields.io/badge/Swift-5.9-4A5260?style=flat-square">
+  <img alt="Sin dependencias" src="https://img.shields.io/badge/dependencias-ninguna-4A5260?style=flat-square">
+  <img alt="Sin red" src="https://img.shields.io/badge/red-ninguna-4A5260?style=flat-square">
 </p>
 
 ![Resumen de Brisa](web/assets/img/vista-resumen-es-oscuro.jpg)
@@ -24,7 +24,7 @@
 
 ## Qué es
 
-Brisa es una aplicación nativa para macOS que responde a una sola pregunta: **qué ocupa mi disco y qué puedo tocar sin arrepentirme**.
+Brisa es una aplicación para macOS que responde a una sola pregunta: **qué ocupa mi disco y qué puedo tocar sin arrepentirme**.
 
 Mide el disco por categorías, encuentra los archivos grandes, agrupa los duplicados, desinstala aplicaciones con lo que dejaron repartido por el sistema y limpia cachés con reglas que se pueden apagar una a una. Nada se elimina al limpiar: cada cosa pasa por la **Papelera de Brisa**, espera con su fecha de caducidad y vuelve a su ruta exacta si la reclamas.
 
