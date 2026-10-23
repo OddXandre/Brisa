@@ -34,7 +34,7 @@
 
 
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="../assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -68,6 +68,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -170,7 +174,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nothing goes without warning.</p>
-      <p>Beta: ad-hoc signed and handed out by hand, outside the App Store.</p>
+      <p>Beta, ad-hoc signed and handed out by hand, outside the App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -200,11 +204,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 or later</span>
-      <span>This site uses no cookies and no analytics. It stores one thing in your browser: the theme you pick.</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 or later</span>
+      <span>This site uses no cookies and no analytics. The only thing it stores in your browser is the theme you pick.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Back to top"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="../assets/js/sitio.js"></script>
 </body>

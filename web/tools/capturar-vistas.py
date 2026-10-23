@@ -46,7 +46,12 @@ IDIOMAS = ["es", "en"]
 # lo que dejaba el texto blando y con manchas alrededor de las letras.
 ANCHO, ALTO, DSF = 1180, 760, 2          # 1180×760 lógicos → 2360×1520 reales
 ANCHO_FINAL = ANCHO * DSF                # los nativos, sin remuestreo
-CALIDAD = 88                             # por debajo, el texto pequeño se ensucia
+# La calidad del JPEG no es una preferencia: a 88 el texto de 11 px de las tablas
+# llegaba con halos alrededor de cada letra —en una pantalla Retina se ve como
+# pixelado— y estas capturas se miran de cerca, no de lejos. A 96 el archivo
+# crece un tercio y el texto queda nítido; la copia AVIF que sirve el sitio se
+# reescribe después en `build.py` a calidad 82.
+CALIDAD = 96
 ESPERA_MS = 9000                         # análisis (1600) + pintado + calma
 
 # Dos inyecciones, y las dos importan.
@@ -75,7 +80,20 @@ try { localStorage.setItem("brisa-theme", "__THEME__"); } catch (e) {}
    Lo que se enseña es la interfaz tal como es. */
 </script>
 <style>
-*, *::before, *::after { transition: none !important; }
+/* Nada se mueve en una captura: una foto es un estado final, no un fotograma.
+   Aquí se apagaban las TRANSICIONES y no las animaciones, y por eso salían las
+   barras a medio crecer y las filas a media opacidad: la app entra sus vistas
+   con `animation` (subida, escalado de barra, opacidad escalonada), y con el
+   presupuesto de tiempo virtual cortando cuando le tocaba, la foto caía en
+   mitad de ese gesto. Con `animation: none` cada pieza se queda en el estilo
+   que tiene escrito —que es el estado terminado—, sin depender de cuándo se
+   dispare la captura. */
+*, *::before, *::after {
+  transition: none !important;
+  animation: none !important;
+  animation-delay: 0s !important;
+  transition-delay: 0s !important;
+}
 </style>
 """
 
@@ -120,6 +138,22 @@ window.addEventListener("load", function () {
       if (avisos) avisos.textContent = "";
       go("__VIEW__");
       sembrar();
+      /* Y un fotograma de calma después de abrir la vista: aunque no haya
+         animaciones, el DOM acaba de cambiar y hay que dejar que se pinte y que
+         cualquier animación que el guion haya arrancado en línea llegue a su
+         final. Se rematan a mano por si alguna se coló sin la hoja. */
+      setTimeout(function () {
+        try {
+          document.getAnimations().forEach(function (a) {
+            /* `finish()` revienta en una animación infinita —un indicador que gira—
+               y esa no tiene final que alcanzar. Esas se anulan: el indicador se
+               queda quieto en su sitio, que es lo que se quiere fotografiar. */
+            try { a.finish(); } catch (e) { a.cancel(); }
+          });
+        } catch (e) {}
+        var avisos2 = document.getElementById("toasts");
+        if (avisos2) avisos2.textContent = "";
+      }, 600);
     }, 2600);
   } catch (err) { document.title = "FALLO " + err.message; }
 });

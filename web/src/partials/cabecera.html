@@ -28,7 +28,7 @@
 {{v:canonical}}
 {{v:alternates}}
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="{{v:base}}assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -62,6 +62,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;

@@ -13,46 +13,30 @@
   <section>
     <div class="wrap">
 
-      <div class="grupo">
-        <h2 class="eyebrow">{{t:preg.g1}}</h2>
-        <div class="faq">
-          <details><summary>{{t:preg.q1}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a1}}</p></div></details>
-          <details><summary>{{t:preg.q2}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a2}}</p></div></details>
-          <details><summary>{{t:preg.q3}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a3}}</p></div></details>
-          <!-- El precio va el último de su grupo, después de lo que se necesita y
-               cuánto ocupa: es la pregunta que decide la instalación y en el grupo
-               de «antes de instalarla» es donde se busca. Su número va detrás del
-               de las doce de siempre para que la ficha de datos estructurados
-               pueda listarlas todas en orden y sin huecos. -->
-          <details><summary>{{t:preg.q13}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a13}}</p></div></details>
-        </div>
-      </div>
-
-      <div class="grupo">
-        <h2 class="eyebrow">{{t:preg.g2}}</h2>
-        <div class="faq">
-          <details><summary>{{t:preg.q4}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a4}}</p></div></details>
-          <details><summary>{{t:preg.q5}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a5}}</p></div></details>
-          <details><summary>{{t:preg.q6}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a6}}</p></div></details>
-        </div>
-      </div>
-
-      <div class="grupo">
-        <h2 class="eyebrow">{{t:preg.g3}}</h2>
-        <div class="faq">
-          <details><summary>{{t:preg.q7}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a7}}</p></div></details>
-          <details><summary>{{t:preg.q8}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a8}}</p></div></details>
-          <details><summary>{{t:preg.q9}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a9}}</p></div></details>
-          <details><summary>{{t:preg.q10}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a10}}</p></div></details>
-        </div>
-      </div>
-
-      <div class="grupo">
-        <h2 class="eyebrow">{{t:preg.g4}}</h2>
-        <div class="faq">
-          <details><summary>{{t:preg.q11}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a11}}</p></div></details>
-          <details><summary>{{t:preg.q12}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a12}}</p></div></details>
-        </div>
+      <!-- Una sola lista, y no cuatro. Antes había cuatro bloques separados por
+           64 px y sin ningún titular que dijera qué los une: el lector veía una
+           tabla que se cerraba y otra que empezaba, con dos filetes y un hueco en
+           medio, y eso no es una pausa, es un corte sin motivo. Los grupos eran
+           invisibles para quien lee —solo el precio viaja fuera de su orden
+           numérico—, así que la lista es una y los filetes la recorren entera. -->
+      <div class="faq">
+        <details><summary>{{t:preg.q1}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a1}}</p></div></details>
+        <details><summary>{{t:preg.q2}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a2}}</p></div></details>
+        <details><summary>{{t:preg.q3}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a3}}</p></div></details>
+        <!-- El precio va aquí, después de lo que se necesita y cuánto ocupa: es
+             la pregunta que decide la instalación y es donde se busca. Su número
+             va detrás del de las doce de siempre para que la ficha de datos
+             estructurados pueda listarlas todas en orden y sin huecos. -->
+        <details><summary>{{t:preg.q13}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a13}}</p></div></details>
+        <details><summary>{{t:preg.q4}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a4}}</p></div></details>
+        <details><summary>{{t:preg.q5}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a5}}</p></div></details>
+        <details><summary>{{t:preg.q6}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a6}}</p></div></details>
+        <details><summary>{{t:preg.q7}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a7}}</p></div></details>
+        <details><summary>{{t:preg.q8}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a8}}</p></div></details>
+        <details><summary>{{t:preg.q9}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a9}}</p></div></details>
+        <details><summary>{{t:preg.q10}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a10}}</p></div></details>
+        <details><summary>{{t:preg.q11}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a11}}</p></div></details>
+        <details><summary>{{t:preg.q12}}{{ico:chevron}}</summary><div class="body"><p>{{t:preg.a12}}</p></div></details>
       </div>
 
     </div>

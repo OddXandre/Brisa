@@ -138,7 +138,15 @@ def sin_comentarios(src):
         if modo == "html":
             if src.startswith("<!--", i):
                 fin = src.find("-->", i)
-                i = n if fin < 0 else fin + 3
+                fin = n if fin < 0 else fin + 3
+                # El contrato de diseño (`<!--impeccable:...`) viaja CON el
+                # artefacto: es metadato auditable del rediseño, no
+                # documentación de desarrollo. Todo lo demás se recorta como
+                # siempre; sin esta regla el contrato se borraba al publicar y
+                # nadie podía auditar contra qué se ha construido.
+                if src.startswith("<!--impeccable:", i):
+                    salida.append(src[i:fin])
+                i = fin
                 continue
             for etiqueta, siguiente in (("<script", "js"), ("<style", "css")):
                 if src.startswith(etiqueta, i):

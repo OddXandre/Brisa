@@ -126,6 +126,12 @@ final class MaintenanceScheduler {
         </dict>
         </plist>
         """
+        // La carpeta puede no existir en una cuenta recién creada —la crea el
+        // primer LaunchAgent que se instala, y este puede ser el primero—: sin
+        // esto, activar el mantenimiento fallaba con «no se pudo configurar»
+        // y el interruptor volvía a apagarse.
+        try FileManager.default.createDirectory(at: Self.plistURL.deletingLastPathComponent(),
+                                                withIntermediateDirectories: true)
         try plist.data(using: .utf8)!.write(to: Self.plistURL, options: .atomic)
         _ = try run(["/bin/launchctl", "unload", Self.plistURL.path])
         _ = try run(["/bin/launchctl", "load", Self.plistURL.path])
@@ -180,16 +186,27 @@ final class MaintenanceScheduler {
         if tocaDuplicados { ajustes.lastDuplicatesRound = ahora.timeIntervalSince1970 }
 
         if purgado > 0 || !movidos.isEmpty {
+            /* Con un solo elemento, «1 elementos» no se dice en ningún
+               idioma: el aviso puede caer perfectamente en la primera ronda.
+               Por eso el singular tiene su propia frase en vez de un número
+               pegado a una palabra en plural. */
+            let uno = movidos.count == 1
             let plantilla: String
             if purgado > 0 && !movidos.isEmpty {
-                plantilla = AppLanguage.t("Se han liberado %g GB y %n elementos esperan en la Papelera de Brisa.",
-                                          "%g GB freed, and %n items wait in Brisa Trash.")
+                plantilla = uno
+                    ? AppLanguage.t("Se ha liberado %g GB y 1 elemento espera en la Papelera de Brisa.",
+                                    "%g GB freed, and 1 item waits in Brisa Trash.")
+                    : AppLanguage.t("Se han liberado %g GB y %n elementos esperan en la Papelera de Brisa.",
+                                    "%g GB freed, and %n items wait in Brisa Trash.")
             } else if purgado > 0 {
                 plantilla = AppLanguage.t("Se han liberado %g GB de la Papelera de Brisa.",
                                           "%g GB freed from Brisa Trash.")
             } else {
-                plantilla = AppLanguage.t("%n elementos esperan en la Papelera de Brisa.",
-                                          "%n items wait in Brisa Trash.")
+                plantilla = uno
+                    ? AppLanguage.t("1 elemento espera en la Papelera de Brisa.",
+                                    "1 item waits in Brisa Trash.")
+                    : AppLanguage.t("%n elementos esperan en la Papelera de Brisa.",
+                                    "%n items wait in Brisa Trash.")
             }
             notify(title: AppLanguage.t("Mantenimiento de Brisa completado", "Brisa maintenance complete"),
                    text: Self.aviso(plantilla, gb: purgado, n: movidos.count))

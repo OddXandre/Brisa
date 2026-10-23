@@ -5,7 +5,7 @@
 # una copia guardada en el navegador sigue enseñando el texto viejo —«en la web
 # todavía pone 30 días»— aunque el archivo ya esté corregido.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://storage.ko-fi.com 'sha256-oHjdlOteflhf3PJUvyWlAsrdq2yTmVL6LvP+icGF7zE=' 'sha256-ktB2XmEHuI5S8tx7iZi+BUmVl8K2JiJhZq5a4UoEo/Y=' 'sha256-oWUS4zWnRAIRFZ5UbTXR/Zhg2qT/1vfV1Hcagha/wec=' 'sha256-MSRfUARbl6r0s/K90R8AzuP4F0jl79c07PO+JrJsLHI=' 'sha256-NA63cxUccrZTjMb5iycVYtVH8RgLp0O+TRRB7Og7ycE='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'none'; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://storage.ko-fi.com 'sha256-oHjdlOteflhf3PJUvyWlAsrdq2yTmVL6LvP+icGF7zE=' 'sha256-ktB2XmEHuI5S8tx7iZi+BUmVl8K2JiJhZq5a4UoEo/Y=' 'sha256-oWUS4zWnRAIRFZ5UbTXR/Zhg2qT/1vfV1Hcagha/wec=' 'sha256-fYce7m/5CnUmMmQImVmAbuZAUH+k7IJ0JpUKTTxhk2M=' 'sha256-8/7mvOlNg1SylEAdUBV2QWc4nUvlUZ7WJ+WDaUu6U1M=' 'sha256-5RrOVEf6gSXCa4ULj0MDqmDga/bazZZHYn/nraPHnxs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'none'; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), camera=(), microphone=(), usb=()
@@ -13,24 +13,29 @@
   Strict-Transport-Security: max-age=31536000
   Cache-Control: public, max-age=0, must-revalidate
 
-# El instalador lleva la versión en el nombre, así que su dirección no cambia
-# nunca y pide guardarse para siempre. Aviso para quien lo toque: el hosting
-# suma las cabeceras de las reglas que casan, así que al precio le llega
-# también el `must-revalidate` de arriba y el navegador usa ese —se sirve
-# bien, pero se revalida—; para que se guardara de verdad habría que sacar el
-# `Cache-Control` de arriba, y el HTML lo necesita.
+# El instalador lleva la versión en el nombre, y eso se tomó como permiso para
+# guardarlo un año con `immutable`. Se retiró el 23 de octubre de 2026, con la
+# publicación que dejó de repartir la 0.1.0: el archivo nuevo se sirve bien,
+# pero el viejo SIGUE contestando 200 desde la copia del borde de Cloudflare —y
+# desde una `pages.dev` no hay forma de purgar esa copia—. Un nombre con versión
+# no es una promesa de que el archivo no se retire nunca; el instalador pesa
+# medio mega y revalidarlo no cuesta nada. Con el `must-revalidate` de arriba
+# basta: en cuanto el archivo desaparece del despliegue, la siguiente petición
+# pregunta y se lleva el 404.
 /descargas/*.dmg
-  Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/x-apple-diskimage
 
-# Las fuentes del sitio y el prototipo también se sirven —aquí no se esconde
-# nada, y lo que se puede leer es lo que se puede visitar—, pero no son
-# páginas que nadie busque: las fuentes llevan los marcadores sin resolver y
-# el prototipo es la app entera dentro del navegador, con su propio título.
-# Que se puedan visitar no es que deban salir en un buscador, así que se les
-# dice que no se indexen; el resto del sitio sigue igual de rastreable.
-/src/*
+# El prototipo sí se sirve: es la app entera dentro del navegador, con su
+# propio título. Se puede visitar, pero no es una página que nadie busque,
+# así que se le dice que no se indexe; el resto del sitio sigue igual de
+# rastreable.
+/descargas/prototipo*
   X-Robots-Tag: noindex
 
-/descargas/prototipo*
+# Y las fuentes —plantillas, diccionario, generador— no viajan:
+# `tools/preparar-publicacion.py` las deja fuera antes de publicar y el
+# vigilante comprueba que contestan 404. Este bloque no es para el día a
+# día, es la red por si alguna vez se publica `web/` entero por error: en
+# ese caso sí se servirían, y al menos no se indexarían.
+/src/*
   X-Robots-Tag: noindex

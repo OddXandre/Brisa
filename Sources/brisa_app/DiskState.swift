@@ -72,6 +72,18 @@ struct DiskState: Codable {
         /// a propósito: un análisis guardado por una versión anterior no lo
         /// trae, y la caché tiene que seguir leyéndose.
         var rules: [String: Bool]? = nil
+        /// Los cinco ajustes de escritorio, opcionales por el mismo motivo que
+        /// `rules`: un análisis guardado por una versión anterior no los trae y
+        /// la caché tiene que seguir leyéndose.
+        var autoEmpty: Bool? = nil      // vaciar la Papelera al vencer el plazo
+        var launchAtLogin: Bool? = nil
+        var menuBar: Bool? = nil
+        var notifySummary: Bool? = nil
+        var notifyLowSpace: Bool? = nil
+        /// Apariencia elegida (`light` o `dark`), para que la app la recupere al
+        /// abrir aunque el almacenamiento local del WebView no esté disponible
+        /// para una página `file://`.
+        var theme: String? = nil
     }
 }
 

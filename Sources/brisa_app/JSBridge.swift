@@ -193,8 +193,12 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         handle(intent: type, payload: body["payload"])
     }
 
+    /// La Papelera cambió por fuera de la UI (por ejemplo, la purga al abrir
+    /// la app): se le manda el contenido nuevo sin tocar nada más.
+    func trashDidChange() { pushTrashState() }
+
     private func pushTrashState() {
-        let payload = BrisaTrashService.shared.items.map { item in
+        let payload = BrisaTrashService.shared.snapshot.map { item in
             ["id": item.id, "name": item.name, "gb": item.gb,
              "taken": item.taken, "path": item.originalPath,
              "opID": item.opID] as [String : Any]
@@ -244,11 +248,28 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             analyzeApp(payload)
         case "uninstall":
             uninstall(payload)
+        case "adminRetry":
+            retryAdmin(payload)
         case "revealPath":
             // «Ver en Finder»: lo único honesto que se puede hacer con un
             // archivo que el usuario quiere mirar antes de decidir.
-            if let path = payload as? String {
-                NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)])
+            //
+            // Si el elemento ya no está —lo borró otra app, o el análisis es de
+            // hace un rato—, `activateFileViewerSelecting` no hace NADA y el
+            // botón parecía roto. Se abre entonces la carpeta que lo contenía;
+            // y si tampoco está, se dice en vez de dejar el clic en silencio.
+            guard let path = payload as? String, !path.isEmpty else { break }
+            let url = URL(fileURLWithPath: path)
+            let folder = url.deletingLastPathComponent()
+            if FileManager.default.fileExists(atPath: path) {
+                NSWorkspace.shared.activateFileViewerSelecting([url])
+            } else if FileManager.default.fileExists(atPath: folder.path), folder.path != "/" {
+                NSWorkspace.shared.open(folder)
+                pushToast(title: AppLanguage.t("Ya no está ahí", "Not there anymore"),
+                          text: AppLanguage.t("Se abre la carpeta donde estaba.", "Opening the folder where it was."))
+            } else {
+                pushToast(title: AppLanguage.t("Ya no está ahí", "Not there anymore"),
+                          text: folder.path)
             }
         case "deleteFiles":
             // Fase 3: eliminar archivos → Papelera de Brisa (lote con deshacer)
@@ -300,16 +321,6 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                 ExclusionService.shared.add(path)
                 pushToast(title: AppLanguage.t("Excluido del análisis", "Excluded from the analysis"), text: path)
             }
-        case "scanCleanables":
-            // Fase 6: descubrir candidatos de limpieza y devolverlos a la UI.
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                let cands = CleaningRules().scanAll()
-                let json = CleaningRules.json(cands)
-                DispatchQueue.main.async {
-                    let js = "window.brisa && window.brisa.onCleanables && window.brisa.onCleanables(\(json));"
-                    self?.webView?.evaluateJavaScript(js, completionHandler: nil)
-                }
-            }
         case "cleanPaths":
             // Fase 6: limpiar rutas concretas → Papelera de Brisa (con deshacer)
             if let obj = payload as? [String: Any],
@@ -336,8 +347,18 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             // Navegación desde el menú nativo: usa la función go() de la UI.
             if let view = payload as? String {
                 let js = "try { go('\(view)') } catch(e) { console.warn(e) }"
-                webView?.evaluateJavaScript(js, completionHandler: nil)
+                evalMain(js)
             }
+        case "optimize":
+            // El «Optimizar» del menú de la barra es el mismo botón de la app:
+            // abre Resumen y pulsa el que ya existe, sin una segunda ruta de
+            // limpieza en el lado nativo que pudiera divergir de la de la UI.
+            evalMain("try { go('resumen'); var b=document.getElementById('btn-clean'); if(b) b.click(); } catch(e) { console.warn(e) }")
+        case "openSettings":
+            // Ajustes vive en la interfaz: se abre su hoja, no una ventana
+            // nativa aparte con otra copia de los mismos controles.
+            evalMain("try { if(typeof openSettings==='function') openSettings(); } catch(e) { console.warn(e) }")
+
         case "setAutoMaintenance":
             // Los ajustes se envían juntos (idioma, retención, mantenimiento),
             // tanto al arrancar como al cambiar cualquiera de ellos.
@@ -441,7 +462,13 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                     DispatchQueue.main.async { self.pushTrashState(); self.refreshAfterTrash() }
                 } catch {
                     DispatchQueue.main.async {
-                        self.pushToast(title: AppLanguage.t("No se pudo deshacer", "Couldn't undo"),
+                        /* Aunque falle, la lista puede haber cambiado —un
+                           deshacer parcial restaura parte del lote y retira las
+                           filas fantasma—: se repinta antes de contar el
+                           error, o la interfaz seguiría enseñando lo que ya no
+                           está. */
+                        self.pushTrashState()
+                        self.pushToast(title: AppLanguage.t("No se pudo deshacer del todo", "Couldn't undo everything"),
                                        text: error.localizedDescription)
                     }
                 }
@@ -457,7 +484,10 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                 try BrisaTrashService.shared.restore(itemID: id)
                 DispatchQueue.main.async { self.pushTrashState(); self.refreshAfterTrash() }
             } catch {
-                DispatchQueue.main.async { self.pushToast(title: AppLanguage.t("No se pudo restaurar", "Couldn't restore"), text: error.localizedDescription) }
+                DispatchQueue.main.async {
+                    self.pushTrashState()
+                    self.pushToast(title: AppLanguage.t("No se pudo restaurar", "Couldn't restore"), text: error.localizedDescription)
+                }
             }
         }
     }
@@ -470,7 +500,10 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                 try BrisaTrashService.shared.deletePermanently(itemID: id)
                 DispatchQueue.main.async { self.pushTrashState(); self.pushToast(title: AppLanguage.t("Eliminado", "Deleted"), text: AppLanguage.t("Eliminado definitivamente.", "Deleted permanently.")) }
             } catch {
-                DispatchQueue.main.async { self.pushToast(title: AppLanguage.t("No se pudo eliminar", "Couldn't delete"), text: error.localizedDescription) }
+                DispatchQueue.main.async {
+                    self.pushTrashState()
+                    self.pushToast(title: AppLanguage.t("No se pudo eliminar", "Couldn't delete"), text: error.localizedDescription)
+                }
             }
         }
     }
@@ -489,12 +522,10 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
 
     /// Post-limpieza: re-escaneo + aviso a la UI de que la papelera cambió.
     private func refreshAfterTrash() {
-        // Ojo: esto viaja como literal de JavaScript, así que va con punto
-        // decimal sí o sí (una coma daría un error de sintaxis y el aviso no
-        // llegaría nunca a la UI).
-        let freed = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), BrisaTrashService.shared.occupiedGB())
-        let js = "window.brisa && window.brisa.onTrashChanged && window.brisa.onTrashChanged(\(freed));"
-        webView?.evaluateJavaScript(js, completionHandler: nil)
+        /* El contenido de la Papelera ya viaja por `onTrashState`, con cada
+           elemento y su tamaño; aquí solo queda volver a medir el disco. Había
+           además un aviso sin parámetros a una función vacía en la página
+           —`onTrashChanged`—: dos piezas para nada. */
         startScan()
     }
 
@@ -506,6 +537,12 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         pushToast(title: AppLanguage.t("Eliminado", "Removed"),
                   text: AppLanguage.t("\(gb) GB en la Papelera de Brisa. Se conservan \(days) días.",
                                       "\(gb) GB in Brisa Trash. Kept for \(days) days."))
+        /* El resumen nativo solo cuando la app no está delante: si el usuario
+           está mirando la ventana ya tiene el aviso de arriba, y repetirlo en
+           el centro de notificaciones sería contarlo dos veces. */
+        if !NSApp.isActive {
+            BrisaNotifications.summary(freedGB: op.gb, items: op.items.count, days: days)
+        }
     }
 
     // MARK: - Fase 9: desinstalador
@@ -604,7 +641,15 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                       text: AppLanguage.t("Espera a que termine.", "Wait for it to finish."))
             return
         }
-        guard var entry = AppInventory.describe(path: path) else { return }
+        guard var entry = AppInventory.describe(path: path) else {
+            // Sin bundle legible no hay nada que quitar. Se dice, en vez de
+            // dejar la pantalla de progreso esperando un resultado que no va a
+            // llegar nunca.
+            pushToast(title: AppLanguage.t("No se pudo quitar", "Couldn't remove it"),
+                      text: AppLanguage.t("La aplicación ya no está donde estaba.",
+                                          "The app is no longer where it was."))
+            return
+        }
         let paths = (obj["paths"] as? [String]) ?? [path]
         var sizes: [String: Double] = [:]
         if let raw = obj["sizes"] as? [String: Any] {
@@ -614,9 +659,58 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         uninstallRunning = true
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
-            let result = AppRemover.run(app: entry, paths: paths, sizes: sizes) { phase, pct, item in
+            /* `allowAdmin`: si algo queda fuera de la carpeta del usuario y
+               macOS lo niega, se pregunta UNA vez y el sistema pide la
+               contraseña. Sin esto, el resultado decía «necesita permisos de
+               administrador» y no había ninguna forma de concederlos desde
+               Brisa, que es justo lo que dejaba la desinstalación a medias. */
+            let result = AppRemover.run(app: entry, paths: paths, sizes: sizes, allowAdmin: true) { phase, pct, item in
                 // El número entra en un literal de JavaScript: con punto
                 // decimal pase lo que pase, como su idioma local.
+                let value = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), pct)
+                var js = "window.brisa && window.brisa.onUninstallProgress && window.brisa.onUninstallProgress(\"\(phase)\", \(value)"
+                if let item {
+                    let safe = item.replacingOccurrences(of: "\\", with: "\\\\")
+                        .replacingOccurrences(of: "\"", with: "\\\"")
+                    js += ", \"\(safe)\""
+                }
+                js += ");"
+                self.evalMain(js)
+            }
+            guard let data = try? JSONSerialization.data(withJSONObject: result),
+                  let json = String(data: data, encoding: .utf8) else { return }
+            DispatchQueue.main.async {
+                self.uninstallRunning = false
+                self.evalMain("window.brisa && window.brisa.onUninstallResult && window.brisa.onUninstallResult(\(json));")
+                self.pushTrashState()
+                self.refreshAfterTrash()
+            }
+        }
+    }
+
+    /// Segunda pasada para lo que quedó pendiente por permisos, desde el botón
+    /// del resultado. Si el usuario cerró el diálogo de macOS sin escribir la
+    /// contraseña, no se queda con una lista de fallos y sin salida: se le
+    /// vuelve a pedir una vez, solo por esos restos.
+    private func retryAdmin(_ payload: Any?) {
+        guard let obj = payload as? [String: Any],
+              let paths = obj["paths"] as? [String], !paths.isEmpty else { return }
+        guard !uninstallRunning else {
+            pushToast(title: AppLanguage.t("Ya hay una desinstalación en marcha",
+                                           "An uninstall is already running"),
+                      text: AppLanguage.t("Espera a que termine.", "Wait for it to finish."))
+            return
+        }
+        var sizes: [String: Double] = [:]
+        if let raw = obj["sizes"] as? [String: Any] {
+            for (key, value) in raw { if let d = Self.doubleValue(value) { sizes[key] = d } }
+        }
+        let name = Self.stringValue(obj["name"]) ?? ""
+        let bid = Self.stringValue(obj["bid"]) ?? ""
+        uninstallRunning = true
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            let result = AppRemover.retryAdmin(paths: paths, sizes: sizes, name: name, bid: bid) { phase, pct, item in
                 let value = String(format: "%.1f", locale: Locale(identifier: "en_US_POSIX"), pct)
                 var js = "window.brisa && window.brisa.onUninstallProgress && window.brisa.onUninstallProgress(\"\(phase)\", \(value)"
                 if let item {
@@ -656,6 +750,10 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
         guard let obj = payload as? [String: Any],
               let theme = obj["theme"] as? String else { return }
         let name: NSAppearance.Name = (theme == "light") ? .aqua : .darkAqua
+        // Se guarda SIEMPRE, también cuando la apariencia ya era la misma: es
+        // la única copia que sobrevive a un reinicio si el WebView no deja
+        // escribir `localStorage` en una página `file://`.
+        BrisaSettings.shared.theme = theme
         guard NSApp.appearance?.name != name else { return }
         NSApp.appearance = NSAppearance(named: name)
         NSLog("Brisa ▶ tema de la ventana: \(theme)")
@@ -697,6 +795,14 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
             store.language = lang
             AppLanguage.shared.set(lang)
         }
+        // Los cinco ajustes de escritorio. Se guardan y se aplican contra el
+        // sistema en el acto: hasta ahora cambiaban solo una casilla.
+        if let v = Self.boolValue(obj["autoEmpty"]) { store.autoEmptyTrash = v }
+        if let v = Self.boolValue(obj["launchAtLogin"]) { store.launchAtLogin = v }
+        if let v = Self.boolValue(obj["menuBar"]) { store.menuBar = v }
+        if let v = Self.boolValue(obj["notifySummary"]) { store.notifySummary = v }
+        if let v = Self.boolValue(obj["notifyLowSpace"]) { store.notifyLowSpace = v }
+        DesktopPreferences.apply()
         store.isConfigured = true
         NSLog("Brisa ▶ ajustes: idioma=\(AppLanguage.current) · retención=\(BrisaSettings.shared.retentionDays) días · mantenimiento=\(BrisaSettings.shared.autoMaintenance ? "sí" : "no")/\(BrisaSettings.shared.frequency)")
         let on = BrisaSettings.shared.autoMaintenance
@@ -781,6 +887,9 @@ final class JSBridge: NSObject, WKScriptMessageHandler {
                 ScanCache.save(state, at: stamp)
                 self.push(state: state, scannedAt: stamp)
                 self.notifyScanFinished()
+                /* Poco espacio: el aviso se decide aquí, con las dos cifras
+                   reales del análisis que acaba de terminar. */
+                BrisaNotifications.lowSpaceIfNeeded(free: result.free, total: result.totalDisk)
                 NSLog("Brisa ▶ análisis terminado: \(result.files.count) archivos top, \(String(format: "%.1f", result.free)) GB libres")
             } catch is CancellationError {
                 NSLog("Brisa ▶ análisis cancelado")

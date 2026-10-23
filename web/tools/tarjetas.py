@@ -116,7 +116,11 @@ def main() -> int:
         print(f"No se puede componer: {imposible}", file=sys.stderr)
         return 1
     build = cargar_build()
-    textos = json.loads(build.leer(WEB / "src/i18n.json"))
+    # El diccionario tal y como lo lee el navegador: con el peso del instalador y
+    # la versión ya escritos. Sin este paso la tarjeta enseñaba `%peso%` —el
+    # marcador— a quien la veía en un enlace compartido, porque el texto de la
+    # tarjeta no pasa por el constructor de las páginas, que es quien sustituye.
+    textos = build.escribir_peso(json.loads(build.leer(WEB / "src/i18n.json")))
     for idioma in IDIOMAS:
         with tempfile.TemporaryDirectory() as carpeta:
             pagina = Path(carpeta) / "tarjeta.html"
@@ -146,7 +150,7 @@ def main() -> int:
             medida = subprocess.run(["sips", "-g", "pixelWidth", "-g", "pixelHeight", str(destino)],
                                     capture_output=True, text=True).stdout.split()
             print(f"  {destino.name}: {medida[-3]}×{medida[-1]} · {destino.stat().st_size // 1024} KB")
-    print("\nDos tarjetas, listas para cuando el sitio tenga dominio.")
+    print("\nDos tarjetas de 1200×630, con el peso y la versión de hoy.")
     return 0
 
 

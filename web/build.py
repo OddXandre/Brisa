@@ -58,8 +58,23 @@ PARCIALES = SRC / "partials"
 MARCA = RAIZ / "Sources/brisa_app/Resources/favicon.svg"
 ICONO = WEB / "assets/img/icono.svg"
 
-VERSION = "0.1.0"
+# La versión del ARTEFACTO: la que va en el Info.plist de la app y en el nombre
+# del DMG que se reparte.
+VERSION = "0.2.0"
+# La versión que el SITIO anuncia de sí mismo: el pie, la línea del héroe, el
+# rótulo del botón y la ficha que leen los buscadores. Estuvo en 0.1.0 mientras
+# el archivo que se repartía ya era el 0.2.0 —una decisión de producto del 21 de
+# octubre—; desde la publicación del 23 de octubre las dos líneas dicen lo
+# mismo, que es lo que evita que la web anuncie una versión que ya no descarga
+# nadie. Si vuelven a separarse, que sea a sabiendas y con el porqué escrito.
+VERSION_ANUNCIADA = "0.2.0"
 CANAL = "beta"
+# La versión se escribe en dos textos de la interfaz —la línea del héroe y el
+# pie— que viven en el diccionario. Se marcan, igual que el peso, para no
+# tenerla escrita a mano en cuatro claves que hay que acordarse de subir: la
+# última vez que se cambió de versión, el sitio siguió diciendo la anterior en
+# las 20 páginas.
+VERSION_MARCA = "%version%"
 
 # El peso del instalador es el único dato duro del sitio que envejece solo: la
 # cifra aparece en diez textos —cinco por idioma— y el archivo que se reparte
@@ -79,7 +94,11 @@ PESO_PUBLICADO = "460 KB"
 # rendimiento que de verdad mueve la aguja está en su formato. El JPEG se queda
 # —es el que entiende cualquiera— y al lado se escribe la misma captura en AVIF,
 # que ocupa la quinta parte, con el sistema, sin añadir una dependencia al sitio.
-CALIDAD_AVIF = "62"
+# La calidad del AVIF estaba en 62 y era lo que dejaba las capturas blandas: en
+# una foto de paisaje sobra, pero estas son INTERFACES —texto de 11 px, filetes de
+# un píxel, cifras tabulares— y el codificador se come justo eso. A 82 el archivo
+# sigue pesando la mitad que su JPEG y el texto llega con los cantos enteros.
+CALIDAD_AVIF = "82"
 SIPS = Path("/usr/bin/sips")
 
 # Las dos piezas que el sitio enlaza y NO fabrica él: el prototipo navegable
@@ -308,7 +327,7 @@ def datos_estructurados(pagina: dict, idioma: str, carpeta: str, textos: dict, p
         "name": marca,
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": textos["inicio.meta1"],
-        "softwareVersion": VERSION,
+        "softwareVersion": VERSION_ANUNCIADA,
         "description": textos["px.inicio.desc"],
         "inLanguage": idioma,
         "isAccessibleForFree": True,
@@ -377,7 +396,7 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
     v = {
         "lang": idioma,
         "base": base,
-        "version": VERSION,
+        "version": VERSION_ANUNCIADA,
         "canal": CANAL,
         # El instalador solo existe después de empaquetar la app. Cuando está,
         # viaja con el sitio y el botón lo descarga. Cuando no, el botón lleva a
@@ -551,16 +570,21 @@ def copias_avif() -> list:
 
 
 def escribir_peso(dicc: dict) -> dict:
-    """El diccionario con el peso del instalador ya escrito en cada texto.
+    """El diccionario con el peso y la versión ya escritos en cada texto.
 
     Se hace aquí, sobre el diccionario, y no con un marcador de página: `resolver`
     no vuelve a mirar lo que acaba de sustituir, así que un `{{v:…}}` escrito
     dentro de un texto del diccionario se quedaría tal cual. Lo usan el
     constructor y el verificador, que si no compararía textos distintos de los
     que se publican.
+
+    Las dos marcas salen de la fuente que ya las sabe: el peso, del instalador
+    que se reparte; la versión, de `VERSION`, que es la misma que va al
+    Info.plist de la app y al nombre del DMG.
     """
     peso = peso_instalador()
-    return {idioma: {c: t.replace(PESO, peso) for c, t in textos.items()}
+    return {idioma: {c: t.replace(PESO, peso).replace(VERSION_MARCA, VERSION_ANUNCIADA)
+                     for c, t in textos.items()}
             for idioma, textos in dicc.items()}
 
 
@@ -801,26 +825,31 @@ def cabeceras() -> list:
         "  Strict-Transport-Security: max-age=31536000",
         "  Cache-Control: public, max-age=0, must-revalidate",
         "",
-        "# El instalador lleva la versión en el nombre, así que su dirección no cambia",
-        "# nunca y pide guardarse para siempre. Aviso para quien lo toque: el hosting",
-        "# suma las cabeceras de las reglas que casan, así que al precio le llega",
-        "# también el `must-revalidate` de arriba y el navegador usa ese —se sirve",
-        "# bien, pero se revalida—; para que se guardara de verdad habría que sacar el",
-        "# `Cache-Control` de arriba, y el HTML lo necesita.",
+        "# El instalador lleva la versión en el nombre, y eso se tomó como permiso para",
+        "# guardarlo un año con `immutable`. Se retiró el 23 de octubre de 2026, con la",
+        "# publicación que dejó de repartir la 0.1.0: el archivo nuevo se sirve bien,",
+        "# pero el viejo SIGUE contestando 200 desde la copia del borde de Cloudflare —y",
+        "# desde una `pages.dev` no hay forma de purgar esa copia—. Un nombre con versión",
+        "# no es una promesa de que el archivo no se retire nunca; el instalador pesa",
+        "# medio mega y revalidarlo no cuesta nada. Con el `must-revalidate` de arriba",
+        "# basta: en cuanto el archivo desaparece del despliegue, la siguiente petición",
+        "# pregunta y se lleva el 404.",
         "/descargas/*.dmg",
-        "  Cache-Control: public, max-age=31536000, immutable",
         "  Content-Type: application/x-apple-diskimage",
         "",
-        "# Las fuentes del sitio y el prototipo también se sirven —aquí no se esconde",
-        "# nada, y lo que se puede leer es lo que se puede visitar—, pero no son",
-        "# páginas que nadie busque: las fuentes llevan los marcadores sin resolver y",
-        "# el prototipo es la app entera dentro del navegador, con su propio título.",
-        "# Que se puedan visitar no es que deban salir en un buscador, así que se les",
-        "# dice que no se indexen; el resto del sitio sigue igual de rastreable.",
-        "/src/*",
+        "# El prototipo sí se sirve: es la app entera dentro del navegador, con su",
+        "# propio título. Se puede visitar, pero no es una página que nadie busque,",
+        "# así que se le dice que no se indexe; el resto del sitio sigue igual de",
+        "# rastreable.",
+        "/descargas/prototipo*",
         "  X-Robots-Tag: noindex",
         "",
-        "/descargas/prototipo*",
+        "# Y las fuentes —plantillas, diccionario, generador— no viajan:",
+        "# `tools/preparar-publicacion.py` las deja fuera antes de publicar y el",
+        "# vigilante comprueba que contestan 404. Este bloque no es para el día a",
+        "# día, es la red por si alguna vez se publica `web/` entero por error: en",
+        "# ese caso sí se servirían, y al menos no se indexarían.",
+        "/src/*",
         "  X-Robots-Tag: noindex",
     ]) + "\n", encoding="utf-8")
     return huellas, prototipo
@@ -872,22 +901,17 @@ def captura(vista: str, idioma: str, base: str, primera: bool, textos: dict) -> 
     # su sitio en la que llega. Ir de la portada a «nueve vistas» era eso: tres
     # pestañas y tres ventanas cruzando la pantalla por su cuenta. Con el nombre
     # fuera, la ventana es parte de su página y entra con ella, donde está.
-    # La ventana es un enlace a su propio archivo. En un teléfono es la única
-    # forma de leerla: la interfaz son 1180 px lógicos y ahí caben 350, así que
-    # el texto de dentro baja a un tercio. Y el recorte no sirve de arreglo
-    # —probado: el trozo que hace legibles las cifras deja fuera sus etiquetas—,
-    # así que se ofrece entera, a su tamaño, en otra pestaña. El aviso que lo
-    # dice va dentro del enlace y solo se pinta en pantalla estrecha (sitio.css),
-    # para que el nombre accesible lo anuncie donde hace falta.
+    # La ventana NO es un enlace. Aquí estuvo uno que abría la captura suelta en
+    # otra pestaña —con su «Ver más grande» y su lupa en el puntero— y se ha
+    # quitado a propósito: la pieza que se publica es la ventana, no el archivo
+    # de dentro, y un enlace prometía una imagen ampliable que ya no existe. La
+    # captura se queda en su marco, a la medida que le toca.
     return (
         f'<figure class="window">'
-        f'<a class="ampliar" href="{claro}" target="_blank" rel="noopener">'
         f'<picture>{fuente}'
         f'<img src="{claro}" data-clara="{claro}" data-oscura="{oscuro}"'
         f' width="{CAP_ANCHO}" height="{CAP_ALTO}" alt="{alt}"{carga}{prioridad} decoding="async">'
         f'</picture>'
-        f'<span class="ampliar-aviso">{textos["cap.ampliar"]}</span>'
-        "</a>"
         "</figure>"
     )
 

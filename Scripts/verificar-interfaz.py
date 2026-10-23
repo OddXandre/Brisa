@@ -286,6 +286,11 @@ def regla(sel):
 
 def tokens(sel):
     cuerpo = regla(sel) or ""
+    # Los comentarios del CSS hablan de los tokens («sobre --bg y sobre
+    # --surface: ink-2 e ink-3 ≥ 4,5:1…»): sin quitarlos, el parser lee el
+    # comentario como si fuera una declaración y el contraste se mide contra
+    # basura en vez de contra el color real.
+    cuerpo = re.sub(r"/\*.*?\*/", " ", cuerpo, flags=re.S)
     return {k: v.strip() for k, v in re.findall(r"(--[a-z0-9-]+)\s*:\s*([^;]+);", cuerpo)}
 
 
@@ -338,6 +343,96 @@ for etiqueta, sel in TEMAS:
         if peor < minimo:
             fallos.append(f"contraste bajo en {etiqueta}: --{nombre} da {peor:.2f}:1 (mínimo {minimo}:1)")
     print("contraste " + etiqueta + ": " + " · ".join(f"{n} {r:.2f}:1 (≥{m})" for n, r, m in peores))
+
+# 9b. UN SOLO ACENTO. El acento de la app es UN naranja —#FF4404, el de la
+#     marca—, y tiene que ser el mismo en los dos temas y el único naranja que
+#     aparece en la interfaz. Antes había cuatro: el #ff5900 de la app, el
+#     #ff4a06 de otra versión, el #ff7b3d para texto y el #c93f04. Un acento
+#     por tema es dos acentos, y un acento «para texto» es otro distinto: el
+#     mismo color tiene que servir para el botón, el icono, el enlace y la
+#     etiqueta, porque si no deja de ser un acento y pasa a ser una paleta
+#     disguise.
+#
+#     Se comprueba de tres maneras: que el token no se redefina en el tema claro
+#     (si se redefiniera, serían dos naranjas), que no quede ningún otro
+#     naranja escrito a mano en la interfaz, y que el acento no se mezcle con
+#     ningún color opaco para sacar de él una variante. Lo último es lo que
+#     importa: mezclar la brasa con blanco o con negro produce #FF6D3B y
+#     #DB3A03 —dos naranjas que se llaman «la brasa» y no lo son—. Del acento
+#     solo se permite bajar presencia (con alfa), nunca cambiar de color. Que
+#     el contraste baje es el precio, y está aceptado.
+ACENTO = "#FF4404"
+oscuro = tokens(":root")
+claro = tokens('html[data-theme="light"]')
+if oscuro.get("--acc", "").strip().lower() != ACENTO.lower():
+    fallos.append(f"el acento del tema oscuro no es {ACENTO}: es {oscuro.get('--acc')}")
+if "--acc" in claro:
+    fallos.append(f"el tema claro redefine el acento ({claro['--acc']}): el acento es uno, "
+                  "y si cambia con el tema son dos")
+# Los naranjas que no son el token. El barrido es sobre el COLOR DEL SISTEMA:
+# el CSS (el <style> entero) y el guion, quitados los comentarios —un comentario
+# habla de los naranjas que hubo y no los usa— y quitada la tabla de marcas de
+# terceros (UN_DEMO_GLYPHS), donde los naranjas son de Blender, Figma, Firefox
+# y VLC: son el color de otra marca, no un acento de Brisa, y confundirlos con
+# un acento daría un fallo que no se puede arreglar sin romper las marcas.
+def es_naranja(r, g, b):
+    return r > 0xC0 and g < 0x90 and b < 0x60
+
+
+def fuera_de_terceros(texto):
+    m = re.search(r"const UN_DEMO_GLYPHS=\{", texto)
+    if not m:
+        return texto
+    i = m.end() - 1
+    prof = 0
+    for j in range(i, len(texto)):
+        if texto[j] == "{":
+            prof += 1
+        elif texto[j] == "}":
+            prof -= 1
+            if prof == 0:
+                return texto[:i] + texto[j:]
+    return texto
+
+
+css_y_js = re.sub(r"<!--.*?-->", " ", src, flags=re.S)
+css_y_js = re.sub(r"/\*.*?\*/", " ", css_y_js, flags=re.S)
+css_y_js = fuera_de_terceros(css_y_js)
+otros = set()
+for m in re.finditer(r"#([0-9a-fA-F]{6})\b", css_y_js):
+    h = m.group(1)
+    if es_naranja(int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)):
+        otros.add("#" + h)
+# Y los rgba: el acento con alfa (rgba(255,68,4,…)) es el mismo color, pero
+# un rgba(255,140,60) es OTRO naranja escrito a mano.
+for m in re.finditer(r"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)", css_y_js):
+    r, g, b = (int(m.group(i)) for i in (1, 2, 3))
+    if es_naranja(r, g, b) and (r, g, b) != (255, 68, 4):
+        otros.add(f"rgb({r},{g},{b})")
+# El acento y sus dos formas de escribirlo (hexadecimal en mayúsculas o no) se
+# aceptan; el resto, no.
+otros = {c for c in otros if c.lower() != ACENTO.lower()}
+if otros:
+    fallos.append(f"naranjas que no son el acento en la interfaz: {sorted(otros)}")
+# Y el acento no se MEZCLA con nada opaco. Un color-mix del acento con blanco,
+# negro o un gris produce otro naranja: no es la brasa con más o menos luz,
+# es otro color que se parece a la brasa. Solo se admite mezclarlo con
+# transparente, que es bajar presencia sin cambiar de color.
+MEZCLAS = re.finditer(r"color-mix\(\s*in srgb\s*,\s*([^,]+),\s*([^)]+)\)", css_y_js)
+mezclado = []
+for m in MEZCLAS:
+    a, b = m.group(1).strip(), m.group(2).strip()
+    if "var(--acc" not in a and "var(--acc" not in b:
+        continue
+    if a.startswith("var(--acc") and b.lower() in ("transparent",):
+        continue
+    if b.startswith("var(--acc") and a.lower() in ("transparent",):
+        continue
+    mezclado.append(f"{a} + {b}")
+if mezclado:
+    fallos.append(f"el acento se mezcla con colores opacos (sale otro naranja): {mezclado}")
+print(f"acento: uno solo ({ACENTO}), el mismo en los dos temas · naranjas sueltos: {len(otros)}"
+      f" · mezclas opacas: {len(mezclado)}")
 
 # 10. LO NATIVO NO SE CUELA EN EL PROTOTIPO: hay ajustes que solo tienen sentido
 #     dentro de la ventana de macOS —el hueco de los semáforos, el aviso de

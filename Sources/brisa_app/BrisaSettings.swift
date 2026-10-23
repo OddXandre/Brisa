@@ -18,9 +18,60 @@ final class BrisaSettings {
         static let auto = "brisa.autoMaintenance"
         static let frequency = "brisa.frequency"
         static let language = "brisa.language"
+        static let theme = "brisa.theme"
         static let configured = "brisa.settingsConfigured"
         static let duplicatesRound = "brisa.duplicatesRound"
+        static let autoEmptyTrash = "brisa.autoEmptyTrash"
+        static let launchAtLogin = "brisa.launchAtLogin"
+        static let menuBar = "brisa.menuBar"
+        static let notifySummary = "brisa.notifySummary"
+        static let notifyLowSpace = "brisa.notifyLowSpace"
         static func rule(_ id: String) -> String { "brisa.rule.\(id)" }
+    }
+
+    // MARK: - Ajustes de escritorio
+
+    /// Los cinco interruptores de Ajustes que no son del mantenimiento. Se
+    /// leen con su valor de fábrica cuando nadie los ha tocado todavía, para
+    /// que la pantalla y el sistema digan lo mismo desde el primer arranque.
+    private func flag(_ key: String, _ fallback: Bool) -> Bool {
+        guard let saved = defaults.object(forKey: key) as? Bool else { return fallback }
+        return saved
+    }
+
+    /// Vaciar la Papelera de Brisa cuando un lote cumple su plazo. Viene
+    /// encendido porque es lo que promete la app al decir «se conserva N días»:
+    /// con esto apagado, lo retirado se queda para siempre y la fecha de
+    /// caducidad que enseña cada fila sería falsa.
+    var autoEmptyTrash: Bool {
+        get { flag(Key.autoEmptyTrash, true) }
+        set { defaults.set(newValue, forKey: Key.autoEmptyTrash) }
+    }
+
+    /// Apagado de fábrica: un elemento de inicio de sesión es algo que se
+    /// instala en la cuenta del usuario y se merece que lo pida él, no que
+    /// aparezca solo tras una actualización.
+    var launchAtLogin: Bool {
+        get { flag(Key.launchAtLogin, false) }
+        set { defaults.set(newValue, forKey: Key.launchAtLogin) }
+    }
+
+    var menuBar: Bool {
+        get { flag(Key.menuBar, true) }
+        set { defaults.set(newValue, forKey: Key.menuBar) }
+    }
+
+    var notifySummary: Bool {
+        get { flag(Key.notifySummary, true) }
+        set { defaults.set(newValue, forKey: Key.notifySummary) }
+    }
+
+    /// También apagado de fábrica: el primer aviso hace que macOS pida el
+    /// permiso de notificaciones, y ese diálogo no puede salir porque sí al
+    /// terminar un análisis. Se enciende en Ajustes, que es donde se espera.
+    var notifyLowSpace: Bool {
+        get { flag(Key.notifyLowSpace, false) }
+        set { defaults.set(newValue, forKey: Key.notifyLowSpace) }
     }
 
     // MARK: - Las cuatro reglas del mantenimiento automático
@@ -131,12 +182,31 @@ final class BrisaSettings {
         set { defaults.set(newValue.hasPrefix("es") ? "es" : "en", forKey: Key.language) }
     }
 
+    /// Apariencia elegida en la app (`light` o `dark`). Vacío = la del
+    /// sistema, que es como arranca la primera vez.
+    ///
+    /// Vive aquí y no solo en `localStorage` porque la página se carga desde
+    /// un archivo (`file://`) y WebKit no garantiza almacenamiento local para
+    /// ese origen: si lo negara, el tema volvería al del sistema en cada
+    /// arranque sin que nadie se enterara. Con el ajuste en el lado nativo, la
+    /// elección sobrevive pase lo que pase con el navegador.
+    var theme: String {
+        get { defaults.string(forKey: Key.theme) ?? "" }
+        set { defaults.set(newValue == "light" || newValue == "dark" ? newValue : "", forKey: Key.theme) }
+    }
+
     /// Instantánea para el estado que recibe la interfaz.
     var snapshot: DiskState.Settings {
         DiskState.Settings(retention: retentionDays,
                            autoMaintenance: autoMaintenance,
                            frequency: frequency,
                            language: language,
-                           rules: maintenanceRulesState)
+                           rules: maintenanceRulesState,
+                           autoEmpty: autoEmptyTrash,
+                           launchAtLogin: launchAtLogin,
+                           menuBar: menuBar,
+                           notifySummary: notifySummary,
+                           notifyLowSpace: notifyLowSpace,
+                           theme: theme.isEmpty ? nil : theme)
     }
 }

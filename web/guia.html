@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Instalar Brisa · Guía paso a paso</title>
-<meta name="description" content="De la descarga a la primera limpieza: los tres pasos del primer arranque, con lo que verás en pantalla.">
+<meta name="description" content="De la descarga a la primera limpieza. Los tres pasos del primer arranque, con lo que verás en pantalla.">
 <!-- Lo que se le pide al buscador: indexar, y que pueda enseñar la imagen grande
      y el fragmento entero en el resultado —si no se autoriza, recorta por defecto
      mucho más—. La página de error lo pide al revés: no indexarse, porque lo
@@ -18,12 +18,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Brisa">
 <meta property="og:title" content="Instalar Brisa · Guía paso a paso">
-<meta property="og:description" content="De la descarga a la primera limpieza: los tres pasos del primer arranque, con lo que verás en pantalla.">
+<meta property="og:description" content="De la descarga a la primera limpieza. Los tres pasos del primer arranque, con lo que verás en pantalla.">
 <meta property="og:locale" content="es_ES">
 <meta property="og:locale:alternate" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Instalar Brisa · Guía paso a paso">
-<meta name="twitter:description" content="De la descarga a la primera limpieza: los tres pasos del primer arranque, con lo que verás en pantalla.">
+<meta name="twitter:description" content="De la descarga a la primera limpieza. Los tres pasos del primer arranque, con lo que verás en pantalla.">
 <meta property="og:url" content="https://heybrisa.pages.dev/guia">
 <meta property="og:image" content="https://heybrisa.pages.dev/assets/img/tarjeta-es.jpg">
 <meta property="og:image:width" content="1200">
@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/guide">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/guia">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -71,6 +71,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -84,7 +88,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "es", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 460 KB, sin cuenta.", "url": "https://heybrisa.pages.dev/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 o posterior", "softwareVersion": "0.1.0", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 460 KB, sin cuenta.", "inLanguage": "es", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Resumen", "Estado del Mac", "Espacio en disco", "Archivos grandes", "Duplicados", "Aplicaciones", "Historial", "Mantenimiento", "Papelera de Brisa"], "url": "https://heybrisa.pages.dev/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-es-claro.jpg", "license": "https://heybrisa.pages.dev/licencia", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://heybrisa.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Guía", "item": "https://heybrisa.pages.dev/guia"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "es", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 490 KB, sin cuenta.", "url": "https://heybrisa.pages.dev/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 o posterior", "softwareVersion": "0.2.0", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 490 KB, sin cuenta.", "inLanguage": "es", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Resumen", "Estado del Mac", "Espacio en disco", "Archivos grandes", "Duplicados", "Aplicaciones", "Historial", "Mantenimiento", "Papelera de Brisa"], "url": "https://heybrisa.pages.dev/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-es-claro.jpg", "license": "https://heybrisa.pages.dev/licencia", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://heybrisa.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Guía", "item": "https://heybrisa.pages.dev/guia"}]}]}</script>
 </head>
 
 <body>
@@ -156,28 +160,26 @@ try {
       <h1>Instalarla y abrirla, paso a paso.</h1>
       <p class="lede">Los tres pasos, con lo que verás en pantalla y qué hacer en cada uno.</p>
       <div class="ctas">
-        <a class="btn primary lg" href="descargas/Brisa-0.1.0-beta.dmg"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75v11.5m0 0 4.25-4.25M12 15.25 7.75 11M4.75 19.25h14.5"/></svg>Descargar el instalador <small>0.1.0 beta</small></a>
+        <a class="btn primary lg" href="descargas/Brisa-0.2.0-beta.dmg"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75v11.5m0 0 4.25-4.25M12 15.25 7.75 11M4.75 19.25h14.5"/></svg>Descargar el instalador <small>0.2.0 beta</small></a>
       </div>
     </div>
   </section>
 
   <div class="showcase">
     <div class="wrap">
-      <figure class="window"><a class="ampliar" href="assets/img/vista-resumen-es-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-resumen-es-oscuro.avif" data-clara="assets/img/vista-resumen-es-claro.avif" data-oscura="assets/img/vista-resumen-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-resumen-es-claro.avif" data-clara="assets/img/vista-resumen-es-claro.avif" data-oscura="assets/img/vista-resumen-es-oscuro.avif"><img src="assets/img/vista-resumen-es-claro.jpg" data-clara="assets/img/vista-resumen-es-claro.jpg" data-oscura="assets/img/vista-resumen-es-oscuro.jpg" width="2360" height="1520" alt="Resumen de Brisa: espacio libre y recuperable, salud del disco y reparto por categorías." fetchpriority="high" decoding="async"></picture><span class="ampliar-aviso">Ver más grande</span></a></figure>
+      <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-resumen-es-oscuro.avif" data-clara="assets/img/vista-resumen-es-claro.avif" data-oscura="assets/img/vista-resumen-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-resumen-es-claro.avif" data-clara="assets/img/vista-resumen-es-claro.avif" data-oscura="assets/img/vista-resumen-es-oscuro.avif"><img src="assets/img/vista-resumen-es-claro.jpg" data-clara="assets/img/vista-resumen-es-claro.jpg" data-oscura="assets/img/vista-resumen-es-oscuro.jpg" width="2360" height="1520" alt="Resumen de Brisa, con el espacio libre y recuperable, la salud del disco y el reparto por categorías." fetchpriority="high" decoding="async"></picture></figure>
     </div>
   </div>
 
   <section>
     <div class="wrap">
-      <p class="eyebrow">Paso 1 · Instalar</p>
       <h2>Arrástrala a Aplicaciones.</h2>
-      <p class="sub">Doble clic en el archivo descargado. Se abre una ventana con el icono de Brisa y un acceso directo a «Aplicaciones»: arrastra el icono hasta ahí.</p>
+      <p class="sub">Doble clic en el archivo descargado. Se abre una ventana con el icono de Brisa y un acceso directo a «Aplicaciones». Arrastra el icono hasta ahí.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <p class="eyebrow">Paso 2 · Autorizarla</p>
       <h2>El aviso de macOS, y cómo se quita.</h2>
       <p class="sub">Esta versión no está publicada en la App Store, así que macOS no puede comprobar su firma y muestra un aviso. No dice que Brisa tenga nada malo.</p>
 
@@ -186,7 +188,7 @@ try {
           <span class="n"></span>
           <div>
             <h3>Intenta abrirla.</h3>
-            <p>Haz doble clic sobre Brisa. macOS mostrará el aviso y no la abrirá: ese intento es el que necesitas para el paso siguiente.</p>
+            <p>Haz doble clic sobre Brisa. macOS mostrará el aviso y no la abrirá. Ese intento es el que necesitas para el paso siguiente.</p>
           </div>
         </li>
         <li class="step">
@@ -214,32 +216,30 @@ try {
 
       <div class="note"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.25 19.25 6v5.6c0 4.4-3 7.55-7.25 9.15-4.25-1.6-7.25-4.75-7.25-9.15V6L12 3.25Z"/><path d="m9 12.1 2.1 2.1 4-4.2"/></svg><div>
         <p>El aviso se queda en ese panel alrededor de una hora y después desaparece solo. Si ya no está, vuelve a intentar abrir Brisa y repite desde el segundo paso.</p>
-        <p>En versiones anteriores de macOS el mismo paso se da con el clic derecho: sobre el icono de Brisa en Aplicaciones, elige «Abrir» y confirma con «Abrir».</p>
+        <p>En versiones anteriores de macOS el mismo paso se da con el clic derecho. Sobre el icono de Brisa en Aplicaciones, elige «Abrir» y confirma con «Abrir».</p>
       </div></div>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <p class="eyebrow">Paso 3 · Ya dentro</p>
       <h2>El análisis y el permiso de disco.</h2>
       <p class="sub">Brisa analiza tu Mac nada más abrirse. Al terminar te ofrece «Acceso total al disco», para medir las carpetas que macOS protege.</p>
-      <p class="sub">Si lo concedes, vuelve a analizar. Si prefieres no darlo, funciona igual: medirá lo demás y te dirá qué falta.</p>
+      <p class="sub">Si lo concedes, vuelve a analizar. Si prefieres no darlo, funciona igual, solo que medirá lo demás y te dirá qué falta.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
-      <p class="eyebrow">Tu privacidad</p>
       <h2>Tus archivos no salen de tu Mac.</h2>
-      <p class="sub">Brisa mide tu disco en tu propio Mac. No hay cuentas ni seguimiento, y no se envía nada a ningún sitio salvo lo que decidas en «Ayudar a mejorar Brisa».</p>
+      <p class="sub">Brisa mide tu disco en tu propio Mac. No hay cuentas ni seguimiento, y no se envía nada a ningún sitio.</p>
     </div>
   </section>
 
   <section class="final">
     <div class="wrap">
       <h2>¿Te ha quedado alguna duda?</h2>
-      <p class="sub">Si algo no cuadra, escríbeme: la dirección está en el pie de esta página. Una captura de pantalla ayuda.</p>
+      <p class="sub">Si algo no cuadra, escríbeme a la dirección que está en el pie de esta página. Una captura de pantalla ayuda.</p>
       <div class="ctas">
         <a class="btn lg" href="preguntas">Ver las preguntas</a>
       </div>
@@ -256,7 +256,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nada se va sin avisar.</p>
-      <p>Beta: firmada ad-hoc y repartida a mano, sin App Store.</p>
+      <p>Beta firmada ad-hoc y repartida a mano, sin App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -286,11 +286,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 o posterior</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 o posterior</span>
       <span>Esta web no usa cookies ni analítica. Solo guarda el tema que elijas.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Volver arriba"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="assets/js/sitio.js"></script>
 </body>

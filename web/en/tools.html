@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Inside Brisa · Mac disk cleaner</title>
-<meta name="description" content="Brisa’s nine views, one by one: what it measures, what it frees, and how it puts everything in view before anything moves.">
+<meta name="description" content="Brisa’s nine views, one by one. What it measures, what it frees, and how it puts everything in view before anything moves.">
 <!-- Lo que se le pide al buscador: indexar, y que pueda enseñar la imagen grande
      y el fragmento entero en el resultado —si no se autoriza, recorta por defecto
      mucho más—. La página de error lo pide al revés: no indexarse, porque lo
@@ -18,12 +18,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Brisa">
 <meta property="og:title" content="Inside Brisa · Mac disk cleaner">
-<meta property="og:description" content="Brisa’s nine views, one by one: what it measures, what it frees, and how it puts everything in view before anything moves.">
+<meta property="og:description" content="Brisa’s nine views, one by one. What it measures, what it frees, and how it puts everything in view before anything moves.">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="es_ES">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Inside Brisa · Mac disk cleaner">
-<meta name="twitter:description" content="Brisa’s nine views, one by one: what it measures, what it frees, and how it puts everything in view before anything moves.">
+<meta name="twitter:description" content="Brisa’s nine views, one by one. What it measures, what it frees, and how it puts everything in view before anything moves.">
 <meta property="og:url" content="https://heybrisa.pages.dev/en/tools">
 <meta property="og:image" content="https://heybrisa.pages.dev/assets/img/tarjeta-en.jpg">
 <meta property="og:image:width" content="1200">
@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/tools">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/herramientas">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="../assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -70,6 +70,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -83,7 +87,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.1.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "The app", "item": "https://heybrisa.pages.dev/en/tools"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.2.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "The app", "item": "https://heybrisa.pages.dev/en/tools"}]}]}</script>
 </head>
 
 <body>
@@ -165,9 +169,9 @@ try {
           <div class="text">
             <span class="num">01</span>
             <h2>Summary</h2>
-            <p class="sub">Your Mac’s report: free space, disk health and what can be recovered. The cleanup starts here.</p>
+            <p class="sub">Your Mac’s report, with free space, disk health and what can be recovered. The cleanup starts here.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-resumen-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-resumen-en-oscuro.avif" data-clara="../assets/img/vista-resumen-en-claro.avif" data-oscura="../assets/img/vista-resumen-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-resumen-en-claro.avif" data-clara="../assets/img/vista-resumen-en-claro.avif" data-oscura="../assets/img/vista-resumen-en-oscuro.avif"><img src="../assets/img/vista-resumen-en-claro.jpg" data-clara="../assets/img/vista-resumen-en-claro.jpg" data-oscura="../assets/img/vista-resumen-en-oscuro.jpg" width="2360" height="1520" alt="Summary: free and recoverable space, disk health, and the split by category." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-resumen-en-oscuro.avif" data-clara="../assets/img/vista-resumen-en-claro.avif" data-oscura="../assets/img/vista-resumen-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-resumen-en-claro.avif" data-clara="../assets/img/vista-resumen-en-claro.avif" data-oscura="../assets/img/vista-resumen-en-oscuro.avif"><img src="../assets/img/vista-resumen-en-claro.jpg" data-clara="../assets/img/vista-resumen-en-claro.jpg" data-oscura="../assets/img/vista-resumen-en-oscuro.jpg" width="2360" height="1520" alt="Summary of Brisa, with free and recoverable space, disk health and the split by category." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool flip">
@@ -176,7 +180,7 @@ try {
             <h2>Mac status</h2>
             <p class="sub">CPU, memory, disk, network, battery and temperature, live. Pause it and see what is using them.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-estado-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-estado-en-oscuro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-estado-en-claro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><img src="../assets/img/vista-estado-en-claro.jpg" data-clara="../assets/img/vista-estado-en-claro.jpg" data-oscura="../assets/img/vista-estado-en-oscuro.jpg" width="2360" height="1520" alt="Mac status in Brisa: CPU, memory, disk, network, battery and temperature, live." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-estado-en-oscuro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-estado-en-claro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><img src="../assets/img/vista-estado-en-claro.jpg" data-clara="../assets/img/vista-estado-en-claro.jpg" data-oscura="../assets/img/vista-estado-en-oscuro.jpg" width="2360" height="1520" alt="Mac status in Brisa, with CPU, memory, disk, network, battery and temperature, live." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool">
@@ -185,7 +189,7 @@ try {
             <h2>Disk space</h2>
             <p class="sub">The disk map by category, folder and age. Click a color and see what is inside.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-atlas-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-atlas-en-oscuro.avif" data-clara="../assets/img/vista-atlas-en-claro.avif" data-oscura="../assets/img/vista-atlas-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-atlas-en-claro.avif" data-clara="../assets/img/vista-atlas-en-claro.avif" data-oscura="../assets/img/vista-atlas-en-oscuro.avif"><img src="../assets/img/vista-atlas-en-claro.jpg" data-clara="../assets/img/vista-atlas-en-claro.jpg" data-oscura="../assets/img/vista-atlas-en-oscuro.jpg" width="2360" height="1520" alt="Disk space in Brisa: the category map with what each one takes, and the detail panel beside it." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-atlas-en-oscuro.avif" data-clara="../assets/img/vista-atlas-en-claro.avif" data-oscura="../assets/img/vista-atlas-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-atlas-en-claro.avif" data-clara="../assets/img/vista-atlas-en-claro.avif" data-oscura="../assets/img/vista-atlas-en-oscuro.avif"><img src="../assets/img/vista-atlas-en-claro.jpg" data-clara="../assets/img/vista-atlas-en-claro.jpg" data-oscura="../assets/img/vista-atlas-en-oscuro.jpg" width="2360" height="1520" alt="Disk space in Brisa. The category map with what each one takes, and the detail panel beside it." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool flip">
@@ -194,7 +198,7 @@ try {
             <h2>Large files</h2>
             <p class="sub">The heaviest files on your disk in one table, with their last use. Move them to iCloud or delete them without leaving the list.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-archivos-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-archivos-en-oscuro.avif" data-clara="../assets/img/vista-archivos-en-claro.avif" data-oscura="../assets/img/vista-archivos-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-archivos-en-claro.avif" data-clara="../assets/img/vista-archivos-en-claro.avif" data-oscura="../assets/img/vista-archivos-en-oscuro.avif"><img src="../assets/img/vista-archivos-en-claro.jpg" data-clara="../assets/img/vista-archivos-en-claro.jpg" data-oscura="../assets/img/vista-archivos-en-oscuro.jpg" width="2360" height="1520" alt="Large files in Brisa: a table with name, size and last opened, plus filters by kind." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-archivos-en-oscuro.avif" data-clara="../assets/img/vista-archivos-en-claro.avif" data-oscura="../assets/img/vista-archivos-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-archivos-en-claro.avif" data-clara="../assets/img/vista-archivos-en-claro.avif" data-oscura="../assets/img/vista-archivos-en-oscuro.avif"><img src="../assets/img/vista-archivos-en-claro.jpg" data-clara="../assets/img/vista-archivos-en-claro.jpg" data-oscura="../assets/img/vista-archivos-en-oscuro.jpg" width="2360" height="1520" alt="Large files in Brisa, in a table with name, size and last opened, plus filters by kind." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool">
@@ -203,7 +207,7 @@ try {
             <h2>Duplicates</h2>
             <p class="sub">Copies and near-twins, grouped. Brisa picks which one to keep and explains why.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-duplicados-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-duplicados-en-oscuro.avif" data-clara="../assets/img/vista-duplicados-en-claro.avif" data-oscura="../assets/img/vista-duplicados-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-duplicados-en-claro.avif" data-clara="../assets/img/vista-duplicados-en-claro.avif" data-oscura="../assets/img/vista-duplicados-en-oscuro.avif"><img src="../assets/img/vista-duplicados-en-claro.jpg" data-clara="../assets/img/vista-duplicados-en-claro.jpg" data-oscura="../assets/img/vista-duplicados-en-oscuro.jpg" width="2360" height="1520" alt="Duplicates in Brisa: copies grouped together, with the one worth keeping marked and the space that would come back." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-duplicados-en-oscuro.avif" data-clara="../assets/img/vista-duplicados-en-claro.avif" data-oscura="../assets/img/vista-duplicados-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-duplicados-en-claro.avif" data-clara="../assets/img/vista-duplicados-en-claro.avif" data-oscura="../assets/img/vista-duplicados-en-oscuro.avif"><img src="../assets/img/vista-duplicados-en-claro.jpg" data-clara="../assets/img/vista-duplicados-en-claro.jpg" data-oscura="../assets/img/vista-duplicados-en-oscuro.jpg" width="2360" height="1520" alt="Duplicates in Brisa. Copies grouped together, with the one worth keeping marked and the space that would come back." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool flip">
@@ -212,7 +216,7 @@ try {
             <h2>Applications</h2>
             <p class="sub">The app and everything it left behind, by category. macOS apps stay out.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-apps-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-apps-en-oscuro.avif" data-clara="../assets/img/vista-apps-en-claro.avif" data-oscura="../assets/img/vista-apps-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-apps-en-claro.avif" data-clara="../assets/img/vista-apps-en-claro.avif" data-oscura="../assets/img/vista-apps-en-oscuro.avif"><img src="../assets/img/vista-apps-en-claro.jpg" data-clara="../assets/img/vista-apps-en-claro.jpg" data-oscura="../assets/img/vista-apps-en-oscuro.jpg" width="2360" height="1520" alt="Installed applications in Brisa, sorted by size, with search and a mark on the ones currently in use." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-apps-en-oscuro.avif" data-clara="../assets/img/vista-apps-en-claro.avif" data-oscura="../assets/img/vista-apps-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-apps-en-claro.avif" data-clara="../assets/img/vista-apps-en-claro.avif" data-oscura="../assets/img/vista-apps-en-oscuro.avif"><img src="../assets/img/vista-apps-en-claro.jpg" data-clara="../assets/img/vista-apps-en-claro.jpg" data-oscura="../assets/img/vista-apps-en-oscuro.jpg" width="2360" height="1520" alt="Installed applications in Brisa, sorted by size, with search and a mark on the ones currently in use." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool">
@@ -221,25 +225,25 @@ try {
             <h2>History</h2>
             <p class="sub">Every cleanup, what it freed and when. Compare two rounds and clear the log without touching Brisa Trash.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-historial-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-historial-en-oscuro.avif" data-clara="../assets/img/vista-historial-en-claro.avif" data-oscura="../assets/img/vista-historial-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-historial-en-claro.avif" data-clara="../assets/img/vista-historial-en-claro.avif" data-oscura="../assets/img/vista-historial-en-oscuro.avif"><img src="../assets/img/vista-historial-en-claro.jpg" data-clara="../assets/img/vista-historial-en-claro.jpg" data-oscura="../assets/img/vista-historial-en-oscuro.jpg" width="2360" height="1520" alt="History in Brisa: every cleanup with its date and its figure, and a side-by-side comparison of two rounds." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-historial-en-oscuro.avif" data-clara="../assets/img/vista-historial-en-claro.avif" data-oscura="../assets/img/vista-historial-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-historial-en-claro.avif" data-clara="../assets/img/vista-historial-en-claro.avif" data-oscura="../assets/img/vista-historial-en-oscuro.avif"><img src="../assets/img/vista-historial-en-claro.jpg" data-clara="../assets/img/vista-historial-en-claro.jpg" data-oscura="../assets/img/vista-historial-en-oscuro.jpg" width="2360" height="1520" alt="History in Brisa, with every cleanup, its date and its figure, and a side-by-side comparison of two rounds." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool flip">
           <div class="text">
             <span class="num">08</span>
             <h2>Maintenance</h2>
-            <p class="sub">Four rules with their own toggle: the system Trash, forgotten downloads, caches and duplicates. It tells you how much it recovered.</p>
+            <p class="sub">Four rules with their own toggle, for the system Trash, forgotten downloads, caches and duplicates. It tells you how much it recovered.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-ritmo-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-ritmo-en-oscuro.avif" data-clara="../assets/img/vista-ritmo-en-claro.avif" data-oscura="../assets/img/vista-ritmo-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-ritmo-en-claro.avif" data-clara="../assets/img/vista-ritmo-en-claro.avif" data-oscura="../assets/img/vista-ritmo-en-oscuro.avif"><img src="../assets/img/vista-ritmo-en-claro.jpg" data-clara="../assets/img/vista-ritmo-en-claro.jpg" data-oscura="../assets/img/vista-ritmo-en-oscuro.jpg" width="2360" height="1520" alt="Maintenance in Brisa: its four rules, each with its own toggle, and when it runs." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-ritmo-en-oscuro.avif" data-clara="../assets/img/vista-ritmo-en-claro.avif" data-oscura="../assets/img/vista-ritmo-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-ritmo-en-claro.avif" data-clara="../assets/img/vista-ritmo-en-claro.avif" data-oscura="../assets/img/vista-ritmo-en-oscuro.avif"><img src="../assets/img/vista-ritmo-en-claro.jpg" data-clara="../assets/img/vista-ritmo-en-claro.jpg" data-oscura="../assets/img/vista-ritmo-en-oscuro.jpg" width="2360" height="1520" alt="Maintenance in Brisa, with its four rules, each one’s toggle, and when it runs." loading="lazy" decoding="async"></picture></figure>
         </div>
 
         <div class="tool">
           <div class="text">
             <span class="num">09</span>
             <h2>Brisa Trash</h2>
-            <p class="sub">Everything removed, with its expiry date and its size. Kept for as long as you choose: 7, 30 or 60 days.</p>
+            <p class="sub">Everything removed, with its expiry date and its size. Kept for as long as you choose, 7, 30 or 60 days.</p>
           </div>
-          <figure class="window"><a class="ampliar" href="../assets/img/vista-papelera-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-papelera-en-oscuro.avif" data-clara="../assets/img/vista-papelera-en-claro.avif" data-oscura="../assets/img/vista-papelera-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-papelera-en-claro.avif" data-clara="../assets/img/vista-papelera-en-claro.avif" data-oscura="../assets/img/vista-papelera-en-oscuro.avif"><img src="../assets/img/vista-papelera-en-claro.jpg" data-clara="../assets/img/vista-papelera-en-claro.jpg" data-oscura="../assets/img/vista-papelera-en-oscuro.jpg" width="2360" height="1520" alt="Brisa Trash: what was removed, with its expiry date and the space coming back." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+          <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-papelera-en-oscuro.avif" data-clara="../assets/img/vista-papelera-en-claro.avif" data-oscura="../assets/img/vista-papelera-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-papelera-en-claro.avif" data-clara="../assets/img/vista-papelera-en-claro.avif" data-oscura="../assets/img/vista-papelera-en-oscuro.avif"><img src="../assets/img/vista-papelera-en-claro.jpg" data-clara="../assets/img/vista-papelera-en-claro.jpg" data-oscura="../assets/img/vista-papelera-en-oscuro.jpg" width="2360" height="1520" alt="Brisa Trash. What was removed, with its expiry date and the space coming back." loading="lazy" decoding="async"></picture></figure>
         </div>
 
       </div>
@@ -268,7 +272,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nothing goes without warning.</p>
-      <p>Beta: ad-hoc signed and handed out by hand, outside the App Store.</p>
+      <p>Beta, ad-hoc signed and handed out by hand, outside the App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -298,11 +302,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 or later</span>
-      <span>This site uses no cookies and no analytics. It stores one thing in your browser: the theme you pick.</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 or later</span>
+      <span>This site uses no cookies and no analytics. The only thing it stores in your browser is the theme you pick.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Back to top"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="../assets/js/sitio.js"></script>
 </body>

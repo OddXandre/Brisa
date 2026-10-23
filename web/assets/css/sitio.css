@@ -2,8 +2,9 @@
    Brisa · web · sistema de diseño
    ----------------------------------------------------------------------------
    Una sola hoja, sin dependencias y sin fuentes externas: usa la misma pila
-   tipográfica que la app (Inter y, en cualquier Mac sin Inter instalada, SF
-   Pro), así que el sitio y el producto se leen igual.
+   tipográfica que la app (SF Pro, la del sistema), el mismo interletraje
+   (−3 % en todo el documento) y los mismos pesos, así que el sitio y el
+   producto se leen igual.
 
    La paleta NO se inventa aquí: son los tokens de la interfaz de la app
    (Sources/brisa_app/Resources/index.html). Si un color cambia, cambia en los
@@ -34,57 +35,100 @@
   color-scheme: light dark;
 
   /* Superficies y tinta. Los nombres son los de la app. */
-  --bg: #ffffff;
+  /* Los valores NO se eligen aquí: son los de la interfaz de la app de hoy
+     (Sources/brisa_app/Resources/index.html) —porcelana fría en claro, noche
+     azulada en oscuro—, con su mismo nombre y su mismo trabajo. Si la app
+     cambia un color, este archivo cambia con ella o el sitio deja de ser el
+     producto. */
+  --bg: #F2F4F8;
   --surface: #ffffff;
-  --surface-2: #f3f3f7;
-  --line: #dcdde5;
-  --line-2: #b9bbc6;
-  --ink: #000000;
-  --ink-2: #60646c;
-  --ink-3: #6f737b;
-  --ink-4: #8b8d98;
-  --sel: rgba(120, 120, 128, .12);
-  --rail: rgba(120, 120, 128, .08);
-  --glass: rgba(255, 255, 255, .78);
-  --float: rgba(255, 255, 255, .86);
-  --rim: inset 0 .5px 0 rgba(255, 255, 255, .7);
+  --surface-2: #EAEDF3;
+  --line: #DCE0E8;
+  --line-2: #B7BDC9;
+  --ink: #0C1016;
+  --ink-2: #4A5260;
+  --ink-3: #5A6270;
+  --ink-4: #666E7B;
+  --sel: rgba(120, 126, 140, .11);
+  /* La casilla de la barra —el elemento marcado y el realce del puntero— va
+     OPACA, y no es un capricho: sobre ella pasa la trama de puntos de la
+     píldora, y con un relleno translúcido los puntos se veían dentro del
+     recuadro. Es el color que ya daba la suma de velo y selección, escrito tal
+     cual para que el recuadro tape la trama en vez de dejarla asomar. */
+  --sel-solida: #E9ECF2;
+  --rail: rgba(255, 255, 255, .55);
+  --trama: rgba(12, 16, 22, .07);
+  --glass: rgba(250, 252, 255, .58);
+  --float: rgba(255, 255, 255, .88);
+  /* El velo de un panel que tapa media pantalla —el menú de móvil—: casi opaco,
+     porque detrás puede haber un botón naranja y no un párrafo quieto. */
+  --panel: rgba(252, 253, 255, .97);
+  --rim: inset 0 .5px 0 rgba(255, 255, 255, .9);
   /* El filete de lo que flota va DENTRO de su sombra, no como `border`: ver la
      nota de elevación de la cabecera. Un solo recurso por pieza. */
-  --ring: rgba(0, 0, 0, .09);
-  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .04), 0 24px 64px -18px rgba(0, 0, 0, .22);
+  --ring: rgba(16, 20, 28, .09);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(16, 20, 28, .04), 0 24px 64px -18px rgba(16, 20, 28, .22);
   /* La misma ventana, apuntada: la pieza no cambia de elevación —sigue teniendo
      sombra y ni un borde—, solo flota dos píxeles más y su sombra se abre con
      ella. Una elevación por pieza, la misma en los dos estados. */
-  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .05), 0 34px 80px -16px rgba(0, 0, 0, .26);
-  --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .6);
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(16, 20, 28, .05), 0 34px 80px -16px rgba(16, 20, 28, .26);
+  /* La sombra de la barra no es un borde: es lo que la separa del contenido
+     cuando hay algo pasando por debajo. Ancha, muy difusa y con poco negro —a
+     medio camino entre la sombra de la ventana y nada—, porque una sombra
+     corta y oscura convierte el cristal en una caja. */
+  --shadow-nav: 0 16px 36px -20px rgba(16, 20, 28, .26), 0 1px 2px rgba(16, 20, 28, .04);
 
-  /* Acento: una brasa, en el tono que la app usa para texto y para la acción.
-     `--acc` es el de la app tal cual —el mismo relleno del botón, el pétalo y
-     su icono—; `--acc-text` es la brasa oscurecida hasta pasar 4,5:1 sobre el
-     blanco, que es para lo que la app la tiene también. `--veil` es el velo de
-     fondo del héroe, el mismo que la app se pone detrás de la interfaz.
-
-     El botón de acción va con el naranja de la app y con su tinta blanca, las
-     dos cosas tal cual: es lo que identifica al producto, y el relleno y la
-     tinta de un botón son lo que se reconoce al mirarlo. Con ese blanco la razón
-     es 3,14:1 —pasa el 3:1 que se le pide a un componente de interfaz y se queda
-     por debajo del 4,5:1 que AA pide para texto menudo, que este lo es: 14,5 y
-     15,5 px—. Se probó a hundir la brasa hasta 4,78:1 y se descartó a sabiendas:
+  /* Acento: una brasa, la de la app, una y la misma en los dos temas.
+     `--acc` es el de la interfaz tal cual —el mismo relleno del botón, el
+     pétalo y su icono—; `--acc-text` es la única variante, y no es otro
+     naranja: es la misma brasa oscurecida hasta pasar 4,5:1 sobre la porcelana
+     (4,85:1), porque hay enlaces que van en ese color y se leen como texto, no
+     como relleno. `--veil` es el velo del héroe, la brasa con muy poca
+     presencia. */
+  /* El botón de acción va con el naranja de la app y con su tinta blanca, las
+     dos cosas tal cual: es lo que identifica al producto. Con ese blanco la
+     razón es 3,45:1 —pasa el 3:1 que se le pide a un componente de interfaz y
+     se queda por debajo del 4,5:1 que AA pide para texto menudo, que este lo
+     es—. Se probó a hundir la brasa hasta 4,78:1 y se descartó a sabiendas:
      el naranja del botón tiene que ser el del producto. La cifra se queda
-     escrita —aquí y en el verificador, con el mínimo que de verdad se exige— en
-     vez de disfrazarse con un tono propio. */
-  --acc: #ff5900;
-  --acc-text: #c93f04;
+     escrita —aquí y en el verificador, con el mínimo que de verdad se exige—
+     en vez de disfrazarse con un tono propio. */
+  --acc: #FF4404;
+  --acc-text: #C13D02;
   --acc-ink: #ffffff;
-  --acc-soft: rgba(255, 89, 0, .1);
-  --veil: rgba(255, 89, 0, .055);
-  --mark: #ff4404;
+  --acc-soft: rgba(255, 68, 4, .10);
+  --veil: rgba(255, 68, 4, .045);
+  --mark: #FF4404;
+  /* Las tres luces del lienzo, tal y como las pinta la app: brasa arriba a la
+     derecha, hielo abajo a la izquierda y un brillo vertical que baja desde
+     arriba. Luz, no dibujo: es la única textura del sistema. */
+  --aurora-warm-c: rgba(255, 68, 4, .08);
+  --aurora-cool-c: rgba(88, 132, 255, .055);
+  --sheen-c: rgba(255, 255, 255, .75);
+  /* La luz del canto de arriba: la que baña la franja de la barra. Va aparte del
+     brillo vertical porque dura poco —se apaga en los primeros 200 px— y porque
+     es la que hacía que la barra se leyera como se leía. Antes esa claridad la
+     ponía el grano al caer sobre el fondo pelado del `body`, y solo arriba: de
+     ahí la banda. Ahora la pone una luz del lienzo, que se apaga sola y no
+     tiene canto. */
+  --cielo-c: rgba(255, 255, 255, .45);
+  --aurora-warm: radial-gradient(112% 76% at 84% -14%, var(--aurora-warm-c), transparent 60%);
+  --aurora-cool: radial-gradient(100% 72% at -8% 108%, var(--aurora-cool-c), transparent 62%);
+  --sheen: linear-gradient(180deg, var(--sheen-c), transparent 38%);
+  /* El grano del lienzo. No es una textura decorativa: es lo que impide que
+     cuatro degradados enormes y de muy poco contraste se pinten a bandas. A
+     8 bits, un salto de uno o dos niveles entre dos píxeles vecinos se ve como
+     un escalón de color en cuanto la pantalla es buena; el ruido lo rompe y el
+     ojo lee una superficie continua. Es un SVG de 160×160 en línea, sin
+     petición y sin archivo, y la política de contenido ya autoriza `data:` en
+     imágenes. Va al 22 % de opacidad: se nota como textura, no como suciedad. */
+  --grano: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='.5'/%3E%3C/svg%3E");
 
   /* Formas: los radios de la app, sin inventar una rampa nueva. */
   --r-ctl: 8px;
-  --r-panel: 12px;
-  --r-btn: 12px;
-  --r-window: 14px;
+  --r-panel: 15px;
+  --r-btn: 11px;
+  --r-window: 15px;
 
   /* Movimiento: tres curvas y tres tiempos, y nada fuera de aquí.
 
@@ -107,10 +151,15 @@
   --ease-io: cubic-bezier(.4, 0, .2, 1);
   --ease-out: cubic-bezier(.22, .61, .36, 1);
   --t-rapido: .16s;                /* la respuesta a un gesto: color, filete, fondo */
-  --t-reveal: .48s;                /* el asentamiento de bloques al entrar */
+  --t-toque: .26s;                 /* la respuesta al puntero en un control: más larga que un gesto, porque es una luz que se posa y no un aviso */
+  --t-foco: .44s;                  /* el foco de luz de una ficha: entra y sale despacio */
+  --t-ventana: 1.05s;              /* la captura del héroe al enderezarse: la única entrada que dura más de medio segundo */
+  --t-reveal: .56s;                /* el asentamiento de bloques al entrar */
+  --t-paso: 70ms;                  /* lo que separa dos piezas de una misma entrada */
   --t-medio: .3s;                  /* lo que cambia de sitio: la barra, el aviso */
   --t-lento: .34s;                 /* lo que se despliega: la altura de una pregunta */
-  --t-tema: .43s;                  /* el asentamiento del tema: el mismo tiempo que usa la app */
+  --t-tema: .56s;                  /* el asentamiento del tema: más largo que una entrada, porque mueve la pantalla entera */
+  --t-respiro: 6.5s;               /* el ciclo del símbolo. No es una transición: es el único bucle del sitio y se queda fuera de la escala corta a propósito, porque lo que respira no es una respuesta a un gesto sino el pulso de la pieza */
 
   /* Escala tipográfica. Seis pasos y ningún tamaño fuera de ellos, con el
      cuerpo y el interlineado tomados de apple.com: 17 px de lectura —su cuerpo
@@ -123,7 +172,13 @@
   --t-lg: 17px;      /* cuerpo de lectura — 17 px es el cuerpo de Apple */
   --t-2xl: 25px;     /* titular de un bloque partido */
 
-  /* Escala de aire. De 4 en 4 hasta 16, y de ahí en saltos que se notan. */
+  /* Escala de aire. De 4 en 4 hasta 16, y de ahí en saltos que se notan.
+
+     Los dos últimos pasos existen porque la página tiene dos distancias que no
+     son de componente sino de página: lo que separa dos filas partidas (128) y
+     lo que separa dos secciones de la misma página en las que la de arriba no
+     lleva aire propio (184). Sin ellos, esos huecos se escribían a mano y
+     acababan siendo distintos en cada archivo. */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
@@ -133,17 +188,49 @@
   --s-7: 48px;
   --s-8: 64px;
   --s-9: 96px;
+  --s-10: 128px;
+  --s-11: 184px;
 
-  /* Medidas de esta web. */
+  /* Medidas de esta web. El canalón crece con la ventana en vez de quedarse en
+     24 px para siempre: en un monitor ancho, 24 px de margen no son aire, son un
+     borde. Con `clamp` la página respira más cuanto más sitio hay —48 px a 1330
+     de ancho— sin tocar el ancho de la columna de lectura, que se queda donde
+     estaba. El tope existe para que en pantallas enormes el texto no se aleje
+     tanto que la página parezca una isla. */
   --max: 1080px;
-  --gutter: 24px;
-  --sec: 112px;      /* aire de una sección de escritorio */
-  --nav-h: 60px;
+  --gutter: clamp(20px, 3.6vw, 48px);
+  /* Tres distancias de página, no de componente, y cada una contesta a una
+     pregunta distinta. `--sec` es el aire entre secciones: cuánto tarda en
+     empezar otro asunto. `--head` es lo que separa el titular de una sección
+     de lo que ese titular anuncia —el hueco que hace que un bloque se lea como
+     «esto de aquí abajo» y no como una continuación del párrafo—. `--bloque`
+     es el aire entre dos piezas hermanas dentro de una misma sección.
+
+     Subieron las tres a la vez y por el mismo motivo: el sitio tenía las
+     secciones separadas y las piezas de dentro pegadas. El lector no veía
+     dónde acababa una idea y empezaba otra porque la pausa estaba fuera del
+     bloque y no dentro. */
+  --sec: clamp(112px, 9.5vw, 152px);
+  --head: clamp(48px, 4.8vw, 72px);
+  --bloque: clamp(64px, 6.4vw, 96px);
+  /* La barra mide lo que mide su forma de siempre —la corta, la que lleva la
+     trama—, no una altura que cambia al bajar. Antes eran 60 en reposo y 54 al
+     desplazar; ahora hay un solo estado y mide 54. */
+  --nav-h: 54px;
+
+  /* El peso del texto. No es el mismo número en los dos temas, y no es un
+     descuido: el mismo corte se lee más fino sobre fondo oscuro —medido aquí a
+     2,4 aumentos, la letra clara sobre negro pierde borde—, así que el tema
+     oscuro sube un punto para que los dos lean igual. En claro, los canónicos
+     de SF Pro. Son ajustes del sistema variable: SF llega a los nueve cortes y
+     a los intermedios, no hace falta inventarse una negrita. */
+  --peso-titular: 600;   /* h1, h2, h3 y la marca */
+  --peso-medio: 500;     /* controles, barra y negritas de texto */
 
   /* Pila tipográfica. Inter si está instalada; si no, SF Pro, que es la que
      usa la app y la que macOS trae. Nunca una fuente de fuera. */
-  --font: Inter, "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
-  --font-display: Inter, "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
@@ -182,33 +269,52 @@
 @property --rail      { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .08); }
 @property --glass     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .78); }
 @property --float     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .86); }
-@property --acc-text  { syntax: "<color>"; inherits: true; initial-value: #c93f04; }
-@property --acc-soft  { syntax: "<color>"; inherits: true; initial-value: rgba(255, 89, 0, .1); }
-@property --veil      { syntax: "<color>"; inherits: true; initial-value: rgba(255, 89, 0, .055); }
+@property --acc-text  { syntax: "<color>"; inherits: true; initial-value: #C13D02; }
+@property --acc-soft  { syntax: "<color>"; inherits: true; initial-value: rgba(255, 68, 4, .10); }
+@property --veil      { syntax: "<color>"; inherits: true; initial-value: rgba(255, 68, 4, .045); }
+/* Las tres luces del lienzo también son colores, y por eso se declaran: sin
+   declarar no se mezclan, y al cambiar de tema se apagarían de golpe mientras
+   el resto viaja. */
+@property --aurora-warm-c { syntax: "<color>"; inherits: true; initial-value: rgba(255, 68, 4, .08); }
+@property --aurora-cool-c { syntax: "<color>"; inherits: true; initial-value: rgba(88, 132, 255, .055); }
+@property --sheen-c       { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .75); }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0a0a0a;
-    --surface: rgba(255, 255, 255, .053);
+    --bg: #0B0D12;
+    --surface: rgba(255, 255, 255, .05);
     --surface-2: rgba(255, 255, 255, .075);
-    --line: rgba(255, 255, 255, .11);
-    --line-2: rgba(255, 255, 255, .20);
-    --ink: rgba(255, 255, 255, .96);
-    --ink-2: rgba(236, 236, 236, .70);
-    --ink-3: rgba(236, 236, 236, .58);
-    --ink-4: rgba(236, 236, 236, .46);
+    --line: rgba(255, 255, 255, .085);
+    --line-2: rgba(255, 255, 255, .16);
+    --ink: #EEF1F6;
+    --ink-2: rgba(214, 222, 235, .72);
+    --ink-3: rgba(214, 222, 235, .64);
+    --ink-4: rgba(214, 222, 235, .56);
     --sel: rgba(255, 255, 255, .06);
     --rail: rgba(255, 255, 255, .045);
-    --glass: rgba(15, 15, 15, .72);
-    --float: rgba(18, 18, 18, .80);
-    --rim: inset 0 .5px 0 rgba(255, 255, 255, .09);
+    --trama: rgba(255, 255, 255, .05);
+    /* El cristal del tema oscuro se aclara y se abre un poco: sobre una página
+       que ya es noche, un velo casi negro al 82 % dejaba la barra más oscura
+       que el fondo y se leía como una losa. Con un gris azulado al 70 % la
+       píldora flota sobre la página en vez de recortarse contra ella. */
+    --glass: rgba(19, 23, 31, .72);
+    --sel-solida: #20262F;
+    --peso-titular: 630;
+    --peso-medio: 515;
+    --float: rgba(19, 23, 31, .80);
+    --panel: rgba(13, 17, 23, .96);
+    --rim: inset 0 .5px 0 rgba(255, 255, 255, .10);
     --ring: rgba(255, 255, 255, .13);
     --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
     --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .55), 0 34px 80px -16px rgba(0, 0, 0, .78);
-    --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .9);
-    --acc-text: #ff7b3d;
-    --acc-soft: rgba(255, 89, 0, .16);
-    --veil: rgba(255, 89, 0, .1);
+    --shadow-nav: 0 18px 40px -20px rgba(0, 0, 0, .7), 0 1px 2px rgba(0, 0, 0, .4);
+    --acc-text: #FF4404;
+    --acc-soft: rgba(255, 68, 4, .16);
+    --veil: rgba(255, 68, 4, .08);
+    --aurora-warm-c: rgba(255, 68, 4, .09);
+    --aurora-cool-c: rgba(88, 132, 255, .08);
+    --sheen-c: rgba(255, 255, 255, .05);
+    --cielo-c: rgba(255, 255, 255, .055);
   }
 }
 
@@ -223,54 +329,74 @@
    negra mientras las capturas ya se habían cambiado a las claras. */
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #ffffff;
+  --bg: #F2F4F8;
   --surface: #ffffff;
-  --surface-2: #f3f3f7;
-  --line: #dcdde5;
-  --line-2: #b9bbc6;
-  --ink: #000000;
-  --ink-2: #60646c;
-  --ink-3: #6f737b;
-  --ink-4: #8b8d98;
-  --sel: rgba(120, 120, 128, .12);
-  --rail: rgba(120, 120, 128, .08);
-  --glass: rgba(255, 255, 255, .78);
-  --float: rgba(255, 255, 255, .86);
-  --rim: inset 0 .5px 0 rgba(255, 255, 255, .7);
-  --ring: rgba(0, 0, 0, .09);
-  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .04), 0 24px 64px -18px rgba(0, 0, 0, .22);
+  --surface-2: #EAEDF3;
+  --line: #DCE0E8;
+  --line-2: #B7BDC9;
+  --ink: #0C1016;
+  --ink-2: #4A5260;
+  --ink-3: #5A6270;
+  --ink-4: #666E7B;
+  --sel: rgba(120, 126, 140, .11);
+  --sel-solida: #E9ECF2;
+  --rail: rgba(255, 255, 255, .55);
+  --trama: rgba(12, 16, 22, .07);
+  --glass: rgba(250, 252, 255, .58);
+  --float: rgba(255, 255, 255, .88);
+  /* El velo de un panel que tapa media pantalla —el menú de móvil—: casi opaco,
+     porque detrás puede haber un botón naranja y no un párrafo quieto. */
+  --panel: rgba(252, 253, 255, .97);
+  --rim: inset 0 .5px 0 rgba(255, 255, 255, .9);
+  --ring: rgba(16, 20, 28, .09);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(16, 20, 28, .04), 0 24px 64px -18px rgba(16, 20, 28, .22);
   /* La misma ventana, apuntada: la pieza no cambia de elevación —sigue teniendo
      sombra y ni un borde—, solo flota dos píxeles más y su sombra se abre con
      ella. Una elevación por pieza, la misma en los dos estados. */
-  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .05), 0 34px 80px -16px rgba(0, 0, 0, .26);
-  --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .6);
-  --acc-text: #c93f04;
-  --acc-soft: rgba(255, 89, 0, .1);
-  --veil: rgba(255, 89, 0, .055);
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(16, 20, 28, .05), 0 34px 80px -16px rgba(16, 20, 28, .26);
+  --shadow-nav: 0 16px 36px -20px rgba(16, 20, 28, .26), 0 1px 2px rgba(16, 20, 28, .04);
+  --peso-titular: 600;
+  --peso-medio: 500;
+  --acc-text: #C13D02;
+  --acc-soft: rgba(255, 68, 4, .10);
+  --veil: rgba(255, 68, 4, .045);
+  --aurora-warm-c: rgba(255, 68, 4, .08);
+  --aurora-cool-c: rgba(88, 132, 255, .055);
+  --sheen-c: rgba(255, 255, 255, .75);
+  --cielo-c: rgba(255, 255, 255, .45);
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0a0a;
-  --surface: rgba(255, 255, 255, .053);
+  --bg: #0B0D12;
+  --surface: rgba(255, 255, 255, .05);
   --surface-2: rgba(255, 255, 255, .075);
-  --line: rgba(255, 255, 255, .11);
-  --line-2: rgba(255, 255, 255, .20);
-  --ink: rgba(255, 255, 255, .96);
-  --ink-2: rgba(236, 236, 236, .70);
-  --ink-3: rgba(236, 236, 236, .58);
-  --ink-4: rgba(236, 236, 236, .46);
+  --line: rgba(255, 255, 255, .085);
+  --line-2: rgba(255, 255, 255, .16);
+  --ink: #EEF1F6;
+  --ink-2: rgba(214, 222, 235, .72);
+  --ink-3: rgba(214, 222, 235, .64);
+  --ink-4: rgba(214, 222, 235, .56);
   --sel: rgba(255, 255, 255, .06);
+  --sel-solida: #20262F;
   --rail: rgba(255, 255, 255, .045);
-  --glass: rgba(15, 15, 15, .72);
-  --float: rgba(18, 18, 18, .80);
-  --rim: inset 0 .5px 0 rgba(255, 255, 255, .09);
+  --trama: rgba(255, 255, 255, .05);
+  --glass: rgba(19, 23, 31, .72);
+  --peso-titular: 630;
+  --peso-medio: 515;
+  --float: rgba(19, 23, 31, .80);
+  --panel: rgba(13, 17, 23, .96);
+  --rim: inset 0 .5px 0 rgba(255, 255, 255, .10);
   --ring: rgba(255, 255, 255, .13);
   --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
   --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .55), 0 34px 80px -16px rgba(0, 0, 0, .78);
-  --shadow-nav: 0 12px 28px -22px rgba(0, 0, 0, .9);
-  --acc-text: #ff7b3d;
-  --acc-soft: rgba(255, 89, 0, .16);
-  --veil: rgba(255, 89, 0, .1);
+  --shadow-nav: 0 18px 40px -20px rgba(0, 0, 0, .7), 0 1px 2px rgba(0, 0, 0, .4);
+  --acc-text: #FF4404;
+  --acc-soft: rgba(255, 68, 4, .16);
+  --veil: rgba(255, 68, 4, .08);
+  --aurora-warm-c: rgba(255, 68, 4, .09);
+  --aurora-cool-c: rgba(88, 132, 255, .08);
+  --sheen-c: rgba(255, 255, 255, .05);
+  --cielo-c: rgba(255, 255, 255, .055);
 }
 
 /* ── 2 · Base ────────────────────────────────────────────────────────────── */
@@ -283,21 +409,103 @@ body {
   background: var(--bg);
   color: var(--ink);
   font: 400 var(--t-lg)/1.47 var(--font);
-  /* El mismo interletraje que Apple aplica a su cuerpo (−0,374 px a 17 px, que
-     es −0,022 em): su texto se lee apretado porque el trazo ya va ajustado, y
-     sin esto el nuestro se lee suelto a cualquier tamaño. Hereda a todo lo que
-     no fije el suyo, que es exactamente lo que se busca. */
-  letter-spacing: -.022em;
-  /* La app ajusta el trazo de Inter al tamaño y el juego de caracteres alterno
-     que usa. El sitio hace lo mismo para que el texto se vea igual de asentado,
-     no para «parecerse»: son los mismos ajustes del mismo tipo. */
+  /* El interletraje es el de la app: −3 % en todo el documento, declarado una
+     sola vez aquí y sin que ninguna regla lo vuelva a escribir. SF Pro ya es
+     una letra estrecha y con aire, y ese punto de compresión es lo que hace
+     que un titular se lea como un titular. */
+  letter-spacing: -.03em;
+  /* Los mismos ajustes del mismo tipo que usa la app: el trazo se ajusta al
+     tamaño, la cifra es tabular para que las columnas de datos se alineen, y
+     la negrita no se fabrica —SF Pro llega a los nueve cortes y una falsa
+     negrita desalinea la mancha—. */
   font-optical-sizing: auto;
-  font-feature-settings: "cv11";
+  font-synthesis-weight: none;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
+
+/* El contenido es una lámina opaca, y el pie vive detrás de ella.
+
+   Es lo que hace que el pie se revele en vez de llegar: se queda pegado al canto
+de abajo de la ventana desde el primer píxel, tapado por el contenido, y cuando
+   la página se acaba lo que sube es el contenido y el pie aparece debajo, ya
+   puesto. Para que eso funcione `main` tiene que ser opaco y pintarse por
+   encima; y como una capa opaca habría tapado las luces del lienzo, las luces
+   se mudan aquí dentro, donde se pintan por encima del fondo sólido y por
+   debajo del texto. El fondo que se ve es exactamente el de antes.
+
+   Solo se hace así de ancho para arriba: en un teléfono el pie puede no caber
+   en una pantalla, y un pie pegado que no cabe no se puede leer entero. Ahí se
+   queda en el flujo y llega con el documento, como cualquier otra pieza. */
+main {
+  position: relative; z-index: 1; background: var(--bg);
+  /* La lámina empieza en el canto MISMO de la ventana, no donde acaba la barra:
+     sube `--nav-h` por encima de su sitio y devuelve ese alto como relleno, así
+     el contenido no se mueve ni un píxel y el fondo sí gana los 66 px de arriba.
+     Sin esto, la franja de la barra era otra superficie —la del `body`, sin
+     grano ni luces— y se leía como una banda pegada al canto con su canto
+     visible (y el cristal de la barra, sobre ese fondo más apagado, salía más
+     oscuro de lo que es). La barra flota por encima (z-index 20): sigue siendo
+     la misma píldora de cristal, pero ahora sobre la misma luz que el resto. */
+  margin-top: calc(-1 * var(--nav-h));
+  padding-top: var(--nav-h);
+}
+
+/* El lienzo: cuatro luces en vez de tres, y una capa de grano encima.
+
+   La primera versión tenía tres —brasa arriba a la derecha, hielo abajo a la
+   izquierda y un brillo vertical— y dejaba dos esquinas planas: el plano se leía
+   como una página con dos manchas, no como un espacio con luz. Ahora hay un
+   segundo hielo, muy tenue, en el hombro de arriba a la izquierda, que da
+   profundidad al fondo sin añadir un tercer color: la luz entra por tres sitios
+   distintos y la página se lee como un volumen.
+
+   Es `fixed` para que la luz no se vaya con el desplazamiento —la página se
+   mueve dentro del mismo espacio— y va por detrás del contenido con
+   `z-index: -1`: el fondo del `body` se pinta en el lienzo del documento, así
+   que esta capa queda por encima de él y por debajo de todo lo demás.
+
+   La caja mide un ocho por ciento más que la ventana por arriba y por abajo
+   porque la capa deriva: con el desplazamiento se mueve setenta píxeles hacia
+   arriba y, sin esa holgura, el canto inferior dejaría ver el fondo liso. */
+main::before {
+  content: ""; position: fixed; inset: -8% 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(180deg, var(--cielo-c), transparent 240px),
+    radial-gradient(72% 50% at 84% -6%, var(--aurora-warm-c), transparent 64%),
+    radial-gradient(66% 46% at -2% 108%, var(--aurora-cool-c), transparent 68%),
+    radial-gradient(44% 30% at 4% 0%, var(--aurora-cool-c), transparent 74%),
+    var(--sheen);
+}
+/* El grano, en su propia capa y por encima de las luces. Va en `soft-light` para
+   que no aclare ni oscurezca el fondo: solo le cambia la textura.
+
+   Va `absolute` y no `fixed`, y no es un detalle: medido en el navegador, esta
+   era la barra que se veía en lo alto de la página. Como capa `fixed` dentro de
+   `main`, el grano se pintaba en todo el lienzo de la ventana, incluidos los
+   66 px de la barra de navegación que quedan POR ENCIMA de `main`; allí el
+   `soft-light` levantaba el fondo diez niveles y en el canto superior del
+   contenido el color caía de golpe —una franja clara de lado a lado, el fondo
+   del pie asomando arriba—. Anclada a `main` la capa se recorta con él: el
+   grano vive donde vive el contenido y la franja de la barra queda con el
+   fondo pelado, sin canto que ver. */
+main::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: var(--grano); background-size: 160px 160px;
+  opacity: .22; mix-blend-mode: soft-light;
+}
+/* La deriva de la luz: setenta píxeles en todo el documento. No se ve el
+   movimiento —no hay nada que comparar— y sin embargo la página no está muerta
+   cuando alguien la recorre despacio. Es `translate` sobre una capa fija, así
+   que la mueve el compositor y no se repinta el fondo en cada fotograma. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    main::before { animation: deriva-luz linear both; animation-timeline: scroll(root); }
+  }
+}
+@keyframes deriva-luz { from { translate: 0 0; } to { translate: 0 -70px; } }
 
 a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: .06em; }
 img { max-width: 100%; }
@@ -323,20 +531,110 @@ body { caret-color: var(--acc); }
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
 
 /* ── 3 · Navegación ──────────────────────────────────────────────────────── */
+/* La barra flota. No es una franja pegada al canto de la ventana —eso la
+   convierte en parte del marco de la página— sino una pieza de cristal que se
+   apoya sobre el contenido con aire alrededor, como la barra lateral de la app.
+   Por eso el `padding` está aquí, en el contenedor, y el fondo en `-in`: el
+   hueco que la separa del canto forma parte de la pieza, y el contenido sigue
+   pasando por debajo de las dos.
+
+   El material es el cristal del sistema —`--glass`, el velo de porcelana en
+   claro y de humo en oscuro— con el desenfoque por debajo: eso es lo que
+   devuelve la página que pasa por detrás convertida en campo de color, sin
+   letras. La pieza NUNCA se pinta opaca: el velo al 97 % con el que se
+   defendía la barra era el parche de un desenfoque que todavía dejaba leer los
+   titulares; con el desenfoque como material, el velo puede quedarse en el
+   del sistema y la barra sigue tapando lo que hay que tapar.
+
+   Lo que hace que el cristal parezca cristal y no plástico son las tres cosas
+   de la última línea: la luz que se posa encima (un halo que baja desde lo
+   alto, como la luz en una mesa), el filo de luz de un píxel en el borde
+   superior y la sombra que el canto inferior proyecta sobre lo que pasa por
+   debajo. La sombra de la pieza solo aparece al bajar, que es cuando hay algo
+   de verdad debajo que justifique que la pieza se eleve. */
 .nav {
   position: sticky; top: 0; z-index: 20;
-  background: var(--glass);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border-bottom: 1px solid var(--line);
+  padding: var(--s-3) var(--gutter) 0;
+  background: transparent;
 }
+/* El aire de arriba no se toca nunca: la píldora flota a 12 px del canto con la
+   página parada y con la página en marcha. Aquí hubo una franja de desenfoque
+   sin tinte que tapaba esos 22 px —para que la letra no asomara cortada por el
+   hueco— y el resultado era peor que el problema: una banda visible de lado a
+   lado por encima de la barra, con su canto donde acababa el desenfoque. El
+   hueco se queda limpio; la píldora ya se separa sola. */
+/* La píldora mide lo que mide el CONTENIDO, no el contenedor: el canalón ya lo
+   pone `.wrap` como relleno, así que aquí se le resta ese mismo canalón a la
+   medida tope. Antes iba de borde a borde de los 1080 px y quedaba 48 px más
+   ancha por cada lado que la ventana y que el texto, que se alinean a 984: la
+   barra parecía flotar sobre otra retícula. Ahora sus dos cantos caen en la
+   misma vertical que los de la captura. */
 .nav-in {
-  max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter);
-  height: var(--nav-h); display: flex; align-items: center; gap: var(--s-5);
+  position: relative;
+  max-width: calc(var(--max) - 2 * var(--gutter)); margin: 0 auto; padding: 0 var(--s-4);
+  height: var(--nav-h); display: flex; align-items: center; gap: var(--s-4);
+  border-radius: var(--r-panel);
+}
+/* El material de la píldora va en este pseudo-elemento, y no en `.nav-in`, por
+   una razón medida: `backdrop-filter` convierte al elemento que lo lleva en raíz
+   de fondo, y a partir de ahí un hijo suyo con desenfoque ya no ve la página,
+   solo el interior de la barra. Con el cristal en `.nav-in`, el menú de móvil
+   —que cuelga de ahí— dejaba leer las preguntas de detrás, nítidas: no era
+   cristal, era un rectángulo a medio pintar. Con la pieza pintada aquí,
+   `.nav-in` vuelve a ser un contenedor normal y el desplegable hereda el mismo
+   material de verdad.
+
+   El halo va como imagen y el velo como color: la luz que se posa encima es la
+   misma en los dos temas —la luz de una ventana no cambia de tema—, y el velo es
+   el del sistema, que es de lo que la pieza está hecha. */
+.nav-in::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
+    var(--glass);
+  /* El material del cristal: desenfoque y brillo en pareja, que es la receta de
+     la barra de Upscayl —`backdrop-blur-sm` = `blur(4px)` y
+     `backdrop-brightness-150` = `brightness(1.5)`, leídos en su clase— aplicada
+     a nuestro velo. El brillo no aclara la página, aclara el vidrio: es lo que
+     hace que el velo se lea como luz y no como un gris sucio, y es la mitad del
+     efecto del que sale la trama.
+
+     Los valores del original son 4 y 1,5, y aquí son 10 y 1,25. Se aparta a
+     sabiendas y por una razón medida: con cuatro píxeles y brillo 1,5, la
+     captura de la app que pasa por debajo —texto blanco sobre negro— se leía a
+     través de la barra y el brillo la levantaba todavía más; una barra que deja
+     leer lo de detrás no es una barra. Con 10 px la forma sigue ahí y la letra
+     no. Y no se vuelve a los 28 px de antes: entonces el desenfoque convertía la
+     página en campo de color y la trama no tenía nada que enseñar detrás. */
+  backdrop-filter: blur(14px) brightness(1.06);
+  -webkit-backdrop-filter: blur(14px) brightness(1.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5),
+              inset 0 -1px 0 rgba(16, 20, 28, .06),
+              0 0 0 .5px var(--ring), var(--shadow-nav);
+}
+/* La trama de puntos, encima del cristal y debajo de las letras.
+
+   Es la misma retícula de la barra de Upscayl —punto de un píxel cada cuatro—,
+   pero al revés de como estaba. Allí el degradado deja el punto sin pintar y
+   pinta el resto: por esos agujeros asoma la página, que es un detalle bonito
+   cuando detrás hay una foto y una mota de suciedad cuando detrás hay papel
+   blanco. Medido aquí: sobre el fondo claro de la portada los huecos se leían
+   como puntitos blancos en los cantos de la barra, que es exactamente lo que
+   parecían. Ahora se pinta el punto y se deja el hueco: tinta del tema al 7 %,
+   sin nada que asome.
+
+   Y está siempre, no solo al bajar. La barra tiene un solo estado —el corto, el
+   que lleva la trama—, y ese estado la identifica desde el primer fotograma. */
+.nav-in::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: inherit;
+  background-image: radial-gradient(circle, var(--trama) 1px, transparent 1.05px);
+  background-size: 4px 4px;
 }
 .brand {
   display: flex; align-items: center; gap: var(--s-2);
-  font: 600 var(--t-lg)/1 var(--font-display); letter-spacing: -.03em;
+  font: var(--peso-titular) var(--t-lg)/1 var(--font-display); letter-spacing: -.03em;
   text-decoration: none; margin-right: var(--s-1);
 }
 /* El símbolo del sitio es el favicon de la app, copiado tal cual al construir
@@ -346,16 +644,48 @@ body { caret-color: var(--acc); }
    placa es un cuadrado negro pegado al nombre. El pétalo sale del mismo archivo
    (build.py lo extrae del favicon), así que el símbolo sigue siendo uno solo. */
 .brand .logo { width: 22px; height: 22px; display: block; flex: none; color: var(--mark); }
-.brand b { font-weight: 600; }
+.brand b { font-weight: var(--peso-titular); }
 
-.nav-links { display: flex; gap: var(--s-1); list-style: none; margin: 0; padding: 0; }
+.nav-links { display: flex; align-items: center; gap: var(--s-1); list-style: none; margin: 0; padding: 0; }
+/* El filete que separa la marca del menú. Es el mismo recurso con el que el
+   resto del sitio divide —un filete de un píxel, nada de cajas—, y es lo que
+   hace que la marca y las puertas se lean como dos zonas de la barra y no como
+   siete palabras seguidas. Es decoración y no se anuncia: va en un
+   pseudo-elemento, que ningún lector de pantalla recorre. */
+.nav-links::before {
+  content: ""; flex: none; width: 1px; height: 18px;
+  margin-right: var(--s-3); background: var(--line);
+}
 .nav-links a {
   display: block; padding: 7px var(--s-3); border-radius: var(--r-ctl);
-  font-size: var(--t-sm); color: var(--ink-2); text-decoration: none;
-  transition: color var(--t-rapido) var(--ease-io), background-color var(--t-rapido) var(--ease-io);
+  /* El menú va medio punto más grueso que un texto corriente y con el
+     interletraje suelto: a 13,5 px el −3 % del documento aprieta tanto que las
+     palabras se leen como un bloque y la barra pierde aire. Es el mismo ajuste
+     que ya llevan los controles pequeños del sitio. */
+  font-size: var(--t-sm); font-weight: var(--peso-medio); letter-spacing: -.01em;
+  color: var(--ink-2); text-decoration: none;
+  transition: color var(--t-medio) var(--ease-out), background-color var(--t-medio) var(--ease-out);
 }
-.nav-links a:hover { color: var(--ink); background: var(--sel); }
-.nav-links a[aria-current="page"] { color: var(--ink); background: var(--sel); }
+/* El realce del puntero son las dos cosas a la vez: la CASILLA que marca la
+   página en la que estás y la palabra en brasa. Sin subrayado y sin filete. La
+   casilla va con `--sel-solida` y no con `--sel` a propósito: tapa la trama de
+   puntos de la píldora, que si no se veía por dentro del recuadro recién
+   aparecido. La brasa es la de la casa, la misma del botón de descarga y de
+   los enlaces del pie: `--acc`, no su variante de texto. En claro sale algo por
+   debajo del 4,5:1 que se le pide a un texto menudo (3,4:1 sobre la casilla),
+   y se queda así a sabiendas: es un realce de paso, la palabra sigue ahí y el
+   estado marcado no depende de él. */
+.nav-links a:hover { color: var(--acc); background: var(--sel-solida); }
+/* Y sobre la puerta de la página que se está leyendo el hover no cambia nada:
+   ya está marcada, y una segunda marca encima de la primera solo la ensucia. */
+.nav-links a[aria-current="page"]:hover { color: var(--ink); background: var(--sel-solida); }
+/* La puerta de la página que se está leyendo lleva su filete, como la tarjeta
+   que representa: sin él, el gris del fondo es el mismo que el del puntero por
+   encima y no se distingue «estás aquí» de «puedes ir». */
+.nav-links a[aria-current="page"] {
+  color: var(--ink); background: var(--sel-solida);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
 .nav-acts { margin-left: auto; display: flex; align-items: center; gap: var(--s-2); }
 
 /* Botón de icono: tema, idioma y menú. 34px de lado, 46px de área táctil
@@ -368,7 +698,9 @@ body { caret-color: var(--acc); }
   transition: color var(--t-rapido) var(--ease-io), background-color var(--t-rapido) var(--ease-io),
               border-color var(--t-rapido) var(--ease-io), transform .26s var(--ease);
 }
-.icon-btn:hover { color: var(--ink); background: var(--sel); }
+/* La casilla del control tapa la trama por la misma razón que la del menú: es
+   una superficie que aparece, y no puede salir tramada por dentro. */
+.icon-btn:hover, .icon-btn:focus-visible { color: var(--ink); background: var(--sel-solida); }
 /* El mismo apretado que un botón de la casa: un control se hunde cuando lo
    pulsas, aunque solo mida 34px. Es la única respuesta que tiene un botón de
    icono, y sin ella el toque no se siente. */
@@ -378,6 +710,7 @@ body { caret-color: var(--acc); }
 .icon-btn svg { width: 17px; height: 17px; }
 
 .nav-toggle { display: none; }
+
 
 /* ── El botón de apoyo (Ko-fi) ─────────────────────────────────────────────
    El widget oficial no escribe un enlace y ya: se escribe su propio <style>
@@ -413,14 +746,17 @@ body { caret-color: var(--acc); }
   height: 34px;
   min-width: 0;
   padding: 0 var(--s-3) !important;
-  background: var(--surface-2) !important;
+  /* Superficie opaca: en el tema oscuro `--surface-2` es un velo translúcido y
+     la trama de la barra se veía por dentro del botón. Un control tapa lo que
+     tiene detrás o deja de ser un control. */
+  background: color-mix(in srgb, var(--bg) 90%, var(--ink) 10%) !important;
   border: 1px solid var(--line) !important;
   border-radius: var(--r-ctl);
   box-shadow: none;
   color: var(--ink);
   font-family: var(--font) !important;
   font-size: var(--t-sm) !important;
-  font-weight: 500 !important;
+  font-weight: var(--peso-medio) !important;
   line-height: 1 !important;
   transition: border-color var(--t-rapido) var(--ease-io), color var(--t-rapido) var(--ease-io),
               transform .26s var(--ease), opacity var(--t-rapido) var(--ease-io);
@@ -474,14 +810,12 @@ body { caret-color: var(--acc); }
 }
 
 @media (max-width: 900px) {
-  /* El menú de móvil es opaco, y no por gusto. Con la superficie flotante
-     translúcida (`--float`, al 86 %) el titular de la página se leía a través
-     del menú abierto: el desenfoque no llega a aplicarse ahí —medido en el
-     navegador, con la superficie puesta a transparente el texto de debajo sale
-     nítido, así que lo que se veía era la transparencia y nada más—. Un
-     desplegable tapa lo que hay debajo; si se puede leer la página a través de
-     él, no es un cristal: es un defecto. La barra de arriba sí va en cristal,
-     porque no tapa nada: el contenido pasa por debajo al hacer scroll. */
+  /* El menú de móvil es el mismo cristal que la barra, con su halo, su filo y
+     su sombra: es la misma pieza, abierta hacia abajo. Antes iba opaco porque el
+     desenfoque no llegaba a aplicarse —el cristal colgaba de `.nav-in`, que era
+     raíz de fondo por su propio `backdrop-filter`, y el panel no veía la
+     página—; ahora el material de la barra vive en `.nav-in::before` y el
+     desplegable vuelve a ver lo que hay detrás. */
   /* El menú se despliega en vez de aparecer de golpe: baja ocho píxeles y se
      funde, que es lo que hace un desplegable del sistema.
 
@@ -492,13 +826,57 @@ body { caret-color: var(--acc); }
      con la versión de `allow-discrete` entraba con opacidad 1 y sin transición
      ninguna). `visibility: hidden` lo saca además del árbol de accesibilidad, así
      que cerrado no se puede tabular hasta él y no recibe toques. */
+  /* El desplegable es otra pieza flotante, no una franja: misma anchura que la
+     barra, mismos cantos, mismo radio. Pegado al canto de la ventana parecía la
+     página desplegada; separado, se lee como lo que es, un panel que se abre
+     debajo de la barra. */
+  /* El material del desplegable es el de la barra, valor por valor: el mismo
+     velo, el mismo halo, el mismo filo de un píxel arriba y abajo, el mismo
+     brillo y la misma sombra que la barra usa cuando se asienta. Antes llevaba
+     su propia receta —28 px de desenfoque y saturación al 190 %—, y abierto se
+     leía como otra pieza: más turbia que la barra de la que cuelga. Ahora se
+     mide igual que ella (blur 14 · brightness 1,25, como
+     `.nav[data-scrolled="true"] .nav-in::before`), que es el estado que le toca
+     a un panel desplegado sobre contenido. */
   .nav-links {
     display: flex;
-    position: absolute; left: 0; right: 0; top: var(--nav-h);
-    flex-direction: column; gap: var(--s-1); padding: var(--s-3) var(--gutter) var(--s-4);
-    background: var(--bg); border-bottom: 1px solid var(--line);
+    position: absolute; left: 0; right: 0;
+    top: calc(var(--s-3) + var(--nav-h) + var(--s-2));
+    flex-direction: column; align-items: stretch; gap: var(--s-1); padding: var(--s-3);
+    border-radius: var(--r-panel);
+    /* La trama va como primera capa del PROPIO panel, no en un pseudo-elemento.
+       Así cubre el recuadro entero hasta el canto —el fondo se pinta en la caja
+       de borde, padding incluido— y no hace falta nada más: ni `inset`, ni
+       medidas, ni `z-index`, ni una segunda capa que apagar y encender. Antes
+       era un pseudo absoluto y dejaba sin cubrir una franja a la derecha y
+       abajo, además de pintarse por encima de las letras.
+
+       Misma receta que la barra y un punto más de tinta, porque el panel tapa
+       una superficie cuatro veces mayor y a la misma densidad se lee como
+       ruido; con el paso de 4 px y el punto de un píxel, la trama se ve sin
+       competir con las letras. */
+    /* El velo del panel NO es el de la barra: es `--float`, el de las superficies
+       que flotan. Medido en un teléfono, con el velo de la barra —58 % en
+       claro— el botón naranja de descarga que quedaba justo debajo asomaba por
+       el panel y teñía de naranja media lista, con «Privacidad» a medio leer.
+       Una franja flotante puede ser casi transparente porque detrás hay texto
+       quieto; un panel que tapa media pantalla, no. */
+    background:
+      radial-gradient(circle, var(--trama) 1px, transparent 1.05px),
+      radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
+      var(--panel);
+    background-size: 4px 4px, auto, auto;
+    -webkit-backdrop-filter: blur(14px) brightness(1.25);
+    backdrop-filter: blur(14px) brightness(1.25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5),
+                inset 0 -1px 0 rgba(16, 20, 28, .06),
+                0 0 0 .5px var(--ring), var(--shadow-nav);
     opacity: 0; visibility: hidden;
   }
+  /* El filete separaba la marca del menú en una fila; en una lista apilada
+     sería una raya suelta en la primera línea. La trama ya no vive aquí: va en
+     el fondo del panel, arriba de todo. */
+  .nav-links::before { display: none; }
   .nav-links a { padding: var(--s-3); font-size: var(--t-lg); }
   .nav[data-open="true"] .nav-links { opacity: 1; visibility: visible; }
   @media (prefers-reduced-motion: no-preference) {
@@ -527,31 +905,60 @@ body { caret-color: var(--acc); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
   height: 42px; padding: 0 var(--s-5); border-radius: var(--r-btn);
-  font: 500 14.5px/1 var(--font); letter-spacing: -.01em;
+  font: var(--peso-medio) 14.5px/1 var(--font); letter-spacing: -.01em;
   text-decoration: none; white-space: nowrap; cursor: pointer;
   border: 1px solid var(--line); background: var(--surface-2); color: var(--ink);
-  transition: background-color var(--t-rapido) var(--ease-io), border-color var(--t-rapido) var(--ease-io),
-              transform var(--t-rapido) var(--ease), color var(--t-rapido) var(--ease-io),
-              filter var(--t-rapido) var(--ease-io);
+  /* El realce dura lo que tarda el ojo en seguirlo, no lo que tarda en cerrarse
+     una transición: 260 ms con la curva que se posa. La anterior iba en 160 ms y
+     pasaba de golpe, que es lo que lo hacía parecer un parpadeo. */
+  transition: background-color var(--t-toque) var(--ease-out), border-color var(--t-toque) var(--ease-out),
+              color var(--t-toque) var(--ease-out), box-shadow var(--t-lento) var(--ease-out);
 }
-.btn:hover { border-color: var(--line-2); }
-.btn:active { transform: scale(.97); }
+/* El realce del puntero es material, no efecto: el filete se aclara dos puntos,
+   el relleno se separa un cuatro por ciento del papel y una luz de medio píxel
+   se posa en el canto de arriba. Nada se mueve y nada cambia de tamaño. Antes
+   el relleno daba un salto del doce por ciento —que sobre una superficie clara
+   se lee como un cambio de color, no como una luz— y el brillo de la brasa
+   hacía que el botón parpadeara. */
+.btn:hover, .btn:focus-visible {
+  border-color: color-mix(in srgb, var(--line-2) 74%, var(--line));
+  background-color: color-mix(in srgb, var(--surface-2) 94%, var(--ink) 6%);
+  box-shadow: inset 0 .5px 0 color-mix(in srgb, #fff 55%, transparent);
+}
+.btn:active { transform: scale(.99); }
 .btn svg { width: 17px; height: 17px; flex: none; }
 .btn small { font: 400 var(--t-xs) var(--font-mono); color: var(--ink-3); }
 /* El único naranja de la pantalla suele ser este botón, y es EL naranja: el
    relleno es `--acc` —el #ff5900 de la app, el mismo de su botón, su pétalo y
    su icono— y la tinta es la blanca de la app. Las dos salen del producto
-   porque las dos lo identifican, y el porqué de la cifra que dan juntas (3,14:1)
-   está en el token. El realce al pasar por encima es el suyo, un 8 % de brillo:
-   es el gesto que la app hace en su propio botón. */
-.btn.primary { background: var(--acc); border-color: transparent; color: var(--acc-ink); box-shadow: var(--rim); }
-.btn.primary:hover { border-color: transparent; filter: brightness(1.08); }
+   porque las dos lo identifican, y el porqué de la cifra que dan juntas (3,45:1)
+   está en el token.
+
+   La respuesta al puntero no cambia ni el relleno ni la tinta, que es lo único
+   que este botón tiene justo: sube el brillo un cuatro por ciento, como hace la
+   app en su propio botón, y se posa con una sombra cálida corta. Antes eran
+   treinta píxeles de halo al cincuenta por ciento, que convertían el botón en un
+   faro; ahora son dieciocho muy diluidos: se nota que la pieza está un poco más
+   alta, sin ver de dónde sale la luz. */
+.btn.primary { background: var(--acc); border-color: transparent; color: var(--acc-ink); box-shadow: var(--rim); position: relative; isolation: isolate; }
+.btn.primary:hover, .btn.primary:focus-visible {
+  border-color: transparent;
+  /* Seis por ciento de blanco en el relleno en vez de un `filter: brightness`:
+     el brillo repinta la letra y el icono y el cambio se ve en el texto. Así la
+     brasa se aclara igual que se aclara un material bajo más luz. */
+  background-color: color-mix(in srgb, var(--acc) 94%, #fff);
+  filter: none;
+  box-shadow: var(--rim), 0 10px 22px -12px rgba(255, 68, 4, .5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn.primary { transition: none; }
+}
 /* «0.1.0 beta», dentro del botón, va en la misma tinta y a plena opacidad: la
    jerarquía la pone el tipo —mono, 12,5 px—, y con el relleno de la app apagar
    la tinta solo empeora lo único que este botón ya tiene justo. */
 .btn.primary small { color: inherit; }
 .btn.quiet { background: transparent; border-color: transparent; color: var(--ink-2); }
-.btn.quiet:hover { background: var(--sel); color: var(--ink); border-color: transparent; }
+.btn.quiet:hover, .btn.quiet:focus-visible { background: color-mix(in srgb, var(--sel) 82%, transparent); color: var(--ink); border-color: transparent; box-shadow: none; }
 .btn.lg { height: 48px; padding: 0 var(--s-5); font-size: 15.5px; }
 .btn.sm { height: 34px; padding: 0 var(--s-3); font-size: var(--t-sm); border-radius: var(--r-ctl); }
 .btn[aria-disabled="true"], .btn:disabled { opacity: .55; pointer-events: none; }
@@ -561,31 +968,42 @@ body { caret-color: var(--acc); }
 .ctas { display: flex; gap: 14px; flex-wrap: wrap; }
 
 /* ── 5 · Héroe ───────────────────────────────────────────────────────────── */
-.hero { position: relative; padding: 104px 0 var(--s-8); text-align: center; isolation: isolate; }
-/* El velo de brasa: el mismo fondo que la app se pone detrás de su interfaz
-   (un radial de brasa al 4 %). Es lo único decorativo del héroe, sale del
-   producto y no dibuja ninguna retícula. Aquí había una cuadrícula de 48px
-   enmascarada: una retícula que no medía nada, y por eso se ha ido. */
-.hero::before {
-  content: ""; position: absolute; inset: -12% 0 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(52% 44% at 50% 8%, var(--veil), transparent 72%);
-}
-.hero .mark { width: 108px; height: 108px; margin: 0 auto var(--s-6); display: block; color: var(--mark); }
+/* El héroe va más apretado de lo que estaba y con el aire medido en dos tramos
+   en vez de cuatro: la marca, el titular, la línea de apoyo y los botones son
+   UNA pieza —lo que se lee en los primeros tres segundos— y separarlos por
+   cuarenta y ocho píxeles cada uno los convertía en cuatro cosas sueltas que
+   había que recorrer bajando la vista. Lo que gana la página en aire lo pone la
+   sección siguiente, que es donde de verdad hace falta.
+
+   Y la ventana del producto sube a montarse sobre el borde del héroe: antes eran
+   dos bloques apilados —el texto y luego una captura— y ahora es una sola
+   composición, el texto y la app que cae justo debajo de los botones. */
+.hero { position: relative; padding: clamp(88px, 9.5vh, 128px) 0 var(--s-8); text-align: center; isolation: isolate; }
+/* El héroe no lleva foco propio. Aquí había un radial de brasa al cuatro por
+   ciento detrás del símbolo —el velo de la app— y en pantalla no se leía como
+   luz, se leía como un resplandor pegado al logo. El símbolo ya está sobre la
+   luz del lienzo, que es la misma de toda la página; no necesita otra. */
+.hero .mark { width: 92px; height: 92px; margin: 0 auto var(--s-5); display: block; color: var(--mark); }
+/* Aquí había un resplandor circular de 280 px detrás del pétalo, al quince por
+   ciento de brasa. Se ha quitado: el símbolo ya está sobre el velo del héroe —la
+   luz de la casa, la misma de todo el lienzo— y el halo añadía un segundo foco
+   que competía con el botón naranja de debajo. La marca respira; no brilla. */
+.marca-viva { position: relative; display: grid; place-items: center; }
 /* El titular de portada. Apple lleva su mayor titular de escritorio a 56 px con
    1,07 de interlineado y el interletraje casi neutro —a tamaños grandes su tipo
    ya viene apretado de fábrica, así que no se aprieta a mano—: esto son esos
    mismos números, no un 68 px que solo cabía en una pantalla ancha. */
 h1 {
-  font: 600 clamp(32px, 5.4vw, 56px)/1.07 var(--font-display); letter-spacing: -.008em;
-  margin: 0 auto var(--s-5); max-width: 15ch; text-wrap: balance;
+  font: var(--peso-titular) clamp(33px, 5.6vw, 60px)/1.03 var(--font-display); letter-spacing: -.035em;
+  margin: 0 auto var(--s-4); max-width: 16ch; text-wrap: balance;
 }
 .lede {
   font-size: clamp(var(--t-lg), 1.6vw, 21px); line-height: 1.4; letter-spacing: -.012em;
-  color: var(--ink-2); max-width: 30em; margin: 0 auto var(--s-6); text-wrap: pretty;
+  color: var(--ink-2); max-width: 32em; margin: 0 auto var(--s-6); text-wrap: pretty;
 }
 .ctas.center { justify-content: center; }
 .meta {
-  margin: var(--s-5) 0 0; font-size: var(--t-xs); color: var(--ink-3);
+  margin: var(--s-6) 0 0; font-size: var(--t-xs); color: var(--ink-3);
   display: flex; justify-content: center; flex-wrap: wrap;
 }
 .meta span + span::before { content: "·"; margin: 0 var(--s-3); color: var(--ink-4); }
@@ -625,23 +1043,11 @@ h1 {
    una caja que no pinta nada y que, sin esta línea, sería una caja en línea con
    un bloque dentro. En bloque, la imagen mide lo que medía. */
 .window picture { display: block; }
-/* La captura se puede abrir a su tamaño. En un teléfono no hay forma de leerla
-   dentro de la página: la interfaz de la app son 1180 px lógicos y ahí caben
-   350, así que su texto baja a un tercio y desaparece. Se probó a recortar la
-   ventana —enseñar solo un trozo, más grande— y sale peor: el recorte que hace
-   legibles las cifras deja fuera las etiquetas que las explican, y la lista
-   queda en «34,9 % · 148,2 GB» sin que se sepa de qué. Lo que sí funciona es no
-   meterla: la imagen entera, a su tamaño, en otra pestaña. El enlace está
-   siempre —también en el escritorio, donde es un «ver más grande» de toda la
-   vida— y el aviso que lo anuncia solo se pinta donde se necesita. */
-.window .ampliar { display: block; cursor: zoom-in; }
-.window .ampliar-aviso {
-  display: none; position: absolute; right: var(--s-3); bottom: var(--s-3);
-  padding: 4px 9px; border-radius: 999px; pointer-events: none;
-  font: 500 var(--t-2xs)/1 var(--font); letter-spacing: .02em;
-  color: var(--ink-2); background: var(--float); border: 1px solid var(--line);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-}
+/* La captura NO se puede ampliar. Aquí hubo un enlace a la imagen suelta, con
+   su «Ver más grande» y su lupa en el puntero, y se ha quitado a propósito: la
+   ventana es una pieza del sitio, no un archivo que se abre en otra pestaña, y
+   un `cursor: zoom-in` promete algo que ya no existe. La foto se queda en su
+   marco, a la medida que le toca. */
 /* Los tres semáforos de macOS estaban dibujados aquí con CSS, para que la
    captura se leyera como una ventana y no como un recorte. Ya no están, y el
    motivo es la única razón por la que esto se quita: una ventana de verdad los
@@ -659,29 +1065,53 @@ h1 {
    macOS— y no con porcentajes de la ventana. */
 /* La captura de portada: el aire de debajo es el mismo que el de una sección,
    porque para el lector es exactamente eso, el final del bloque de arriba. */
-.showcase { padding: 0 0 var(--s-9); }
+.showcase { padding: 0 0 var(--s-10); }
+/* En una página interior, detrás de la captura viene una sección con su propio
+   aire de arriba. Sumar los dos —ciento veintiocho más ciento treinta y seis—
+   dejaba un páramo entre la ventana y lo siguiente; aquí la captura suelta su
+   aire y lo pone la sección, que es quien sabe cuánto le toca. El escaparate de
+   la portada no entra: detrás tiene la parada de las fichas, que no lleva aire
+   propio y sí necesita separarse de la captura. */
+.showcase:has(+ section:not(.cuatro)) { padding-bottom: 0; }
+/* La ventana se mete un poco en el aire del héroe: es lo que la convierte en la
+   continuación de los botones y no en otra pieza debajo. En una página interior
+   no lo hace —ahí la cabecera no es un héroe y la captura es un bloque aparte—. */
+.hero + .showcase { margin-top: calc(-1 * var(--s-5)); }
 .showcase .window { max-width: var(--max); margin: 0 auto; }
 /* Arriba, en cambio, el bloque no se separa solo: en la portada el aire lo pone
    el propio héroe (`padding-bottom`), pero una cabecera interior no lleva aire
    abajo, así que su botón quedaba pegado a la ventana. Mismo hueco que el de una
    cabecera seguida de una sección. */
-section.head + .showcase { padding-top: var(--s-8); }
+section.head + .showcase { padding-top: var(--s-9); }
 
 /* ── 7 · Secciones ───────────────────────────────────────────────────────── */
-section { padding: var(--sec) 0; border-top: 1px solid var(--line); }
-section.plain { border-top: 0; }
+/* El filete que separa dos secciones no cruza la página entera: nace y muere
+   antes de los bordes, así que la línea no toca el canto de la ventana y la
+   página se lee como una lámina, no como una tabla. Es el mismo filete de
+   siempre —un píxel de `--line`—, solo que desvanecido en los extremos, que es
+   donde una línea recta de lado a lado parece un borde de marco. */
+section { position: relative; padding: var(--sec) 0; }
+section::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  /* Nace en la esquina izquierda y se disuelve hacia la derecha: es el canto de
+     una lámina que empieza donde empieza la página, no una raya centrada en
+     medio del aire. Los filetes cortos —los de las preguntas— sí se apagan por
+     los dos extremos, porque ahí la línea pertenece a la columna de texto. */
+  background: linear-gradient(90deg, var(--line) 0, var(--line) 46%, transparent 100%);
+}
+section.plain::before { content: none; }
 /* La etiqueta que nombra un bloque. En la escala pequeña, en versalitas y en la
    sans del sitio: la mono se queda para el código y las cifras, que es donde
    dice algo. */
 .eyebrow {
-  font: 600 var(--t-2xs)/1 var(--font); text-transform: uppercase; letter-spacing: .09em;
+  font: var(--peso-titular) var(--t-2xs)/1 var(--font); text-transform: uppercase; letter-spacing: .09em;
   color: var(--ink-3); margin: 0 0 var(--s-3); max-width: none;
 }
 h2 {
-  font: 600 clamp(24px, 3.6vw, 36px)/1.1 var(--font-display); letter-spacing: -.008em;
-  margin: 0 0 var(--s-4); max-width: 20ch; text-wrap: balance;
+  font: var(--peso-titular) clamp(24px, 3.6vw, 36px)/1.1 var(--font-display); letter-spacing: -.03em;
+  margin: 0 0 var(--s-5); max-width: 20ch; text-wrap: balance;
 }
-h3 { font: 600 18px/1.24 var(--font-display); letter-spacing: -.008em; margin: 0 0 var(--s-2); }
+h3 { font: var(--peso-titular) 19px/1.24 var(--font-display); letter-spacing: -.028em; margin: 0 0 var(--s-2); }
 .sub { color: var(--ink-2); font-size: var(--t-lg); line-height: 1.47; max-width: 34em; margin: 0; text-wrap: pretty; }
 .sub + .sub { margin-top: var(--s-3); }
 
@@ -689,46 +1119,72 @@ h3 { font: 600 18px/1.24 var(--font-display); letter-spacing: -.008em; margin: 0
    la izquierda, porque aquí no hay nada que centrar. Sin etiqueta encima: un
    rótulo que repite la palabra del titular no ordena nada, solo retrasa la
    lectura. El aire de arriba se lo queda la cabecera. */
-section.head { padding: var(--s-9) 0 0; border-top: 0; }
-section.head h1 { font-size: clamp(28px, 4.4vw, 48px); line-height: 1.08; margin: 0 0 var(--s-5); max-width: 24ch; }
+section.head { padding: var(--sec) 0 0; position: relative; isolation: isolate; }
+section.head::before { content: none; }
+/* La cabecera interior no lleva el velo del héroe —no hay símbolo que iluminar—
+   pero tampoco puede ser una página en blanco con un titular pegado arriba: una
+   luz muy tenue en el hombro izquierdo le da el mismo suelo que a la portada sin
+   añadir una pieza. Es un cuarto de la intensidad del héroe. */
+section.head::after {
+  /* La luz arranca en el canto de la VENTANA, no en el de la sección. Antes
+     empezaba en el borde de la sección —sesenta y seis píxeles más abajo— y el
+     degradado entraba a plena fuerza justo ahí: se veía una banda horizontal
+     de lado a lado por encima del titular, como una franja pegada al fondo.
+     Subiéndola lo que mide la barra, su canto cae fuera de la pantalla y lo
+     único que se ve es la luz. */
+  content: ""; position: absolute; z-index: -1;
+  top: calc(-1 * (var(--nav-h) + var(--s-3))); left: 0; right: 0;
+  height: calc(60% + var(--nav-h) + var(--s-3));
+  pointer-events: none;
+  background: radial-gradient(52% 84% at 8% 0%, var(--veil), transparent 74%);
+}
+section.head h1 { font-size: clamp(28px, 4.4vw, 48px); line-height: 1.08; margin: 0 0 var(--s-6); max-width: 24ch; }
 section.head .lede { margin: 0; }
-section.head .ctas { margin-top: var(--s-6); }
+section.head .ctas { margin-top: var(--s-7); }
 /* Los datos que deciden una descarga —sistema, tamaño, versión— van pegados al
    botón que la ofrece. En una cabecera alineada a la izquierda, la línea se
    alinea con lo de arriba en vez de quedar centrada bajo el botón. */
 section.head .meta { justify-content: flex-start; }
-section.head + section { border-top: 0; padding-top: var(--s-8); }
+/* La cabecera no es una sección con cuerpo: su aire de abajo lo pone la que
+   viene. Estaba en 96 px y la primera pieza caía a menos de la mitad de lo que
+   cae cualquier bloque en el resto del sitio; ahora es el mismo aire de sección,
+   así que todas las páginas respiran igual después del titular. */
+section.head + section { padding-top: var(--sec); }
+section.head + section::before { content: none; }
 
 /* ── 8 · Rejilla de celdas (filete de 1px) ───────────────────────────────── */
 .grid {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-panel);
+  margin-top: var(--head); border: 1px solid var(--line); border-radius: var(--r-panel);
   overflow: hidden; background: var(--surface);
 }
-.cell { padding: var(--s-6); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+/* Cuando la rejilla, la lista de vistas, los pasos o la tabla ABREN la sección
+   que sigue a la cabecera de una página, no llevan su propio aire de arriba: el
+   que separa del titular ya lo pone la sección, y sumarle el del bloque dejaba
+   ese primer hueco dos veces más grande que el de cualquier otra sección. */
+section.head + section :is(.grid, .tools, .steps, .table) { margin-top: 0; }
+.cell { padding: clamp(28px, 3.4vw, 44px); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .cell:nth-child(2n) { border-right: 0; }
 .cell:nth-last-child(-n+2) { border-bottom: 0; }
 .cell .ic {
-  width: 36px; height: 36px; display: grid; place-items: center;
+  width: 40px; height: 40px; display: grid; place-items: center;
   border-radius: var(--r-ctl); background: var(--surface-2);
-  border: 1px solid var(--line); margin-bottom: var(--s-5); color: var(--ink);
+  border: 1px solid var(--line); margin-bottom: var(--s-6); color: var(--ink);
 }
-.cell .ic svg { width: 18px; height: 18px; }
-.cell p { margin: 0 0 var(--s-4); color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.cell .ic svg { width: 19px; height: 19px; }
+.cell p { margin: 0 0 var(--s-5); color: var(--ink-2); font-size: var(--t-md); line-height: 1.55; }
 .cell .detail {
   font-size: var(--t-sm); color: var(--ink-3);
   display: flex; align-items: center; gap: var(--s-2);
 }
 .cell .detail .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--acc); flex: none; }
-.cell a.cell-link { text-decoration: none; display: block; }
-.cell a.cell-link:hover :is(h2, h3) { color: var(--acc-text); }
 /* En la rejilla de la privacidad el título de cada tarjeta es un `h2` y no un
    `h3`: esa rejilla va justo debajo del titular de la página, sin un titular de
    sección por encima —igual que las nueve vistas de «Qué hace», que también son
    `h2`—, y un `h3` sin `h2` encima deja un hueco en el índice del documento que
    recorre quien usa un lector de pantalla. El nivel es el que le toca; el
    tamaño, el de la tarjeta. */
-.grid .cell h2 { font: 600 18px/1.24 var(--font-display); letter-spacing: -.008em; margin: 0 0 var(--s-2); }
+.grid .cell h2 { font: var(--peso-titular) 19px/1.24 var(--font-display); letter-spacing: -.008em; margin: 0 0 var(--s-2); }
 
 /* La misma rejilla, para tres bloques en vez de cuatro: sin cuarta celda, el
    filete que sobraba era el de la derecha del último. */
@@ -737,27 +1193,287 @@ section.head + section { border-top: 0; padding-top: var(--s-8); }
 .grid.tres .cell:nth-child(2n) { border-right: 1px solid var(--line); }
 .grid.tres .cell:last-child { border-right: 0; }
 
+/* ── 8b · Las cuatro cosas, una a una ────────────────────────────────────── */
+/* Cuatro fichas en fila, y la página se detiene a enseñarlas. Aquí hubo un
+   índice de filas —con su motivo: una rejilla de cajas iguales no dice en qué
+   orden se lee—. El motivo era bueno; lo que faltaba era tiempo. Con la
+   parada, el orden lo da el desplazamiento y no el ojo, así que cada pieza
+   puede ser una caja entera: la que llega está sola en pantalla, con la
+   anterior ya colocada al lado.
+
+   La ficha es cuadrada y no lleva nada que sobre: ni número, ni icono, ni una
+   línea de adorno. Con cuatro piezas iguales en fila, el número y el icono
+   repetidos cuatro veces no ordenaban nada —el orden lo da la parada— y el
+   icono dentro de un cuadrado era un borde dentro de otro. Quedan el nombre,
+   la frase y el dato, que es lo único que se viene a leer, y el aire es el
+   justo para que respire sin parecer vacía: menos relleno, menos alto, y todo
+   apoyado en el canto izquierdo.
+
+   El color tampoco es el blanco de la página: es el papel de la casa con una
+   gota de brasa, sin degradado y sin desenfoque. El degradado se probó y se
+   dejó: cuatro cajas de trescientos píxeles con una rampa de dos niveles se
+   pintan a bandas, y el grano del lienzo no las tapa porque no está encima de
+   la ficha. El desenfoque tampoco aportaría nada —detrás hay una luz, no una
+   fotografía— y costaría cuatro capas de GPU por fotograma justo cuando las
+   fichas se están moviendo. */
+.cuatro-fichas {
+  list-style: none; margin: var(--head) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-3);
+}
+/* La proporción vive en la celda de la rejilla y no en el enlace, y no es un
+   detalle: con el `aspect-ratio` en el enlace, la altura estirada de la fila le
+   devolvía una anchura calculada y las cuatro fichas medían 237, 235,4, 233,4 y
+   233,4. En la celda, el ancho lo pone la rejilla y la proporción solo decide la
+   altura; todos los cantos de abajo cierran a la misma línea. */
+.cuatro-ficha { min-width: 0; aspect-ratio: 1 / .95; }
+.cuatro-enlace {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; width: 100%; height: 100%;
+  min-height: 0;
+  padding: clamp(20px, 1.8vw, 24px);
+  border: 1px solid var(--line); border-radius: var(--r-panel);
+  /* El material: el papel de la casa, más frío por abajo. Un degradado de dos
+     tokens —`--surface` y `--surface-2`— que en claro deja una porcelana
+     ligeramente azulada, como el lienzo, y en oscuro un cristal ahumado. Nada
+     de brasa aquí: el naranja de la ficha es el trazo del dato y la pista de
+     abajo, y con las fichas teñidas el acento dejaba de señalar para ser
+     ambiente. La rampa es corta a propósito —cuatro niveles en 237 px—, así
+     que no se pinta a bandas. */
+  background: linear-gradient(180deg,
+    var(--surface),
+    color-mix(in srgb, var(--surface) 76%, var(--surface-2)));
+  text-decoration: none;
+  transition: border-color var(--t-rapido) var(--ease-io);
+}
+.cuatro-enlace h3 { font-size: 20px; line-height: 1.2; margin: 0 0 var(--s-2); }
+.cuatro-enlace p { margin: 0; color: var(--ink-2); font-size: var(--t-md); line-height: 1.45; text-wrap: pretty; }
+/* El dato: un filete tenue, un trazo de brasa y una línea de texto menudo. El
+   trazo es el único naranja de la ficha, y es el que separa el dato de la
+   frase; el punto redondo de las filas se cambió por el trazo porque en una
+   caja estrecha un punto suelto se lee como una viñeta. Va al pie, empujado
+   por `margin-top: auto`, así que las cuatro fichas cierran a la misma altura
+   aunque una frase ocupe un renglón más. */
+.cuatro-dato {
+  display: flex; align-items: center; gap: var(--s-2);
+  margin-top: auto; padding-top: var(--s-3);
+  border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  font-size: var(--t-xs); color: var(--ink-3);
+}
+.cuatro-dato::before { content: ""; width: 12px; height: 1px; background: var(--acc); flex: none; }
+/* El mismo realce de siempre: el filete se marca y el nombre se enciende. La
+   ficha no sube, no crece y no proyecta nada. */
+.cuatro-enlace h3 { transition: color var(--t-rapido) var(--ease-io); }
+@media (hover: hover) {
+  .cuatro-enlace:hover { border-color: color-mix(in srgb, var(--acc) 26%, var(--line)); }
+  /* La brasa cruda y la del tema oscuro son la misma: el titular de la ficha es
+     texto grande (20 px y peso medio), así que la razón que da —3,45:1— pasa el
+     3:1 que se le pide a una pieza de ese tamaño. Bajarla a `--acc-text` lo
+     apagaba a un granate que no es el naranja del producto. */
+  .cuatro-enlace:hover h3 { color: var(--acc); }
+}
+
+/* El foco de luz. La ficha se enciende bajo el puntero con la MISMA trama de la
+   barra —el punto de un píxel cada cuatro, con el hueco sin pintar—, pero no
+   como textura de fondo: como una luz que barre el papel. El puntero no mueve
+   nada ni desplaza la pieza; descubre una retícula que ya estaba ahí.
+
+   Son dos capas, y las dos cuelgan de la posición del puntero (`--luz-x` y
+   `--luz-y`, que escribe el guion): la trama de puntos, enmascarada con un
+   radial, y un rescoldo cálido muy tenue detrás. La máscara es lo que convierte
+   la retícula en foco, y por eso la capa mide lo que mide la ficha y no se
+   mueve: lo que viaja es la ventana que la deja ver.
+
+   Ahora la trama va en brasa y el rescoldo es más ancho y más difuso: el foco
+   se lee como calor debajo del papel, no como una luz recortada con un círculo.
+   Los dos pesos son bajos a propósito —el rescoldo al catorce por ciento y la
+   trama a un tercio de su tinta, sobre una máscara que se disuelve en cuarenta
+   píxeles—, porque el naranja de la página señala una sola acción y esta no es
+   una acción: es una respuesta al puntero. */
+.cuatro-enlace::before,
+.cuatro-enlace::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: inherit; opacity: 0;
+  transition: opacity var(--t-foco) var(--ease-out);
+}
+.cuatro-enlace::before {
+  background: radial-gradient(340px 300px at var(--luz-x, 50%) var(--luz-y, 50%),
+    color-mix(in srgb, var(--acc) 15%, transparent) 0%,
+    color-mix(in srgb, var(--acc) 7%, transparent) 36%,
+    transparent 70%);
+  filter: blur(12px);
+}
+.cuatro-enlace::after {
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--acc) 58%, transparent) .85px, transparent 1.1px);
+  background-size: 4px 4px;
+  -webkit-mask-image: radial-gradient(210px 210px at var(--luz-x, 50%) var(--luz-y, 50%),
+    #000 0%, rgba(0, 0, 0, .48) 34%, transparent 72%);
+  mask-image: radial-gradient(210px 210px at var(--luz-x, 50%) var(--luz-y, 50%),
+    #000 0%, rgba(0, 0, 0, .48) 34%, transparent 72%);
+  transition-duration: var(--t-lento);
+}
+@media (hover: hover) {
+  .cuatro-enlace:hover::before { opacity: .8; }
+  .cuatro-enlace:hover::after { opacity: .3; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cuatro-enlace::before, .cuatro-enlace::after { transition: none; }
+}
+
+/* La acción cierra la parada, y es su cuenta atrás. El borde del botón se dibuja
+   en brasa con lo que queda de recorrido —empieza arriba y da la vuelta en
+   sentido del reloj— y, cuando cierra el círculo, el botón se llena del mismo
+   naranja. Es una pieza que se gana al bajar, no un indicador que se mira al
+   lado, y contesta la única pregunta que se hace quien está parado: cuánto
+   queda. La pista anterior —una línea de lado a lado bajo la fila— medía una
+   cosa y pesaba como un mando.
+
+   El trazo va en un pseudo de un píxel, enmascarado a su propia caja menos el
+   relleno: eso deja un anillo del grosor del filete y nada más, así que la
+   brasa no toca ni la letra ni el fondo. El degradado cónico se corta con un
+   canto blando de 24 grados para que la cabeza de la línea no se vea como un
+   corte: es un borde que se está generando, no una aguja de reloj. */
+/* El mismo sello para los dos cierres de sección: el de las cuatro fichas y el
+   de la papelera. La cuenta la lleva la pieza a la que se quiere llegar, y por
+   eso se reutiliza en vez de inventar una barra para el segundo. */
+.btn-sello {
+  position: relative; isolation: isolate;
+  transition: background-color var(--t-lento) var(--ease-out), color var(--t-lento) var(--ease-out),
+              box-shadow var(--t-lento) var(--ease-out), filter var(--t-rapido) var(--ease-io);
+}
+/* El carril del anillo: el filete que hay bajo la brasa mientras da la vuelta.
+   Solo existe con la sección en marcha; sin ella, el botón es el de siempre. */
+.cuatro[data-fijado] .btn-sello,
+.ritual[data-sello] .btn-sello {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 85%, transparent);
+}
+.btn-sello::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; padding: 1px;
+  /* Nace en la esquina izquierda (270° del cono, que empieza arriba) y avanza en
+     el sentido del reloj. Y no nace de golpe: el primer tramo entra en
+     degradado, así que la línea se está formando desde el canto y no aparece
+     cortada como una aguja. El tramo final se apaga en ocho grados para que la
+     cabeza del trazo no tenga un corte recto. */
+  background: conic-gradient(from 270deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--acc) 22%, transparent) calc(var(--sello, 0) * 30deg),
+    color-mix(in srgb, var(--acc) 62%, transparent) calc(var(--sello, 0) * 200deg),
+    var(--acc) calc(var(--sello, 0) * 360deg - 8deg),
+    transparent calc(var(--sello, 0) * 360deg));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t-rapido) var(--ease-io);
+}
+.cuatro[data-fijado] .btn-sello::before,
+.ritual[data-sello] .btn-sello::before { opacity: 1; }
+/* Lleno. El anillo ya está completo cuando esto entra, así que el naranja no
+   salta: se derrama desde el borde hacia dentro en el tiempo de la casa, con la
+   misma curva que el resto del sitio. */
+.cuatro[data-completo] .btn-sello,
+.ritual[data-completo] .btn-sello {
+  background: var(--acc); color: var(--acc-ink);
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px transparent;
+}
+/* Y el anillo cierra del todo: el canto blando de arriba deja los últimos
+   veinticuatro grados en degradado, que a media vuelta se leen como una cabeza
+   encendida y con la vuelta entera dejarían una muesca en el borde. */
+.cuatro[data-completo] .btn-sello::before,
+.ritual[data-completo] .btn-sello::before { background: var(--acc); }
+.cuatro[data-completo] .btn-sello:hover,
+.ritual[data-completo] .btn-sello:hover { filter: brightness(1.04); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-sello::before { transition: none; }
+}
+
+/* La parada. La sección es una pantalla más alta que la lámina que enseña, y
+   la lámina se queda pegada arriba —`sticky`— mientras ese recorrido pasa por
+   debajo. No hay rueda secuestrada: el desplazamiento sigue siendo del
+   navegador, con su inercia y su tacto, la barra de desplazamiento está donde
+   siempre y una tecla de fin de página sigue llevando al final del documento.
+
+   Treinta y ocho de recorrido, no una pantalla entera. Aquí había sesenta y la
+   parada se quedaba retenida casi dos pantallas después de que la última ficha
+   estuviera puesta: la página seguía sin ceder cuando ya no había nada que
+   enseñar. Ahora la cuarta aterriza al setenta y seis por ciento, el anillo del
+   botón cierra al ochenta y seis y quedan menos de cincuenta píxeles con las
+   cuatro puestas. La parada es una pausa para que cuatro cosas se lean, no un
+   recorrido turístico. */
+.cuatro[data-fijado] { padding: 0; height: calc(100svh + 30svh); }
+.cuatro[data-fijado] .cuatro-fijo {
+  position: sticky; top: 0; height: 100svh;
+  display: grid; align-content: center;
+  padding: calc(var(--nav-h) + var(--s-5)) 0 var(--s-6);
+}
+/* La llegada. El valor lo escribe el guion en `--local` —de 0 a 1, ya
+   suavizado—, y aquí solo se traduce a tres cosas que no mueven el papel:
+   opacidad, un desplazamiento de 64 px y quince milésimas de escala. Sube y se
+   posa, sin rebote y sin desenfoque, que es lo que hace que se lea como una
+   pieza que se coloca y no como un efecto. `will-change` está solo mientras la
+   parada existe: cuatro capas fijas todo el documento serían memoria regalada. */
+.cuatro-ficha { --local: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .cuatro[data-fijado] .cuatro-ficha {
+    opacity: var(--local);
+    /* Un recorrido corto: veinticuatro píxeles y ocho milésimas de escala. Lo
+       que hace que la ficha llegue es la opacidad, que es lo que el ojo lee sin
+       ver una pieza viajando por la pantalla. Con sesenta y cuatro píxeles la
+       cuarta ficha parecía caer desde arriba en vez de colocarse. */
+    translate: 0 calc((1 - var(--local)) * 24px);
+    scale: calc(.992 + var(--local) * .008);
+    will-change: opacity, translate, scale;
+  }
+}
+
 /* ── 9 · Filas partidas: texto a un lado, captura al otro ────────────────── */
 /* El aire entre dos bloques partidos es el de una sección corta: tienen que
    leerse como dos cosas distintas y no como una lista corrida. */
-.split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: center; }
-.split + .split { margin-top: var(--s-9); }
+.split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--bloque); align-items: center; }
+.split + .split { margin-top: var(--s-11); }
 .split.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 .split.flip .text { order: 2; }
 .split > * { min-width: 0; }
+/* Un botón que cierra un bloque —«Conócelas una a una», «Cómo se guarda
+   todo»— necesita el aire del bloque, no el de un párrafo. Sin esta regla caía
+   a diecisiete píxeles del borde de la rejilla porque lo único que lo separaba
+   era el margen por defecto de un `<p>`, que es una medida de texto y no de
+   pieza. */
+.wrap > p:has(> .btn) { margin: var(--s-6) 0 0; }
 .split h2 { font-size: clamp(25px, 3vw, 32px); }
 
-.points { list-style: none; padding: 0; margin: var(--s-5) 0 0; display: grid; gap: var(--s-3); }
-.points li { display: flex; gap: var(--s-3); align-items: flex-start; font-size: var(--t-md); color: var(--ink-2); }
+/* Tres o cinco afirmaciones seguidas no son una lista de viñetas: son un
+   cuadro, y se lee mejor con los filetes de la casa que con tres puntos
+   sueltos. Antes cada línea empezaba con su check y no había nada que las
+   uniera; ahora la primera abre con un filete y cada una se cierra con el suyo,
+   así que el bloque tiene techo y suelo y las tres se leen como una pieza. */
+.points { list-style: none; padding: 0; margin: var(--s-6) 0 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.points li {
+  display: flex; gap: var(--s-3); align-items: flex-start;
+  padding: var(--s-4) 0; border-bottom: 1px solid var(--line);
+  font-size: var(--t-md); line-height: 1.55; color: var(--ink-2);
+}
 .points svg { width: 17px; height: 17px; margin-top: 3px; flex: none; color: var(--acc); }
-.points b { color: var(--ink); font-weight: 500; }
+.points b { color: var(--ink); font-weight: var(--peso-medio); }
 
 /* La lista de las nueve vistas: cada fila es una vista entera, así que el aire
    entre filas es el de dos secciones seguidas, y el de dentro el de una fila
    partida. */
-.tools { display: grid; gap: var(--s-9); margin-top: var(--s-7); }
-.tool { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: center; }
+.tools { display: grid; gap: var(--s-10); margin-top: var(--head); }
+/* La captura pesa más que su párrafo: es lo que se viene a ver. En una ventana
+   ancha la proporción es de cuatro y ocho —la ventana gana 120 px y el texto
+   los pierde de sobra, porque son dos frases—; por debajo de 1100 se queda en
+   cinco y siete, que en una pantalla pequeña es lo que cabe. */
+.tool { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--bloque); align-items: center; }
+@media (min-width: 1100px) {
+  .tool { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
+}
 .tool.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+@media (min-width: 1100px) {
+  .tool.flip { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); }
+}
 .tool.flip .text { order: 2; }
 .tool > * { min-width: 0; }
 /* El nombre de cada vista, a la escala de su propia fila: en la columna de texto
@@ -765,35 +1481,121 @@ section.head + section { border-top: 0; padding-top: var(--s-8); }
 .tool h2 { font-size: var(--t-2xl); letter-spacing: -.008em; margin: 0 0 var(--s-3); }
 /* La numeración de las nueve vistas sí dice algo: el titular de la página
    promete «nueve vistas, una por una», y este es el orden. */
+/* El número de la vista, con su filete al lado: es un marcador de capítulo, y
+   en versalitas de 11,5 px sin nada más se leía como un pie de foto. El filete
+   lo convierte en una regla que abre la ficha. */
 .tool .num {
-  font: 600 var(--t-2xs)/1 var(--font); color: var(--ink-4); letter-spacing: .1em;
-  display: block; margin-bottom: var(--s-3);
+  font: 600 var(--t-xs)/1 var(--font); color: var(--ink-4); letter-spacing: .12em;
+  display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-3);
+}
+.tool .num::after { content: ""; width: 28px; height: 1px; background: var(--line-2); }
+
+/* ── 9b · La secuencia de la papelera ────────────────────────────────────── */
+/* Es la pieza que el sitio tiene que explicar y que ningún limpiador explica:
+   el viaje de ida y vuelta de un archivo. Va montada como una secuencia y no
+   como tres tarjetas iguales porque lo que hay que entender es un ORDEN, y tres
+   cajas hermanas dicen «tres cosas» mientras una lista numerada con su rail dice
+   «primero esto, después esto otro».
+
+   El texto se queda quieto a la izquierda mientras los pasos pasan a su lado:
+   `sticky` sobre el propio elemento de rejilla, con `align-items: start` para
+   que su caja no se estire hasta la altura de la fila —si se estira, no hay
+   recorrido que hacer y no se pega a nada—. No hay scroll secuestrado: quien
+   lee puede bajar a la velocidad que quiera, y en un teléfono la columna se
+   apila y el `sticky` desaparece, porque ahí no hay dos columnas que sincronizar. */
+.ritual-in {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(48px, 6vw, 104px); align-items: start;
+}
+.ritual-texto { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
+.ritual-texto .sub { max-width: 28em; }
+.ritual-cta { margin: var(--s-7) 0 0; }
+
+.ritual-pasos { list-style: none; margin: 0; padding: 0; counter-reset: ritual; }
+/* Cada paso deja noventa y seis píxeles por debajo: es lo que da recorrido al
+   texto pegado y lo que separa un paso del siguiente cuando la columna se
+   apila en un teléfono. */
+.ritual-paso { position: relative; padding: 0 0 var(--s-10) 72px; min-height: clamp(220px, 26vh, 280px); }
+.ritual-paso:last-child { padding-bottom: 0; }
+/* El rail: un filete que nace bajo el número y muere en el paso siguiente. Se
+   apaga en el último porque después de la papelera no hay nada. */
+.ritual-paso::before {
+  content: ""; position: absolute; left: 15px; top: 40px; bottom: 4px; width: 1px;
+  background: var(--line);
+}
+.ritual-paso:last-child::before { content: none; }
+/* El número del paso, en la letra del sitio y con la cifra a secas. Estaba en
+   la mono —que es la letra del código y de las medidas, no la de contar— y con
+   el cero delante, que en una lista de tres no numera nada: es una convención
+   de catálogo, no de relato. Aquí se lee 1, 2 y 3, como se lee una secuencia. */
+.ritual-paso .n {
+  position: absolute; left: 0; top: 0; width: 31px; height: 31px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--bg); border: 1px solid var(--line);
+  font: var(--peso-medio) var(--t-sm)/1 var(--font); letter-spacing: -.01em; color: var(--ink-3);
+  counter-increment: ritual;
+}
+.ritual-paso .n::before { content: counter(ritual); }
+.ritual-cuerpo h3 { margin-bottom: var(--s-3); }
+.ritual-cuerpo p { margin: 0; color: var(--ink-2); font-size: var(--t-lg); line-height: 1.55; max-width: 30em; }
+
+/* El paso que ya se ha leído se enciende: el aro del número pasa a la brasa con
+   su halo, y el rail que baja de él deja de ser gris. Es el mismo recurso con el
+   que el foco marca dónde estás y con el que se encienden los números de la
+   página de instalación, aplicado a una lectura.
+
+   Se enciende una sola vez y se queda encendido: esto no es un indicador de
+   posición que se apaga al pasar, es la constancia de que ese paso ya se ha
+   contado. Por eso el guion solo añade el atributo y aquí no hay nada que
+   deshacer. */
+.ritual-paso[data-encendido] .n {
+  border-color: color-mix(in srgb, var(--acc) 55%, var(--line));
+  color: var(--ink);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--acc) 8%, transparent);
+}
+.ritual-paso[data-encendido]::before { background: color-mix(in srgb, var(--acc) 26%, var(--line)); }
+@media (prefers-reduced-motion: no-preference) {
+  .ritual-paso .n {
+    transition: border-color var(--t-lento) var(--ease-io), color var(--t-lento) var(--ease-io),
+                box-shadow var(--t-lento) var(--ease-io);
+  }
+  .ritual-paso::before { transition: background-color var(--t-lento) var(--ease-io); }
+  /* Lo que aún no se ha alcanzado espera un poco más abajo y apagado, sin llegar
+     a esconderse: se sigue leyendo si alguien se adelanta a bajar, y el conjunto
+     no se mueve de sitio porque lo que viaja son dos décimas de opacidad y diez
+     píxeles. Con el movimiento reducido —o sin guion que encienda nada— todo
+     está a plena tinta desde el primer fotograma. */
+  .ritual-cuerpo {
+    transition: opacity var(--t-reveal) var(--ease-out), translate var(--t-reveal) var(--ease-out);
+  }
+  .revelado-activo .ritual-paso:not([data-encendido]) .ritual-cuerpo {
+    opacity: .55; translate: 0 10px;
+  }
 }
 
 /* ── 10 · Tabla de reglas ────────────────────────────────────────────────── */
 .table {
-  margin-top: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-panel);
+  margin-top: var(--head); border: 1px solid var(--line); border-radius: var(--r-panel);
   overflow: hidden; background: var(--surface);
 }
 .row {
-  display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: var(--s-4);
-  align-items: center; padding: var(--s-5) var(--s-6); border-bottom: 1px solid var(--line);
+  display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: var(--s-5);
+  align-items: center; padding: var(--s-6) var(--s-7); border-bottom: 1px solid var(--line);
 }
 .row:last-child { border-bottom: 0; }
 .row svg { width: 19px; height: 19px; color: var(--ink); }
-.row b { font-weight: 500; }
-.row span { color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.row b { font-weight: var(--peso-medio); }
+.row span { color: var(--ink-2); font-size: var(--t-md); line-height: 1.55; }
 .row .tag { font-size: var(--t-xs); color: var(--ink-3); white-space: nowrap; }
 
 /* ── 11 · Cajas de aviso ─────────────────────────────────────────────────── */
 .note {
-  margin-top: var(--s-5); padding: var(--s-5); border-radius: var(--r-panel);
+  margin-top: var(--s-6); padding: var(--s-6); border-radius: var(--r-panel);
   border: 1px solid var(--line); background: var(--surface-2);
-  display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: var(--s-4);
-  font-size: var(--t-md); color: var(--ink-2); line-height: 1.5;
+  display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: var(--s-5);
+  font-size: var(--t-md); color: var(--ink-2); line-height: 1.55;
 }
 .note svg { width: 19px; height: 19px; margin-top: 1px; color: var(--ink); }
-.note b { color: var(--ink); font-weight: 500; }
+.note b { color: var(--ink); font-weight: var(--peso-medio); }
 .note h3 { margin-bottom: var(--s-2); }
 /* Un enlace dentro del contenido no es texto: es una puerta, y a 15px el
    subrayado solo no basta para que se vea. Va en el tono de acento que sí pasa
@@ -807,8 +1609,8 @@ section.head + section { border-top: 0; padding-top: var(--s-8); }
    junto al botón de descarga, y ese enlace salía sin acento mientras todos los
    demás salían con él. Quedan fuera, a propósito, los botones y las celdas
    enteras de la rejilla: ya llevan su propio realce al pasar por encima. */
-main a:not(.btn):not(.cell-link) { color: var(--acc-text); text-decoration: underline; transition: color var(--t-rapido) var(--ease-io); }
-main a:not(.btn):not(.cell-link):hover { color: var(--ink); }
+main a:not(.btn):not(.cuatro-enlace) { color: var(--acc-text); text-decoration: underline; transition: color var(--t-rapido) var(--ease-io); }
+main a:not(.btn):not(.cuatro-enlace):hover { color: var(--ink); }
 .note p { margin: 0; }
 .note p + p { margin-top: var(--s-2); }
 .note + .note { margin-top: var(--s-3); }
@@ -816,10 +1618,10 @@ main a:not(.btn):not(.cell-link):hover { color: var(--ink); }
 .note.accent svg { color: var(--acc-text); }
 
 /* ── 12 · Pasos numerados ────────────────────────────────────────────────── */
-.steps { list-style: none; padding: 0; margin: var(--s-7) 0 0; display: grid; gap: 0; counter-reset: paso; }
+.steps { list-style: none; padding: 0; margin: var(--head) 0 0; display: grid; gap: 0; counter-reset: paso; }
 .step {
-  display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--s-5);
-  padding: var(--s-6) 0; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--s-6);
+  padding: var(--s-7) 0; border-top: 1px solid var(--line);
 }
 .step:last-child { border-bottom: 1px solid var(--line); }
 .step .n {
@@ -828,8 +1630,22 @@ main a:not(.btn):not(.cell-link):hover { color: var(--ink); }
   border: 1px solid var(--line); color: var(--ink-2); background: var(--surface);
 }
 .step .n::before { content: counter(paso); }
+/* El número del paso se enciende cuando el paso entra en pantalla, una vez, y
+   se queda encendido: el aro pasa de gris a brasa y el dígito llega a tinta
+   plena. Es el mismo recurso con el que el foco marca dónde estás, aplicado a
+   la lectura de una lista —la brasa dice «este es el paso que toca leer»— y no
+   mueve nada, así que vale también con el movimiento reducido: all\u00ed se enciende
+   de golpe, sin transición. */
+.step .n[data-encendido] {
+  border-color: color-mix(in srgb, var(--acc) 55%, var(--line));
+  color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 8%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .step .n { transition: border-color var(--t-lento) var(--ease-io), color var(--t-lento) var(--ease-io), box-shadow var(--t-lento) var(--ease-io); }
+}
 .step h3 { margin-bottom: var(--s-3); }
-.step p { margin: 0; color: var(--ink-2); font-size: var(--t-md); line-height: 1.5; }
+.step p { margin: 0; color: var(--ink-2); font-size: var(--t-md); line-height: 1.55; }
 .step p + p { margin-top: var(--s-3); }
 .step code, p code, li code, .body code {
   font: 13px var(--font-mono); background: var(--surface-2);
@@ -843,54 +1659,195 @@ main a:not(.btn):not(.cell-link):hover { color: var(--ink); }
 .sublist li:last-child { margin-bottom: 0; }
 .sublist li::marker { color: var(--ink-4); }
 
-/* El comando, en su propio bloque: se lee entero y se copia de una vez. */
+/* El comando, en su propio bloque: se lee entero y se copia de una vez. Lleva
+   un canto de brasa a la izquierda porque es lo único de la página que se
+   ejecuta, y ese canto es la única señal que necesita: no es un aviso ni una
+   acción, es «esto es una orden y se copia tal cual». Va a un cuarenta y cinco
+   por ciento para que sea un canto y no un botón. */
 .code {
-  margin: var(--s-5) 0 0; padding: var(--s-4) var(--s-5); border-radius: var(--r-panel);
-  border: 1px solid var(--line); background: var(--surface-2);
-  font: 13px/1.5 var(--font-mono); color: var(--ink);
+  margin: var(--s-5) 0 0; padding: var(--s-5) var(--s-6); border-radius: var(--r-panel);
+  border: 1px solid var(--line);
+  border-left: 2px solid color-mix(in srgb, var(--acc) 45%, var(--line));
+  background: var(--surface-2);
+  font: 13px/1.6 var(--font-mono); color: var(--ink);
   overflow-x: auto; white-space: pre;
 }
 
 /* ── 13 · Preguntas ──────────────────────────────────────────────────────── */
-.faq { max-width: 46em; margin-top: var(--s-5); }
-/* Grupos de preguntas: el mismo bloque repetido, separado por aire. */
-.grupo + .grupo { margin-top: var(--s-8); }
-.grupo > .eyebrow { margin-bottom: var(--s-4); }
-details { border-bottom: 1px solid var(--line); }
-details:first-of-type { border-top: 1px solid var(--line); }
+/* Una sola lista de preguntas. Aquí hubo grupos separados por 64 px de aire y
+   sin titular que los nombrara: el lector veía dos tablas con un hueco en medio,
+   porque cada bloque cerraba su último filete y abría el primero del siguiente.
+   Sin títulos, el corte no decía nada; la lista va entera y los filetes la
+   recorren de arriba abajo, que es lo que se lee como «esto sigue». */
+.faq { max-width: 46em; margin-top: var(--head); }
+/* Cuando la lista abre la sección —la página de preguntas—, el aire de arriba ya
+   lo pone la sección: sumarle el del titular dejaba un hueco que no separaba
+   nada, porque no había titular del que separarse. */
+.wrap > .faq:first-child { margin-top: 0; }
+/* Los filetes de la lista de preguntas nacen y mueren antes de los cantos, como
+   los de las secciones: una línea recta de lado a lado cierra la columna como
+   el borde de una tabla. Van en un pseudo-elemento y no en `border` porque un
+   borde no admite degradado, y porque así el de arriba y los de abajo se pueden
+   declarar cada uno por su lado sin tocar la caja.
+
+   El mismo reparto —ocho por ciento de fundido en cada punta— lo lleva el panel
+   que se enciende al apuntar una pregunta: el realce no empieza donde empieza
+   la letra, empieza donde empieza el filete. */
+details { position: relative; }
+details::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0, var(--line) 8%, var(--line) 92%, transparent);
+}
+details:first-of-type::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0, var(--line) 8%, var(--line) 92%, transparent);
+}
+/* La fila de una pregunta. El realce no es el fondo del `summary` —que empezaba
+   justo donde empezaba la letra, así que la pregunta y la flecha se tocaban con
+   el borde del gris—: es un panel propio, un pseudo-elemento que se sale
+   dieciséis píxeles por cada lado y lleva su radio de control. Así el texto
+   sigue alineado con el titular de la sección, que es lo que ordena la lista, y
+   el realce tiene aire dentro sin mover nada.
+
+   El `summary` crea su propio contexto de apilado (`isolation`) para que el
+   panel quede por debajo de la letra y no por encima: sin él, un hijo con
+   `z-index: -1` se va detrás del fondo de la página y no se ve nunca. */
 summary {
   list-style: none; cursor: pointer; display: flex; justify-content: space-between;
-  align-items: center; gap: var(--s-5); padding: var(--s-5) 0;
-  font-weight: 500; font-size: var(--t-lg);
+  align-items: center; gap: var(--s-5); padding: var(--s-6) 0;
+  font-weight: var(--peso-medio); font-size: var(--t-lg);
+  position: relative; isolation: isolate;
+  transition: color var(--t-medio) var(--ease-out);
 }
+summary::before {
+  /* El panel mide exactamente lo que mide el filete —ni dieciséis píxeles más
+     por lado, como estaba— y lleva el mismo reparto de fundido, así que al
+     apuntar una pregunta el realce empieza y acaba donde empieza y acaba su
+     raya. Antes se salía por los dos cantos y el borde del gris no coincidía
+     con ninguna línea de la lista. */
+  content: ""; position: absolute; inset: 4px 0; z-index: -1;
+  border-radius: var(--r-ctl);
+  /* Se enseña por opacidad y no por color: un degradado no interpola, así que
+     cambiando el fondo el realce entraría de golpe. */
+  background: linear-gradient(90deg, transparent 0, var(--sel) 8%, var(--sel) 92%, transparent);
+  opacity: 0;
+  transition: opacity var(--t-medio) var(--ease-out);
+}
+/* La pregunta abierta se queda marcada: su panel sigue encendido y el titular
+   pasa a tinta plena. Es lo que dice «esta es la que estás leyendo» en una
+   lista donde el cuerpo abierto ya no cabe en el pliegue. */
+details[open] > summary { color: var(--ink); }
+details[open] > summary::before { opacity: 1; }
 summary::-webkit-details-marker { display: none; }
-summary svg { width: 18px; height: 18px; color: var(--ink-3); flex: none; transition: transform var(--t-medio) var(--ease), color var(--t-rapido) var(--ease-io); }
+summary svg { width: 18px; height: 18px; color: var(--ink-3); flex: none;  transition: transform var(--t-lento) var(--ease), color var(--t-medio) var(--ease-out); }
 details[open] summary svg { transform: rotate(90deg); }
-details .body { padding: 0 0 var(--s-5); color: var(--ink-2); max-width: 40em; }
+/* La respuesta no aparece y ya está: se asienta desde un pelo más arriba
+   mientras se aclara. Es una animación y no una transición a propósito: la
+   primera vez que se abre, el cuerpo pasa de no estar pintado a estar pintado, y
+   una transición necesita un fotograma del estado viejo que ese elemento no
+   tiene. La animación arranca sola en cuanto se pinta, así que se ve igual en
+   todos los navegadores, incluidos los que no conocen `::details-content` (que
+   solo aportan el despliegue de la altura). */
+@media (prefers-reduced-motion: no-preference) {
+  details[open] > .body { animation: cuerpo-pregunta var(--t-lento) var(--ease-out) both; }
+}
+@keyframes cuerpo-pregunta {
+  from { opacity: 0; translate: 0 -8px; }
+  to   { opacity: 1; translate: none; }
+}
+details .body { padding: 0 0 var(--s-6); color: var(--ink-2); max-width: 40em; }
 details .body p { margin: 0 0 var(--s-3); }
 details .body p:last-child { margin-bottom: 0; }
 details .body ul { margin: var(--s-3) 0 0; padding-left: var(--s-5); }
 details .body li { margin-bottom: var(--s-2); }
 
 /* ── 14 · Cierre y pie ───────────────────────────────────────────────────── */
-.final { text-align: center; }
-.final .mark { width: 64px; height: 64px; margin: 0 auto var(--s-6); display: block; color: var(--mark); }
+/* El cierre no es un héroe en pequeño: es la última pieza de la página y tiene
+   que tener peso propio. Se le pone la misma luz del héroe detrás del símbolo,
+   para que el principio y el final del documento se reconozcan como el mismo
+   sitio, y el símbolo crece a 72 px —en 64 se leía como un sello de pie—. */
+.final { position: relative; isolation: isolate; text-align: center; }
+.final::after {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 420px; z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(46% 62% at 50% 26%, var(--veil), transparent 72%);
+}
+.final .mark { width: 72px; height: 72px; margin: 0 auto var(--s-7); display: block; color: var(--mark); }
 .final h2 { margin-inline: auto; }
-.final .sub { margin: 0 auto var(--s-6); }
+.final .sub { margin: 0 auto var(--s-7); }
 .final .ctas { justify-content: center; }
-.final .meta { margin-top: var(--s-5); }
+.final .meta { margin-top: var(--s-6); }
 
-footer { border-top: 1px solid var(--line); padding: var(--s-8) 0; font-size: var(--t-sm); color: var(--ink-2); }
+/* El pie no es el final del documento: es la última lámina, y sube desde el
+   fondo mientras el contenido se va. Es sticky, no fixed, y el contenido lleva
+   un suelo de una pantalla (más abajo), así que el pie espera siempre por debajo
+   del pliegue y aparece entero al llegar, en vez de asomar por detrás a media
+   página. Lleva el mismo velo suave que una cabecera interior y los filetes de
+   siempre; nada más. */
+footer {
+  position: sticky; bottom: 0; z-index: 0;
+  overflow: hidden;
+  padding: var(--s-7) 0;
+  background: var(--bg);
+  font-size: var(--t-sm); color: var(--ink-2);
+}
+/* El pie, en un teléfono, vuelve al flujo: pegado al canto no cabría entero y
+   lo que no cabe no se puede leer. */
+@media (max-width: 820px) {
+  footer { position: relative; }
+}
+
+/* Y el contenido, en una pantalla ancha, mide al menos una pantalla. Sin esto,
+   en una página corta —la de error, sin más— el pie pegado al canto se metía
+   debajo del contenido y lo que asomaba era su mitad de abajo, sin marca ni
+   columnas. Con el suelo de una pantalla, el pie empieza siempre por debajo del
+   pliegue y se revela entero al llegar al final. */
+@media (min-width: 821px) {
+  main { min-height: calc(100svh - var(--nav-h) - var(--s-3)); }
+}
+footer::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0, var(--line) 14%, var(--line) 86%, transparent);
+}
+footer::after {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 60%; z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(56% 100% at 74% 0%, var(--veil), transparent 74%);
+}
+
+/* Aquí hubo una firma enorme con la palabra de la marca, tramada en puntos y
+   recortada por el canto de abajo. Se ha quitado: el pie ya dice quién es en su
+   primera línea y la palabra a trescientos píxeles pesaba más que todo lo
+   demás. Sin ella el pie es lo que tenía que ser, una lámina corta que sube
+   desde el fondo de la página. */
+
 /* Tres columnas: la marca, la navegación del producto y lo que es esta web. */
-.foot-in { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--s-5) var(--s-8); align-items: start; }
-footer .brand { margin-bottom: var(--s-3); }
+.foot-in { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: var(--s-6) var(--s-8); align-items: start; }
+footer .brand { margin-bottom: var(--s-4); }
+/* El lema es la única frase del pie que se lee de verdad, así que va a tamaño de
+   lectura y en tinta plena: en 13,5 px y gris era una nota al pie de sí misma. */
+footer .brand + p { font-size: var(--t-lg); color: var(--ink); max-width: 26em; }
 footer p { margin: 0; max-width: 34em; }
-footer p + p { margin-top: var(--s-2); }
+footer p + p { margin-top: var(--s-3); }
 footer .eyebrow { margin-bottom: var(--s-4); }
 /* En el pie los enlaces van en columna: son listas, no filas que se parten. */
 .foot-links { display: flex; flex-direction: column; gap: var(--s-3); list-style: none; margin: 0; padding: 0; }
-.foot-links a { text-decoration: none; color: var(--ink-2); transition: color var(--t-rapido) var(--ease-io); }
-.foot-links a:hover { color: var(--ink); }
+.foot-links a { position: relative; text-decoration: none; color: var(--ink-2); transition: color var(--t-medio) var(--ease-out); }
+/* En el pie la palabra se enciende en la brasa y no se subraya. Aquí hubo una
+   línea de un píxel que se dibujaba al pasar por encima: en una columna de
+   enlaces tan juntos, el subrayado aparecía y desaparecía bajo cada renglón y
+   se leía como un temblor. El color es el único gesto, y es el mismo naranja
+   del producto. */
+.foot-links a:hover { color: var(--acc); }
+/* El enlace del pie mide 16 px de alto: el texto es de 13 px y no lleva relleno,
+   así que con el dedo se acierta de suerte. El texto se queda exactamente donde
+   está y el área que recibe el toque crece a 24 px con un pseudo-elemento —el
+   mismo recurso con el que el botón de la barra llega a 46 px en un teléfono—:
+   4 px por arriba y por abajo no llegan a los 12 px de hueco entre líneas, así
+   que dos enlaces vecinos nunca se pisan. */
+.foot-links a::after { content: ""; position: absolute; inset: -4px 0; }
 .foot-legal {
   grid-column: 1 / -1; margin-top: var(--s-4); padding-top: var(--s-5); border-top: 1px solid var(--line);
   display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); justify-content: space-between;
@@ -905,7 +1862,7 @@ footer .eyebrow { margin-bottom: var(--s-4); }
   @supports (animation-timeline: scroll()) {
     @keyframes retirarse {
       from { opacity: 1; transform: none; }
-      to   { opacity: .55; transform: translateY(-28px); }
+      to   { opacity: .4; transform: translateY(-44px) scale(.9); }
     }
     .hero .mark {
       animation: retirarse linear both;
@@ -913,7 +1870,24 @@ footer .eyebrow { margin-bottom: var(--s-4); }
       animation-range: 0 320px;
     }
   }
+
+  /* La respiración. Es el ÚNICO movimiento del sitio que arranca solo, y por eso
+     vive en su propia caja, va lentísimo y no toca nada más: 6,5 s de ciclo y
+     un 1,4 % de escala —en 108 px son menos de dos píxeles, y a ese paso no se
+     lee como animación, se lee como que la pieza está viva—.
+     La caja es la que respira para no pelearse con la retirada de arriba, que
+     también usa `transform` en el símbolo. Y se para fuera de pantalla (lo hace
+     el guion): lo que no se ve no gasta ni batería ni fotogramas. */
+  @keyframes respirar {
+    from, to { transform: scale(1); }
+    50%      { transform: scale(1.014); }
+  }
+  .marca-viva {
+    transform-origin: 50% 58%;
+    animation: respirar var(--t-respiro) var(--ease-io) infinite;
+  }
 }
+.marca-viva { display: block; }
 
 /* ── 15b · Revelado al entrar en pantalla ──────────────────────────────────
    La animación se activa solo cuando el guion confirma que hay observador y
@@ -922,28 +1896,153 @@ footer .eyebrow { margin-bottom: var(--s-4); }
    cada línea: entrada corta, opacidad y desplazamiento pequeño, sin desenfoques
    ni zoom que hagan esperar para leer.
    ────────────────────────────────────────────────────────────────────────── */
+/* Cuatro formas de entrar, y no una para todo. Un mismo gesto repetido diez
+   veces no es una coreografía: es un tic. Aquí se elige por el papel que la
+   pieza hace en la página:
+
+     (sin variante)  el bloque de contenido: sube veinte píxeles y se aclara.
+     mask            un titular: entra por una máscara, como si se destapara.
+     left / right    la columna de texto de una fila partida: llega desde su
+                     lado, así que acompaña al ojo hacia la captura de al lado.
+     zoom            una ventana del producto: aparece desde un poco más lejos.
+
+   Todas mueven `translate`, `scale` y `clip-path` —nunca `transform`, que lo
+   usan las respuestas al puntero— y todas comparten tiempo, curva y retardo
+   escalonado. La variante no la escribe el HTML: la pone el guion según dónde
+   está la pieza (`prepararRevelado`), para no dejar veinte atributos escritos a
+   mano que se desincronicen al mover una sección.
+
+   El titular NO entra recortado por una máscara de `clip-path`, aunque sea lo
+   primero que uno escribe. Está medido en el navegador y el fallo es silencioso:
+   Chrome recorta el rectángulo de intersección con el `clip-path` del propio
+   elemento, así que un titular escondido con `inset(0 0 100% 0)` tiene área
+   visible cero, el observador no lo ve nunca, no recibe `.revelado` y se queda
+   invisible para siempre. Se ve en la consola vacía y en la página a medias. Lo
+   que hace el titular es subir desde su línea de base y crecer un uno y medio
+   por ciento: se lee como que se asienta, no como que aparece. */
 @media (prefers-reduced-motion: no-preference) {
   .revelado-activo [data-reveal]:not(.revelado) {
     opacity: 0;
-    transform: translateY(14px) scale(.99);
+    /* Un pelo más de recorrido con una entrada algo más larga: a 14 px el
+       bloque aparecía ya colocado y lo único que se veía era la opacidad. */
+    translate: 0 20px;
+    scale: .994;
+  }
+  .revelado-activo [data-reveal="mask"]:not(.revelado) {
+    opacity: 0; translate: 0 .22em; scale: .985; transform-origin: 50% 100%;
+  }
+  .revelado-activo [data-reveal="left"]:not(.revelado) {
+    opacity: 0; translate: -30px 0; scale: 1;
+  }
+  .revelado-activo [data-reveal="right"]:not(.revelado) {
+    opacity: 0; translate: 30px 0; scale: 1;
+  }
+  .revelado-activo [data-reveal="zoom"]:not(.revelado) {
+    opacity: 0; translate: 0 14px; scale: .975;
   }
   .revelado-activo [data-reveal] {
-    transition: opacity var(--t-reveal) var(--ease-out), transform var(--t-reveal) var(--ease-out);
+    transition: opacity var(--t-reveal) var(--ease-out), translate var(--t-reveal) var(--ease-out),
+                scale var(--t-reveal) var(--ease-out);
     transition-delay: var(--reveal-delay, 0ms);
   }
-  .revelado-activo [data-reveal]:focus-within { opacity: 1; transform: none; }
+  .revelado-activo [data-reveal]:focus-within {
+    opacity: 1; translate: none; scale: none;
+  }
   .revelado-activo [data-reveal].revelado {
     opacity: 1;
-    transform: none;
+    translate: none;
+    scale: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] {
     opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
     transform: none !important;
     transition: none !important;
   }
 }
+
+/* ── 15c · Entrada de la portada y movimiento al desplazar ─────────────────
+   La portada no espera al observador: lo que se ve al llegar entra al cargar,
+   una pieza detrás de otra, y comparte un solo gesto —subir diez píxeles y
+   aclararse—, así que la página se asienta en vez de aparecer por partes. Es
+   la coreografía de la app al abrir su ventana, con sus mismos tiempos.
+   ────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .hero h1,
+  .hero .lede,
+  .hero .ctas,
+  .hero .meta {
+    animation: entrar var(--t-reveal) var(--ease-out) both;
+  }
+  .hero h1 { animation-delay: var(--t-paso); }
+  .hero .lede { animation-delay: calc(var(--t-paso) * 2); }
+  .hero .ctas { animation-delay: calc(var(--t-paso) * 3); }
+  .hero .meta { animation-delay: calc(var(--t-paso) * 4); }
+  /* La ventana del producto cierra la entrada. Es la misma animación de la
+     captura de Upscayl bajo su titular: la pieza llega inclinada hacia atrás,
+     algo pequeña y baja, y se endereza hasta quedar plana sobre el papel. La
+     perspectiva vive en el contenedor y la inclinación en la pieza, que usa
+     `rotate`, `scale` y `translate` —propiedades sueltas— para no pisar el
+     `transform` del puntero. */
+  .showcase { perspective: 1200px; }
+  .showcase .window {
+    transform-origin: 50% 0%;
+    animation: abrir-ventana var(--t-ventana) var(--ease-out) both;
+    animation-delay: calc(var(--t-paso) * 4 + 120ms);
+  }
+}
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes abrir-ventana {
+  from { opacity: 0; translate: 0 64px; scale: .93; rotate: x 20deg; }
+  45%  { opacity: 1; }
+  to { opacity: 1; translate: 0 0; scale: 1; rotate: x 0deg; }
+}
+
+
+/* La ventana del producto no aparece: se asienta. Empieza cuarenta píxeles más
+   abajo, un cuatro por ciento más pequeña y algo inclinada hacia atrás, y acaba
+   plana cuando el bloque está del todo a la vista. El movimiento va en
+   `translate`, `scale` y `rotate` —propiedades sueltas— y no en `transform`,
+   porque el puntero ya usa `transform` para levantar la pieza dos píxeles y las
+   dos respuestas tienen que poder convivir: con `transform` en las dos, la
+   animación de scroll se zampa el realce del ratón. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Solo las capturas que llegan desde abajo. La de la portada es lo primero
+       que se ve y no puede estar a medio asentar al abrir la página: esa entra
+       al cargar, con el resto del héroe, y no se ata al desplazamiento. */
+    .split, .tool { perspective: 1600px; }
+    .split .window, .tool .window {
+      animation: asentar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+@keyframes asentar {
+  from { translate: 0 44px; scale: .96; rotate: x 6deg; opacity: .25; }
+  to { translate: 0 0; scale: 1; rotate: x 0deg; opacity: 1; }
+}
+
+/* ── 15d · La luz del héroe ────────────────────────────────────────────────
+   Aquí hubo un movimiento más: la captura se desplazaba dentro de su marco
+   mientras el bloque cruzaba la pantalla. Se ha quitado y no por prudencia. Una
+   captura de la app es una captura de la app: para que la imagen pudiera
+   moverse había que agrandarla un seis por ciento dentro de un marco que
+   recorta, y el resultado era exactamente lo que se veía: la barra de la ventana
+   y los dos cantos de la interfaz se comían tres por ciento por lado. En una
+   foto de un paisaje ese recorte no se nota; en una interfaz con texto pegado al
+   borde, se nota en cada pieza. El movimiento se queda donde no cuesta nada: el
+   bloque entero se asienta al llegar, que ya lo hace, y la imagen no se toca.
+
+   Y no queda ninguna luz atada al desplazamiento: la que había detrás del
+   símbolo se ha ido con el resplandor, porque sin él no había nada que apagar. */
 
 /* ── 16 · Navegar entre páginas ──────────────────────────────────────────── */
 /* Las cinco pestañas de arriba no son vistas de una aplicación: son cinco
@@ -955,10 +2054,9 @@ footer .eyebrow { margin-bottom: var(--s-4); }
    nada que descargar, y donde no exista —Firefox, Safari— no pasa nada, el
    enlace hace lo de siempre.
 
-   `navigation: auto` la enciende para toda navegación dentro del sitio. Un
-   detalle que se nota: la barra de arriba lleva nombre propio, así que se queda
-   fuera del relevo y no parpadea mientras cambia lo de dentro. Es lo que hace
-   una pestaña de verdad.
+   `navigation: auto` la enciende para toda navegación dentro del sitio. La
+   barra no lleva nombre propio —el porqué está justo debajo—, así que entra y
+   sale con su página como cualquier otra pieza.
 
    Y la captura NO lleva nombre propio, aunque lo llevó. Con nombre, el navegador
    coge la ventana que estabas mirando y la hace VIAJAR hasta su sitio nuevo en
@@ -971,7 +2069,61 @@ footer .eyebrow { margin-bottom: var(--s-4); }
    Las dos ramas de siempre: sin reducción, el relevo; con reducción, el mismo
    relevo. Ninguna de las dos puede quedarse sin declarar. */
 @view-transition { navigation: auto; }
-.nav { view-transition-name: barra; }
+/* La barra NO lleva nombre de relevo, y no es un detalle. Un elemento con
+   `view-transition-name` se pinta en su propia capa, con el lienzo cerrado, y
+   el `backdrop-filter` de lo que lleva dentro solo muestrea ese lienzo —que
+   está vacío—: medido aquí, con el nombre puesto el titular que pasaba por
+   detrás se leía NÍTIDO aunque el desenfoque estuviera declarado y calculado.
+   Sin nombre, la barra entra con su página, que es lo que hace un documento.
+
+   El CAMBIO DE TEMA tampoco pasa por el relevo, y por la misma familia de
+   motivo: el navegador pinta esas transiciones con fotografías de la página, y
+   una fotografía no trae `backdrop-filter`. Medido también: durante el medio
+   segundo del cambio la barra se quedaba sin cristal y sus letras se leían por
+   dentro. El tema se cambia con el fundido de tokens de la sección 17, que no
+   fotografía nada y deja el desenfoque leyendo el contenido real en cada
+   fotograma. Aquí el cristal es el material de la barra, no un adorno: no se
+   cambia por un fundido más vistoso. */
+
+/* ── El botón de volver arriba ───────────────────────────────────────────── */
+/* Una pieza más del mismo material que la barra: cristal del sistema, filo de
+   luz y el chevron de la casa girado. Aparece cuando hay algo a lo que volver,
+   no antes: un botón que está siempre es un botón que nunca dice nada.
+
+   Mide 38 px y no 44: es una ayuda, no una acción, y a 44 competía en peso con
+   el botón de descarga de la barra. El radio es el de un control de la casa
+   (`--r-btn`) y no una cápsula: redondo del todo lo convertía en un icono
+   suelto flotando sobre la página, y esto es un mando más del sitio.
+
+   Y es la MISMA pieza que la barra, no una parecida: el mismo cristal, el mismo
+   halo que baja desde arriba, el mismo desenfoque y el mismo radio de panel. Con
+   su blur de 30 px y su saturación al 180 % era un icono de otra familia puesto
+   encima de esta página; ahora, cuando aparece al bajar, se lee como un trozo de
+   la barra que se ha quedado abajo esperando. */
+.subir {
+  position: fixed; z-index: 30;
+  right: var(--gutter); bottom: calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+  width: 40px; height: 40px; padding: 0; display: grid; place-items: center;
+  border: 0; border-radius: var(--r-panel); cursor: pointer;
+  background:
+    radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
+    var(--glass);
+  color: var(--ink-2);
+  backdrop-filter: blur(14px) brightness(1.06);
+  -webkit-backdrop-filter: blur(14px) brightness(1.06);
+  box-shadow: var(--rim), 0 0 0 .5px var(--ring), var(--shadow-nav);
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity var(--t-medio) var(--ease-io), transform var(--t-medio) var(--ease-out),
+              visibility var(--t-medio) linear, color var(--t-rapido) var(--ease-io),
+              background-color var(--t-rapido) var(--ease-io);
+}
+.subir[data-visible="true"] { opacity: 1; visibility: visible; transform: none; }
+.subir:hover { color: var(--ink); background-color: var(--sel-solida); }
+.subir:active { transform: scale(.96); }
+.subir svg { width: 17px; height: 17px; transform: rotate(-90deg); }
+@media (prefers-reduced-motion: reduce) {
+  .subir { transition: opacity var(--t-rapido) linear, visibility var(--t-rapido) linear; transform: none; }
+}
 /* La barra no se funde consigo misma: es la misma barra en las dos páginas. El
    navegador, por defecto, cruza su fotograma viejo con el nuevo y los mezcla
    sumando luz; con un fondo translúcido como el suyo —cristal sobre la página—
@@ -1020,58 +2172,47 @@ footer .eyebrow { margin-bottom: var(--s-4); }
 /* Lo que contesta a un gesto, que no es lo mismo que lo que entra en pantalla:
    son cambios de color y de filete, de 150 a 350ms, sin mover nada de sitio. */
 
-/* La barra se asienta al bajar: el filete se marca y aparece una sombra corta.
-   Es lo que dice «ya no estás arriba» sin desplazar ni un píxel. */
-.nav { transition: border-color var(--t-rapido) var(--ease-io), box-shadow var(--t-rapido) var(--ease-io); }
-.nav[data-scrolled="true"] { border-bottom-color: var(--line-2); box-shadow: var(--shadow-nav); }
+/* La barra tiene un solo estado. Aquí había dos —alto y sin trama arriba,
+   corto y con trama al bajar— y el cambio se notaba como un parpadeo cada vez
+   que alguien volvía al principio. Ahora la pieza es la misma de punta a punta
+   del documento: la corta, con su trama y su sombra puestas desde el primer
+   fotograma. Lo que dice «estás en una página» es la página, no el mobiliario. */
 
-/* Una celda con enlace se enciende al pasar por encima. Una sin enlace, no:
-   iluminarla prometería una acción que no existe. Lo mismo vale para la fila de
-   una pregunta, que también es un control —se pulsa y se abre—.
+/* La fila de una pregunta es un control —se pulsa y se abre—, así que se
+   enciende al pasar por encima. Una tarjeta sin enlace no lo hace: iluminarla
+   prometería una acción que no existe.
 
-   Y las dos respuestas al puntero se quedan en los ratones (`hover: hover`). En
-   una pantalla táctil no hay nada que apuntar, así que el realce se quedaría
-   encendido después del toque, señalando una celda que ya nadie está mirando. Es
+   La respuesta al puntero se queda en los ratones (`hover: hover`). En una
+   pantalla táctil no hay nada que apuntar, así que el realce se quedaría
+   encendido después del toque, señalando una fila que ya nadie está mirando. Es
    un cambio de color —nada se mueve—, así que vale también con el movimiento
    reducido: aquí no hay nada que reducir. */
-.cell { transition: background-color var(--t-rapido) var(--ease-io); }
-summary { transition: background-color var(--t-rapido) var(--ease-io); }
 @media (hover: hover) {
-  .cell:has(a.cell-link):hover { background: var(--rail); }
-  summary:hover { background: var(--rail); }
+  summary:hover { color: var(--ink); }
+  summary:hover::before { opacity: 1; }
 }
 
 /* Lo que sí se mueve al apuntar, y por eso vive bajo dos guardas: hay puntero
    (`hover: hover`) y no hay movimiento reducido. Nada de esto se esconde: son
    desplazamientos de dos píxeles sobre lo que ya está pintado. */
-@media (hover: hover) and (min-width: 821px) {
-  /* El aviso de la captura —«Ver más grande»— solo se anuncia cuando hay un
-     puntero encima, y también al llegar con el tabulador: es una acción, y una
-     acción se anuncia cuando se está en ella. En un teléfono no hay nada que
-     apuntar, así que ahí está siempre (ver la adaptación). */
-  .window .ampliar-aviso { display: block; opacity: 0; }
-  .window:hover .ampliar-aviso,
-  .window .ampliar:focus-visible .ampliar-aviso { opacity: 1; }
-}
-@media (hover: hover) and (min-width: 821px) and (prefers-reduced-motion: no-preference) {
-  .window .ampliar-aviso {
-    transform: translateY(4px);
-    transition: opacity var(--t-rapido) var(--ease-io), transform var(--t-medio) var(--ease-out);
-  }
-  .window:hover .ampliar-aviso,
-  .window .ampliar:focus-visible .ampliar-aviso { transform: none; }
-}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   /* La ventana flota —es lo único que proyecta sombra— y al apuntarla flota dos
      píxeles más: sube y su sombra se abre con ella. La pieza no cambia de
      elevación —sigue siendo una sombra y ni un borde—, solo está más alta, que
      es lo que hace un panel al que se le acerca el puntero. */
+  /* La ventana no solo se eleva: se abre. Sube cuatro píxeles, su sombra se
+     abre con ella y lo de dentro crece un 1,5 % anclado ARRIBA, así que la
+     barra del producto —lo que hace que la captura se lea como una ventana—
+     se queda donde está y lo que cambia es el contenido. Antes solo subía dos
+     píxeles y el gesto se quedaba en un temblor. */
   .window { transition: transform var(--t-medio) var(--ease-out), box-shadow var(--t-medio) var(--ease-io); }
-  .window:hover { transform: translateY(-2px); box-shadow: var(--shadow-window-alto); }
-  /* El icono de una celda con enlace sube un píxel con su celda: es la única
-     pieza de la ficha que puede moverse sin llevarse texto por delante. */
-  .cell .ic { transition: transform var(--t-medio) var(--ease-out), border-color var(--t-rapido) var(--ease-io); }
-  .cell:has(a.cell-link):hover .ic { transform: translateY(-1px); border-color: var(--line-2); }
+  .window:hover { transform: translateY(-4px); box-shadow: var(--shadow-window-alto); }
+  /* La captura NO se agranda al apuntarla. Lo hacía —un uno y medio por ciento—
+     y en una foto de paisaje no se nota, pero esto es una interfaz: el marco
+     recorta y lo que crece es justo lo que hay que leer, así que el borde de la
+     ventana y la última columna de la tabla se comían un píxel cada vez que
+     alguien pasaba el ratón. La pieza sigue flotando, que es el gesto; la imagen
+     dentro se queda quieta, que es el contenido. */
   /* La flecha de la pregunta se aparta dos píxeles hacia donde va a llevar: al
      abrirse ya gira (ver arriba), así que el apuntado solo empuja. */
   summary:hover svg { transform: translateX(2px); }
@@ -1132,9 +2273,10 @@ summary:hover svg { color: var(--ink); }
    segundo de panel vacío. */
 @media (prefers-reduced-motion: no-preference) {
   html.tema-anim {
-    transition-property: --bg, --surface, --surface-2, --line, --line-2, --ink, --ink-2,
-                         --ink-3, --ink-4, --sel, --rail, --glass, --float,
-                         --acc-text, --acc-soft, --veil;
+  transition-property: --bg, --surface, --surface-2, --line, --line-2, --ink, --ink-2,
+                       --ink-3, --ink-4, --sel, --rail, --glass, --float,
+                       --acc-text, --acc-soft, --veil,
+                       --aurora-warm-c, --aurora-cool-c, --sheen-c;
     transition-duration: var(--t-tema);
     /* La curva NO es la simétrica (`--ease-io`): esa arranca despacio y en medio
        segundo de cambio eso se lee como si el primer cuarto no hiciera nada, que
@@ -1153,7 +2295,7 @@ summary:hover svg { color: var(--ink); }
    mismo fallo que dejó un botón pegado a la captura, pero en texto— y en un
    documento eso no es cuestión de gusto: es lo que hace ver qué apartado
    responde a qué pregunta. */
-.prosa :is(h2, h3) + .sub { margin-bottom: var(--s-7); }
+.prosa :is(h2, h3) + .sub { margin-bottom: var(--s-8); }
 /* La letra pequeña: la licencia junto al botón que la acepta, y la fecha de
    revisión de cada documento. Se lee sin ir a buscarla y no compite con el
    titular, que es justo lo que se le pide. */
@@ -1162,24 +2304,63 @@ summary:hover svg { color: var(--ink); }
 /* ── 19 · Adaptación ─────────────────────────────────────────────────────── */
 /* Los dos cortes: a 900px la barra no cabe y el menú se pliega; a 820px
    ninguna fila partida se sostiene y todo pasa a una columna. */
+@media (max-width: 1024px) {
+  /* Cuatro fichas en 700 px de ancho no son cuatro fichas: son cuatro tiras.
+     A partir de aquí van de dos en dos, y la parada se apaga —sin la fila
+     entera a la vista no hay nada que enseñar de una en una—. Las reglas de
+     `[data-fijado]` se deshacen también por si el atributo llegara vivo a este
+     ancho: quien lo pone y lo quita es el guion, pero la hoja no se queda a
+     esperar a que llegue. */
+  .cuatro-fichas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+  /* Sin la fila de cuatro, el cuadrado deja de tener sentido: dos columnas en
+     un portátil dan fichas de 420 px de lado para tres líneas de texto. Aquí
+     la ficha vuelve a ser una tarjeta ancha y baja. */
+  .cuatro-ficha { aspect-ratio: auto; min-height: 210px; }
+  .cuatro[data-fijado] { height: auto; padding: var(--sec) 0; }
+  .cuatro[data-fijado] .cuatro-fijo { position: static; height: auto; display: block; padding: 0; }
+}
+@media (max-width: 620px) {
+  .cuatro-fichas { grid-template-columns: minmax(0, 1fr); }
+  /* En una columna, la ficha mide lo que mide su texto. El mínimo de 210 px
+     venía de la rejilla de dos, donde servía para igualar las parejas; aquí solo
+     dejaba un hueco vacío entre la frase y el dato. */
+  .cuatro-ficha { min-height: 0; }
+  .cuatro-enlace { min-height: 0; }
+}
 @media (max-width: 900px) {
-  :root { --sec: 88px; }
+  :root { --sec: 104px; }
 }
 @media (max-width: 820px) {
-  :root { --sec: 72px; --gutter: 20px; --s-9: 64px; --s-8: 48px; }
-  .hero { padding: 64px 0 40px; }
-  .hero .mark { width: 84px; height: 84px; margin-bottom: var(--s-5); }
+  /* En un teléfono no se recorta el ritmo a la mitad: se recorta lo justo para
+     que la pantalla no se pase el día haciendo scroll. Un titular y su bloque
+     siguen separados por más aire del que hay entre dos párrafos, que es lo
+     único que hace falta para que la jerarquía siga leyéndose en 390 px. */
+  :root {
+    --sec: 84px; --gutter: 20px; --head: 40px; --bloque: 40px;
+    --s-9: 64px; --s-8: 48px; --s-10: 80px; --s-11: 96px;
+  }
+  .hero { padding: 72px 0 48px; }
+  .hero .mark { width: 84px; height: 84px; margin-bottom: var(--s-6); }
   .grid { grid-template-columns: minmax(0, 1fr); }
   .cell { border-right: 0; border-bottom: 1px solid var(--line); }
   .cell:last-child { border-bottom: 0; }
-  .split, .split.flip, .tool, .tool.flip { grid-template-columns: minmax(0, 1fr); gap: var(--s-6); }
+  .split, .split.flip, .tool, .tool.flip { grid-template-columns: minmax(0, 1fr); gap: var(--bloque); }
   .grid.tres { grid-template-columns: minmax(0, 1fr); }
   .grid.tres .cell { border-right: 0; border-bottom: 1px solid var(--line); }
   .grid.tres .cell:last-child { border-bottom: 0; }
   .split.flip .text, .tool.flip .text { order: 0; }
   .showcase { padding-bottom: var(--s-8); }
-  .window .ampliar-aviso { display: block; }
-  .tools { gap: var(--s-8); }
+  .tools { gap: var(--s-10); }
+  /* La secuencia se apila y pierde el `sticky`: en una columna no hay dos cosas
+     que sincronizar, y un texto que se queda pegado debajo de la barra mientras
+     su lista pasa por detrás solo tapa la lista. El rail y los números se
+     quedan: el orden sigue siendo un orden. */
+  .ritual-in { grid-template-columns: minmax(0, 1fr); gap: var(--s-7); }
+  .ritual-texto { position: static; }
+  /* Sin la columna que se queda pegada, el alto mínimo de cada paso solo servía
+     para abrir un hueco entre el texto y el número siguiente: en una columna, el
+     paso mide lo que mide y lo que separa es su aire de abajo. */
+  .ritual-paso { padding-left: 60px; padding-bottom: var(--s-8); min-height: 0; }
   .row { grid-template-columns: 20px minmax(0, 1fr); gap: var(--s-3) var(--s-4); padding: var(--s-5); }
   .row .tag { display: none; }
   .prosa :is(h2, h3) + .sub { margin-bottom: var(--s-6); }
@@ -1196,4 +2377,31 @@ summary:hover svg { color: var(--ink); }
      ocupaba justo lo que ocupa el propio menú desplegado. */
   .nav-acts .btn .lbl { display: none; }
   .nav-acts .btn { padding: 0 11px; }
+}
+/* Dos cortes más abajo, y no uno: lo que se rompe primero no es lo mismo que lo
+   primero que se queda sin sitio.
+
+   El botón de descarga se sale antes que la barra. Su contenido —dibujo, «el
+   instalador» y la versión— pide 320 px, así que por debajo de 360 de ventana
+   no cabe y se salía por la derecha. Aquí se le deja partir en dos renglones en
+   vez de salirse: de 360 para arriba sigue entrando de un tirón y se ve igual
+   que siempre, porque solo se envuelve lo que no cabe. */
+@media (max-width: 400px) {
+  .ctas .btn.lg {
+    flex-wrap: wrap; height: auto; min-height: 48px;
+    padding: 10px var(--s-4); white-space: normal; text-align: center;
+  }
+}
+/* Y a 320 px —el iPhone SE de primera hornada, el ancho más estrecho que se
+   sigue usando— la barra entera no cabía: marca, tema, idioma, apoyo, descarga
+   y menú pedían 331 px y había 280, así que el botón del menú se salía once
+   píxeles por la derecha y la página ganaba un scroll lateral de dieciséis.
+   Aquí se recuperan casi cincuenta: el nombre de la marca se va —queda el
+   símbolo, que es la marca igual, y el ancla conserva su `aria-label`, así que
+   se sigue anunciando como «Brisa, inicio»— y los huecos se aprietan sin tocar
+   el área táctil, que la dan los pseudo-elementos, no el hueco. */
+@media (max-width: 340px) {
+  .nav-in { padding: 0 12px; gap: 12px; }
+  .nav-acts { gap: 6px; }
+  .nav-in .brand b { display: none; }
 }

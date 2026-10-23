@@ -363,10 +363,22 @@ final class ScannerService {
         }
     }
 
+    /// Lo que macOS protege y Brisa no toca ni ofrece: la librería de Fotos,
+    /// las copias de iPhone, Mensajes, el historial de llamadas y el correo.
+    ///
+    /// Las claves llevan barra delante a propósito. Antes una de ellas era la
+    /// palabra suelta «Mail», y por coincidencia parcial marcaba como
+    /// protegido cualquier archivo con esas letras dentro: una exportación de
+    /// Mailchimp en Descargas, una carpeta llamada «Mail backup» en Documentos
+    /// o una factura de Gmail. Eran archivos del usuario que ni se podían
+    /// limpiar ni desinstalar, y el motivo que veía era «es un elemento
+    /// protegido». Con la ruta completa del correo, lo protegido sigue
+    /// protegido y lo demás vuelve a ser suyo.
     static func isProtected(path: String, home: String) -> Bool {
         let protectedSubstrings = [
-            "Photos Library", ".photoslibrary", "MobileSync", "Mail",
-            "Library/Messages", "CallHistory", "Library/Mail"
+            "Photos Library", ".photoslibrary", "MobileSync",
+            "Library/Messages", "CallHistory",
+            "Library/Mail", "Mail Downloads", "com.apple.mail"
         ]
         return protectedSubstrings.contains { path.contains($0) }
     }

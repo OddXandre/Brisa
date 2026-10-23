@@ -5,7 +5,13 @@
 
   <section class="hero plain">
     <div class="wrap">
-      <svg class="mark" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
+      <!-- El símbolo va dentro de su propia caja porque tiene DOS movimientos
+           que no pueden compartir elemento: la respiración de aquí (una escala
+           lentísima, en bucle) y la retirada al desplazar (`retirarse`, en el
+           CSS). En el mismo nodo, la segunda animación pisaría a la primera en
+           `transform` y el símbolo dejaría de respirar en cuanto se toca la
+           rueda. -->
+      <span class="marca-viva"><svg class="mark" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg></span>
       <h1>{{t:inicio.h1}}</h1>
       <p class="lede">{{t:inicio.lede}}</p>
       <div class="ctas center">
@@ -24,48 +30,117 @@
     </div>
   </div>
 
-  <section>
-    <div class="wrap">
-      <p class="eyebrow">{{t:herr.eyebrow}}</p>
-      <h2>{{t:herr.h2}}</h2>
-      <p class="sub">{{t:herr.sub}}</p>
+  <!-- El orden de la página es el de las preguntas que se hace quien llega:
+       qué encuentra, qué pasa si me equivoco, cómo lo controlo, y qué cuesta.
+       La reversibilidad va la primera de todas porque es la objeción que
+       detiene la descarga —«me va a borrar algo»— y antes vivía al final, en
+       una tabla de seis filas que llegaba tarde y en abstracto. -->
+  <!-- Cuatro fichas en fila, y la página se detiene a enseñarlas.
 
-      <div class="grid">
-        <div class="cell">
-          <a class="cell-link" href="{{v:urlHerramientas}}">
-            <span class="ic">{{ico:barras}}</span>
-            <h3>{{t:herr.c1.t}}</h3>
-            <p>{{t:herr.c1.p}}</p>
-            <span class="detail"><span class="dot"></span>{{t:herr.c1.d}}</span>
-          </a>
-        </div>
-        <div class="cell">
-          <a class="cell-link" href="{{v:urlHerramientas}}">
-            <span class="ic">{{ico:caja}}</span>
-            <h3>{{t:herr.c2.t}}</h3>
-            <p>{{t:herr.c2.p}}</p>
-            <span class="detail"><span class="dot"></span>{{t:herr.c2.d}}</span>
-          </a>
-        </div>
-        <div class="cell">
-          <a class="cell-link" href="{{v:urlHerramientas}}">
-            <span class="ic">{{ico:lupa}}</span>
-            <h3>{{t:herr.c3.t}}</h3>
-            <p>{{t:herr.c3.p}}</p>
-            <span class="detail"><span class="dot"></span>{{t:herr.c3.d}}</span>
-          </a>
-        </div>
-        <div class="cell">
-          <a class="cell-link" href="{{v:urlHerramientas}}">
-            <span class="ic">{{ico:ritmo}}</span>
-            <h3>{{t:herr.c4.t}}</h3>
-            <p>{{t:herr.c4.p}}</p>
-            <span class="detail"><span class="dot"></span>{{t:herr.c4.d}}</span>
-          </a>
-        </div>
+       Aquí hubo un índice de cuatro filas, con su motivo escrito: una rejilla
+       de cajas iguales no dice en qué orden se lee. El motivo era bueno y la
+       solución también; lo que faltaba era tiempo. Cuatro cosas que ocupan y
+       nadie mira merecen que se lean de una en una, y eso no se consigue con
+       cuatro filas correctas que pasan de largo: se consigue parando la página
+       y subiendo cada ficha cuando le toca. Así el orden no lo tiene que
+       adivinar el ojo —lo da la rueda— y cada ficha llega sola, con la
+       anterior ya colocada al lado.
+
+       La parada la hace `position: sticky` sobre la lámina de dentro, no un
+       secuestro de la rueda: el desplazamiento sigue siendo del navegador, con
+       su inercia y su tacto, y quien quiera saltárselo tiene la barra de
+       desplazamiento donde siempre. La sección solo es más alta que la
+       pantalla; lo que se queda quieto es lo de dentro. Sin guion —o con
+       movimiento reducido, o en una pantalla estrecha— la sección vuelve a su
+       altura natural y las cuatro fichas están a la vista desde el primer
+       fotograma: la página no depende de esto para contarse. -->
+  <section class="cuatro" data-cuatro>
+    <div class="cuatro-fijo">
+      <div class="wrap">
+        <h2>{{t:herr.h2}}</h2>
+        <p class="sub">{{t:herr.sub}}</p>
+
+        <ol class="cuatro-fichas">
+          <li class="cuatro-ficha">
+            <a class="cuatro-enlace" href="{{v:urlHerramientas}}">
+              <h3>{{t:herr.c1.t}}</h3>
+              <p>{{t:herr.c1.p}}</p>
+              <span class="cuatro-dato">{{t:herr.c1.d}}</span>
+            </a>
+          </li>
+          <li class="cuatro-ficha">
+            <a class="cuatro-enlace" href="{{v:urlHerramientas}}">
+              <h3>{{t:herr.c2.t}}</h3>
+              <p>{{t:herr.c2.p}}</p>
+              <span class="cuatro-dato">{{t:herr.c2.d}}</span>
+            </a>
+          </li>
+          <li class="cuatro-ficha">
+            <a class="cuatro-enlace" href="{{v:urlHerramientas}}">
+              <h3>{{t:herr.c3.t}}</h3>
+              <p>{{t:herr.c3.p}}</p>
+              <span class="cuatro-dato">{{t:herr.c3.d}}</span>
+            </a>
+          </li>
+          <li class="cuatro-ficha">
+            <a class="cuatro-enlace" href="{{v:urlHerramientas}}">
+              <h3>{{t:herr.c4.t}}</h3>
+              <p>{{t:herr.c4.p}}</p>
+              <span class="cuatro-dato">{{t:herr.c4.d}}</span>
+            </a>
+          </li>
+        </ol>
+
+        <!-- La acción cierra la parada, y es además su cuenta atrás: el borde del
+             botón se dibuja con lo que queda de recorrido y, cuando da la vuelta
+             entera, se llena. No hay barra aparte porque la pista que había
+             debajo —una línea de lado a lado— medía una cosa y pesaba como un
+             control: la cuenta la lleva la pieza a la que se quiere llegar. -->
+        <p class="cuatro-cta"><a class="btn quiet btn-sello" href="{{v:urlHerramientas}}">{{t:herr.mas}} {{ico:chevron}}</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- La pieza que este sitio tiene que enseñar y ningún limpiador enseña: el
+       viaje de ida y vuelta de un archivo. Va montada como una secuencia —el
+       texto se queda quieto a la izquierda y los tres pasos se encienden al
+       llegar—, no como tres tarjetas iguales, porque lo que hay que entender es
+       un orden: primero se aparta, después espera, después vuelve. -->
+  <section class="ritual">
+    <div class="wrap ritual-in">
+      <div class="ritual-texto">
+        <h2>{{t:seg.h2}}</h2>
+        <p class="sub">{{t:seg.sub}}</p>
+        <!-- El cierre de esta sección lleva el mismo sello que el de las cuatro
+             fichas: el borde se dibuja con lo que queda de recorrido y se llena
+             al llegar al final. Sin icono: la pieza ya dice adónde va y una
+             flecha al lado de un botón que se está llenando sobra. -->
+        <p class="ritual-cta"><a class="btn quiet btn-sello" href="{{v:urlSeguridad}}">{{t:herr.verSeguridad}}</a></p>
       </div>
 
-      <p><a class="btn quiet" href="{{v:urlHerramientas}}">{{t:herr.mas}} {{ico:chevron}}</a></p>
+      <ol class="ritual-pasos">
+        <li class="ritual-paso">
+          <span class="n"></span>
+          <div class="ritual-cuerpo">
+            <h3>{{t:ritual.p1.b}}</h3>
+            <p>{{t:ritual.p1.s}}</p>
+          </div>
+        </li>
+        <li class="ritual-paso">
+          <span class="n"></span>
+          <div class="ritual-cuerpo">
+            <h3>{{t:ritual.p2.b}}</h3>
+            <p>{{t:ritual.p2.s}}</p>
+          </div>
+        </li>
+        <li class="ritual-paso">
+          <span class="n"></span>
+          <div class="ritual-cuerpo">
+            <h3>{{t:ritual.p3.b}}</h3>
+            <p>{{t:ritual.p3.s}}</p>
+          </div>
+        </li>
+      </ol>
     </div>
   </section>
 
@@ -73,7 +148,6 @@
     <div class="wrap">
       <div class="split flip">
         <div class="text">
-          <p class="eyebrow">{{t:esp.eyebrow}}</p>
           <h2>{{t:esp.h2}}</h2>
           <p class="sub">{{t:esp.sub}}</p>
           <ul class="points">
@@ -87,7 +161,6 @@
 
       <div class="split">
         <div class="text">
-          <p class="eyebrow">{{t:apps.eyebrow}}</p>
           <h2>{{t:apps.h2}}</h2>
           <p class="sub">{{t:apps.sub}}</p>
           <ul class="points">
@@ -104,35 +177,14 @@
 
   <section>
     <div class="wrap">
-      <p class="eyebrow">{{t:seg.eyebrow}}</p>
-      <h2>{{t:seg.h2}}</h2>
-      <p class="sub">{{t:seg.sub}}</p>
-
-      <div class="table">
-        <div class="row">{{ico:papelera}}<span><b>{{t:seg.r1.b}}</b> {{t:seg.r1.s}}</span><span class="tag">{{t:seg.r1.tag}}</span></div>
-        <div class="row">{{ico:check}}<span><b>{{t:seg.r2.b}}</b> {{t:seg.r2.s}}</span><span class="tag">{{t:seg.r2.tag}}</span></div>
-        <div class="row">{{ico:rayo}}<span><b>{{t:seg.r3.b}}</b> {{t:seg.r3.s}}</span><span class="tag">{{t:seg.r3.tag}}</span></div>
-        <div class="row">{{ico:candado}}<span><b>{{t:seg.r4.b}}</b> {{t:seg.r4.s}}</span><span class="tag">{{t:seg.r4.tag}}</span></div>
-        <div class="row">{{ico:escudo}}<span><b>{{t:seg.r5.b}}</b> {{t:seg.r5.s}}</span><span class="tag">{{t:seg.r5.tag}}</span></div>
-        <div class="row">{{ico:brillo}}<span><b>{{t:seg.r6.b}}</b> {{t:seg.r6.s}}</span><span class="tag">{{t:seg.r6.tag}}</span></div>
-      </div>
-
-      <p><a class="btn quiet" href="{{v:urlSeguridad}}">{{t:herr.verSeguridad}} {{ico:chevron}}</a></p>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <p class="eyebrow">{{t:faq.eyebrow}}</p>
       <h2>{{t:faq.h2}}</h2>
       <div class="faq">
         <details><summary>{{t:faq.q1}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a1}}</p></div></details>
-        <details><summary>{{t:faq.q2}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a2}}</p></div></details>
         <details><summary>{{t:faq.q3}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a3}}</p></div></details>
-        <details><summary>{{t:faq.q4}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a4}}</p></div></details>
-        <details><summary>{{t:faq.q5}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a5}}</p></div></details>
         <details><summary>{{t:faq.q6}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a6}}</p></div></details>
+        <details><summary>{{t:faq.q2}}{{ico:chevron}}</summary><div class="body"><p>{{t:faq.a2}}</p></div></details>
       </div>
+      <p><a class="btn quiet" href="{{v:urlPreguntas}}">{{t:nav.preguntas}} {{ico:chevron}}</a></p>
     </div>
   </section>
 

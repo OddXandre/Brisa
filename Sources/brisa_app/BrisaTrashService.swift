@@ -44,10 +44,25 @@ final class BrisaTrashService {
 
     private let fm = FileManager.default
 
+    /// Un solo cerrojo recursivo para el manifiesto. La Papelera la tocan dos
+    /// hilos a la vez de verdad: las operaciones (mover, restaurar, deshacer)
+    /// corren de fondo y la interfaz pide su estado mientras tanto. Sin esto,
+    /// restaurar dos filas seguidas podía leer `items` a medio mutar y dejar
+    /// la lista con elementos que ya no existen (o tumbar la app por índice).
+    /// Es recursivo porque `undo` llama a `restore`, que también lo toma.
+    private let lock = NSRecursiveLock()
+
     // MARK: - Estado (manifest.json)
 
     private(set) var items: [TrashItem] = []
     private(set) var operations: [Operation] = []
+
+    /// Copia coherente del contenido, para quien la lea desde otro hilo.
+    var snapshot: [TrashItem] {
+        lock.lock(); defer { lock.unlock() }
+        loadIfNeeded()
+        return items
+    }
 
     struct Manifest: Codable {
         var items: [TrashItem]
@@ -76,6 +91,7 @@ final class BrisaTrashService {
         case protected
         case notFound
         case alreadyInTrash
+        case partial([String])
 
         var errorDescription: String? {
             switch self {
@@ -83,6 +99,8 @@ final class BrisaTrashService {
             case .protected: return "Es un elemento protegido (librería de Fotos, backup, correo)."
             case .notFound: return "El archivo ya no existe."
             case .alreadyInTrash: return "Ya está en la Papelera de Brisa."
+            case .partial(let names):
+                return "Se restauró el resto. No se pudo restaurar: " + names.joined(separator: ", ") + "."
             }
         }
     }
@@ -123,6 +141,7 @@ final class BrisaTrashService {
     ///   carpeta del usuario se rechaza.
     @discardableResult
     func trash(paths: [String], kind: String, sizes: [String: Double] = [:], allowing: [String] = []) throws -> Operation {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         let uniquePaths = Array(NSOrderedSet(array: paths)) as? [String] ?? paths
         try uniquePaths.forEach { try validate(path: $0, allowing: allowing) }
@@ -182,14 +201,23 @@ final class BrisaTrashService {
     }
 
     /// Restaura un item concreto a su ruta original.
+    ///
+    /// Si el archivo ya no está en la Papelera (se borró a mano desde el
+    /// Finder), la entrada fantasma se retira del manifiesto antes de lanzar:
+    /// dejarla era una fila que no se podía restaurar ni borrar, que nunca
+    /// desaparecía y que seguía sumando en el espacio ocupado.
     func restore(itemID: String) throws {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         guard let item = items.first(where: { $0.id == itemID }) else { throw TrashError.notFound }
 
         let src = Self.trashRoot.appendingPathComponent(item.opID).appendingPathComponent(
             item.id + "-" + item.name
         )
-        guard fm.fileExists(atPath: src.path) else { throw TrashError.notFound }
+        guard fm.fileExists(atPath: src.path) else {
+            forget(item: item)
+            throw TrashError.notFound
+        }
 
         let dest = URL(fileURLWithPath: item.originalPath)
         try fm.createDirectory(at: dest.deletingLastPathComponent(), withIntermediateDirectories: true)
@@ -205,10 +233,13 @@ final class BrisaTrashService {
         }
         try fm.moveItem(at: src, to: final)
 
-        items.removeAll { $0.id == itemID }
-        // Si el lote quedó vacío, se retira la operación Y su carpeta: antes se
-        // quedaba la carpeta vacía en disco y cada Deshacer dejaba basura en
-        // la Papelera de Brisa.
+        forget(item: item)
+    }
+
+    /// Retira del manifiesto una entrada que ya no tiene archivo detrás,
+    /// junto con su lote si se queda vacío, y lo guarda.
+    private func forget(item: TrashItem) {
+        items.removeAll { $0.id == item.id }
         if !items.contains(where: { $0.opID == item.opID }) {
             operations.removeAll { $0.id == item.opID }
             removeFolderIfEmpty(opID: item.opID)
@@ -224,18 +255,28 @@ final class BrisaTrashService {
     }
 
     /// Deshace un lote completo (banner «Deshacer» del Resumen).
+    ///
+    /// Restaura lo que puede y lo cuenta: antes se abortaba en el primer
+    /// archivo que ya no estaba, así que el resto del lote se quedaba en la
+    /// Papelera aunque el usuario hubiera pedido deshacerlo todo, y el aviso
+    /// decía solo «no se pudo deshacer» sin mencionar lo que sí se deshizo.
     func undo(operationID: String) throws {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         let opItems = items.filter { $0.opID == operationID }
+        var fallos: [String] = []
         for item in opItems {
-            try restore(itemID: item.id)
+            do { try restore(itemID: item.id) }
+            catch { fallos.append(item.name) }
         }
+        if !fallos.isEmpty { throw TrashError.partial(fallos) }
     }
 
     /// Elimina definitivamente los items más antiguos que `retentionDays`.
     /// Se llama al arrancar la app. Devuelve GB liberados del disco.
     @discardableResult
     func purge(olderThan retentionDays: Int) -> Double {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         let cutoff = Date().timeIntervalSince1970 - Double(retentionDays) * 86400
         let expired = items.filter { $0.taken < cutoff }
@@ -244,8 +285,18 @@ final class BrisaTrashService {
         var freed: Double = 0
         for item in expired {
             let src = Self.trashRoot.appendingPathComponent(item.opID).appendingPathComponent(item.id + "-" + item.name)
-            if let size = (try? src.resourceValues(forKeys: [.totalFileAllocatedSizeKey]))?.totalFileAllocatedSize {
-                freed += Double(size) / 1_000_000_000
+            /* El tamaño de una CARPETA (un bundle de app) no lo da
+               `totalFileAllocatedSize`: devuelve lo que ocupa su entrada de
+               directorio. Para esos se usa el tamaño medido al retirarlos, que
+               es el único que existe. */
+            var isDir: ObjCBool = false
+            let exists = fm.fileExists(atPath: src.path, isDirectory: &isDir)
+            if exists {
+                if isDir.boolValue {
+                    freed += item.gb
+                } else if let size = (try? src.resourceValues(forKeys: [.totalFileAllocatedSizeKey]))?.totalFileAllocatedSize {
+                    freed += Double(size) / 1_000_000_000
+                }
             }
             try? fm.removeItem(at: src)
         }
@@ -265,21 +316,21 @@ final class BrisaTrashService {
     /// Elimina un elemento de forma permanente, después de la confirmación
     /// explícita de la UI.
     func deletePermanently(itemID: String) throws {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         guard let item = items.first(where: { $0.id == itemID }) else { throw TrashError.notFound }
         let src = Self.trashRoot.appendingPathComponent(item.opID).appendingPathComponent(item.id + "-" + item.name)
-        guard fm.fileExists(atPath: src.path) else { throw TrashError.notFound }
-        try fm.removeItem(at: src)
-        items.removeAll { $0.id == itemID }
-        if !items.contains(where: { $0.opID == item.opID }) {
-            operations.removeAll { $0.id == item.opID }
-            removeFolderIfEmpty(opID: item.opID)
+        guard fm.fileExists(atPath: src.path) else {
+            forget(item: item)
+            throw TrashError.notFound
         }
-        save()
+        try fm.removeItem(at: src)
+        forget(item: item)
     }
 
     /// Vacía de forma permanente toda la Papelera de Brisa.
     func emptyPermanently() throws {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         try fm.removeItem(at: Self.trashRoot)
         items.removeAll()
@@ -291,12 +342,14 @@ final class BrisaTrashService {
     /// Devuelve la operación más reciente, cargando el manifiesto si es
     /// necesario para que Deshacer funcione también tras reabrir la app.
     var latestOperation: Operation? {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         return operations.first
     }
 
     /// GB ocupados ahora mismo por la Papelera de Brisa.
     func occupiedGB() -> Double {
+        lock.lock(); defer { lock.unlock() }
         loadIfNeeded()
         return items.reduce(0) { $0 + $1.gb }
     }
@@ -306,7 +359,10 @@ final class BrisaTrashService {
         if !loaded { load(); loaded = true }
     }
 
-    func loadFromDiskIfNeeded() { loadIfNeeded() }
+    func loadFromDiskIfNeeded() {
+        lock.lock(); defer { lock.unlock() }
+        loadIfNeeded()
+    }
 }
 
 extension BrisaTrashService.TrashError {

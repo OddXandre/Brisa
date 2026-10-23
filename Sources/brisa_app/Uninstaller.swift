@@ -429,9 +429,16 @@ enum Leftovers {
         var seen: Set<String> = [app.path]
 
         // La app en sí va primero: es lo que el usuario ha venido a quitar.
+        //
+        // Si no la podemos escribir es de root —App Store, instalador .pkg— y
+        // macOS pedirá administrador para quitarla. Se dice AQUÍ, antes de
+        // empezar: antes se marcaba siempre como «sin permisos» y el usuario se
+        // enteraba al final, cuando la app ya había hecho medio trabajo y la
+        // pantalla le contestaba «necesita permisos de administrador».
         let appSize = app.gb > 0 ? app.gb : Double(AppInventory.size(of: app.path)) / 1_000_000_000
+        let appNeedsAdmin = !fm.isWritableFile(atPath: app.path)
         items.append(["id": "un-app", "name": app.name, "path": app.path,
-                      "gb": round3(appSize), "conf": "certain", "admin": false,
+                      "gb": round3(appSize), "conf": "certain", "admin": appNeedsAdmin,
                       "nested": false, "cat": "app"])
 
         // Los sitios donde una app se deja ver con su nombre, no con su
@@ -521,12 +528,17 @@ enum AppRemover {
     }
 
     static func reason(for error: Error, path: String, home: String) -> Reason {
+        // Un enlace simbólico no pide contraseña: es un «no se quita» sin más.
+        if error is RemoveError { return .other }
         if let trash = error as? BrisaTrashService.TrashError {
             switch trash {
             case .outsideHome: return .admin
             case .protected: return .protected
             case .notFound: return .gone
             case .alreadyInTrash: return .other
+            // Un deshacer a medias no sale de una desinstalación; si llegara,
+            // el motivo honesto es «no se pudo quitar» sin más.
+            case .partial: return .other
             }
         }
         let ns = error as NSError
@@ -571,9 +583,13 @@ enum AppRemover {
     /// decide si se puede tocar. Fuera de la carpeta del usuario solo entran
     /// /Applications y /Library, y nunca las raíces, los contenedores ni nada
     /// del sistema.
-    static func isRemovable(_ path: String, appPath: String, home: String) -> Bool {
+    /// `appPath` es la app que se está quitando, que siempre entra —incluso si
+    /// vive fuera de las carpetas permitidas— porque es lo que el usuario ha
+    /// elegido. Va opcional para el reintento con permisos, que ya no tiene
+    /// bundle (lo quitó la primera pasada) y solo trae restos.
+    static func isRemovable(_ path: String, appPath: String?, home: String) -> Bool {
         let std = URL(fileURLWithPath: path).standardizedFileURL.path
-        if std == URL(fileURLWithPath: appPath).standardizedFileURL.path { return true }
+        if let appPath, std == URL(fileURLWithPath: appPath).standardizedFileURL.path { return true }
         guard !std.isEmpty, std != home else { return false }
         let allowed = std.hasPrefix(home + "/") || std.hasPrefix("/Applications/") || std.hasPrefix("/Library/")
         guard allowed else { return false }
@@ -582,6 +598,17 @@ enum AppRemover {
             if std == prefix || std.hasPrefix(prefix + "/") { return false }
         }
         return true
+    }
+
+    /// La etiqueta del lanzador de un plist, que es como `launchctl` conoce al
+    /// servicio (no siempre coincide con el nombre del archivo). Sin etiqueta no
+    /// hay nada que descargar y se devuelve nil en vez de adivinar.
+    static func agentLabel(path: String) -> String? {
+        guard let data = FileManager.default.contents(atPath: path),
+              let plist = try? PropertyListSerialization.propertyList(from: data, format: nil),
+              let dict = plist as? [String: Any],
+              let label = dict["Label"] as? String, !label.isEmpty else { return nil }
+        return label
     }
 
     /// Cierra la app y todo lo que cuelga de su bundle. Primero se pide por las
@@ -615,10 +642,7 @@ enum AppRemover {
     static func unloadAgents(_ paths: [String]) {
         let uid = getuid()
         for path in paths where path.contains("/LaunchAgents/") || path.contains("/LaunchDaemons/") {
-            guard let data = FileManager.default.contents(atPath: path),
-                  let plist = try? PropertyListSerialization.propertyList(from: data, format: nil),
-                  let dict = plist as? [String: Any],
-                  let label = dict["Label"] as? String, !label.isEmpty else { continue }
+            guard let label = agentLabel(path: path) else { continue }
             let isDaemon = path.contains("/LaunchDaemons/")
             let task = Process()
             task.executableURL = URL(fileURLWithPath: "/bin/launchctl")
@@ -638,6 +662,80 @@ enum AppRemover {
         var freed: Double = 0
     }
 
+    /// Error de nuestra propia capa para el caso que no es del sistema: un
+    /// enlace simbólico. No se reutiliza `outsideHome` —que existe para lo que
+    /// está fuera de casa y pide administrador— porque acababa contando un
+    /// enlace como si necesitara contraseña.
+    private enum RemoveError: Error { case symlink }
+
+    /// Pregunta al usuario, UNA vez, si quiere que macOS le pida la contraseña
+    /// de administrador para terminar. Se hace en el hilo principal porque es
+    /// un diálogo, y `run` viene de una cola de fondo.
+    private static func confirmAdmin(_ count: Int, gb: Double) -> Bool {
+        let ask = { () -> Bool in
+            NSApp.activate(ignoringOtherApps: true)
+            let alert = NSAlert()
+            alert.messageText = count == 1
+                ? AppLanguage.t("Un elemento necesita tu permiso de administrador",
+                                "One item needs your administrator permission")
+                : AppLanguage.t("\(count) elementos necesitan tu permiso de administrador",
+                                "\(count) items need your administrator permission")
+            alert.informativeText = AppLanguage.t(
+                "Están fuera de tu carpeta —en /Library o en una aplicación de App Store— y macOS no deja quitarlos sin autorización. Se te pedirá la contraseña una sola vez y Brisa no la guarda.\n\nSe liberarán \(AppLanguage.gb(gb)) GB.",
+                "They live outside your folder —in /Library or inside an App Store app— and macOS will not remove them without authorization. You will be asked for your password once and Brisa never stores it.\n\nThis frees \(AppLanguage.gb(gb)) GB.")
+            alert.alertStyle = .informational
+            alert.addButton(withTitle: AppLanguage.t("Continuar", "Continue"))
+            alert.addButton(withTitle: AppLanguage.t("Ahora no", "Not now"))
+            return alert.runModal() == .alertFirstButtonReturn
+        }
+        if Thread.isMainThread { return ask() }
+        return DispatchQueue.main.sync(execute: ask)
+    }
+
+    /// Lo que falló por permisos se reintenta en UNA pasada autorizada: macOS
+    /// enseña su propio diálogo, con el nombre de Brisa, y el usuario decide.
+    /// Antes esto no existía y el resultado solo decía «necesita permisos de
+    /// administrador» para siempre: conceder cualquier permiso no cambiaba nada
+    /// porque la app nunca llegaba a pedir la autorización.
+    private static func elevate(_ failures: inout [Failure], sizes: [String: Double],
+                                opID: String, home: String, appPath: String?,
+                                tally: inout Tally) {
+        let targets = failures
+            .filter { $0.reason == Reason.admin.rawValue }
+            .map(\.path)
+            .filter { isRemovable($0, appPath: appPath, home: home) }
+        guard !targets.isEmpty else { return }
+
+        // Se mide ANTES de borrar: después ya no hay nada que medir.
+        var measured: [String: Double] = [:]
+        for path in targets {
+            measured[path] = sizes[path] ?? Double(AppInventory.size(of: path)) / 1_000_000_000
+        }
+        let freed = measured.values.reduce(0, +)
+        guard confirmAdmin(targets.count, gb: (freed * 1000).rounded() / 1000) else { return }
+
+        let daemons = targets.filter { $0.contains("/LaunchDaemons/") }
+            .compactMap { agentLabel(path: $0) }
+        let gone = PrivilegedRemover.remove(targets, daemons: daemons)
+        guard !gone.isEmpty else {
+            NSLog("Brisa ▶ desinstalador: el borrado con permisos no quitó nada")
+            return
+        }
+
+        let removed = Set(gone)
+        failures.removeAll { removed.contains($0.path) }
+        for path in gone {
+            tally.paths.append(path)
+            tally.items.append(BrisaTrashService.TrashItem(
+                id: UUID().uuidString, opID: opID,
+                originalPath: path, name: (path as NSString).lastPathComponent,
+                gb: ((measured[path] ?? 0) * 1000).rounded() / 1000,
+                taken: Date().timeIntervalSince1970))
+            tally.freed += measured[path] ?? 0
+        }
+        NSLog("Brisa ▶ desinstalador: \(gone.count) elementos quitados con permisos")
+    }
+
     /// Desinstala: cierra, retira del lanzador y BORRA elemento a elemento.
     /// Devuelve el resultado en JSON.
     ///
@@ -652,7 +750,11 @@ enum AppRemover {
     /// Va de uno en uno —y no en un lote— para que un solo archivo que macOS no
     /// deje tocar no impida quitar hasta la app: se quita todo lo que se puede y
     /// se cuenta lo que no.
+    /// `allowAdmin` es el permiso del usuario para que, si algún elemento falla
+    /// por permisos, se le pregunte una vez y macOS pida la contraseña. Va en
+    /// falso por defecto para que un verificador automático no abra diálogos.
     static func run(app: AppEntry, paths: [String], sizes: [String: Double],
+                    allowAdmin: Bool = false,
                     progress: @escaping (String, Double, String?) -> Void) -> [String: Any] {
         let home = FileManager.default.homeDirectoryForCurrentUser.path
         let opID = UUID().uuidString
@@ -687,7 +789,16 @@ enum AppRemover {
             remove(path, sizes: sizes, opID: opID, home: home,
                    failure: { failures.append($0) }, tally: &tally)
         }
-        progress("clean", 92, nil)
+        // Lo que macOS no dejó tocar por permisos: una sola autorización y se
+        // termina lo que el usuario había pedido. Lo demás (un archivo en uso,
+        // uno protegido) no se reintenta: su motivo es otro y seguiría fallando.
+        if allowAdmin, failures.contains(where: { $0.reason == Reason.admin.rawValue }) {
+            progress("files", 94, nil)
+            elevate(&failures, sizes: sizes, opID: opID, home: home,
+                    appPath: app.path, tally: &tally)
+        }
+
+        progress("clean", 96, nil)
         progress("done", 100, nil)
 
         /* El historial no distingue cómo se quitó una cosa, así que la entrada
@@ -710,6 +821,52 @@ enum AppRemover {
         ]
     }
 
+    /// Termina lo que quedó pendiente por permisos, en una segunda pasada. Se
+    /// usa cuando el usuario cerró el diálogo de macOS sin escribir la
+    /// contraseña: el resultado ofrece «pedir permiso y terminar» y esto lo
+    /// cumple sin volver a analizar la app, que ya no está en el disco.
+    static func retryAdmin(paths: [String], sizes: [String: Double], name: String, bid: String,
+                           progress: @escaping (String, Double, String?) -> Void) -> [String: Any] {
+        let home = FileManager.default.homeDirectoryForCurrentUser.path
+        let opID = UUID().uuidString
+        var tally = Tally()
+        // Solo tiene sentido reintentar con permisos lo que de verdad los pide:
+        // la lista blanca de `PrivilegedRemover` —/Applications y /Library— es
+        // la misma que decide qué se puede borrar en nombre de administrador.
+        let wanted = paths.filter {
+            isRemovable($0, appPath: nil, home: home)
+                && !ScannerService.isProtected(path: $0, home: home)
+                && !PrivilegedRemover.eligible([$0], home: home).isEmpty
+        }
+        var failures = wanted.map {
+            Failure(name: ($0 as NSString).lastPathComponent, path: $0, reason: Reason.admin.rawValue)
+        }
+
+        progress("files", 30, nil)
+        elevate(&failures, sizes: sizes, opID: opID, home: home, appPath: nil, tally: &tally)
+        // Lo que ya no está no es un fallo: entre el primer intento y este pudo
+        // quitarlo el propio macOS o el usuario a mano.
+        failures.removeAll { !FileManager.default.fileExists(atPath: $0.path) }
+        progress("clean", 96, nil)
+        progress("done", 100, nil)
+
+        if !tally.items.isEmpty {
+            HistoryService.shared.record(operation: BrisaTrashService.Operation(
+                id: opID, ts: Date().timeIntervalSince1970,
+                gb: (tally.freed * 1000).rounded() / 1000,
+                items: tally.items, kind: "bin"))
+        }
+
+        return [
+            "name": name, "bid": bid,
+            "removed": tally.paths.count,
+            "freed": (tally.freed * 1000).rounded() / 1000,
+            "closed": 0,
+            "done": tally.paths,
+            "failures": failures.map { ["name": $0.name, "path": $0.path, "reason": $0.reason] }
+        ]
+    }
+
     /// Borra UNA ruta de forma definitiva y anota el resultado. El espacio se
     /// toma de lo ya medido en el análisis cuando está (`sizes`), porque medir
     /// un bundle recién borrado ya no diría nada.
@@ -725,7 +882,7 @@ enum AppRemover {
             // No se sigue un enlace simbólico: borrar `~/enlace/fichero` podría
             // acabar con un recurso que el usuario nunca señaló.
             guard standard.resolvingSymlinksInPath().path == standard.path else {
-                throw BrisaTrashService.TrashError.outsideHome
+                throw RemoveError.symlink
             }
             guard !ScannerService.isProtected(path: standard.path, home: home) else {
                 throw BrisaTrashService.TrashError.protected
@@ -745,5 +902,82 @@ enum AppRemover {
             NSLog("Brisa ▶ desinstalador: no se pudo quitar \(path) (\(reason))")
             failure(Failure(name: name, path: path, reason: reason))
         }
+    }
+}
+
+// MARK: - 3c · Borrado con autorización del sistema
+
+/// Quita lo que macOS no deja tocar sin ser administrador: aplicaciones de App
+/// Store en `/Applications` y restos en `/Library`. Lo hace con `osascript`
+/// (`do shell script … with administrator privileges`), que abre el diálogo del
+/// sistema —el mismo que usa un instalador— y no guarda ninguna credencial.
+///
+/// Es el último eslabón de la cadena de guardias: solo recibe rutas que ya
+/// pasaron `isRemovable`, y aquí las vuelve a comprobar. Cada ruta va
+/// entrecomillada como un argumento entero, así que ningún nombre de archivo
+/// puede convertirse en otro comando.
+enum PrivilegedRemover {
+
+    /// Borra `paths` en una sola autorización y devuelve las que ya no están.
+    /// `daemons` son las etiquetas de los servicios de sistema que hay que
+    /// descargar antes de llevarse su plist.
+    /// Qué rutas se le pueden entregar a `rm` en nombre de administrador.
+    /// Función PURA —no mira el disco salvo para resolver enlaces— y por eso se
+    /// puede comprobar sola en `Tests/verify_uninstall.swift`: es la guardia de
+    /// la única parte de la app que borra con privilegios.
+    static func eligible(_ paths: [String], home: String) -> [String] {
+        paths.filter { path in
+            let std = URL(fileURLWithPath: path).standardizedFileURL.path
+            guard !std.isEmpty, !std.hasPrefix(home + "/") else { return false }
+            guard std.hasPrefix("/Applications/") || std.hasPrefix("/Library/") else { return false }
+            guard !AppRemover.containerRoots(home: home).contains(std) else { return false }
+            // Un enlace simbólico nunca: borrarlo a él no es el problema, es lo
+            // que hay detrás.
+            return URL(fileURLWithPath: std).resolvingSymlinksInPath().path == std
+        }
+    }
+
+    static func remove(_ paths: [String], daemons: [String]) -> [String] {
+        let home = FileManager.default.homeDirectoryForCurrentUser.path
+        let targets = eligible(paths, home: home)
+            .filter { FileManager.default.fileExists(atPath: $0) }
+        guard !targets.isEmpty else { return [] }
+
+        var commands = ["/bin/rm -rf -- " + targets.map { shQuote($0) }.joined(separator: " ")]
+        for label in daemons where !label.isEmpty {
+            commands.append("/bin/launchctl bootout system/" + shQuote(label))
+        }
+        // `true` al final: si un elemento desapareció entre la medición y el
+        // borrado, el script no tiene que abortar el resto. Lo que de verdad
+        // pasó se lee en el disco, no en el código de salida.
+        commands.append("true")
+        let script = commands.joined(separator: "; ")
+
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+        task.arguments = ["-e", "do shell script \(appleQuote(script)) with administrator privileges"]
+        task.standardOutput = FileHandle.nullDevice
+        task.standardError = FileHandle.nullDevice
+        do {
+            try task.run()
+            task.waitUntilExit()
+        } catch {
+            NSLog("Brisa ▶ desinstalador: no se pudo pedir autorización (\(error))")
+            return []
+        }
+        NSLog("Brisa ▶ desinstalador: borrado con permisos, osascript \(task.terminationStatus)")
+        return targets.filter { !FileManager.default.fileExists(atPath: $0) }
+    }
+
+    /// Un argumento de shell: comillas simples, y las comillas simples del
+    /// propio texto escapadas.
+    private static func shQuote(_ s: String) -> String {
+        "'" + s.replacingOccurrences(of: "'", with: "'\\''") + "'"
+    }
+
+    /// El mismo texto como literal de AppleScript: la barra invertida primero.
+    private static func appleQuote(_ s: String) -> String {
+        "\"" + s.replacingOccurrences(of: "\\", with: "\\\\")
+                   .replacingOccurrences(of: "\"", with: "\\\"") + "\""
     }
 }

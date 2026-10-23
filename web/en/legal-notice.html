@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/legal-notice">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/aviso-legal">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="../assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -70,6 +70,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -83,7 +87,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.1.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "Legal notice", "item": "https://heybrisa.pages.dev/en/legal-notice"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.2.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "Legal notice", "item": "https://heybrisa.pages.dev/en/legal-notice"}]}]}</script>
 </head>
 
 <body>
@@ -153,20 +157,20 @@ try {
   <section class="head">
     <div class="wrap">
       <h1>Who is behind this site.</h1>
-      <p class="lede">No company, no register, no fine print: one person who built a program and hands it out. This is what you need to know to use it with peace of mind.</p>
+      <p class="lede">No company, no register, no fine print. One person who built a program and hands it out. This is what you need to know to use it with peace of mind.</p>
     </div>
   </section>
 
   <section class="prosa">
     <div class="wrap">
       <h2>Who signs this</h2>
-      <p class="sub">This site and the program it hands out are run by one person, with no company behind it: write to <a href="mailto:we.beyond.studio@gmail.com">we.beyond.studio@gmail.com</a>.</p>
+      <p class="sub">This site and the program it hands out are run by one person, with no company behind it. Write to <a href="mailto:we.beyond.studio@gmail.com">we.beyond.studio@gmail.com</a>.</p>
 
       <h2>What this site is</h2>
       <p class="sub">An informational page, to introduce Brisa and hand out its beta. It sells nothing, takes no payments, carries no third-party advertising, and collects no data from whoever visits it.</p>
 
       <h2>How it may be used</h2>
-      <p class="sub">You can read it, link to it and quote it. What you cannot do is spoil it for everyone else: no taking the server down, no mass automated requests, and no copying the design and the copy.</p>
+      <p class="sub">You can read it, link to it and quote it. What you cannot do is spoil it for everyone else. No taking the server down, no mass automated requests, and no copying the design and the copy.</p>
 
       <h2>What belongs to whom</h2>
       <p class="sub">The name, the symbol, the words, the illustrations and the code of Brisa belong to its author. The logos of other programs shown in the screenshots belong to their owners.</p>
@@ -177,7 +181,7 @@ try {
       <h2>Which law applies</h2>
       <p class="sub">This notice is governed by Spanish law, and any disagreement will be settled by the courts of the author’s place of residence.</p>
 
-      <p class="letra-pequena">Last reviewed: 6 October 2026.</p>
+      <p class="letra-pequena">Last reviewed, 6 October 2026.</p>
     </div>
   </section>
 
@@ -191,7 +195,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nothing goes without warning.</p>
-      <p>Beta: ad-hoc signed and handed out by hand, outside the App Store.</p>
+      <p>Beta, ad-hoc signed and handed out by hand, outside the App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -221,11 +225,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 or later</span>
-      <span>This site uses no cookies and no analytics. It stores one thing in your browser: the theme you pick.</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 or later</span>
+      <span>This site uses no cookies and no analytics. The only thing it stores in your browser is the theme you pick.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Back to top"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="../assets/js/sitio.js"></script>
 </body>

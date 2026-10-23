@@ -49,8 +49,8 @@ el icono de Brisa en Aplicaciones, elige «Abrir» y confirma con «Abrir».
 TU PRIVACIDAD
 -------------
 Brisa mide tu disco en tu propio Mac: tus archivos no salen de él, no hay
-cuentas ni seguimiento y nada se envía a ningún sitio salvo que actives tú
-la opción «Ayudar a mejorar Brisa».
+cuentas ni seguimiento y nada se envía a ningún sitio. La aplicación no abre
+ninguna conexión de red.
 
 ¿ALGO NO FUNCIONA?
 ------------------

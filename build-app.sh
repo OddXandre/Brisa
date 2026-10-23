@@ -82,8 +82,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
     <key>CFBundleName</key><string>Brisa</string>
     <key>CFBundleDisplayName</key><string>Brisa</string>
     <key>CFBundleIdentifier</key><string>dev.brisa.app</string>
-    <key>CFBundleVersion</key><string>100</string>
-    <key>CFBundleShortVersionString</key><string>0.1.0</string>
+    <key>CFBundleVersion</key><string>200</string>
+    <key>CFBundleShortVersionString</key><string>0.2.0</string>
     <key>BrisaReleaseChannel</key><string>beta</string>
     <key>CFBundleExecutable</key><string>Brisa</string>
     <key>CFBundlePackageType</key><string>APPL</string>

@@ -14,7 +14,6 @@
     <div class="wrap">
       <div class="split flip">
         <div class="text">
-          <p class="eyebrow">{{t:seg.plan.eyebrow}}</p>
           <h2>{{t:seg.plan.h2}}</h2>
           <ol class="steps">
             <li class="step">
@@ -36,11 +35,30 @@
     </div>
   </section>
 
+  <!-- Las seis reglas vivas de la app, aquí y no en la portada: en la portada
+       ocupaban una pantalla entera antes de que el lector supiera cómo
+       funciona nada, y una tabla de filas iguales se lee como una lista de
+       condiciones. En la página a la que se viene a comprobarlo, en cambio,
+       son exactamente lo que se viene a buscar. -->
+  <section>
+    <div class="wrap">
+      <h2>{{t:seg.reglas.h2}}</h2>
+
+      <div class="table">
+        <div class="row">{{ico:papelera}}<span><b>{{t:seg.r1.b}}</b> {{t:seg.r1.s}}</span><span class="tag">{{t:seg.r1.tag}}</span></div>
+        <div class="row">{{ico:check}}<span><b>{{t:seg.r2.b}}</b> {{t:seg.r2.s}}</span><span class="tag">{{t:seg.r2.tag}}</span></div>
+        <div class="row">{{ico:rayo}}<span><b>{{t:seg.r3.b}}</b> {{t:seg.r3.s}}</span><span class="tag">{{t:seg.r3.tag}}</span></div>
+        <div class="row">{{ico:candado}}<span><b>{{t:seg.r4.b}}</b> {{t:seg.r4.s}}</span><span class="tag">{{t:seg.r4.tag}}</span></div>
+        <div class="row">{{ico:escudo}}<span><b>{{t:seg.r5.b}}</b> {{t:seg.r5.s}}</span><span class="tag">{{t:seg.r5.tag}}</span></div>
+        <div class="row">{{ico:brillo}}<span><b>{{t:seg.r6.b}}</b> {{t:seg.r6.s}}</span><span class="tag">{{t:seg.r6.tag}}</span></div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="wrap">
       <div class="split">
         <div class="text">
-          <p class="eyebrow">{{t:seg.toca.eyebrow}}</p>
           <h2>{{t:seg.toca.h2}}</h2>
           <p class="sub">{{t:seg.toca.p}}</p>
           <ul class="points">
@@ -60,7 +78,6 @@
     <div class="wrap">
       <div class="split flip">
         <div class="text">
-          <p class="eyebrow">{{t:seg.perm.eyebrow}}</p>
           <h2>{{t:seg.perm.h2}}</h2>
           <p class="sub">{{t:seg.perm.p1}}</p>
           <p class="sub">{{t:seg.perm.p2}}</p>

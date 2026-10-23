@@ -35,7 +35,7 @@ que hace el sitio, y por eso está declarada en la política de contenido
 2. **Montar lo que se publica**, y subirlo a la raíz del dominio:
 
    ```
-   /usr/bin/python3 web/tools/preparar-publicacion.py   # 103 ficheros · 13,6 MB · sin fuentes
+   /usr/bin/python3 web/tools/preparar-publicacion.py   # 103 ficheros · 15,9 MB · sin fuentes
    ```
 
    `web/` son dos cosas a la vez: el sitio y las piezas que lo construyen.
@@ -200,7 +200,7 @@ que hace el sitio, y por eso está declarada en la política de contenido
 4. El correo del aviso legal es el que quieres que se vea: es una línea en
    `build.py` (`CONTACTO`) y aparece en el aviso legal, en la privacidad y en el
    pie de las 20 páginas.
-5. El instalador: si `dist/Brisa-0.1.0-beta.dmg` no está construido, el botón de
+5. El instalador: si `dist/Brisa-0.2.0-beta.dmg` no está construido, el botón de
    descarga lleva a la sección que explica cómo se reparte, y el verificador lo
    avisa. Para que descargue de verdad, empaquétalo antes de construir el sitio.
 6. Las fechas de revisión de los documentos (`legal.fecha` en `src/i18n.json`),

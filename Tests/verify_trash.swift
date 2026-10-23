@@ -88,6 +88,48 @@ struct Verify {
         // 6) occupiedGB coherente
         check(svc.occupiedGB() >= 0, "occupiedGB debe ser >= 0")
 
+        // 7) Entrada fantasma: si el archivo desaparece de la Papelera (borrado
+        // desde el Finder), restaurar lo dice Y retira la fila. Antes la entrada
+        // se quedaba para siempre: no se podía restaurar ni borrar, y seguía
+        // sumando en el espacio ocupado.
+        let f4 = try makeFile("fantasma.bin", bytes: 1_000)
+        let op4 = try svc.trash(paths: [f4], kind: "wind")
+        let ghostItem = op4.items[0]
+        let ghostPath = BrisaTrashService.trashRoot
+            .appendingPathComponent(ghostItem.opID)
+            .appendingPathComponent(ghostItem.id + "-" + ghostItem.name)
+        try fm.removeItem(at: ghostPath)
+        var ghostThrew = false
+        do { try svc.restore(itemID: ghostItem.id) } catch { ghostThrew = true }
+        check(ghostThrew, "restaurar un archivo que ya no está debe avisar")
+        check(svc.items.isEmpty, "la fila fantasma debe desaparecer del manifiesto")
+
+        // 8) Deshacer parcial: un elemento del lote ya no está; el resto vuelve
+        // igualmente y el error lo dice, en vez de abortar en el primero.
+        let f5 = try makeFile("lote-a.bin", bytes: 1_000)
+        let f6 = try makeFile("lote-b.bin", bytes: 1_000)
+        let op5 = try svc.trash(paths: [f5, f6], kind: "wind")
+        let lost = op5.items[0]
+        try fm.removeItem(at: BrisaTrashService.trashRoot
+            .appendingPathComponent(lost.opID)
+            .appendingPathComponent(lost.id + "-" + lost.name))
+        var partialThrew = false
+        do { try svc.undo(operationID: op5.id) } catch { partialThrew = true }
+        check(partialThrew, "un deshacer a medias debe informar del fallo")
+        check(fm.fileExists(atPath: f6) || fm.fileExists(atPath: f5),
+              "el resto del lote sí debe volver a su sitio")
+        check(svc.items.isEmpty, "no deben quedar filas tras el deshacer parcial")
+
+        // 9) Purga de una CARPETA (un bundle): cuenta el tamaño medido al
+        // retirarla, no lo que ocupa su entrada de directorio.
+        let bundle = dir.appendingPathComponent("App Falsa.app")
+        try fm.createDirectory(at: bundle, withIntermediateDirectories: true)
+        _ = try Data(repeating: 0x42, count: 4096).write(to: bundle.appendingPathComponent("dentro.bin"))
+        _ = try svc.trash(paths: [bundle.path], kind: "bin", sizes: [bundle.path: 0.75])
+        let freed = svc.purge(olderThan: 0)
+        check(abs(freed - 0.75) < 0.001, "la purga de un bundle debe contar sus 0,75 GB, contó \(freed)")
+        check(svc.items.isEmpty, "Manifest vacío tras purgar el bundle")
+
         if failures.isEmpty {
             print("FASE 3 OK: trash/restaurar/deshacer/purgar/validaciones verificados")
             return 0

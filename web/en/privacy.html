@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy · Brisa, a Mac disk cleaner</title>
-<meta name="description" content="No accounts, no telemetry, no network: Brisa works inside your Mac. Here is the detail, with no fine print.">
+<meta name="description" content="No accounts, no telemetry, no network. Brisa works inside your Mac. Here is the detail, with no fine print.">
 <!-- Lo que se le pide al buscador: indexar, y que pueda enseñar la imagen grande
      y el fragmento entero en el resultado —si no se autoriza, recorta por defecto
      mucho más—. La página de error lo pide al revés: no indexarse, porque lo
@@ -18,12 +18,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Brisa">
 <meta property="og:title" content="Privacy · Brisa, a Mac disk cleaner">
-<meta property="og:description" content="No accounts, no telemetry, no network: Brisa works inside your Mac. Here is the detail, with no fine print.">
+<meta property="og:description" content="No accounts, no telemetry, no network. Brisa works inside your Mac. Here is the detail, with no fine print.">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="es_ES">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Privacy · Brisa, a Mac disk cleaner">
-<meta name="twitter:description" content="No accounts, no telemetry, no network: Brisa works inside your Mac. Here is the detail, with no fine print.">
+<meta name="twitter:description" content="No accounts, no telemetry, no network. Brisa works inside your Mac. Here is the detail, with no fine print.">
 <meta property="og:url" content="https://heybrisa.pages.dev/en/privacy">
 <meta property="og:image" content="https://heybrisa.pages.dev/assets/img/tarjeta-en.jpg">
 <meta property="og:image:width" content="1200">
@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/privacy">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/privacidad">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="../assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -70,6 +70,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -83,7 +87,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.1.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "Privacy", "item": "https://heybrisa.pages.dev/en/privacy"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.2.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "Privacy", "item": "https://heybrisa.pages.dev/en/privacy"}]}]}</script>
 </head>
 
 <body>
@@ -163,12 +167,12 @@ try {
         <div class="cell">
           <span class="ic"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.75" y="10.75" width="14.5" height="9.5" rx="2"/><path d="M8.25 10.75V7.5a3.75 3.75 0 0 1 7.2-1.45"/><circle cx="12" cy="15.5" r="1.1" fill="currentColor" stroke="none"/></svg></span>
           <h2>Nothing leaves your Mac.</h2>
-          <p>Brisa opens no network connections: no accounts, no analytics, no version check. Everything is computed inside your Mac. Nothing leaves it unless you turn on “Help improve Brisa”.</p>
+          <p>Brisa opens no network connections. No accounts, no analytics, no version check. Everything is computed inside your Mac, and nothing leaves it.</p>
         </div>
         <div class="cell">
           <span class="ic"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.25 19.75 7.5v9L12 20.75 4.25 16.5v-9L12 3.25Z"/><path d="M4.25 7.5 12 11.75l7.75-4.25M12 11.75v9"/></svg></span>
           <h2>What it stores, and where.</h2>
-          <p>It all lives in one folder, “~/Library/Application Support/Brisa/”: what was removed with its date, the cleanup history, your exclusions, and a sample of the Mac’s state.</p>
+          <p>It all lives in one folder, “~/Library/Application Support/Brisa/”. That is where what was removed with its date, the cleanup history, your exclusions and a sample of the Mac’s state live.</p>
         </div>
         <div class="cell">
           <span class="ic"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M9.25 7V5.25a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1V7m-7.25 0 .85 11.15a2 2 0 0 0 2 1.85h5.3a2 2 0 0 0 2-1.85L17.5 7M10.25 11v5M13.75 11v5"/></svg></span>
@@ -184,9 +188,9 @@ try {
       <div class="split flip">
         <div class="text">
           <h2>Permissions.</h2>
-          <p class="sub">Brisa asks for nothing when it opens. Without Full Disk Access it measures everything except the protected folders; with it, it measures those too. And you can withdraw it whenever you want.</p>
+          <p class="sub">Brisa asks for nothing when it opens. Without Full Disk Access it measures everything except the protected folders, and with it, it measures those too. You can withdraw it whenever you want.</p>
         </div>
-        <figure class="window"><a class="ampliar" href="../assets/img/vista-estado-en-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-estado-en-oscuro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-estado-en-claro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><img src="../assets/img/vista-estado-en-claro.jpg" data-clara="../assets/img/vista-estado-en-claro.jpg" data-oscura="../assets/img/vista-estado-en-oscuro.jpg" width="2360" height="1520" alt="Mac status in Brisa: CPU, memory, disk, network, battery and temperature, live." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">View larger</span></a></figure>
+        <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="../assets/img/vista-estado-en-oscuro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><source type="image/avif" srcset="../assets/img/vista-estado-en-claro.avif" data-clara="../assets/img/vista-estado-en-claro.avif" data-oscura="../assets/img/vista-estado-en-oscuro.avif"><img src="../assets/img/vista-estado-en-claro.jpg" data-clara="../assets/img/vista-estado-en-claro.jpg" data-oscura="../assets/img/vista-estado-en-oscuro.jpg" width="2360" height="1520" alt="Mac status in Brisa, with CPU, memory, disk, network, battery and temperature, live." loading="lazy" decoding="async"></picture></figure>
       </div>
     </div>
   </section>
@@ -195,15 +199,15 @@ try {
     <div class="wrap">
       <div class="note"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.25 19.25 6v5.6c0 4.4-3 7.55-7.25 9.15-4.25-1.6-7.25-4.75-7.25-9.15V6L12 3.25Z"/><path d="m9 12.1 2.1 2.1 4-4.2"/></svg><div>
         <h3>And this site.</h3>
-        <p>This site is a folder of static files: no cookies, no analytics, and no third-party requests beyond the Ko-fi button, which loads its script and its typeface from Ko-fi’s server. Everything else is served from here.</p>
+        <p>This site is a folder of static files. It uses no cookies and no analytics, and the only third-party request is made by the Ko-fi button, which loads its script and its typeface from Ko-fi’s server. Everything else is served from here.</p>
       </div></div>
       <div class="note"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.75" cy="10.75" r="6.5"/><path d="m15.5 15.5 4.75 4.75"/></svg><div>
         <h3>Trademarks and sample data.</h3>
-        <p>The screenshots come from Brisa’s real interface running on sample data: they are not anyone’s Mac. The application names shown belong to their owners.</p>
+        <p>The screenshots come from Brisa’s real interface running on sample data. They are not anyone’s Mac. The application names shown belong to their owners.</p>
       </div></div>
       <div class="note"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5c.45 3.35 2.15 5.05 5.5 5.5-3.35.45-5.05 2.15-5.5 5.5-.45-3.35-2.15-5.05-5.5-5.5 3.35-.45 5.05-2.15 5.5-5.5Z"/><path d="M17.5 14c.25 1.55 1 2.25 2.5 2.5-1.5.25-2.25.95-2.5 2.5-.25-1.55-.95-2.25-2.5-2.5 1.55-.25 2.25-.95 2.5-2.5Z"/><circle cx="5.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg><div>
         <h3>Beta, no warranty.</h3>
-        <p>Brisa is a beta handed out for testing: it comes as is, with no warranty of any kind, and it is ad-hoc signed. Do not use it as your only backup.</p>
+        <p>Brisa is a beta handed out for testing. It comes as is, with no warranty of any kind, and it is ad-hoc signed. Do not use it as your only backup.</p>
       </div></div>
     </div>
   </section>
@@ -216,7 +220,7 @@ try {
       <p class="sub">The person responsible for this site is the one who signs the legal notice, and can be found at <a href="mailto:we.beyond.studio@gmail.com">we.beyond.studio@gmail.com</a>.</p>
 
       <h3>What data there is</h3>
-      <p class="sub">This site has no forms, no accounts, no analytics and no cookies: it collects nothing of yours. Your browser stores only the theme you pick. The provider hosting these files keeps the usual server logs—IP address, date and page requested—solely to keep the site running.</p>
+      <p class="sub">This site has no forms, no accounts, no analytics and no cookies, so it collects nothing of yours. Your browser stores only the theme you pick. The provider hosting these files keeps the usual server logs (IP address, date and page requested), solely to keep the site running.</p>
 
       <h3>How long it lasts, and who sees it</h3>
       <p class="sub">Server logs last as long as the hosting provider’s policy says; it acts as data processor. Nothing is passed to third parties, there is no advertising, and no data leaves the European Economic Area. The only connection to a third party is opened by the Ko-fi button, which serves its own pieces from its server.</p>
@@ -224,7 +228,7 @@ try {
       <h3>Your rights</h3>
       <p class="sub">You can ask for access, rectification, erasure, objection, restriction and portability, and complain to the Spanish Data Protection Agency if you think your request was not handled properly. Write to <a href="mailto:we.beyond.studio@gmail.com">we.beyond.studio@gmail.com</a>.</p>
 
-      <p class="letra-pequena">Last reviewed: 6 October 2026.</p>
+      <p class="letra-pequena">Last reviewed, 6 October 2026.</p>
     </div>
   </section>
 
@@ -250,7 +254,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nothing goes without warning.</p>
-      <p>Beta: ad-hoc signed and handed out by hand, outside the App Store.</p>
+      <p>Beta, ad-hoc signed and handed out by hand, outside the App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -280,11 +284,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 or later</span>
-      <span>This site uses no cookies and no analytics. It stores one thing in your browser: the theme you pick.</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 or later</span>
+      <span>This site uses no cookies and no analytics. The only thing it stores in your browser is the theme you pick.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Back to top"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="../assets/js/sitio.js"></script>
 </body>

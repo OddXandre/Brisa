@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>License · Brisa</title>
-<meta name="description" content="What downloading Brisa grants you and what it does not: personal use, no warranty, and the files it moves always your responsibility.">
+<meta name="description" content="What downloading Brisa grants you and what it does not. Personal use, no warranty, and the files it moves always your responsibility.">
 <!-- Lo que se le pide al buscador: indexar, y que pueda enseñar la imagen grande
      y el fragmento entero en el resultado —si no se autoriza, recorta por defecto
      mucho más—. La página de error lo pide al revés: no indexarse, porque lo
@@ -18,12 +18,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Brisa">
 <meta property="og:title" content="License · Brisa">
-<meta property="og:description" content="What downloading Brisa grants you and what it does not: personal use, no warranty, and the files it moves always your responsibility.">
+<meta property="og:description" content="What downloading Brisa grants you and what it does not. Personal use, no warranty, and the files it moves always your responsibility.">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="es_ES">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="License · Brisa">
-<meta name="twitter:description" content="What downloading Brisa grants you and what it does not: personal use, no warranty, and the files it moves always your responsibility.">
+<meta name="twitter:description" content="What downloading Brisa grants you and what it does not. Personal use, no warranty, and the files it moves always your responsibility.">
 <meta property="og:url" content="https://heybrisa.pages.dev/en/license">
 <meta property="og:image" content="https://heybrisa.pages.dev/assets/img/tarjeta-en.jpg">
 <meta property="og:image:width" content="1200">
@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/license">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/licencia">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="../assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -70,6 +70,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -83,7 +87,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.1.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "License", "item": "https://heybrisa.pages.dev/en/license"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.2.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "License", "item": "https://heybrisa.pages.dev/en/license"}]}]}</script>
 </head>
 
 <body>
@@ -166,21 +170,21 @@ try {
       <p class="sub">It cannot be modified, decompiled, resold, rented or shipped as part of another product, and the authorship notices cannot be removed.</p>
 
       <h2>About your files</h2>
-      <p class="sub">Brisa moves and deletes files: that is on whoever uses it. What it removes ends up in Brisa Trash; what you mark as permanent is deleted. Keep a copy of anything you cannot lose.</p>
+      <p class="sub">Brisa moves and deletes files, and that is on whoever uses it. What it removes ends up in Brisa Trash, and what you mark as permanent is deleted. Keep a copy of anything you cannot lose.</p>
 
       <h2>This is a beta</h2>
-      <p class="sub">The version being handed out is in testing: it can change without notice, it can fail, and its local data can be lost between versions. It is not a finished product: no support and no promised dates.</p>
+      <p class="sub">The version being handed out is in testing. It can change without notice, it can fail, and its local data can be lost between versions. It is not a finished product, and there is no support and no promised dates.</p>
 
       <h2>No warranty</h2>
       <p class="sub">The program comes as is, with no warranty of any kind, express or implied, including fitness for a particular purpose. As far as the law allows, the author is not liable for damage or data loss caused by its use.</p>
 
       <h2>When it ends</h2>
-      <p class="sub">You can stop using it whenever you want: it uninstalls in two steps and leaves nothing behind. The license ends if you break any of the points above.</p>
+      <p class="sub">You can stop using it whenever you want. It uninstalls in two steps and leaves nothing behind. The license ends if you break any of the points above.</p>
 
       <h2>How it is accepted</h2>
       <p class="sub">Downloading and using Brisa means accepting this. If any of it does not sit right with you, do not install it.</p>
 
-      <p class="letra-pequena">Last reviewed: 6 October 2026.</p>
+      <p class="letra-pequena">Last reviewed, 6 October 2026.</p>
     </div>
   </section>
 
@@ -194,7 +198,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nothing goes without warning.</p>
-      <p>Beta: ad-hoc signed and handed out by hand, outside the App Store.</p>
+      <p>Beta, ad-hoc signed and handed out by hand, outside the App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -224,11 +228,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 or later</span>
-      <span>This site uses no cookies and no analytics. It stores one thing in your browser: the theme you pick.</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 or later</span>
+      <span>This site uses no cookies and no analytics. The only thing it stores in your browser is the theme you pick.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Back to top"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="../assets/js/sitio.js"></script>
 </body>

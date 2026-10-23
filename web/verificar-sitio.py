@@ -106,7 +106,12 @@ SUELOS = [
     (".cell", "padding", 24, "dentro de una celda"),
     (".grid", "margin-top", 32, "entre el titular y la rejilla"),
     (".note", "gap", 12, "entre el icono y el texto de un aviso"),
-    (".grupo + .grupo", "margin-top", 48, "entre dos grupos de preguntas"),
+    # Aquí estaba el aire entre grupos de preguntas (`.grupo + .grupo`, 48). Ya
+    # no hay grupos: la página de preguntas es una sola lista, porque cuatro
+    # bloques separados por aire y sin titular que los nombrara se leían como
+    # dos tablas con un hueco en medio. Sin regla que medir, la comprobación se
+    # va con ella; el aire que queda —el de `.faq` sobre el titular— lo siguen
+    # mirando el resto de suelos y la medida de secciones.
     # El aire de arriba de un bloque de capturas no lo pone él mismo: en la
     # portada lo pone el héroe, con su aire de abajo, y en una página interior lo
     # tiene que poner esta regla. Cuando no lo pone nadie el botón de la cabecera
@@ -593,12 +598,23 @@ def declaracion(css, selector, prop):
 
 
 def pixeles(valor, valores):
-    """Un valor de la hoja a número de píxeles, resolviendo el token si lo usa."""
+    """Un valor de la hoja a número de píxeles, resolviendo el token si lo usa.
+
+    Un `clamp()` se lee por su mínimo, y no es un atajo: el mínimo de la función
+    ES el suelo que se cumple en cualquier pantalla —con `clamp(96px, 9vw,
+    136px)` no hay ancho de ventana en el que una sección deje menos de 96 px—,
+    así que es exactamente lo que esta comprobación quiere medir. Sin esto, un
+    valor a escala se leía como ausente y el verificador pedía volver a escribir
+    a mano un número fijo para poder verlo.
+    """
     if valor is None:
         return None
     token = re.fullmatch(r"var\((--[a-z0-9-]+)\)", valor.strip())
     if token:
         valor = valores.get(token.group(1), "")
+    escalera = re.fullmatch(r"clamp\(\s*([^,]+),.*\)", valor.strip(), re.S)
+    if escalera:
+        return pixeles(escalera.group(1), valores)
     medido = re.fullmatch(r"([\d.]+)px", valor.strip())
     return float(medido.group(1)) if medido else None
 
@@ -1124,8 +1140,8 @@ def estructurado(paginas, dicc, build):
         programa = next((n for n in grafo if n.get("@type") == "SoftwareApplication"), {})
         if programa.get("name") != textos_idioma["marca.nombre"]:
             fallo(f"{donde}: el nombre del programa en la ficha no es el de la marca")
-        if programa.get("softwareVersion") != build.VERSION:
-            fallo(f"{donde}: la ficha no declara la versión {build.VERSION}")
+        if programa.get("softwareVersion") != build.VERSION_ANUNCIADA:
+            fallo(f"{donde}: la ficha no declara la versión {build.VERSION_ANUNCIADA}")
         if programa.get("offers", {}).get("price") != "0":
             fallo(f"{donde}: la ficha no declara que se reparte gratis")
         if len(programa.get("featureList", [])) != 9:

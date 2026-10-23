@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/questions">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/preguntas">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="../assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -70,6 +70,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -83,7 +87,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.1.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 460 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "Questions", "item": "https://heybrisa.pages.dev/en/questions"}]}, {"@type": "FAQPage", "inLanguage": "en", "mainEntity": [{"@type": "Question", "name": "Which Macs does Brisa need?", "acceptedAnswer": {"@type": "Answer", "text": "macOS 14 (Sonoma) or later. Nothing else: no account, no network, nothing to install first."}}, {"@type": "Question", "name": "Is it a big download?", "acceptedAnswer": {"@type": "Answer", "text": "Less than a photo: the installer is 460 KB, and the app 1.1 MB once installed."}}, {"@type": "Question", "name": "Why is it not on the App Store?", "acceptedAnswer": {"@type": "Answer", "text": "It is handed out by hand. Getting into the App Store takes a developer certificate and passing a review; until then, macOS asks you to confirm the first launch."}}, {"@type": "Question", "name": "What does Brisa send over the network?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing, unless you ask for it. No account, no analytics, no version check. The only exception is “Help improve Brisa”, and it sends only what you decide."}}, {"@type": "Question", "name": "Why does it ask for Full Disk Access?", "acceptedAnswer": {"@type": "Answer", "text": "To measure the folders macOS protects: Documents, Desktop, Downloads, Photos, iCloud, Mail and Messages. Without it, Brisa works the same and tells you what is missing."}}, {"@type": "Question", "name": "Where does it keep what it measures?", "acceptedAnswer": {"@type": "Answer", "text": "In “~/Library/Application Support/Brisa/”: Brisa Trash, the history, your exclusions and a sample of the Mac’s state. You clear it from the app."}}, {"@type": "Question", "name": "What exactly does a cleanup delete?", "acceptedAnswer": {"@type": "Answer", "text": "Caches apps rebuild, downloads nobody opened, repeated copies, old installers and whatever was already in the system Trash. Never photos, documents or music."}}, {"@type": "Question", "name": "Can I undo a cleanup?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: what was removed waits in Brisa Trash with its date. It is restored one item at a time, and you set the window in Settings."}}, {"@type": "Question", "name": "What about uninstalling an app?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and Brisa warns you first. Only what you mark is removed; what other applications share stays."}}, {"@type": "Question", "name": "How does it choose which duplicate to keep?", "acceptedAnswer": {"@type": "Answer", "text": "It prefers the best quality, the one closest to hand and the most recently used. You can change the pick before applying anything."}}, {"@type": "Question", "name": "What does automatic maintenance do?", "acceptedAnswer": {"@type": "Answer", "text": "It runs in the background, as often as you choose—every night, on weekends or once a month—and empties Brisa Trash when the retention window expires. When it finishes it tells you how much it freed."}}, {"@type": "Question", "name": "Can I remove Brisa completely?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, in two steps: the “--reset” command removes the maintenance and all local data, and then you delete the app from Applications."}}, {"@type": "Question", "name": "How much does Brisa cost?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. It is handed out free and complete: no account, no subscription, no paid version and no locked features. If it helps you, you can support the project from the bar."}}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "en", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "url": "https://heybrisa.pages.dev/en/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 or later", "softwareVersion": "0.2.0", "description": "Brisa sets aside what your Mac no longer uses and tells you what it frees. What it removes comes back within the 7, 30 or 60 days you choose. 490 KB, no account.", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Summary", "Mac status", "Disk space", "Large files", "Duplicates", "Applications", "History", "Maintenance", "Brisa Trash"], "url": "https://heybrisa.pages.dev/en/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-en-claro.jpg", "license": "https://heybrisa.pages.dev/en/license", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://heybrisa.pages.dev/en/"}, {"@type": "ListItem", "position": 2, "name": "Questions", "item": "https://heybrisa.pages.dev/en/questions"}]}, {"@type": "FAQPage", "inLanguage": "en", "mainEntity": [{"@type": "Question", "name": "Which Macs does Brisa need?", "acceptedAnswer": {"@type": "Answer", "text": "macOS 14 (Sonoma) or later. Nothing else, no account, no network, nothing to install first."}}, {"@type": "Question", "name": "Is it a big download?", "acceptedAnswer": {"@type": "Answer", "text": "Less than a photo. The installer is 490 KB, and the app 1.2 MB once installed."}}, {"@type": "Question", "name": "Why is it not on the App Store?", "acceptedAnswer": {"@type": "Answer", "text": "It is handed out by hand. Getting into the App Store takes a developer certificate and passing a review, and until then macOS asks you to confirm the first launch."}}, {"@type": "Question", "name": "What does Brisa send over the network?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. Brisa opens no network connections: no account, no analytics, no version check."}}, {"@type": "Question", "name": "Why does it ask for Full Disk Access?", "acceptedAnswer": {"@type": "Answer", "text": "To measure the folders macOS protects. They are Documents, Desktop, Downloads, Photos, iCloud, Mail and Messages. Without it, Brisa works the same and tells you what is missing."}}, {"@type": "Question", "name": "Where does it keep what it measures?", "acceptedAnswer": {"@type": "Answer", "text": "In “~/Library/Application Support/Brisa/”. That is where Brisa Trash, the history, your exclusions and a sample of the Mac’s state live. You clear it from the app."}}, {"@type": "Question", "name": "What exactly does a cleanup delete?", "acceptedAnswer": {"@type": "Answer", "text": "Caches apps rebuild, downloads nobody opened, repeated copies, old installers and whatever was already in the system Trash. Never photos, documents or music."}}, {"@type": "Question", "name": "Can I undo a cleanup?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. What was removed waits in Brisa Trash with its date, it is restored one item at a time, and you set the window in Settings."}}, {"@type": "Question", "name": "What about uninstalling an app?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, and Brisa warns you first. Only what you mark is removed, and what other applications share stays."}}, {"@type": "Question", "name": "How does it choose which duplicate to keep?", "acceptedAnswer": {"@type": "Answer", "text": "It prefers the best quality, the one closest to hand and the most recently used. You can change the pick before applying anything."}}, {"@type": "Question", "name": "What does automatic maintenance do?", "acceptedAnswer": {"@type": "Answer", "text": "It runs in the background, as often as you choose (every night, on weekends or once a month), and empties Brisa Trash when the retention window expires. When it finishes it tells you how much it freed."}}, {"@type": "Question", "name": "Can I remove Brisa completely?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, in two steps. The “--reset” command removes the maintenance and all local data, and then you delete the app from Applications."}}, {"@type": "Question", "name": "How much does Brisa cost?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. It is handed out free and complete, with no account, no subscription, no paid version and no locked features. If it helps you, you can support the project from the bar."}}]}]}</script>
 </head>
 
 <body>
@@ -153,53 +157,37 @@ try {
   <section class="head">
     <div class="wrap">
       <h1>Questions, answered.</h1>
-      <p class="lede">If something is not here, write to the address in the footer of this page: I answer it myself.</p>
+      <p class="lede">If something is not here, write to the address in the footer of this page. I answer it myself.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
 
-      <div class="grupo">
-        <h2 class="eyebrow">Before installing</h2>
-        <div class="faq">
-          <details><summary>Which Macs does Brisa need?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>macOS 14 (Sonoma) or later. Nothing else: no account, no network, nothing to install first.</p></div></details>
-          <details><summary>Is it a big download?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Less than a photo: the installer is 460 KB, and the app 1.1 MB once installed.</p></div></details>
-          <details><summary>Why is it not on the App Store?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>It is handed out by hand. Getting into the App Store takes a developer certificate and passing a review; until then, macOS asks you to confirm the first launch.</p></div></details>
-          <!-- El precio va el último de su grupo, después de lo que se necesita y
-               cuánto ocupa: es la pregunta que decide la instalación y en el grupo
-               de «antes de instalarla» es donde se busca. Su número va detrás del
-               de las doce de siempre para que la ficha de datos estructurados
-               pueda listarlas todas en orden y sin huecos. -->
-          <details><summary>How much does Brisa cost?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nothing. It is handed out free and complete: no account, no subscription, no paid version and no locked features. If it helps you, you can support the project from the bar.</p></div></details>
-        </div>
-      </div>
-
-      <div class="grupo">
-        <h2 class="eyebrow">Permissions and privacy</h2>
-        <div class="faq">
-          <details><summary>What does Brisa send over the network?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nothing, unless you ask for it. No account, no analytics, no version check. The only exception is “Help improve Brisa”, and it sends only what you decide.</p></div></details>
-          <details><summary>Why does it ask for Full Disk Access?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>To measure the folders macOS protects: Documents, Desktop, Downloads, Photos, iCloud, Mail and Messages. Without it, Brisa works the same and tells you what is missing.</p></div></details>
-          <details><summary>Where does it keep what it measures?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>In “~/Library/Application Support/Brisa/”: Brisa Trash, the history, your exclusions and a sample of the Mac’s state. You clear it from the app.</p></div></details>
-        </div>
-      </div>
-
-      <div class="grupo">
-        <h2 class="eyebrow">What it does to your disk</h2>
-        <div class="faq">
-          <details><summary>What exactly does a cleanup delete?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Caches apps rebuild, downloads nobody opened, repeated copies, old installers and whatever was already in the system Trash. Never photos, documents or music.</p></div></details>
-          <details><summary>Can I undo a cleanup?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Yes: what was removed waits in Brisa Trash with its date. It is restored one item at a time, and you set the window in Settings.</p></div></details>
-          <details><summary>What about uninstalling an app?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Yes, and Brisa warns you first. Only what you mark is removed; what other applications share stays.</p></div></details>
-          <details><summary>How does it choose which duplicate to keep?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>It prefers the best quality, the one closest to hand and the most recently used. You can change the pick before applying anything.</p></div></details>
-        </div>
-      </div>
-
-      <div class="grupo">
-        <h2 class="eyebrow">Day to day</h2>
-        <div class="faq">
-          <details><summary>What does automatic maintenance do?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>It runs in the background, as often as you choose—every night, on weekends or once a month—and empties Brisa Trash when the retention window expires. When it finishes it tells you how much it freed.</p></div></details>
-          <details><summary>Can I remove Brisa completely?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Yes, in two steps: the “--reset” command removes the maintenance and all local data, and then you delete the app from Applications.</p></div></details>
-        </div>
+      <!-- Una sola lista, y no cuatro. Antes había cuatro bloques separados por
+           64 px y sin ningún titular que dijera qué los une: el lector veía una
+           tabla que se cerraba y otra que empezaba, con dos filetes y un hueco en
+           medio, y eso no es una pausa, es un corte sin motivo. Los grupos eran
+           invisibles para quien lee —solo el precio viaja fuera de su orden
+           numérico—, así que la lista es una y los filetes la recorren entera. -->
+      <div class="faq">
+        <details><summary>Which Macs does Brisa need?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>macOS 14 (Sonoma) or later. Nothing else, no account, no network, nothing to install first.</p></div></details>
+        <details><summary>Is it a big download?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Less than a photo. The installer is 490 KB, and the app 1.2 MB once installed.</p></div></details>
+        <details><summary>Why is it not on the App Store?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>It is handed out by hand. Getting into the App Store takes a developer certificate and passing a review, and until then macOS asks you to confirm the first launch.</p></div></details>
+        <!-- El precio va aquí, después de lo que se necesita y cuánto ocupa: es
+             la pregunta que decide la instalación y es donde se busca. Su número
+             va detrás del de las doce de siempre para que la ficha de datos
+             estructurados pueda listarlas todas en orden y sin huecos. -->
+        <details><summary>How much does Brisa cost?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nothing. It is handed out free and complete, with no account, no subscription, no paid version and no locked features. If it helps you, you can support the project from the bar.</p></div></details>
+        <details><summary>What does Brisa send over the network?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Nothing. Brisa opens no network connections: no account, no analytics, no version check.</p></div></details>
+        <details><summary>Why does it ask for Full Disk Access?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>To measure the folders macOS protects. They are Documents, Desktop, Downloads, Photos, iCloud, Mail and Messages. Without it, Brisa works the same and tells you what is missing.</p></div></details>
+        <details><summary>Where does it keep what it measures?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>In “~/Library/Application Support/Brisa/”. That is where Brisa Trash, the history, your exclusions and a sample of the Mac’s state live. You clear it from the app.</p></div></details>
+        <details><summary>What exactly does a cleanup delete?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Caches apps rebuild, downloads nobody opened, repeated copies, old installers and whatever was already in the system Trash. Never photos, documents or music.</p></div></details>
+        <details><summary>Can I undo a cleanup?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Yes. What was removed waits in Brisa Trash with its date, it is restored one item at a time, and you set the window in Settings.</p></div></details>
+        <details><summary>What about uninstalling an app?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Yes, and Brisa warns you first. Only what you mark is removed, and what other applications share stays.</p></div></details>
+        <details><summary>How does it choose which duplicate to keep?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>It prefers the best quality, the one closest to hand and the most recently used. You can change the pick before applying anything.</p></div></details>
+        <details><summary>What does automatic maintenance do?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>It runs in the background, as often as you choose (every night, on weekends or once a month), and empties Brisa Trash when the retention window expires. When it finishes it tells you how much it freed.</p></div></details>
+        <details><summary>Can I remove Brisa completely?<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></summary><div class="body"><p>Yes, in two steps. The “--reset” command removes the maintenance and all local data, and then you delete the app from Applications.</p></div></details>
       </div>
 
     </div>
@@ -227,7 +215,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nothing goes without warning.</p>
-      <p>Beta: ad-hoc signed and handed out by hand, outside the App Store.</p>
+      <p>Beta, ad-hoc signed and handed out by hand, outside the App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -257,11 +245,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 or later</span>
-      <span>This site uses no cookies and no analytics. It stores one thing in your browser: the theme you pick.</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 or later</span>
+      <span>This site uses no cookies and no analytics. The only thing it stores in your browser is the theme you pick.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Back to top"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="../assets/js/sitio.js"></script>
 </body>

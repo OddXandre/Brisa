@@ -134,6 +134,37 @@ struct Verify {
               "/Library/Application Support no")
         check(!AppRemover.isRemovable("/Users/alguien/Library/Caches", appPath: appPath, home: home),
               "la carpeta de OTRO usuario no")
+        /* El reintento autorizado ya no tiene bundle (la app se quitó en la
+           primera pasada), así que llama a la misma guardia SIN app. Lo que se
+           puede quitar no cambia: las mismas carpetas, y ninguna raíz. */
+        check(AppRemover.isRemovable("/Applications/Algo.app", appPath: nil, home: home),
+              "sin bundle, una app de /Applications sigue siendo removible")
+        check(AppRemover.isRemovable("/Library/LaunchDaemons/\(bid).plist", appPath: nil, home: home),
+              "sin bundle, su demonio sigue siendo removible")
+        check(!AppRemover.isRemovable("/Library", appPath: nil, home: home),
+              "sin bundle, /Library sigue sin poder quitarse")
+        check(AppRemover.isRemovable(home + "/Library/Caches/x", appPath: nil, home: home),
+              "sin bundle, lo de casa sigue pasando la guardia general")
+
+        // ---- 4b. Lo que se borra con permisos de administrador -------------
+        // Es la única pasada que borra en nombre de otro usuario, así que su
+        // lista blanca se prueba aparte: fuera de casa, dentro de lo permitido y
+        // nunca las raíces ni nada del sistema.
+        check(PrivilegedRemover.eligible(["/Library/LaunchDaemons/\(bid).plist"], home: home)
+                == ["/Library/LaunchDaemons/\(bid).plist"],
+              "el demonio de la app sí entra en la pasada con permisos")
+        check(PrivilegedRemover.eligible(["/Applications/Algo.app"], home: home).count == 1,
+              "una aplicación de /Applications sí entra")
+        check(PrivilegedRemover.eligible([home + "/Library/Caches/\(bid)"], home: home).isEmpty,
+              "lo de casa NO se toca con permisos: ya se quitó sin ellos")
+        check(PrivilegedRemover.eligible(["/Library"], home: home).isEmpty,
+              "/Library no se borra entero, ni con permisos")
+        check(PrivilegedRemover.eligible(["/Library/Preferences"], home: home).isEmpty,
+              "un contenedor de /Library tampoco")
+        check(PrivilegedRemover.eligible(["/System/Library/CoreServices"], home: home).isEmpty,
+              "nada del sistema, tampoco con permisos")
+        check(PrivilegedRemover.eligible(["/usr/local/bin/algo"], home: home).isEmpty,
+              "nada de /usr, tampoco con permisos")
 
         // ---- 5. Motivos del fallo --------------------------------------------
         let eperm = NSError(domain: NSPOSIXErrorDomain, code: Int(EPERM))

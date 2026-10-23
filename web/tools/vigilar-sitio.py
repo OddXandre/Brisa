@@ -29,6 +29,7 @@ falla: avisa de que no ha podido mirar, que es distinto de estar roto.
 """
 import hashlib
 import ipaddress
+import re
 import socket
 import ssl
 import sys
@@ -125,6 +126,25 @@ def pedir(url, solo_cabeceras=False):
         return e.code, dict(e.headers or {}), b"" if solo_cabeceras else e.read()
 
 
+# Lo que Cloudflare mete en cada HTML al servirlo, y que no está en disco porque
+# lo pone el borde: un comentario, un guion con el testigo de su analítica y el
+# comentario que lo cierra. Se quita antes de comparar por una razón concreta:
+# mientras esté, esta comprobación falla SIEMPRE —en las diecinueve páginas, con
+# 214 B de más— y una comprobación que siempre falla deja de mirar. Lo que tiene
+# que distinguir son los bytes de verdad: si alguien publica un despliegue viejo,
+# o toca el sitio a mano, lo demás del fichero no cuadra y se ve igual.
+INYECTADO = re.compile(
+    rb"<!--\s*Cloudflare Pages Analytics\s*-->\s*"
+    rb"<script\b[^>]*cloudflareinsights[^>]*>\s*</script>\s*"
+    rb"<!--\s*Cloudflare Pages Analytics\s*-->")
+
+
+def sin_lo_inyectado(cuerpo):
+    """El cuerpo servido sin el testigo de Cloudflare, y si lo llevaba."""
+    limpio, cuantos = INYECTADO.subn(b"", cuerpo)
+    return limpio, cuantos > 0
+
+
 def fichero_de(ruta):
     """El fichero de disco que corresponde a una dirección servida."""
     if ruta == "/":
@@ -183,11 +203,16 @@ def main():
             print(f"  · {ruta:<28} 200 · {len(cuerpo):>7} B (sin espejo en disco)")
             continue
         esperado = local.read_bytes()
-        if cuerpo == esperado:
-            print(f"  ✓ {ruta:<28} 200 · {len(cuerpo):>7} B · idéntico a {local.relative_to(RAIZ)}")
+        # El cuerpo servido puede llevar el testigo de Cloudflare; el de disco
+        # no. Se compara lo que queda al quitarlo y se dice, para que no parezca
+        # que el hosting sirve otra cosa.
+        servido, inyectado = sin_lo_inyectado(cuerpo)
+        nota = " (sin el testigo que inyecta Cloudflare)" if inyectado else ""
+        if servido == esperado:
+            print(f"  ✓ {ruta:<28} 200 · {len(cuerpo):>7} B · idéntico a {local.relative_to(RAIZ)}{nota}")
         else:
             fallos.append(
-                f"{ruta}: servido {len(cuerpo)} B con {hashlib.sha256(cuerpo).hexdigest()[:12]} "
+                f"{ruta}: servido {len(servido)} B con {hashlib.sha256(servido).hexdigest()[:12]} "
                 f"y en disco {len(esperado)} B con {hashlib.sha256(esperado).hexdigest()[:12]}. "
                 "Lo que hay publicado no es lo que hay construido.")
             print(f"  ✗ {ruta:<28} 200 · pero DISTINTO de {local.relative_to(RAIZ)}")

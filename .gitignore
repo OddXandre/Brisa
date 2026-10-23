@@ -23,6 +23,11 @@ prototipo-brisa.html
 # cuenta). La regenera `wrangler pages deploy`; no es fuente de Brisa.
 .wrangler/
 
+# Configuración de las herramientas de este Mac (skills enlazadas y su
+# candado). No es fuente de Brisa y las rutas son absolutas: no viaja.
+.claude/
+skills-lock.json
+
 # El sitio montado para publicar: lo regenera `web/tools/preparar-publicacion.py`
 # desde `web/`, quitando las fuentes que no se sirven. 13 MB que se rehacen
 # enteros en cada publicación.

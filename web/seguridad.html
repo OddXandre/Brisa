@@ -36,7 +36,7 @@
 <link rel="alternate" hreflang="en" href="https://heybrisa.pages.dev/en/safety">
 <link rel="alternate" hreflang="x-default" href="https://heybrisa.pages.dev/seguridad">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" data-tema-color>
+<meta name="theme-color" content="#F2F4F8" data-tema-color>
 <link rel="icon" type="image/svg+xml" href="assets/img/icono.svg">
 <!-- La primera captura, pedida antes de tiempo. Solo la declaran las páginas que
      tienen una: una precarga de una imagen que no entra en pantalla ocupa el
@@ -70,6 +70,10 @@ try {
 <noscript><style>
   @media (max-width: 900px) {
     .nav { position: static; }
+    /* Sin guion la barra deja de medir lo fijo y crece con la lista, así que el
+       contenido no puede seguir subiendo por debajo de ella: se anula el
+       adelanto de `main` y cada pieza vuelve a su sitio en el flujo. */
+    main { margin-top: 0; padding-top: 0; }
     .nav-in { height: auto; flex-wrap: wrap; row-gap: var(--s-2); padding-bottom: var(--s-3); }
     .nav-links {
       order: 1; position: static; flex-basis: 100%;
@@ -83,7 +87,7 @@ try {
 <!-- La ficha que leen los buscadores: qué es esto, a qué sitio pertenece y —en la
      página de preguntas— sus preguntas con sus respuestas. No se ve, no ejecuta
      nada y va al final para no retrasar lo que sí se ve. -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "es", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 460 KB, sin cuenta.", "url": "https://heybrisa.pages.dev/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 o posterior", "softwareVersion": "0.1.0", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 460 KB, sin cuenta.", "inLanguage": "es", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Resumen", "Estado del Mac", "Espacio en disco", "Archivos grandes", "Duplicados", "Aplicaciones", "Historial", "Mantenimiento", "Papelera de Brisa"], "url": "https://heybrisa.pages.dev/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-es-claro.jpg", "license": "https://heybrisa.pages.dev/licencia", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.1.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://heybrisa.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Seguridad", "item": "https://heybrisa.pages.dev/seguridad"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "name": "Brisa", "inLanguage": "es", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 490 KB, sin cuenta.", "url": "https://heybrisa.pages.dev/"}, {"@type": "SoftwareApplication", "name": "Brisa", "applicationCategory": "UtilitiesApplication", "operatingSystem": "macOS 14 o posterior", "softwareVersion": "0.2.0", "description": "Brisa aparta lo que tu Mac ya no usa y te enseña cuánto libera antes de tocar nada. Lo que quita vuelve dentro de los 7, 30 o 60 días que elijas. 490 KB, sin cuenta.", "inLanguage": "es", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "featureList": ["Resumen", "Estado del Mac", "Espacio en disco", "Archivos grandes", "Duplicados", "Aplicaciones", "Historial", "Mantenimiento", "Papelera de Brisa"], "url": "https://heybrisa.pages.dev/", "screenshot": "https://heybrisa.pages.dev/assets/img/vista-resumen-es-claro.jpg", "license": "https://heybrisa.pages.dev/licencia", "downloadUrl": "https://heybrisa.pages.dev/descargas/Brisa-0.2.0-beta.dmg"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://heybrisa.pages.dev/"}, {"@type": "ListItem", "position": 2, "name": "Seguridad", "item": "https://heybrisa.pages.dev/seguridad"}]}]}</script>
 </head>
 
 <body>
@@ -161,7 +165,6 @@ try {
     <div class="wrap">
       <div class="split flip">
         <div class="text">
-          <p class="eyebrow">El plan</p>
           <h2>Tres cosas, en este orden.</h2>
           <ol class="steps">
             <li class="step">
@@ -170,7 +173,7 @@ try {
             </li>
             <li class="step">
               <span class="n"></span>
-              <div><h3>Guarda lo retirado el tiempo que decidas.</h3><p>Lo retirado espera en la Papelera de Brisa con su fecha de caducidad; el plazo —7, 30 o 60 días— lo eliges tú en Ajustes.</p></div>
+              <div><h3>Guarda lo retirado el tiempo que decidas.</h3><p>Lo retirado espera en la Papelera de Brisa con su fecha de caducidad, y el plazo de 7, 30 o 60 días lo eliges tú en Ajustes.</p></div>
             </li>
             <li class="step">
               <span class="n"></span>
@@ -178,7 +181,27 @@ try {
             </li>
           </ol>
         </div>
-        <figure class="window"><a class="ampliar" href="assets/img/vista-papelera-es-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-papelera-es-oscuro.avif" data-clara="assets/img/vista-papelera-es-claro.avif" data-oscura="assets/img/vista-papelera-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-papelera-es-claro.avif" data-clara="assets/img/vista-papelera-es-claro.avif" data-oscura="assets/img/vista-papelera-es-oscuro.avif"><img src="assets/img/vista-papelera-es-claro.jpg" data-clara="assets/img/vista-papelera-es-claro.jpg" data-oscura="assets/img/vista-papelera-es-oscuro.jpg" width="2360" height="1520" alt="Papelera de Brisa: lo retirado, con su fecha de caducidad y el espacio que se recupera." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">Ver más grande</span></a></figure>
+        <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-papelera-es-oscuro.avif" data-clara="assets/img/vista-papelera-es-claro.avif" data-oscura="assets/img/vista-papelera-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-papelera-es-claro.avif" data-clara="assets/img/vista-papelera-es-claro.avif" data-oscura="assets/img/vista-papelera-es-oscuro.avif"><img src="assets/img/vista-papelera-es-claro.jpg" data-clara="assets/img/vista-papelera-es-claro.jpg" data-oscura="assets/img/vista-papelera-es-oscuro.jpg" width="2360" height="1520" alt="Papelera de Brisa. Lo retirado, con su fecha de caducidad y el espacio que se recupera." loading="lazy" decoding="async"></picture></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Las seis reglas vivas de la app, aquí y no en la portada: en la portada
+       ocupaban una pantalla entera antes de que el lector supiera cómo
+       funciona nada, y una tabla de filas iguales se lee como una lista de
+       condiciones. En la página a la que se viene a comprobarlo, en cambio,
+       son exactamente lo que se viene a buscar. -->
+  <section>
+    <div class="wrap">
+      <h2>Seis reglas, sin excepciones.</h2>
+
+      <div class="table">
+        <div class="row"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M9.25 7V5.25a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1V7m-7.25 0 .85 11.15a2 2 0 0 0 2 1.85h5.3a2 2 0 0 0 2-1.85L17.5 7M10.25 11v5M13.75 11v5"/></svg><span><b>Ninguna limpieza borra nada. Todo pasa por la Papelera de Brisa.</b> Se guarda 7, 30 o 60 días, y vuelve a su sitio dentro de ese plazo.</span><span class="tag">reversible</span></div>
+        <div class="row"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span><b>Nada se elimina sin tu confirmación.</b> Primero ves el plan. Después decides.</span><span class="tag">con tu permiso</span></div>
+        <div class="row"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.25 3.5 6.5 13.5h4.25l-.5 7 6.75-10H13z"/></svg><span><b>Desinstalar no tiene vuelta atrás, y se avisa.</b> Se va también lo que la aplicación fue dejando por el disco.</span><span class="tag">con aviso</span></div>
+        <div class="row"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.75" y="10.75" width="14.5" height="9.5" rx="2"/><path d="M8.25 10.75V7.5a3.75 3.75 0 0 1 7.2-1.45"/><circle cx="12" cy="15.5" r="1.1" fill="currentColor" stroke="none"/></svg><span><b>Tus cosas no se tocan.</b> Fotos, documentos y música quedan fuera. Siempre.</span><span class="tag">sin tocar</span></div>
+        <div class="row"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.25 19.25 6v5.6c0 4.4-3 7.55-7.25 9.15-4.25-1.6-7.25-4.75-7.25-9.15V6L12 3.25Z"/><path d="m9 12.1 2.1 2.1 4-4.2"/></svg><span><b>Sin cuenta y sin red.</b> Nada se envía a ningún sitio: el análisis ocurre entero en tu Mac.</span><span class="tag">local</span></div>
+        <div class="row"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5c.45 3.35 2.15 5.05 5.5 5.5-3.35.45-5.05 2.15-5.5 5.5-.45-3.35-2.15-5.05-5.5-5.5 3.35-.45 5.05-2.15 5.5-5.5Z"/><path d="M17.5 14c.25 1.55 1 2.25 2.5 2.5-1.5.25-2.25.95-2.5 2.5-.25-1.55-.95-2.25-2.5-2.5 1.55-.25 2.25-.95 2.5-2.5Z"/><circle cx="5.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg><span><b>Un solo permiso, y tú decides.</b> Sin él mide menos, y con él lo mide todo. Se retira cuando quieras.</span><span class="tag">opcional</span></div>
       </div>
     </div>
   </section>
@@ -187,18 +210,17 @@ try {
     <div class="wrap">
       <div class="split">
         <div class="text">
-          <p class="eyebrow">Los límites</p>
           <h2>Lo que Brisa no toca nunca.</h2>
           <p class="sub">La limpieza y el mantenimiento usan la misma lista de exclusiones.</p>
           <ul class="points">
             <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span>Tus fotos y tus vídeos, y todo lo que hay dentro de Fotos.</span></li>
             <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span>Tus documentos, sean donde sean, incluidos los de iCloud Drive.</span></li>
             <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span>Tu música y tus audios, también los descargados para escuchar sin conexión.</span></li>
-            <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span>Las aplicaciones instaladas: Brisa no desinstala nada por su cuenta.</span></li>
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span>Las aplicaciones instaladas. Brisa no desinstala nada por su cuenta.</span></li>
             <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.75 4.5 4.5L19 7.25"/></svg><span>El sistema y sus archivos.</span></li>
           </ul>
         </div>
-        <figure class="window"><a class="ampliar" href="assets/img/vista-ritmo-es-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-ritmo-es-oscuro.avif" data-clara="assets/img/vista-ritmo-es-claro.avif" data-oscura="assets/img/vista-ritmo-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-ritmo-es-claro.avif" data-clara="assets/img/vista-ritmo-es-claro.avif" data-oscura="assets/img/vista-ritmo-es-oscuro.avif"><img src="assets/img/vista-ritmo-es-claro.jpg" data-clara="assets/img/vista-ritmo-es-claro.jpg" data-oscura="assets/img/vista-ritmo-es-oscuro.jpg" width="2360" height="1520" alt="Mantenimiento en Brisa: sus cuatro reglas, cada una con su interruptor, y cuándo se ejecuta." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">Ver más grande</span></a></figure>
+        <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-ritmo-es-oscuro.avif" data-clara="assets/img/vista-ritmo-es-claro.avif" data-oscura="assets/img/vista-ritmo-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-ritmo-es-claro.avif" data-clara="assets/img/vista-ritmo-es-claro.avif" data-oscura="assets/img/vista-ritmo-es-oscuro.avif"><img src="assets/img/vista-ritmo-es-claro.jpg" data-clara="assets/img/vista-ritmo-es-claro.jpg" data-oscura="assets/img/vista-ritmo-es-oscuro.jpg" width="2360" height="1520" alt="Mantenimiento en Brisa, con sus cuatro reglas, el interruptor de cada una y cuándo se ejecuta." loading="lazy" decoding="async"></picture></figure>
       </div>
     </div>
   </section>
@@ -207,13 +229,12 @@ try {
     <div class="wrap">
       <div class="split flip">
         <div class="text">
-          <p class="eyebrow">Permisos</p>
           <h2>Un permiso, y opcional.</h2>
           <p class="sub">Brisa no pide nada al abrirse. Sin Acceso total al disco mide todo lo demás y lo dice en el resumen, con un botón que lleva al ajuste.</p>
           <p class="sub">Con el permiso mide también Documentos, Escritorio, Descargas, Fotos, iCloud, Correo y Mensajes. macOS lo concede a cada versión, así que al actualizar hay que repetir el paso.</p>
-          <div class="note"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.75" y="10.75" width="14.5" height="9.5" rx="2"/><path d="M8.25 10.75V7.5a3.75 3.75 0 0 1 7.2-1.45"/><circle cx="12" cy="15.5" r="1.1" fill="currentColor" stroke="none"/></svg><div><p>Si prefieres no darlo, Brisa sirve igual: solo pierde la parte del disco que macOS esconde.</p></div></div>
+          <div class="note"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.75" y="10.75" width="14.5" height="9.5" rx="2"/><path d="M8.25 10.75V7.5a3.75 3.75 0 0 1 7.2-1.45"/><circle cx="12" cy="15.5" r="1.1" fill="currentColor" stroke="none"/></svg><div><p>Si prefieres no darlo, Brisa sirve igual. Solo pierde la parte del disco que macOS esconde.</p></div></div>
         </div>
-        <figure class="window"><a class="ampliar" href="assets/img/vista-estado-es-claro.jpg" target="_blank" rel="noopener"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-estado-es-oscuro.avif" data-clara="assets/img/vista-estado-es-claro.avif" data-oscura="assets/img/vista-estado-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-estado-es-claro.avif" data-clara="assets/img/vista-estado-es-claro.avif" data-oscura="assets/img/vista-estado-es-oscuro.avif"><img src="assets/img/vista-estado-es-claro.jpg" data-clara="assets/img/vista-estado-es-claro.jpg" data-oscura="assets/img/vista-estado-es-oscuro.jpg" width="2360" height="1520" alt="Estado del Mac en Brisa: CPU, memoria, disco, red, batería y temperatura en vivo." loading="lazy" decoding="async"></picture><span class="ampliar-aviso">Ver más grande</span></a></figure>
+        <figure class="window"><picture><source media="(prefers-color-scheme: dark)" type="image/avif" srcset="assets/img/vista-estado-es-oscuro.avif" data-clara="assets/img/vista-estado-es-claro.avif" data-oscura="assets/img/vista-estado-es-oscuro.avif"><source type="image/avif" srcset="assets/img/vista-estado-es-claro.avif" data-clara="assets/img/vista-estado-es-claro.avif" data-oscura="assets/img/vista-estado-es-oscuro.avif"><img src="assets/img/vista-estado-es-claro.jpg" data-clara="assets/img/vista-estado-es-claro.jpg" data-oscura="assets/img/vista-estado-es-oscuro.jpg" width="2360" height="1520" alt="Estado del Mac en Brisa, con CPU, memoria, disco, red, batería y temperatura en vivo." loading="lazy" decoding="async"></picture></figure>
       </div>
     </div>
   </section>
@@ -236,7 +257,7 @@ try {
         <b>Brisa</b>
       </a>
       <p>Nada se va sin avisar.</p>
-      <p>Beta: firmada ad-hoc y repartida a mano, sin App Store.</p>
+      <p>Beta firmada ad-hoc y repartida a mano, sin App Store.</p>
     </div>
 
     <!-- Los dos bloques de enlaces del pie son hitos de navegación, no adorno: con
@@ -266,11 +287,19 @@ try {
     </nav>
 
     <div class="foot-legal">
-      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.1.0 · macOS 14 o posterior</span>
+      <span>&copy; <span data-anio>2026</span> Brisa &middot; Beta 0.2.0 · macOS 14 o posterior</span>
       <span>Esta web no usa cookies ni analítica. Solo guarda el tema que elijas.</span>
     </div>
   </div>
+
 </footer>
+
+<!-- Volver arriba. Va aquí, en el pie, porque es donde se puede querer —al
+     final de un documento largo— y porque así lo tienen las veinte páginas sin
+     que ninguna tenga que acordarse de ponerlo. El chevron es el de la casa,
+     girado: subir es el mismo gesto que avanzar, en el otro eje. El guion lo
+     enseña solo cuando hay recorrido que deshacer. -->
+<button class="subir" type="button" data-subir aria-label="Volver arriba"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="assets/js/sitio.js"></script>
 </body>
