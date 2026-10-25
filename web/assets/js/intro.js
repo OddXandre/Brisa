@@ -588,8 +588,15 @@ void main() {
     // Split light reads as colour, not grey: lift the chroma of whatever the dispersion separated
     // (neutral greys are untouched), so the cyan glow and the gold rim line are as vivid as in the
     // reference, where the cyan is brighter than the backdrop itself.
+    //
+    // Sólo la luz que aún no tiene color. El realce existía para los grises que el canto separa, y se
+    // aplicaba a todo el cristal, incluida la cara: medida aquí, la brasa del pétalo atravesaba el
+    // vidrio como #FF2A01 y llegaba al héroe como #FF4404, o sea que el mismo naranja decía dos cosas
+    // distintas según el momento del gesto. Lo ya saturado no se toca; lo casi neutro se levanta
+    // entero, que es lo que hace visible la franja del canto.
     float tl = dot(trans, vec3(0.2126, 0.7152, 0.0722));
-    trans = clamp(tl + (trans - tl) * (1.0 + uVivid * uOptics), 0.0, 1.0);
+    float chroma = length(trans - vec3(tl));
+    trans = clamp(tl + (trans - tl) * (1.0 + uVivid * uOptics * (1.0 - smoothstep(0.22, 0.5, chroma))), 0.0, 1.0);
     // A young droplet is milky; it clears as it grows. The haze only ever lightens: on a light backdrop
     // it brightens what is light behind it and leaves dark content dark (in the reference the magnified
     // logo stays navy in the milk); on a dark backdrop it lifts the dark and leaves a white logo white.

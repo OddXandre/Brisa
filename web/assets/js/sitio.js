@@ -38,6 +38,17 @@
      que apagarse con el mismo interruptor. */
   const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  /* ¿Esta página llega por el relevo entre documentos? El navegador lo sabe y
+     lo dice mientras ocurre (`:active-view-transition`, que solo vale durante
+     el cruce). Se guarda aquí arriba porque lo usan dos cosas que no se hablan:
+     la entrada de la portada —que la hoja apaga con la marca `en-relevo`— y el
+     revelado, que deja puestos los bloques que ya están en pantalla. La marca
+     se queda: la página que trae el cruce no vuelve a entrar por su cuenta. */
+  const porRelevo = (() => {
+    try { return raiz.matches(":active-view-transition"); } catch { return false; }
+  })();
+  if (porRelevo) raiz.classList.add("en-relevo");
+
   /* ── 1 · Tema ────────────────────────────────────────────────────────── */
   const guardado = (() => {
     try { return localStorage.getItem(CLAVE_TEMA); } catch { return null; }
@@ -377,6 +388,18 @@
         });
       }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
       observadorRevelado = observador;
+      /* Lo que ya está en pantalla no entra: el relevo ya lo ha traído. Se
+         marca ANTES de encender el revelado y de observar nada, así que en el
+         primer fotograma —el que el navegador fotografía para el cruce— ya está
+         a plena tinta y la página que llega no se ve vacía. Lo de más abajo se
+         queda como estaba y se revela al desplazar, que es su momento. */
+      if (porRelevo) {
+        const alto = window.innerHeight;
+        elementos.forEach((elemento) => {
+          const caja = elemento.getBoundingClientRect();
+          if (caja.top < alto && caja.bottom > 0) elemento.classList.add("revelado");
+        });
+      }
       elementos.forEach((elemento) => observador.observe(elemento));
       raiz.classList.add("revelado-activo");
       elementos.forEach((elemento) => elemento.addEventListener("focusin", () => {

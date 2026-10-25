@@ -226,12 +226,11 @@
      desplazar; ahora hay un solo estado y mide 54. */
   --nav-h: 54px;
 
-  /* El peso del texto. No es el mismo número en los dos temas, y no es un
-     descuido: el mismo corte se lee más fino sobre fondo oscuro —medido aquí a
-     2,4 aumentos, la letra clara sobre negro pierde borde—, así que el tema
-     oscuro sube un punto para que los dos lean igual. En claro, los canónicos
-     de SF Pro. Son ajustes del sistema variable: SF llega a los nueve cortes y
-     a los intermedios, no hace falta inventarse una negrita. */
+  /* El peso del texto, el mismo en los dos temas. Subió un punto en oscuro
+     —el mismo corte se lee más fino sobre negro—, y se retiró: el peso no es
+     solo tinta, es ancho, así que el titular se recolocaba y el interletraje
+     aparente cambiaba al pasar de un tema al otro. Aquí manda la geometría: los
+     canónicos de SF Pro en claro y en oscuro, y el tema solo cambia el color. */
   --peso-titular: 600;   /* h1, h2, h3 y la marca */
   --peso-medio: 500;     /* controles, barra y negritas de texto */
 
@@ -311,8 +310,6 @@
        píldora flota sobre la página en vez de recortarse contra ella. */
     --glass: rgba(19, 23, 31, .72);
     --sel-solida: #20262F;
-    --peso-titular: 630;
-    --peso-medio: 515;
     --float: rgba(19, 23, 31, .80);
     --panel: rgba(13, 17, 23, .96);
     --rim: inset 0 .5px 0 rgba(255, 255, 255, .10);
@@ -375,8 +372,6 @@
      ella. Una elevación por pieza, la misma en los dos estados. */
   --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(16, 20, 28, .05), 0 34px 80px -16px rgba(16, 20, 28, .26);
   --shadow-nav: 0 16px 36px -20px rgba(16, 20, 28, .26), 0 1px 2px rgba(16, 20, 28, .04);
-  --peso-titular: 600;
-  --peso-medio: 500;
   --acc-text: #C13D02;
   --acc-soft: rgba(255, 68, 4, .10);
   --veil: rgba(255, 68, 4, .045);
@@ -403,8 +398,6 @@
   --glass: rgba(19, 23, 31, .72);
   --nav-alto: rgba(255, 255, 255, .07);
   --nav-bajo: rgba(0, 0, 0, .1);
-  --peso-titular: 630;
-  --peso-medio: 515;
   --float: rgba(19, 23, 31, .80);
   --panel: rgba(13, 17, 23, .96);
   --rim: inset 0 .5px 0 rgba(255, 255, 255, .10);
@@ -596,6 +589,11 @@ body { caret-color: var(--acc); }
   max-width: calc(var(--max) - 2 * var(--gutter)); margin: 0 auto; padding: 0 var(--s-4);
   height: var(--nav-h); display: flex; align-items: center; gap: var(--s-4);
   border-radius: var(--r-panel);
+  /* El desenfoque, también aquí: es el que no depende de cómo trate el motor un
+     pseudo con `z-index: -1`. El velo de `.nav-in::before` se pinta encima, y su
+     propio filtro se anula —el porqué, abajo—. */
+  -webkit-backdrop-filter: blur(14px) brightness(1.06);
+  backdrop-filter: blur(14px) brightness(1.06);
 }
 /* El material de la píldora va en este pseudo-elemento, y no en `.nav-in`, por
    una razón medida: `backdrop-filter` convierte al elemento que lo lleva en raíz
@@ -628,13 +626,21 @@ body { caret-color: var(--acc); }
      hace que el velo se lea como luz y no como un gris sucio, y es la mitad del
      efecto del que sale la trama.
 
-     Los valores del original son 4 y 1,5, y aquí son 10 y 1,25. Se aparta a
+     Los valores del original son 4 y 1,5, y aquí son 14 y 1,06. Se aparta a
      sabiendas y por una razón medida: con cuatro píxeles y brillo 1,5, la
      captura de la app que pasa por debajo —texto blanco sobre negro— se leía a
      través de la barra y el brillo la levantaba todavía más; una barra que deja
-     leer lo de detrás no es una barra. Con 10 px la forma sigue ahí y la letra
+     leer lo de detrás no es una barra. Con 14 px la forma sigue ahí y la letra
      no. Y no se vuelve a los 28 px de antes: entonces el desenfoque convertía la
-     página en campo de color y la trama no tenía nada que enseñar detrás. */
+     página en campo de color y la trama no tenía nada que enseñar detrás.
+
+     El desenfoque va TAMBIÉN en `.nav-in`, y ese es el que asegura el efecto.
+     Un filtro de fondo sobre un pseudo con `z-index: -1` es justo lo que WebKit
+     no pinta de forma fiable: la píldora conservaba su velo, su luz y su trama
+     —todo lo que pinta el pseudo— y la página de detrás seguía con filo, sin
+     desenfocar. En el contenedor no hay `z-index` que valga; y como el filtro
+     crea raíz de fondo, el de este pseudo deja de muestrear la página y se anula
+     solo, sin sumarse dos veces. */
   backdrop-filter: blur(14px) brightness(1.06);
   -webkit-backdrop-filter: blur(14px) brightness(1.06);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5),
@@ -666,6 +672,13 @@ body { caret-color: var(--acc); }
   -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
   mask-image: linear-gradient(180deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
 }
+/* La entrada de la barra, al acercarse, no por `.nav-in`: una `backdrop-filter`
+   con animación lo convierte en raíz de fondo y el pseudo-mantiene el contenido
+   por detrás de la barra —en móvil se ve la página clapada. */
+html[data-intro] .nav-in::before,
+html[data-intro] .nav-in::after,
+html[data-intro] .nav-in > * { animation: llegar var(--t-medio) var(--ease-out) both; }
+@media (max-width: 900px) { html[data-intro] .nav-in > .nav-links { animation: none; } }
 .brand {
   display: flex; align-items: center; gap: var(--s-2);
   font: var(--peso-titular) var(--t-lg)/1 var(--font-display); letter-spacing: -.03em;
@@ -862,12 +875,11 @@ body { caret-color: var(--acc); }
 }
 
 @media (max-width: 900px) {
-  /* El menú de móvil es el mismo cristal que la barra, con su halo, su filo y
-     su sombra: es la misma pieza, abierta hacia abajo. Antes iba opaco porque el
-     desenfoque no llegaba a aplicarse —el cristal colgaba de `.nav-in`, que era
-     raíz de fondo por su propio `backdrop-filter`, y el panel no veía la
-     página—; ahora el material de la barra vive en `.nav-in::before` y el
-     desplegable vuelve a ver lo que hay detrás. */
+  /* El menú de móvil es la misma pieza que la barra, abierta hacia abajo: su
+     halo, su filo y su sombra. Ya no lleva desenfoque propio y no es una
+     pérdida: cuelga de `.nav-in`, que ahora filtra, así que un filtro ahí dentro
+     no tendría nada que muestrear. Su velo es `--panel`, casi opaco, que es lo
+     que necesita un panel que tapa media pantalla. */
   /* El menú se despliega en vez de aparecer de golpe: baja ocho píxeles y se
      funde, que es lo que hace un desplegable del sistema.
 
@@ -882,14 +894,10 @@ body { caret-color: var(--acc); }
      barra, mismos cantos, mismo radio. Pegado al canto de la ventana parecía la
      página desplegada; separado, se lee como lo que es, un panel que se abre
      debajo de la barra. */
-  /* El material del desplegable es el de la barra, valor por valor: el mismo
-     velo, el mismo halo, el mismo filo de un píxel arriba y abajo, el mismo
-     brillo y la misma sombra que la barra usa cuando se asienta. Antes llevaba
-     su propia receta —28 px de desenfoque y saturación al 190 %—, y abierto se
-     leía como otra pieza: más turbia que la barra de la que cuelga. Ahora se
-     mide igual que ella (blur 14 · brightness 1,25, como
-     `.nav[data-scrolled="true"] .nav-in::before`), que es el estado que le toca
-     a un panel desplegado sobre contenido. */
+  /* El material del desplegable es el de la barra: el mismo halo, el mismo filo
+     de un píxel arriba y abajo y la misma sombra. Antes llevaba su propia
+     receta —28 px de desenfoque y saturación al 190 %— y abierto se leía como
+     otra pieza, más turbia que la barra de la que cuelga. */
   .nav-links {
     display: flex;
     position: absolute; left: 0; right: 0;
@@ -918,8 +926,6 @@ body { caret-color: var(--acc); }
       radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
       var(--panel);
     background-size: 4px 4px, auto, auto;
-    -webkit-backdrop-filter: blur(14px) brightness(1.25);
-    backdrop-filter: blur(14px) brightness(1.25);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5),
                 inset 0 -1px 0 rgba(16, 20, 28, .06),
                 0 0 0 .5px var(--ring), var(--shadow-nav);
@@ -2094,8 +2100,25 @@ footer .eyebrow { margin-bottom: var(--s-4); }
 
   /* La barra entra la primera, con el mismo gesto y sin retardo: es el borde de
      la página y no debe llegar después de lo que enmarca. Solo en la portada,
-     que es la única donde hay intro que acompañar. */
-  html[data-intro] .nav-in { animation: llegar var(--t-medio) var(--ease-out) both; }
+     que es la única donde hay intro que acompañar.
+
+     El gesto va a las piezas de dentro —el cristal, la trama, la marca, los
+     enlaces y los controles— y no a `.nav-in`, que es el contenedor. Medido: una
+     animación sobre el contenedor lo deja como raíz de fondo mientras corre y
+     mientras la rellena, y a partir de ahí el `backdrop-filter` de
+     `.nav-in::before` ya no muestrea la página, solo el interior vacío de la
+     barra —el desenfoque desaparecía y el texto de detrás se leía con filo,
+     sobre todo en el teléfono—. En las piezas, el mismo gesto y el cristal
+     intacto, porque nada de lo que anima lleva desenfoque. */
+  html[data-intro] .nav-in::before,
+  html[data-intro] .nav-in::after,
+  html[data-intro] .nav-in > * { animation: llegar var(--t-medio) var(--ease-out) both; }
+  /* En un teléfono el desplegable abre y cierra con su propia opacidad, y una
+     animación rellenada se la quedaría: el menú no podría fundirse al cerrar.
+     Ahí no entra —cuando se abre, ya está fuera de la intro—. */
+  @media (max-width: 900px) {
+    html[data-intro] .nav-in > .nav-links { animation: none; }
+  }
 
   /* Y nada de esto corre hasta que el cristal se ha posado y empieza a irse.
      El guion marca `data-intro-listo` en ese fotograma (`retirar`), así que la
@@ -2103,7 +2126,9 @@ footer .eyebrow { margin-bottom: var(--s-4); }
      cuando la cortina desaparece —que es lo que se veía: la web de golpe—. En
      una pausa, `both` deja la pieza en su estado inicial: la página llega.
      Donde no hay intro la pausa no se aplica y todo corre como siempre. */
-  html.intro-on:not([data-intro-listo]) .nav-in,
+  html.intro-on:not([data-intro-listo]) .nav-in::before,
+  html.intro-on:not([data-intro-listo]) .nav-in::after,
+  html.intro-on:not([data-intro-listo]) .nav-in > *,
   html.intro-on:not([data-intro-listo]) .hero h1,
   html.intro-on:not([data-intro-listo]) .hero .lede,
   html.intro-on:not([data-intro-listo]) .hero .ctas,
@@ -2181,6 +2206,44 @@ footer .eyebrow { margin-bottom: var(--s-4); }
    símbolo se ha ido con el resplandor, porque sin él no había nada que apagar. */
 
 /* ── 16 · Navegar entre páginas ──────────────────────────────────────────── */
+/* Lo que llega por el relevo ya está puesto: no entra otra vez.
+
+   Aquí estaba el gesto que se veía dos veces. El relevo no fotografía la
+   página viva: fotografía su primer fotograma, y en ese primer fotograma el
+   contenido todavía no había entrado —el revelado se prepara con el guion, y
+   las entradas de la portada arrancan en el mismo instante—. Así que el cruce
+   traía una página vacía y, al acabar, el contenido aparecía de golpe encima:
+   primero el fundido, luego la página. Dos gestos para un solo cambio.
+
+   La cura es que el contenido ya esté a la vista en ese primer fotograma:
+   mientras hay un relevo (`:active-view-transition`) las entradas no corren y
+   lo que aún no se había revelado se da por revelado. Y como al terminar el
+   relevo el selector deja de valer —y entonces la entrada arrancaría de cero,
+   que es el mismo temblor con otro nombre—, el guion deja puesta la marca
+   `en-relevo` en el documento: la página que llega por el cruce no vuelve a
+   entrar, ni durante ni después.
+   Donde el navegador no conozca el relevo tampoco conoce el selector ni la
+   marca, así que no hay nada que apagar. */
+html:active-view-transition .hero h1,
+html:active-view-transition .hero .lede,
+html:active-view-transition .hero .ctas,
+html:active-view-transition .hero .meta,
+html:active-view-transition .showcase .window,
+html.en-relevo .hero h1,
+html.en-relevo .hero .lede,
+html.en-relevo .hero .ctas,
+html.en-relevo .hero .meta,
+html.en-relevo .showcase .window { animation: none; }
+/* Y lo que aún no se había revelado, a la vista: es lo que se fotografía. La
+   marca `en-relevo` no entra aquí —duraría toda la página y el revelado al
+   desplazar no volvería a verse nunca—; de los bloques que ya están en pantalla
+   se encarga el guion, que los marca `revelado` antes de observarlos. */
+@media (prefers-reduced-motion: no-preference) {
+  html.revelado-activo:active-view-transition [data-reveal]:not(.revelado) {
+    opacity: 1; translate: none; scale: none; transition: none;
+  }
+}
+
 /* Las cinco pestañas de arriba no son vistas de una aplicación: son cinco
    documentos. Cambiar de una a otra es una carga de página, y sin nada más lo
    que se ve es el corte —la pantalla se vacía y vuelve a llenarse—. La
@@ -2285,9 +2348,13 @@ footer .eyebrow { margin-bottom: var(--s-4); }
      dos curvas son las de la casa, una para lo que se apaga y otra para lo que se
      enciende. */
   ::view-transition-old(root) { animation: irse var(--t-reveal) var(--ease-io) both; }
-  ::view-transition-new(root) { animation: llegar var(--t-reveal) var(--ease-out) both; }
+  ::view-transition-new(root) { animation: encenderse var(--t-reveal) var(--ease-out) both; }
   @keyframes irse { 0%, 55% { opacity: 1; } to { opacity: 0; } }
-  @keyframes llegar { from { opacity: 0; } to { opacity: 1; } }
+  /* `encenderse` y no `llegar`: `llegar` ya es la entrada de la barra, y dos
+     juegos de fotogramas con el mismo nombre no conviven —gana el último del
+     archivo—, así que la barra perdía su ocho píxeles de bajada y solo se
+     fundía. */
+  @keyframes encenderse { from { opacity: 0; } to { opacity: 1; } }
   /* El papel debajo de las dos capas: en el tramo en que ninguna de las dos está
      entera, lo que asoma es el fondo de la página y no el del navegador, que es
      el que da el parpadeo blanco al navegar en tema oscuro. */
