@@ -410,6 +410,12 @@ def variables(pagina: dict, idioma: str, carpeta: str, piezas: dict, textos: dic
         "prototipo": f"{base}descargas/prototipo",
         "marca": dibujo_marca(),
         "nav": pagina["nav"],
+        # La intro de cristal solo la lleva la portada: es la única página con
+        # el pétalo grande del héroe, que es donde el logo de la animación
+        # tiene que posarse. El atributo se escribe en <html>, así el guion de
+        # la cabecera lo sabe antes del primer píxel y ninguna otra página
+        # levanta la cortina.
+        "intro": ' data-intro="1"' if pagina["src"] == "inicio" else "",
         "contacto": CONTACTO,
         # El nombre de la marca sale del diccionario y no de una constante: es
         # texto, y los textos viven en un solo sitio.

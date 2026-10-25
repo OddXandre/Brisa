@@ -54,6 +54,36 @@ try {
   if (tema === "light" || tema === "dark") document.documentElement.dataset.theme = tema;
 } catch (e) {}
 </script>
+<!-- La intro, levantada antes del primer píxel.
+
+     El cristal de la portada vive en un lienzo que se pinta por encima de todo
+     (assets/js/intro.js): si la cortina apareciera cuando arranca ese guion, la
+     página se vería un instante y luego se taparía, que es peor que no tener
+     intro. Aquí solo se deja puesta la clase y se marca la pestaña —una intro
+     por pestaña, no en cada página—; el guion la retira al acabar.
+
+     Con movimiento reducido no se levanta, y si el guion no llegara a tiempo
+     —bloqueado, con un error, sin WebGL— el reloj de abajo la retira a los tres
+     segundos: una intro rota no puede dejar la web tapada. Sin JavaScript no
+     hay clase, así que tampoco hay cortina. -->
+<script>
+try {
+  if (document.documentElement.hasAttribute("data-intro") &&
+      !sessionStorage.getItem("brisa.intro") &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    sessionStorage.setItem("brisa.intro", "1");
+    document.documentElement.classList.add("intro-on");
+    setTimeout(function () {
+      if (!document.documentElement.hasAttribute("data-intro-listo")) {
+        /* Se marca el final aunque no lo haya habido: es lo que suelta la
+           entrada de la portada, que sin intro no debe quedarse quieta. */
+        document.documentElement.setAttribute("data-intro-listo", "");
+        document.documentElement.classList.remove("intro-on");
+      }
+    }, 6000);
+  }
+} catch (e) {}
+</script>
 <!-- Sin guion no hay desplegable, y en un teléfono la barra solo cabe en una
      fila: las cinco puertas de la página viven dentro del menú, así que sin
      JavaScript no se podría salir de la que se está leyendo —el pie las tiene
@@ -93,6 +123,13 @@ try {
 
 <body>
 <a class="skip" href="#contenido">Ir al contenido</a>
+
+<!-- La cortina de la intro. Existe en todas las páginas y no se ve casi nunca:
+     solo la enciende la clase del documento que pone el guion de arriba, y el
+     lienzo que vive dentro lo pinta el shader del cristal. Va `aria-hidden` y no
+     tiene nada enfocable, así que ni el lector de pantalla ni el tabulador
+     pasan por ella mientras dura. -->
+<div class="intro" data-cortina aria-hidden="true"><canvas></canvas></div>
 
 <nav class="nav" data-open="false" aria-label="Navegación principal">
   <div class="nav-in">
@@ -293,6 +330,7 @@ try {
 <button class="subir" type="button" data-subir aria-label="Volver arriba"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></button>
 
 <script src="assets/js/sitio.js"></script>
+<script src="assets/js/intro.js"></script>
 </body>
 </html>
 

@@ -59,6 +59,14 @@
   --rail: rgba(255, 255, 255, .55);
   --trama: rgba(12, 16, 22, .07);
   --glass: rgba(250, 252, 255, .58);
+  /* La luz y la sombra de la píldora, en vertical. El cristal era un velo plano
+     y la trama, una retícula igual de arriba abajo: la barra se leía como una
+     placa recortada, no como una pieza de vidrio. Estas dos la inclinan —una luz
+     que se posa en el canto de arriba y una sombra que se cierra en el de
+     abajo—, y la trama se apaga con ellas. Son colores declarados para que
+     también viajen al cambiar de tema. */
+  --nav-alto: rgba(255, 255, 255, .32);
+  --nav-bajo: rgba(16, 20, 28, .045);
   --float: rgba(255, 255, 255, .88);
   /* El velo de un panel que tapa media pantalla —el menú de móvil—: casi opaco,
      porque detrás puede haber un botón naranja y no un párrafo quieto. */
@@ -268,6 +276,8 @@
 @property --sel       { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .12); }
 @property --rail      { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .08); }
 @property --glass     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .78); }
+@property --nav-alto  { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .32); }
+@property --nav-bajo  { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .045); }
 @property --float     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .86); }
 @property --acc-text  { syntax: "<color>"; inherits: true; initial-value: #C13D02; }
 @property --acc-soft  { syntax: "<color>"; inherits: true; initial-value: rgba(255, 68, 4, .10); }
@@ -293,6 +303,8 @@
     --sel: rgba(255, 255, 255, .06);
     --rail: rgba(255, 255, 255, .045);
     --trama: rgba(255, 255, 255, .05);
+    --nav-alto: rgba(255, 255, 255, .07);
+    --nav-bajo: rgba(0, 0, 0, .1);
     /* El cristal del tema oscuro se aclara y se abre un poco: sobre una página
        que ya es noche, un velo casi negro al 82 % dejaba la barra más oscura
        que el fondo y se leía como una losa. Con un gris azulado al 70 % la
@@ -343,6 +355,14 @@
   --rail: rgba(255, 255, 255, .55);
   --trama: rgba(12, 16, 22, .07);
   --glass: rgba(250, 252, 255, .58);
+  /* La luz y la sombra de la píldora, en vertical. El cristal era un velo plano
+     y la trama, una retícula igual de arriba abajo: la barra se leía como una
+     placa recortada, no como una pieza de vidrio. Estas dos la inclinan —una luz
+     que se posa en el canto de arriba y una sombra que se cierra en el de
+     abajo—, y la trama se apaga con ellas. Son colores declarados para que
+     también viajen al cambiar de tema. */
+  --nav-alto: rgba(255, 255, 255, .32);
+  --nav-bajo: rgba(16, 20, 28, .045);
   --float: rgba(255, 255, 255, .88);
   /* El velo de un panel que tapa media pantalla —el menú de móvil—: casi opaco,
      porque detrás puede haber un botón naranja y no un párrafo quieto. */
@@ -381,6 +401,8 @@
   --rail: rgba(255, 255, 255, .045);
   --trama: rgba(255, 255, 255, .05);
   --glass: rgba(19, 23, 31, .72);
+  --nav-alto: rgba(255, 255, 255, .07);
+  --nav-bajo: rgba(0, 0, 0, .1);
   --peso-titular: 630;
   --peso-medio: 515;
   --float: rgba(19, 23, 31, .80);
@@ -590,8 +612,14 @@ body { caret-color: var(--acc); }
 .nav-in::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   border-radius: inherit;
+  /* La luz, no un tinte: el halo cenital de siempre y, debajo, dos degradados
+     verticales —uno que aclara desde el canto de arriba y otro que cierra el de
+     abajo—. El vidrio así tiene canto y fondo, que es lo que separa una pieza de
+     cristal de un rectángulo translúcido. */
   background:
     radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(180deg, var(--nav-alto), transparent 54%),
+    linear-gradient(0deg, var(--nav-bajo), transparent 46%),
     var(--glass);
   /* El material del cristal: desenfoque y brillo en pareja, que es la receta de
      la barra de Upscayl —`backdrop-blur-sm` = `blur(4px)` y
@@ -631,6 +659,12 @@ body { caret-color: var(--acc); }
   border-radius: inherit;
   background-image: radial-gradient(circle, var(--trama) 1px, transparent 1.05px);
   background-size: 4px 4px;
+  /* La retícula deja de ser uniforme: nace en el canto de arriba, donde la luz
+     la enciende, y se apaga hacia abajo hasta desaparecer. Una trama de fuerza
+     igual en toda la píldora se lee como un patrón pegado; degradada, se lee
+     como el grano de la superficie. */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
 }
 .brand {
   display: flex; align-items: center; gap: var(--s-2);
@@ -675,10 +709,20 @@ body { caret-color: var(--acc); }
    debajo del 4,5:1 que se le pide a un texto menudo (3,4:1 sobre la casilla),
    y se queda así a sabiendas: es un realce de paso, la palabra sigue ahí y el
    estado marcado no depende de él. */
-.nav-links a:hover { color: var(--acc); background: var(--sel-solida); }
-/* Y sobre la puerta de la página que se está leyendo el hover no cambia nada:
-   ya está marcada, y una segunda marca encima de la primera solo la ensucia. */
-.nav-links a[aria-current="page"]:hover { color: var(--ink); background: var(--sel-solida); }
+/* El realce del puntero solo existe donde HAY puntero. En una pantalla táctil
+   `:hover` no es un estado que dure lo que el dedo, sino uno que el navegador
+   deja pegado al último elemento tocado hasta el siguiente toque: pulsabas
+   «Preguntas», la página cambiaba y la puerta se quedaba encendida como si el
+   puntero siguiera encima, y al abrir el menú en un teléfono el elemento que
+   acabas de tocar salía ya marcado. Con la consulta de medios, el ratón —y el
+   lápiz sobre una pantalla con puntero— ve el mismo realce de siempre y el dedo
+   ninguno. */
+@media (hover: hover) and (pointer: fine) {
+  .nav-links a:hover { color: var(--acc); background: var(--sel-solida); }
+  /* Y sobre la puerta de la página que se está leyendo el hover no cambia nada:
+     ya está marcada, y una segunda marca encima de la primera solo la ensucia. */
+  .nav-links a[aria-current="page"]:hover { color: var(--ink); background: var(--sel-solida); }
+}
 /* La puerta de la página que se está leyendo lleva su filete, como la tarjeta
    que representa: sin él, el gris del fondo es el mismo que el del puntero por
    encima y no se distingue «estás aquí» de «puedes ir». */
@@ -700,7 +744,13 @@ body { caret-color: var(--acc); }
 }
 /* La casilla del control tapa la trama por la misma razón que la del menú: es
    una superficie que aparece, y no puede salir tramada por dentro. */
-.icon-btn:hover, .icon-btn:focus-visible { color: var(--ink); background: var(--sel-solida); }
+.icon-btn:focus-visible { color: var(--ink); background: var(--sel-solida); }
+/* El realce del puntero, donde hay puntero —la misma razón que en el menú—. El
+   del foco se queda fuera: quien llega con el teclado tiene que ver dónde está,
+   en un ordenador y en una tableta. */
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn:hover { color: var(--ink); background: var(--sel-solida); }
+}
 /* El mismo apretado que un botón de la casa: un control se hunde cuando lo
    pulsas, aunque solo mida 34px. Es la única respuesta que tiene un botón de
    icono, y sin ella el toque no se siente. */
@@ -766,7 +816,9 @@ body { caret-color: var(--acc); }
    apaga al pasar por encima (baja la opacidad) y se pone blanco al visitarlo o
    pulsarlo —blanco sobre un botón blanco, o sea, texto invisible—; por eso las
    tres fases van nombradas aquí. */
-.nav-acts a.kofi-button:hover { opacity: 1; border-color: var(--line-2) !important; }
+@media (hover: hover) and (pointer: fine) {
+  .nav-acts a.kofi-button:hover { opacity: 1; border-color: var(--line-2) !important; }
+}
 .nav-acts a.kofi-button:visited, .nav-acts a.kofi-button:active { opacity: 1; color: var(--ink) !important; }
 .nav-acts a.kofi-button:active { transform: scale(.97); }
 .nav-acts .kofitext {
@@ -901,6 +953,39 @@ body { caret-color: var(--acc); }
   .nav-acts .btn::after { content: ""; position: absolute; inset: -6px; }
 }
 
+/* ── 3b · La cortina de la intro ─────────────────────────────────────────── */
+/* Una lámina del color del papel sobre la que ocurre la intro y que se retira
+   cuando el pétalo ya está en su sitio (assets/js/intro.js). No es una pantalla
+   de carga: no hay nada que esperar, y por eso dura lo que dura el gesto —una
+   vez por pestaña— y no se queda si el guion falla. Vive `display: none` hasta
+   que el documento lleva la clase, así que sin JavaScript no existe.
+
+   El fundido es más largo que el de un control (`--t-reveal`, el asentamiento
+   de un bloque): una superficie que ocupa la pantalla entera no se retira en un
+   parpadeo sin que se note el canto, y es el tiempo que tiene la portada para
+   entrar detrás sin que se vea el corte. La curva es la de salida, no la
+   simétrica: se va decidida y se posa, que es como se retira una cortina. */
+.intro { display: none; }
+html.intro-on .intro {
+  display: block; position: fixed; inset: 0; z-index: 60;
+  background: var(--bg); opacity: 1;
+  transition: opacity var(--t-reveal) var(--ease-out);
+  /* Los dos gestos que no deben llegar a la página mientras dura: la rueda y el
+     arrastre del dedo. El bloqueo de verdad está en `overflow`, abajo, porque
+     esto solo cubre la lámina. */
+  touch-action: none; overscroll-behavior: contain;
+}
+html.intro-on.intro-saliendo .intro { opacity: 0; }
+.intro canvas { display: block; width: 100%; height: 100%; }
+
+/* Mientras la intro no ha terminado, la página no se desplaza. No es una
+   precaución decorativa: el pétalo aterriza en un punto de la portada, y quien
+   llega con la rueda —o con el dedo— estaría moviendo el blanco mientras el
+   pétalo vuela. Se suelta a la vez que se retira la cortina, en el mismo
+   fotograma: cuando la página se ve, ya se puede recorrer. */
+html.intro-on { overflow: hidden; }
+html.intro-on body { overflow: hidden; }
+
 /* ── 4 · Botones ─────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
@@ -920,10 +1005,20 @@ body { caret-color: var(--acc); }
    el relleno daba un salto del doce por ciento —que sobre una superficie clara
    se lee como un cambio de color, no como una luz— y el brillo de la brasa
    hacía que el botón parpadeara. */
-.btn:hover, .btn:focus-visible {
+.btn:focus-visible {
   border-color: color-mix(in srgb, var(--line-2) 74%, var(--line));
   background-color: color-mix(in srgb, var(--surface-2) 94%, var(--ink) 6%);
   box-shadow: inset 0 .5px 0 color-mix(in srgb, #fff 55%, transparent);
+}
+/* La misma regla, con el puntero y solo con el puntero: en una pantalla táctil
+   el `:hover` se queda pegado al último botón tocado —el de la barra, sin ir más
+   lejos— y el botón sigue pareciendo pulsado cuando ya no lo está. */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    border-color: color-mix(in srgb, var(--line-2) 74%, var(--line));
+    background-color: color-mix(in srgb, var(--surface-2) 94%, var(--ink) 6%);
+    box-shadow: inset 0 .5px 0 color-mix(in srgb, #fff 55%, transparent);
+  }
 }
 .btn:active { transform: scale(.99); }
 .btn svg { width: 17px; height: 17px; flex: none; }
@@ -941,7 +1036,7 @@ body { caret-color: var(--acc); }
    faro; ahora son dieciocho muy diluidos: se nota que la pieza está un poco más
    alta, sin ver de dónde sale la luz. */
 .btn.primary { background: var(--acc); border-color: transparent; color: var(--acc-ink); box-shadow: var(--rim); position: relative; isolation: isolate; }
-.btn.primary:hover, .btn.primary:focus-visible {
+.btn.primary:focus-visible {
   border-color: transparent;
   /* Seis por ciento de blanco en el relleno en vez de un `filter: brightness`:
      el brillo repinta la letra y el icono y el cambio se ve en el texto. Así la
@@ -949,6 +1044,14 @@ body { caret-color: var(--acc); }
   background-color: color-mix(in srgb, var(--acc) 94%, #fff);
   filter: none;
   box-shadow: var(--rim), 0 10px 22px -12px rgba(255, 68, 4, .5);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn.primary:hover {
+    border-color: transparent;
+    background-color: color-mix(in srgb, var(--acc) 94%, #fff);
+    filter: none;
+    box-shadow: var(--rim), 0 10px 22px -12px rgba(255, 68, 4, .5);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .btn.primary { transition: none; }
@@ -958,7 +1061,10 @@ body { caret-color: var(--acc); }
    la tinta solo empeora lo único que este botón ya tiene justo. */
 .btn.primary small { color: inherit; }
 .btn.quiet { background: transparent; border-color: transparent; color: var(--ink-2); }
-.btn.quiet:hover, .btn.quiet:focus-visible { background: color-mix(in srgb, var(--sel) 82%, transparent); color: var(--ink); border-color: transparent; box-shadow: none; }
+.btn.quiet:focus-visible { background: color-mix(in srgb, var(--sel) 82%, transparent); color: var(--ink); border-color: transparent; box-shadow: none; }
+@media (hover: hover) and (pointer: fine) {
+  .btn.quiet:hover { background: color-mix(in srgb, var(--sel) 82%, transparent); color: var(--ink); border-color: transparent; box-shadow: none; }
+}
 .btn.lg { height: 48px; padding: 0 var(--s-5); font-size: 15.5px; }
 .btn.sm { height: 34px; padding: 0 var(--s-3); font-size: var(--t-sm); border-radius: var(--r-ctl); }
 .btn[aria-disabled="true"], .btn:disabled { opacity: .55; pointer-events: none; }
@@ -1886,6 +1992,10 @@ footer .eyebrow { margin-bottom: var(--s-4); }
     transform-origin: 50% 58%;
     animation: respirar var(--t-respiro) var(--ease-io) infinite;
   }
+  /* Con la intro puesta la respiración se para: el cristal se pinta sobre la
+     caja que mide en reposo y su último fotograma tiene que caer justo encima
+     de la marca, no un 1,4 % al lado. Reanuda al retirarse la cortina. */
+  html.intro-on .marca-viva { animation-play-state: paused; }
 }
 .marca-viva { display: block; }
 
@@ -1981,6 +2091,26 @@ footer .eyebrow { margin-bottom: var(--s-4); }
   .hero .lede { animation-delay: calc(var(--t-paso) * 2); }
   .hero .ctas { animation-delay: calc(var(--t-paso) * 3); }
   .hero .meta { animation-delay: calc(var(--t-paso) * 4); }
+
+  /* La barra entra la primera, con el mismo gesto y sin retardo: es el borde de
+     la página y no debe llegar después de lo que enmarca. Solo en la portada,
+     que es la única donde hay intro que acompañar. */
+  html[data-intro] .nav-in { animation: llegar var(--t-medio) var(--ease-out) both; }
+
+  /* Y nada de esto corre hasta que el cristal se ha posado y empieza a irse.
+     El guion marca `data-intro-listo` en ese fotograma (`retirar`), así que la
+     portada entra debajo de la cortina que se funde, en vez de estar ya entera
+     cuando la cortina desaparece —que es lo que se veía: la web de golpe—. En
+     una pausa, `both` deja la pieza en su estado inicial: la página llega.
+     Donde no hay intro la pausa no se aplica y todo corre como siempre. */
+  html.intro-on:not([data-intro-listo]) .nav-in,
+  html.intro-on:not([data-intro-listo]) .hero h1,
+  html.intro-on:not([data-intro-listo]) .hero .lede,
+  html.intro-on:not([data-intro-listo]) .hero .ctas,
+  html.intro-on:not([data-intro-listo]) .hero .meta,
+  html.intro-on:not([data-intro-listo]) .showcase .window {
+    animation-play-state: paused;
+  }
   /* La ventana del producto cierra la entrada. Es la misma animación de la
      captura de Upscayl bajo su titular: la pieza llega inclinada hacia atrás,
      algo pequeña y baja, y se endereza hasta quedar plana sobre el papel. La
@@ -1997,6 +2127,12 @@ footer .eyebrow { margin-bottom: var(--s-4); }
 @keyframes entrar {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
+}
+/* La barra no sube: baja. Es el borde de arriba del documento, y lo que llega
+   desde fuera de la pantalla entra por su canto, no por el de la página. */
+@keyframes llegar {
+  from { opacity: 0; translate: 0 -8px; }
+  to { opacity: 1; translate: 0 0; }
 }
 @keyframes abrir-ventana {
   from { opacity: 0; translate: 0 64px; scale: .93; rotate: x 20deg; }

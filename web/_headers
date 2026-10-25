@@ -5,7 +5,7 @@
 # una copia guardada en el navegador sigue enseñando el texto viejo —«en la web
 # todavía pone 30 días»— aunque el archivo ya esté corregido.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://storage.ko-fi.com 'sha256-oHjdlOteflhf3PJUvyWlAsrdq2yTmVL6LvP+icGF7zE=' 'sha256-ktB2XmEHuI5S8tx7iZi+BUmVl8K2JiJhZq5a4UoEo/Y=' 'sha256-oWUS4zWnRAIRFZ5UbTXR/Zhg2qT/1vfV1Hcagha/wec=' 'sha256-fYce7m/5CnUmMmQImVmAbuZAUH+k7IJ0JpUKTTxhk2M=' 'sha256-8/7mvOlNg1SylEAdUBV2QWc4nUvlUZ7WJ+WDaUu6U1M=' 'sha256-5RrOVEf6gSXCa4ULj0MDqmDga/bazZZHYn/nraPHnxs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'none'; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://storage.ko-fi.com 'sha256-oHjdlOteflhf3PJUvyWlAsrdq2yTmVL6LvP+icGF7zE=' 'sha256-Pq3rBGck+B1BDw951GEL0J/uJWpWpEAynEteOcQudqc=' 'sha256-ktB2XmEHuI5S8tx7iZi+BUmVl8K2JiJhZq5a4UoEo/Y=' 'sha256-oWUS4zWnRAIRFZ5UbTXR/Zhg2qT/1vfV1Hcagha/wec=' 'sha256-fYce7m/5CnUmMmQImVmAbuZAUH+k7IJ0JpUKTTxhk2M=' 'sha256-8/7mvOlNg1SylEAdUBV2QWc4nUvlUZ7WJ+WDaUu6U1M=' 'sha256-5RrOVEf6gSXCa4ULj0MDqmDga/bazZZHYn/nraPHnxs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'none'; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), camera=(), microphone=(), usb=()
