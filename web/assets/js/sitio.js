@@ -67,12 +67,18 @@
   function pintarTema() {
     const activo = temaActivo();
     document.querySelectorAll("[data-tema-icono]").forEach((icono) => {
-      /* Con el atributo y no con `.hidden`: un elemento SVG no es un HTMLElement
-         y no tiene esa propiedad, así que `svg.hidden = true` se quedaba en una
-         propiedad suelta del objeto y el icono seguía a la vista: en el botón de
-         tema se veían el sol y la luna a la vez. */
-      if (icono.dataset.temaIcono === activo) icono.removeAttribute("hidden");
-      else icono.setAttribute("hidden", "");
+      /* El estado va en `data-vivo` y no en `hidden`, y no por gusto: `hidden`
+         es `display: none`, y una pieza que no se pinta no puede fundirse con
+         la otra —el icono salía y entraba de golpe, que es justo lo que se
+         quería quitar—. Los dos viven en la misma celda y se relevan por
+         opacidad; al lector de pantalla no le llega ninguno (van con
+         `aria-hidden`, como antes), sino la etiqueta del botón.
+
+         Tampoco con `.hidden`, la propiedad: un elemento SVG no es un
+         HTMLElement y no la tiene, así que `svg.hidden = true` se quedaba en
+         una propiedad suelta del objeto y se veían el sol y la luna a la vez. */
+      if (icono.dataset.temaIcono === activo) icono.setAttribute("data-vivo", "");
+      else icono.removeAttribute("data-vivo");
     });
     const boton = document.querySelector("[data-tema-boton]");
     if (boton) {
@@ -95,13 +101,20 @@
      Va también con el movimiento reducido, al contrario que la entrada: aquí lo
      que viaja es el COLOR, no hay nada que se desplace, y quitar el paso dejaría
      un salto de blanco a negro de golpe. El sistema hace lo mismo —el cambio de
-     apariencia se funde aunque el resto del movimiento esté reducido—. */
+     apariencia se funde aunque el resto del movimiento esté reducido—.
+
+     El reloj de aquí no es el de nadie más: la hoja lleva DOS (la sala en
+     `--t-tema`, las letras en `--t-tema-tinta`, más corto), así que la clase
+     tiene que durar lo que el más largo y un poco más, o el último tramo del
+     asentamiento se quedaría sin clase y la página daría un salto al final
+     —que es peor que no haber fundido—. Antes eran 470 ms para una transición
+     de 560; ahora son 640 para 520. */
   let relojTema = 0;
 
   const animarTema = () => {
     raiz.classList.add("tema-anim");
     window.clearTimeout(relojTema);
-    relojTema = window.setTimeout(() => raiz.classList.remove("tema-anim"), 470);
+    relojTema = window.setTimeout(() => raiz.classList.remove("tema-anim"), 640);
   };
 
   function aplicarTema(siguiente) {

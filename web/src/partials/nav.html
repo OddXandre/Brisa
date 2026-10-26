@@ -18,8 +18,13 @@
               data-etiqueta="{{t:nav.tema}}"
               data-claro="{{t:nav.temaClaro}}" data-oscuro="{{t:nav.temaOscuro}}"
               aria-label="{{t:nav.temaAccion}}" title="{{t:nav.temaAccion}}">
-        <svg data-tema-icono="light" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:sol}}</svg>
-        <svg data-tema-icono="dark" aria-hidden="true" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:luna}}</svg>
+        <!-- Los dos dibujos van pintados, uno encima del otro, y se relevan por
+             opacidad: `hidden` —que es `display: none`— los apagaba de golpe y
+             el botón del tema era lo único del cambio de tema que no se movía.
+             El que manda va con `data-vivo`, y `light` lo trae puesto para que
+             antes de que corra el guion se vea el icono correcto y no un hueco. -->
+        <svg data-tema-icono="light" data-vivo aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:sol}}</svg>
+        <svg data-tema-icono="dark" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{trazo:luna}}</svg>
       </button>
 
       <a class="icon-btn wide" href="{{v:urlIdioma}}" hreflang="{{v:langOtra}}"

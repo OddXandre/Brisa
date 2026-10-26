@@ -75,16 +75,23 @@
   /* El filete de lo que flota va DENTRO de su sombra, no como `border`: ver la
      nota de elevación de la cabecera. Un solo recurso por pieza. */
   --ring: rgba(16, 20, 28, .09);
-  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(16, 20, 28, .04), 0 24px 64px -18px rgba(16, 20, 28, .22);
+  /* El negro de cada sombra, aparte y con nombre, para que viaje con el tema: la
+     geometría se queda quieta y lo único que cambia es la profundidad. */
+  --sombra-1: rgba(16, 20, 28, .04);
+  --sombra-2: rgba(16, 20, 28, .22);
+  --sombra-2a: rgba(16, 20, 28, .26);
+  --sombra-nav: rgba(16, 20, 28, .26);
+  --sombra-nav-1: rgba(16, 20, 28, .04);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px var(--sombra-1), 0 24px 64px -18px var(--sombra-2);
   /* La misma ventana, apuntada: la pieza no cambia de elevación —sigue teniendo
      sombra y ni un borde—, solo flota dos píxeles más y su sombra se abre con
      ella. Una elevación por pieza, la misma en los dos estados. */
-  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(16, 20, 28, .05), 0 34px 80px -16px rgba(16, 20, 28, .26);
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px var(--sombra-1), 0 34px 80px -16px var(--sombra-2a);
   /* La sombra de la barra no es un borde: es lo que la separa del contenido
      cuando hay algo pasando por debajo. Ancha, muy difusa y con poco negro —a
      medio camino entre la sombra de la ventana y nada—, porque una sombra
      corta y oscura convierte el cristal en una caja. */
-  --shadow-nav: 0 16px 36px -20px rgba(16, 20, 28, .26), 0 1px 2px rgba(16, 20, 28, .04);
+  --shadow-nav: 0 16px 36px -20px var(--sombra-nav), 0 1px 2px var(--sombra-nav-1);
 
   /* Acento: una brasa, la de la app, una y la misma en los dos temas.
      `--acc` es el de la interfaz tal cual —el mismo relleno del botón, el
@@ -158,6 +165,13 @@
   --ease: cubic-bezier(.32, .72, 0, 1);
   --ease-io: cubic-bezier(.4, 0, .2, 1);
   --ease-out: cubic-bezier(.22, .61, .36, 1);
+  /* La curva de la tinta al cambiar de tema. Es la única de la casa con el
+     centro pronunciado, y está puesta a propósito: la tinta y el fondo se
+     cruzan una vez, siempre —uno sube mientras el otro baja—, y lo que se
+     puede elegir es cuánto dura ese cruce. Con una curva de arranque vivo el
+     cruce se atraviesa despacio y la página se queda un instante sin texto;
+     con esta, pasa por el medio en la mitad de tiempo y se va. */
+  --ease-tinta: cubic-bezier(.8, 0, .2, 1);
   --t-rapido: .16s;                /* la respuesta a un gesto: color, filete, fondo */
   --t-toque: .26s;                 /* la respuesta al puntero en un control: más larga que un gesto, porque es una luz que se posa y no un aviso */
   --t-foco: .44s;                  /* el foco de luz de una ficha: entra y sale despacio */
@@ -166,7 +180,8 @@
   --t-paso: 70ms;                  /* lo que separa dos piezas de una misma entrada */
   --t-medio: .3s;                  /* lo que cambia de sitio: la barra, el aviso */
   --t-lento: .34s;                 /* lo que se despliega: la altura de una pregunta */
-  --t-tema: .56s;                  /* el asentamiento del tema: más largo que una entrada, porque mueve la pantalla entera */
+  --t-tema: .52s;                  /* la sala al cambiar de tema: superficies, filetes, sombras y luces */
+  --t-tema-tinta: .26s;            /* y las letras, que vuelven antes para que la página se lea cuanto antes */
   --t-respiro: 6.5s;               /* el ciclo del símbolo. No es una transición: es el único bucle del sitio y se queda fuera de la escala corta a propósito, porque lo que respira no es una respuesta a un gesto sino el pulso de la pieza */
 
   /* Escala tipográfica. Seis pasos y ningún tamaño fuera de ellos, con el
@@ -273,7 +288,18 @@
 @property --ink-3     { syntax: "<color>"; inherits: true; initial-value: #6f737b; }
 @property --ink-4     { syntax: "<color>"; inherits: true; initial-value: #8b8d98; }
 @property --sel       { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .12); }
+/* Estos cinco estaban escritos en la transición y NO declarados, así que no
+   interpolaban: el mismo valor en todos los fotogramas y el nuevo al final
+   —medido—. La trama de puntos de la barra, la casilla marcada, el velo del menú
+   de móvil, el filete de lo que flota y la luz del cielo SALTABAN al empezar el
+   cambio mientras todo lo demás se fundía medio segundo. Se veía en la barra:
+   los puntos pasaban de oscuros a claros de golpe. */
+@property --trama      { syntax: "<color>"; inherits: true; initial-value: rgba(12, 16, 22, .07); }
+@property --sel-solida { syntax: "<color>"; inherits: true; initial-value: #E9ECF2; }
+@property --panel      { syntax: "<color>"; inherits: true; initial-value: rgba(252, 253, 255, .97); }
+@property --cielo-c    { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .45); }
 @property --rail      { syntax: "<color>"; inherits: true; initial-value: rgba(120, 120, 128, .08); }
+@property --ring      { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .09); }
 @property --glass     { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .78); }
 @property --nav-alto  { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .32); }
 @property --nav-bajo  { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .045); }
@@ -287,6 +313,16 @@
 @property --aurora-warm-c { syntax: "<color>"; inherits: true; initial-value: rgba(255, 68, 4, .08); }
 @property --aurora-cool-c { syntax: "<color>"; inherits: true; initial-value: rgba(88, 132, 255, .055); }
 @property --sheen-c       { syntax: "<color>"; inherits: true; initial-value: rgba(255, 255, 255, .75); }
+/* Los cinco grises de las sombras. Una sombra no se puede declarar —no hay tipo
+   `<shadow>`—, pero SÍ puede llevar un color dentro: puesta a mano, la sombra se
+   quedaba clavada en el gris del tema viejo y saltaba de golpe al final del
+   cambio (medido: el mismo valor en los treinta fotogramas). Declarado el negro
+   de dentro, la sombra se recalcula en cada fotograma con el color que toca. */
+@property --sombra-1     { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .04); }
+@property --sombra-2     { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .22); }
+@property --sombra-2a    { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .26); }
+@property --sombra-nav   { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .26); }
+@property --sombra-nav-1 { syntax: "<color>"; inherits: true; initial-value: rgba(16, 20, 28, .04); }
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -314,9 +350,14 @@
     --panel: rgba(13, 17, 23, .96);
     --rim: inset 0 .5px 0 rgba(255, 255, 255, .10);
     --ring: rgba(255, 255, 255, .13);
-    --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
-    --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .55), 0 34px 80px -16px rgba(0, 0, 0, .78);
-    --shadow-nav: 0 18px 40px -20px rgba(0, 0, 0, .7), 0 1px 2px rgba(0, 0, 0, .4);
+    --sombra-1: rgba(0, 0, 0, .5);
+    --sombra-2: rgba(0, 0, 0, .7);
+    --sombra-2a: rgba(0, 0, 0, .78);
+    --sombra-nav: rgba(0, 0, 0, .7);
+    --sombra-nav-1: rgba(0, 0, 0, .4);
+    --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px var(--sombra-1), 0 24px 64px -18px var(--sombra-2);
+    --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px var(--sombra-1), 0 34px 80px -16px var(--sombra-2a);
+    --shadow-nav: 0 16px 36px -20px var(--sombra-nav), 0 1px 2px var(--sombra-nav-1);
     --acc-text: #FF4404;
     --acc-soft: rgba(255, 68, 4, .16);
     --veil: rgba(255, 68, 4, .08);
@@ -366,12 +407,17 @@
   --panel: rgba(252, 253, 255, .97);
   --rim: inset 0 .5px 0 rgba(255, 255, 255, .9);
   --ring: rgba(16, 20, 28, .09);
-  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(16, 20, 28, .04), 0 24px 64px -18px rgba(16, 20, 28, .22);
+  --sombra-1: rgba(16, 20, 28, .04);
+  --sombra-2: rgba(16, 20, 28, .22);
+  --sombra-2a: rgba(16, 20, 28, .26);
+  --sombra-nav: rgba(16, 20, 28, .26);
+  --sombra-nav-1: rgba(16, 20, 28, .04);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px var(--sombra-1), 0 24px 64px -18px var(--sombra-2);
   /* La misma ventana, apuntada: la pieza no cambia de elevación —sigue teniendo
      sombra y ni un borde—, solo flota dos píxeles más y su sombra se abre con
      ella. Una elevación por pieza, la misma en los dos estados. */
-  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(16, 20, 28, .05), 0 34px 80px -16px rgba(16, 20, 28, .26);
-  --shadow-nav: 0 16px 36px -20px rgba(16, 20, 28, .26), 0 1px 2px rgba(16, 20, 28, .04);
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px var(--sombra-1), 0 34px 80px -16px var(--sombra-2a);
+  --shadow-nav: 0 16px 36px -20px var(--sombra-nav), 0 1px 2px var(--sombra-nav-1);
   --acc-text: #C13D02;
   --acc-soft: rgba(255, 68, 4, .10);
   --veil: rgba(255, 68, 4, .045);
@@ -402,9 +448,14 @@
   --panel: rgba(13, 17, 23, .96);
   --rim: inset 0 .5px 0 rgba(255, 255, 255, .10);
   --ring: rgba(255, 255, 255, .13);
-  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px rgba(0, 0, 0, .5), 0 24px 64px -18px rgba(0, 0, 0, .7);
-  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px rgba(0, 0, 0, .55), 0 34px 80px -16px rgba(0, 0, 0, .78);
-  --shadow-nav: 0 18px 40px -20px rgba(0, 0, 0, .7), 0 1px 2px rgba(0, 0, 0, .4);
+  --sombra-1: rgba(0, 0, 0, .5);
+  --sombra-2: rgba(0, 0, 0, .7);
+  --sombra-2a: rgba(0, 0, 0, .78);
+  --sombra-nav: rgba(0, 0, 0, .7);
+  --sombra-nav-1: rgba(0, 0, 0, .4);
+  --shadow-window: 0 0 0 .5px var(--ring), 0 1px 2px var(--sombra-1), 0 24px 64px -18px var(--sombra-2);
+  --shadow-window-alto: 0 0 0 .5px var(--ring), 0 2px 5px var(--sombra-1), 0 34px 80px -16px var(--sombra-2a);
+  --shadow-nav: 0 16px 36px -20px var(--sombra-nav), 0 1px 2px var(--sombra-nav-1);
   --acc-text: #FF4404;
   --acc-soft: rgba(255, 68, 4, .16);
   --veil: rgba(255, 68, 4, .08);
@@ -771,6 +822,31 @@ html[data-intro] .nav-in > * { animation: llegar var(--t-medio) var(--ease-out) 
 .icon-btn::after { content: ""; position: absolute; inset: -6px; }
 .icon-btn.wide { width: auto; padding: 0 var(--s-2); gap: var(--s-1); grid-auto-flow: column; }
 .icon-btn svg { width: 17px; height: 17px; }
+/* El sol y la luna no se sustituyen: se RELEVAN. Antes el que salía
+desaparecía de golpe —`hidden` es `display: none`— y el que entraba aparecía
+entero en el mismo fotograma, así que el botón del tema, que es donde mira todo
+el mundo al pulsarlo, era lo único del cambio que no se movía.
+
+   Ahora los dos están pintados, uno encima del otro en la misma celda, y lo que
+   se mueve es su opacidad: el que se va se apaga girando mientras el que llega
+   entra desde el otro lado, en el mismo cuarto de segundo. `hidden` ya no sirve
+   para esto —con `display: none` no hay nada que fundir—, así que el estado va
+   en `data-vivo`, que el guion pone y quita. Y los dos siguen con
+   `aria-hidden="true"`, que ya llevaban: al lector de pantalla lo que le cuenta
+   el botón es su etiqueta, no el dibujo. */
+.icon-btn svg[data-tema-icono] {
+  grid-area: 1 / 1;                 /* los dos en la misma celda: uno encima del otro */
+  opacity: 0;
+  transition: opacity var(--t-rapido) var(--ease-io);
+}
+.icon-btn svg[data-tema-icono][data-vivo] { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .icon-btn svg[data-tema-icono] {
+    transform: rotate(-45deg) scale(.7);
+    transition: opacity var(--t-rapido) var(--ease-io), transform var(--t-medio) var(--ease);
+  }
+  .icon-btn svg[data-tema-icono][data-vivo] { transform: none; }
+}
 
 .nav-toggle { display: none; }
 
@@ -2429,7 +2505,7 @@ html.en-relevo .showcase .window { animation: none; }
 
    Aquí solo vive el fundido; quien pone y quita la clase es el guion, que además
    le pone plazo: la pieza no puede quedarse apagada esperando a nada. */
-.window picture { transition: opacity var(--t-rapido) var(--ease-io); }
+.window picture { transition: opacity var(--t-tema-tinta) var(--ease-io); }
 .window picture.tema-fundido { opacity: 0; }
 
 /* La pregunta abierta se despliega con la altura de su propio contenido, en vez
@@ -2457,39 +2533,77 @@ summary:hover svg { color: var(--ink); }
 
 /* El cambio de tema se asienta en color, no en contenido: lo único que cambia de
    archivo es la captura. Los dos temas traen los mismos tokens, así que basta
-   con dejar que los tokens viajen de uno a otro en el mismo tiempo que la app
-   usa en su propio `theme-anim` (430 ms), y con la clase puesta solo durante ese
-   cambio: las transiciones propias de cada control siguen mandando el resto del
-   tiempo.
+   con dejar que los tokens viajen de uno a otro, y con la clase puesta solo
+   durante ese cambio: las transiciones propias de cada control siguen mandando
+   el resto del tiempo.
 
    Quién transiciona es `html`, y solo él. Ahí es donde el valor cambia de
    verdad, y de ahí lo hereda todo lo demás —incluido el texto, que es lo que
    antes se quedaba esperando—. Los tokens están declarados en la sección 1b:
    sin declarar no son colores y no hay nada que interpolar.
 
-   Las sombras se quedan fuera de la lista porque una sombra no es un color y no
-   se puede declarar: son las dos únicas piezas que flotan —la ventana del
-   producto y la barra—, y van por su cuenta, con el mismo tiempo y la misma
-   curva, para que se asienten a la vez que lo demás. La transición de vista del
-   navegador haría esto mismo y peor: la captura del tema nuevo todavía no está
-   en la caché la primera vez que se pulsa, así que el fundido enseñaría medio
-   segundo de panel vacío. */
-@media (prefers-reduced-motion: no-preference) {
-  html.tema-anim {
-  transition-property: --bg, --surface, --surface-2, --line, --line-2, --ink, --ink-2,
-                       --ink-3, --ink-4, --sel, --rail, --glass, --float,
-                       --acc-text, --acc-soft, --veil,
-                       --aurora-warm-c, --aurora-cool-c, --sheen-c;
-    transition-duration: var(--t-tema);
-    /* La curva NO es la simétrica (`--ease-io`): esa arranca despacio y en medio
-       segundo de cambio eso se lee como si el primer cuarto no hiciera nada, que
-       es exactamente el «delay» que se notaba. La de la casa arranca viva y
-       frena largo, así que el cambio se ve desde el primer fotograma y termina
-       posándose. */
-    transition-timing-function: var(--ease);
-  }
-  html.tema-anim :is(.window, .nav) { transition: box-shadow var(--t-tema) var(--ease-io); }
+   DOS RELOJES, y es la diferencia que se nota. Si la sala y las letras cruzan a
+   la vez hay un instante —medido en este sitio: 91 ms, contraste 1,01:1— en el
+   que la tinta y el fondo valen casi lo mismo y la página se queda sin texto.
+   Que se crucen no se puede evitar: uno sube mientras el otro baja, y hacen
+   falta los dos. Lo que sí se elige es cuánto dura el cruce. Las letras llegan
+   antes y con una curva de paso rápido por el medio (--ease-tinta): medido en
+   el navegador, fotograma a fotograma, el tramo por debajo de 3:1 pasa de tres
+   fotogramas a dos, y el de 4,5:1 de cinco a cuatro; y la página vuelve a
+   leerse en 250 ms en vez de en 560, que es lo que de verdad se agradece. La
+   sala se sigue tomando su medio segundo, que es lo que hace que el cambio se
+   lea como la luz de un cuarto y no como un interruptor.
+
+   Aquí van TODOS los tokens de color, y la lista se mantiene a mano: el orden de
+   `transition-property` manda sobre el de `transition-duration` y el de
+   `transition-timing-function`, y si se desalinean no hay error —el navegador
+   reparte lo que falta y sigue—, así que la única comprobación posible es medir
+   que cada token tarda lo suyo. Los cinco últimos son la tinta.
+
+   Los cinco grises de sombra van con las superficies aunque una sombra no sea un
+   color: lo que viaja es el negro de dentro (ver 1b), y la sombra se recalcula
+   sola en cada fotograma. Antes iban a mano en la regla y eran lo único de la
+   página que saltaba de golpe a mitad del cambio: medido, el mismo valor durante
+   los treinta fotogramas y el nuevo al final.
+
+   Sin la guarda de movimiento reducido, y a sabiendas: aquí lo que viaja es el
+   COLOR. Quitarlo no ahorra movimiento, deja un salto de blanco a negro de
+   golpe —justo lo que el sistema sí funde cuando cambia de apariencia—. Lo que
+   se apaga con el movimiento reducido es el giro del icono, que está en su
+   propia regla. */
+html.tema-anim {
+  transition-property:
+    /* La sala. */
+    --bg, --surface, --surface-2, --line, --line-2, --sel, --sel-solida,
+    --rail, --trama, --glass, --nav-alto, --nav-bajo, --float, --panel,
+    --ring, --sombra-1, --sombra-2, --sombra-2a, --sombra-nav, --sombra-nav-1,
+    /* Las luces. */
+    --acc-soft, --veil, --aurora-warm-c, --aurora-cool-c, --cielo-c, --sheen-c,
+    /* La tinta. */
+    --ink, --ink-2, --ink-3, --ink-4, --acc-text;
+  transition-duration:
+    var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema),
+    var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema),
+    var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema),
+    var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema),
+    var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema), var(--t-tema),
+    var(--t-tema),
+    var(--t-tema-tinta), var(--t-tema-tinta), var(--t-tema-tinta),
+    var(--t-tema-tinta), var(--t-tema-tinta);
+  transition-timing-function:
+    var(--ease), var(--ease), var(--ease), var(--ease), var(--ease),
+    var(--ease), var(--ease), var(--ease), var(--ease), var(--ease),
+    var(--ease), var(--ease), var(--ease), var(--ease), var(--ease),
+    var(--ease), var(--ease), var(--ease), var(--ease), var(--ease),
+    var(--ease), var(--ease), var(--ease), var(--ease), var(--ease),
+    var(--ease),
+    var(--ease-tinta), var(--ease-tinta), var(--ease-tinta),
+    var(--ease-tinta), var(--ease-tinta);
 }
+/* La curva de la sala NO es la simétrica (`--ease-io`): esa arranca despacio y
+   en medio segundo eso se lee como si el primer cuarto no hiciera nada, que es
+   exactamente el «delay» que se notaba. La de la casa arranca viva y frena
+   largo: el cambio se ve desde el primer fotograma y termina posándose. */
 
 /* ── 18 · Documentos ─────────────────────────────────────────────────────── */
 /* El aviso legal y la licencia no son páginas de producto: son prosa con
