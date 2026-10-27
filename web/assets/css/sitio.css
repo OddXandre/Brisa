@@ -1004,17 +1004,12 @@ el mundo al pulsarlo, era lo único del cambio que no se movía.
     top: calc(var(--s-3) + var(--nav-h) + var(--s-2));
     flex-direction: column; align-items: stretch; gap: var(--s-1); padding: var(--s-3);
     border-radius: var(--r-panel);
-    /* La trama va como primera capa del PROPIO panel, no en un pseudo-elemento.
-       Así cubre el recuadro entero hasta el canto —el fondo se pinta en la caja
-       de borde, padding incluido— y no hace falta nada más: ni `inset`, ni
-       medidas, ni `z-index`, ni una segunda capa que apagar y encender. Antes
-       era un pseudo absoluto y dejaba sin cubrir una franja a la derecha y
-       abajo, además de pintarse por encima de las letras.
-
-       Misma receta que la barra y un punto más de tinta, porque el panel tapa
-       una superficie cuatro veces mayor y a la misma densidad se lee como
-       ruido; con el paso de 4 px y el punto de un píxel, la trama se ve sin
-       competir con las letras. */
+    /* La trama ya no va aquí, como capa de fondo, sino en `::after` (abajo). La
+       razón es la máscara: la retícula de la barra se apaga con un degradado, y
+       una máscara puesta en el panel sería una máscara sobre TODO lo que el
+       panel pinta, letras incluidas. Una capa de fondo no se puede enmascarar
+       sola, así que la trama vuelve a un pseudo con su propia máscara, que es
+       como la tiene la barra. */
     /* El velo del panel NO es el de la barra: es `--float`, el de las superficies
        que flotan. Medido en un teléfono, con el velo de la barra —58 % en
        claro— el botón naranja de descarga que quedaba justo debajo asomaba por
@@ -1025,10 +1020,8 @@ el mundo al pulsarlo, era lo único del cambio que no se movía.
        ahí para tapar la página, que es justo lo que pasa a hacer el filtro de
        abajo. */
     background:
-      radial-gradient(circle, var(--trama) 1px, transparent 1.05px),
       radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
       var(--float);
-    background-size: 4px 4px, auto, auto;
     /* El desenfoque, por fin de verdad. El mismo par que la píldora —catorce
        píxeles y un 6 % de brillo—, y el mismo que su cristal: tres piezas de la
        barra, una sola receta. */
@@ -1040,9 +1033,32 @@ el mundo al pulsarlo, era lo único del cambio que no se movía.
     opacity: 0; visibility: hidden;
   }
   /* El filete separaba la marca del menú en una fila; en una lista apilada
-     sería una raya suelta en la primera línea. La trama ya no vive aquí: va en
-     el fondo del panel, arriba de todo. */
+     sería una raya suelta en la primera línea. */
   .nav-links::before { display: none; }
+  /* La trama, ahora con máscara propia: nace en el canto de abajo y se apaga
+     hacia arriba, que es la de la barra al revés —allí la luz enciende la
+     retícula por arriba y se pierde hacia abajo; aquí la pieza cuelga, y lo que
+     se apaga es lo que sube a su encuentro—.
+
+     `z-index: -1` la deja por encima del velo del panel y por debajo de las
+     letras: un pseudo posicionado sin `z-index` se pinta en el grupo de encima y
+     tapa el texto, que fue el defecto que la obligó a bajar al fondo del panel.
+     Ahora que lleva máscara vuelve aquí, y con el `z-index` que le toca ese
+     defecto no se repite.
+
+     Más sutil que la de la barra, y a propósito: cubre una superficie cuatro
+     veces mayor, así que el mismo punto a la misma distancia se lee como un
+     patrón pegado y no como el grano de una superficie. El paso sube de 4 a 6 px
+     —de 16 a 36 px² por punto, menos de la mitad de densidad— y el degradado la
+     apaga a media altura: la retícula se intuye, no se mira. */
+  .nav-links::after {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    pointer-events: none; border-radius: inherit;
+    background-image: radial-gradient(circle, var(--trama) 1px, transparent 1.05px);
+    background-size: 6px 6px;
+    -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
+    mask-image: linear-gradient(0deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
+  }
   .nav-links a { padding: var(--s-3); font-size: var(--t-lg); }
   .nav[data-open="true"] .nav-links { opacity: 1; visibility: visible; }
   @media (prefers-reduced-motion: no-preference) {
