@@ -1046,16 +1046,17 @@ el mundo al pulsarlo, era lo único del cambio que no se movía.
      Ahora que lleva máscara vuelve aquí, y con el `z-index` que le toca ese
      defecto no se repite.
 
-     Más sutil que la de la barra, y a propósito: cubre una superficie cuatro
-     veces mayor, así que el mismo punto a la misma distancia se lee como un
-     patrón pegado y no como el grano de una superficie. El paso sube de 4 a 6 px
-     —de 16 a 36 px² por punto, menos de la mitad de densidad— y el degradado la
-     apaga a media altura: la retícula se intuye, no se mira. */
+     La retícula es la MISMA que la de la barra —punto de un píxel, paso de 4 px,
+     la tinta del tema— y lo único que cambia es hacia dónde se apaga: la trama
+     es una sola y se reconoce en las dos piezas. Aflojarla aquí —separando los
+     puntos— sería inventarse una segunda retícula para la misma casa. Lo que la
+     hace discreta en el panel no es la distancia entre puntos, es el degradado,
+     que la apaga a media altura: se intuye, no se mira. */
   .nav-links::after {
     content: ""; position: absolute; inset: 0; z-index: -1;
     pointer-events: none; border-radius: inherit;
     background-image: radial-gradient(circle, var(--trama) 1px, transparent 1.05px);
-    background-size: 6px 6px;
+    background-size: 4px 4px;
     -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
     mask-image: linear-gradient(0deg, #000 0%, #000 14%, rgba(0, 0, 0, .38) 62%, transparent 100%);
   }
