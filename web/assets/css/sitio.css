@@ -623,6 +623,10 @@ body { caret-color: var(--acc); }
   padding: var(--s-3) var(--gutter) 0;
   background: transparent;
 }
+/* El cristal de la píldora en móvil. Nace apagado: solo se enciende donde tiene
+   trabajo, que es donde `.nav-in` suelta su filtro. El porqué de que viva fuera
+   de `.nav-in` —y no dentro, que es donde estaba— está en nav.html. */
+.nav-cristal { display: none; }
 /* El aire de arriba no se toca nunca: la píldora flota a 12 px del canto con la
    página parada y con la página en marcha. Aquí hubo una franja de desenfoque
    sin tinte que tapaba esos 22 px —para que la letra no asomara cortada por el
@@ -951,11 +955,31 @@ el mundo al pulsarlo, era lo único del cambio que no se movía.
 }
 
 @media (max-width: 900px) {
+  /* La píldora suelta su filtro y el cristal se muda al hermano de arriba. No es
+     un capricho de sitio: un elemento con `backdrop-filter` se convierte en raíz
+     de fondo, y desde ahí un descendiente suyo solo muestrea lo que se pinta
+     DENTRO de esa raíz —la página deja de existir para él—. Con el filtro en
+     `.nav-in`, el desplegable llevaba su halo, su velo y su trama, y la página
+     seguía nítida por debajo: era un panel translúcido, no un cristal. El pseudo
+     servía para la píldora, que comparte su caja; no para el panel, que cuelga
+     más abajo. Así que el filtro sale a un hermano, `.nav-in` vuelve a ser un
+     contenedor corriente, y el desplegable puede desenfocar de verdad. */
+  .nav-in { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  /* El cristal de la píldora, con la caja escrita a mano porque es de las pocas
+     del sitio que no dependen de su contenido: el ancho es el de la ventana
+     menos los dos canalones —topado por `--max`— y el alto, el de la barra. Cae
+     exactamente donde caía el filtro que se acaba de soltar, que es lo que hace
+     que este cambio no se vea. */
+  .nav-cristal {
+    display: block; position: absolute; z-index: -1; pointer-events: none;
+    top: var(--s-3); left: var(--gutter); right: var(--gutter);
+    max-width: calc(var(--max) - 2 * var(--gutter)); margin: 0 auto;
+    height: var(--nav-h); border-radius: var(--r-panel);
+    -webkit-backdrop-filter: blur(14px) brightness(1.06);
+    backdrop-filter: blur(14px) brightness(1.06);
+  }
   /* El menú de móvil es la misma pieza que la barra, abierta hacia abajo: su
-     halo, su filo y su sombra. Ya no lleva desenfoque propio y no es una
-     pérdida: cuelga de `.nav-in`, que ahora filtra, así que un filtro ahí dentro
-     no tendría nada que muestrear. Su velo es `--panel`, casi opaco, que es lo
-     que necesita un panel que tapa media pantalla. */
+     halo, su filo, su sombra y —ahora sí— su desenfoque. */
   /* El menú se despliega en vez de aparecer de golpe: baja ocho píxeles y se
      funde, que es lo que hace un desplegable del sistema.
 
@@ -996,12 +1020,20 @@ el mundo al pulsarlo, era lo único del cambio que no se movía.
        claro— el botón naranja de descarga que quedaba justo debajo asomaba por
        el panel y teñía de naranja media lista, con «Privacidad» a medio leer.
        Una franja flotante puede ser casi transparente porque detrás hay texto
-       quieto; un panel que tapa media pantalla, no. */
+       quieto; un       panel que tapa media pantalla, no. Y ahora que el desenfoque llega donde
+       tiene que llegar, este es el velo que le toca: el 97 % de `--panel` estaba
+       ahí para tapar la página, que es justo lo que pasa a hacer el filtro de
+       abajo. */
     background:
       radial-gradient(circle, var(--trama) 1px, transparent 1.05px),
       radial-gradient(130% 200% at 50% -80%, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 62%),
-      var(--panel);
+      var(--float);
     background-size: 4px 4px, auto, auto;
+    /* El desenfoque, por fin de verdad. El mismo par que la píldora —catorce
+       píxeles y un 6 % de brillo—, y el mismo que su cristal: tres piezas de la
+       barra, una sola receta. */
+    -webkit-backdrop-filter: blur(14px) brightness(1.06);
+    backdrop-filter: blur(14px) brightness(1.06);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5),
                 inset 0 -1px 0 rgba(16, 20, 28, .06),
                 0 0 0 .5px var(--ring), var(--shadow-nav);
@@ -2671,9 +2703,24 @@ html.tema-anim {
   /* La secuencia se apila y pierde el `sticky`: en una columna no hay dos cosas
      que sincronizar, y un texto que se queda pegado debajo de la barra mientras
      su lista pasa por detrás solo tapa la lista. El rail y los números se
-     quedan: el orden sigue siendo un orden. */
-  .ritual-in { grid-template-columns: minmax(0, 1fr); gap: var(--s-7); }
-  .ritual-texto { position: static; }
+     quedan: el orden sigue siendo un orden.
+
+     Y en una columna el botón que cierra el bloque baja detrás de los tres
+     pasos: lo que cuenta la sección —retira, espera, vuelve— es la respuesta a
+     lo que el botón pregunta, así que primero se lee el cómo y después se ofrece
+     el detalle. Se hace deshaciendo la caja del texto con `display: contents`:
+     sus tres piezas —el título, la entradilla y el botón— pasan a ser piezas de
+     la misma columna, y así se pueden ordenar. El div sigue en el documento y
+     las reglas que lo tocan siguen valiendo; lo que desaparece es su caja. Como
+     el hueco de la rejilla caería entonces también entre el título y la
+     entradilla —que no llevaban ninguno—, el aire se pone a mano donde estaba:
+     el mismo `--s-7` de antes, ahora como margen de los pasos. Solo en una
+     columna: en dos, el botón vive en la columna del texto, que sigue pegada
+     mientras los pasos pasan por detrás. */
+  .ritual-in { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .ritual-texto { position: static; display: contents; }
+  .ritual-pasos { margin-top: var(--s-7); }
+  .ritual-cta { order: 1; }
   /* Sin la columna que se queda pegada, el alto mínimo de cada paso solo servía
      para abrir un hueco entre el texto y el número siguiente: en una columna, el
      paso mide lo que mide y lo que separa es su aire de abajo. */

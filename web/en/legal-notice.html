@@ -131,6 +131,17 @@ try {
 <div class="intro" data-cortina aria-hidden="true"><canvas></canvas></div>
 
 <nav class="nav" data-open="false" aria-label="Main navigation">
+  <!-- El cristal de la píldora. En un elemento hermano y no dentro de `.nav-in`,
+       y no es un detalle de montaje: un elemento con desenfoque de fondo se
+       convierte en «raíz de fondo», y a partir de ahí un descendiente suyo solo
+       puede muestrear lo que se pinta DENTRO de esa raíz —la página deja de
+       existir para él—. Con el filtro en `.nav-in`, el menú de móvil, que cuelga
+       de ahí, no desenfocaba nada por mucho filtro que llevara: era un panel
+       translúcido con las preguntas de detrás nítidas. Aquí, al ser un hermano,
+       la píldora y el panel desenfocan los dos la página. Se enciende solo en
+       móvil (sitio.css), que es donde `.nav-in` suelta su filtro. Vacío y
+       `aria-hidden` porque es un acabado, no contenido. -->
+  <span class="nav-cristal" aria-hidden="true"></span>
   <div class="nav-in">
     <a class="brand" href="./" aria-label="Brisa, home page">
       <svg class="logo" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false"><path fill="currentColor" d="M447.339 278.449C476.406 276.83 502.324 294.691 509.692 323.15C510.746 327.152 511.412 331.25 511.666 335.379C512.495 348.814 511.485 366.722 511.751 380.665C511.43 394.663 512.623 408.855 511.23 422.786C508.276 452.422 481.291 463.029 459.659 476.13L402.471 511.385L328.886 556.629C316.547 564.252 299.661 575.362 287.165 582.191C282.667 584.606 277.866 586.404 272.896 587.542C259.806 590.539 246.141 589.759 233.481 585.285C223.372 581.646 197.793 564.488 187.027 557.907L80.3926 492.356C68.4928 484.752 55.9589 477.353 43.958 470.124C28.4154 460.758 15.2153 455.782 6.44142 438.818C-1.27539 423.9 0.25906 410.568 0.292982 394.319L0.295912 358.144C14.7688 399.519 49.6555 425.71 90.877 436.608C163.327 455.751 217.035 417.083 275.142 381.193C306.449 361.861 337.283 342.815 367.906 321.745L395.235 302.71C412.969 290.261 425.168 280.744 447.339 278.449ZM250.646 0.552131C278.435 -3.48367 302.089 15.4675 324.405 29.3295L387.401 68.2562L455.627 110.067C465.29 115.926 489.519 129.762 496.809 136.615C513.724 152.529 511.915 174.634 511.86 195.646L511.732 233.655C482.49 148.69 384.434 131.452 310.959 167.965C288.364 179.193 262.161 194.624 240.965 208.608C230.007 214.746 217.313 223.064 206.542 229.823C184.275 243.659 162.285 257.935 140.584 272.642C127.29 281.653 105.629 297.825 92.4902 304.739C85.523 308.468 77.9047 310.817 70.0498 311.67C52.9984 313.759 35.827 308.855 22.4512 298.078C-5.73352 275.463 0.821508 247.494 0.335951 215.524C0.244533 209.537 0.238846 203.454 0.306654 197.453C0.589379 187.026 -0.60433 176.402 1.15626 166.078C5.92721 138.103 31.3205 129.031 52.7461 116.196C76.8242 101.696 100.813 87.0494 124.711 72.2562L190.028 31.0101C208.909 18.887 227.966 2.80442 250.646 0.552131Z"/></svg>

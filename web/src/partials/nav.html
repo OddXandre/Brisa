@@ -1,4 +1,15 @@
 <nav class="nav" data-open="false" aria-label="{{t:nav.principal}}">
+  <!-- El cristal de la píldora. En un elemento hermano y no dentro de `.nav-in`,
+       y no es un detalle de montaje: un elemento con desenfoque de fondo se
+       convierte en «raíz de fondo», y a partir de ahí un descendiente suyo solo
+       puede muestrear lo que se pinta DENTRO de esa raíz —la página deja de
+       existir para él—. Con el filtro en `.nav-in`, el menú de móvil, que cuelga
+       de ahí, no desenfocaba nada por mucho filtro que llevara: era un panel
+       translúcido con las preguntas de detrás nítidas. Aquí, al ser un hermano,
+       la píldora y el panel desenfocan los dos la página. Se enciende solo en
+       móvil (sitio.css), que es donde `.nav-in` suelta su filtro. Vacío y
+       `aria-hidden` porque es un acabado, no contenido. -->
+  <span class="nav-cristal" aria-hidden="true"></span>
   <div class="nav-in">
     <a class="brand" href="{{v:urlInicio}}" aria-label="{{t:marca.aria}}">
       <svg class="logo" viewBox="-6 -4 524 598" aria-hidden="true" focusable="false">{{v:marca}}</svg>
