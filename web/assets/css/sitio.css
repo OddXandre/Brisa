@@ -1858,8 +1858,17 @@ main a:not(.btn):not(.cuatro-enlace):hover { color: var(--ink); }
 .steps { list-style: none; padding: 0; margin: var(--head) 0 0; display: grid; gap: 0; counter-reset: paso; }
 .step {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--s-6);
-  padding: var(--s-7) 0; border-top: 1px solid var(--line);
+  padding: var(--s-7) 0;
 }
+/* La raya es lo que separa un paso del SIGUIENTE, y por eso va en `+` y no como
+   `border-top` en todos, que es como estaba: con el borde en cada paso, la lista
+   abría con una raya suelta por encima del primer número. En la descarga —donde
+   los pasos abren la sección, sin ningún encabezado por encima— esa raya no
+   tenía a qué agarrarse y se leía como un resto; en la guía y en seguridad caía
+   justo bajo el `h2` y pasaba por deliberada. Así las tres se leen igual: la
+   lista empieza en su primer número y lo que hay son separaciones. El cierre de
+   abajo se queda en el último paso, que ahí sí hay contenido detrás. */
+.step + .step { border-top: 1px solid var(--line); }
 .step:last-child { border-bottom: 1px solid var(--line); }
 .step .n {
   counter-increment: paso; width: 32px; height: 32px; border-radius: 50%;
