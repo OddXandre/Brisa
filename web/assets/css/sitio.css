@@ -1860,16 +1860,26 @@ main a:not(.btn):not(.cuatro-enlace):hover { color: var(--ink); }
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: var(--s-6);
   padding: var(--s-7) 0;
 }
-/* La raya es lo que separa un paso del SIGUIENTE, y por eso va en `+` y no como
+/* El filete separa un paso del SIGUIENTE, y por eso va en `+` y no como
    `border-top` en todos, que es como estaba: con el borde en cada paso, la lista
    abría con una raya suelta por encima del primer número. En la descarga —donde
    los pasos abren la sección, sin ningún encabezado por encima— esa raya no
    tenía a qué agarrarse y se leía como un resto; en la guía y en seguridad caía
-   justo bajo el `h2` y pasaba por deliberada. Así las tres se leen igual: la
-   lista empieza en su primer número y lo que hay son separaciones. El cierre de
-   abajo se queda en el último paso, que ahí sí hay contenido detrás. */
+   justo bajo el `h2` y pasaba por deliberada. La de cierre se fue por lo mismo:
+   entre ella y el aviso quedaba el aire de la pieza, así que tampoco cerraba
+   nada. Lo que queda es lo que la lista dice ser: números separados por un
+   filete, y así se lee igual en las tres páginas que la usan. */
 .step + .step { border-top: 1px solid var(--line); }
-.step:last-child { border-bottom: 1px solid var(--line); }
+/* Sin rayas en los extremos, el aire de fuera sobra: era el que apartaba el
+   filete del texto, y ya no hay filete del que apartarlo. Se queda el de dentro
+   —los mismos 48 px a cada lado del filete, que no se tocan— y el de fuera lo
+   pone la casa, que es lo que hace el resto de la web: por arriba el `--head`
+   del `ol` (el mismo hueco que separa un `h2` de lo que le sigue) y por abajo el
+   margen que traiga lo que venga después —aquí el aviso, con su `--s-6`, igual
+   que detrás de cualquier otro bloque—. Sin los dos, la lista quedaba con 48 px
+   de más a cada lado que no los justificaba nada. */
+.step:first-child { padding-top: 0; }
+.step:last-child { padding-bottom: 0; }
 .step .n {
   counter-increment: paso; width: 32px; height: 32px; border-radius: 50%;
   display: grid; place-items: center; font: 500 var(--t-sm)/1 var(--font-mono);
